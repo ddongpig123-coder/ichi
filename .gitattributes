@@ -1,0 +1,8 @@
+# Force GitHub Linguist to detect TypeScript
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+
+# Exclude generated/vendor files from language stats
+package-lock.json linguist-generated=true
+node_modules/ linguist-vendored=true
+assets/ linguist-documentation=true
