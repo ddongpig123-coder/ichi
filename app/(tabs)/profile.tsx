@@ -3,16 +3,19 @@ import { useAuth } from "../../src/contexts/AuthContext";
 
 export default function ProfileScreen() {
   const { user } = useAuth();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.name}>{user?.displayName ?? "ユーザー"}</Text>
-      <Text style={styles.email}>{user?.email}</Text>
+      <Text style={styles.label}>ユーザーID</Text>
+      <Text style={styles.uid}>{user?.uid?.slice(0, 12)}...</Text>
+      <Text style={styles.note}>現在は匿名ユーザーとして利用中です</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", gap: 8 },
-  name: { fontSize: 20, fontWeight: "600" },
-  email: { fontSize: 14, color: "#666" },
+  container: { flex: 1, justifyContent: "center", alignItems: "center", gap: 8, backgroundColor: "#F5F7FA" },
+  label: { fontSize: 12, color: "#aaa" },
+  uid: { fontSize: 16, fontWeight: "600", color: "#333" },
+  note: { fontSize: 13, color: "#aaa", marginTop: 8 },
 });

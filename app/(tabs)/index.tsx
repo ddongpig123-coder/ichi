@@ -1,32 +1,19 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useAuth } from "../../src/contexts/AuthContext";
-import { signOut } from "../../src/services/authService";
+import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
-  const { user } = useAuth();
   const router = useRouter();
-
-  async function handleSignOut() {
-    await signOut();
-    router.replace("/login");
-  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcome}>ようこそ！</Text>
-      <Text style={styles.email}>{user?.email}</Text>
-      <TouchableOpacity style={styles.signOut} onPress={handleSignOut}>
-        <Text style={styles.signOutText}>ログアウト</Text>
-      </TouchableOpacity>
+      <Text style={styles.title}>大学生コミュニティ</Text>
+      <Text style={styles.subtitle}>掲示板で情報交換しよう</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", gap: 16 },
-  welcome: { fontSize: 24, fontWeight: "700" },
-  email: { fontSize: 14, color: "#555" },
-  signOut: { marginTop: 24, padding: 12, backgroundColor: "#eee", borderRadius: 8 },
-  signOutText: { color: "#333" },
+  container: { flex: 1, justifyContent: "center", alignItems: "center", gap: 12, backgroundColor: "#F5F7FA" },
+  title: { fontSize: 26, fontWeight: "700", color: "#1A1A2E" },
+  subtitle: { fontSize: 14, color: "#888" },
 });
