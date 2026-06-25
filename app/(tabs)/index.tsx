@@ -1,19 +1,19 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { useTimetable } from "../../src/hooks/useTimetable";
+import TimeTable from "../../src/components/timetable/TimeTable";
 
 export default function HomeScreen() {
-  const router = useRouter();
+  const { sessions } = useTimetable();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>大学生コミュニティ</Text>
-      <Text style={styles.subtitle}>掲示板で情報交換しよう</Text>
+      <Text style={styles.title}>時間割</Text>
+      <TimeTable sessions={sessions} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", gap: 12, backgroundColor: "#F5F7FA" },
-  title: { fontSize: 26, fontWeight: "700", color: "#1A1A2E" },
-  subtitle: { fontSize: 14, color: "#888" },
+  container: { flex: 1, backgroundColor: "#F5F7FA", paddingTop: 16 },
+  title: { fontSize: 20, fontWeight: "700", color: "#1A1A2E", paddingHorizontal: 16, marginBottom: 12 },
 });
