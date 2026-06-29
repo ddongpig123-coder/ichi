@@ -117,6 +117,40 @@ export async function createComment(
   });
 }
 
+export async function searchPosts(
+  schoolDomain: string,
+  keyword: string,
+  pageSize = 30
+): Promise<(Post & { boardLabel: string })[]> {
+  const { BOARDS } = await import("../types/board");
+  const results: (Post & { boardLabel: string })[] = [];
+  const kw = keyword.trim().toLowerCase();
+  if (!kw) return results;
+
+  await Promise.all(
+    BOARDS.map(async (board) => {
+      const q = query(postsCol(schoolDomain, board.id), orderBy("createdAt", "desc"), limit(pageSize));
+      const snap = await getDocs(q);
+      snap.docs.forEach((d) => {
+        const data = d.data();
+        if (
+          data.title?.toLowerCase().includes(kw) ||
+          data.body?.toLowerCase().includes(kw)
+        ) {
+          results.push({
+            id: d.id,
+            ...(data as Omit<Post, "id">),
+            createdAt: toMs(data.createdAt),
+            boardLabel: board.label,
+          });
+        }
+      });
+    })
+  );
+
+  return results.sort((a, b) => b.createdAt - a.createdAt);
+}
+
 export async function fetchComments(
   schoolDomain: string,
   boardId: BoardId,
