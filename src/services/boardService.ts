@@ -3,6 +3,8 @@ import {
   addDoc,
   getDocs,
   getDoc,
+  setDoc,
+  deleteDoc,
   doc,
   query,
   orderBy,
@@ -115,6 +117,73 @@ export async function createComment(
   await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
     commentCount: increment(1),
   });
+}
+
+function likesCol(schoolDomain: string, boardId: BoardId, postId: string) {
+  return collection(db, "schools", schoolDomain, "boards", boardId, "posts", postId, "likes");
+}
+
+export async function toggleLike(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string,
+  uid: string
+): Promise<{ liked: boolean; likeCount: number }> {
+  const likeRef = doc(likesCol(schoolDomain, boardId, postId), uid);
+  const postRef = doc(postsCol(schoolDomain, boardId), postId);
+  const likeSnap = await getDoc(likeRef);
+
+  if (likeSnap.exists()) {
+    await deleteDoc(likeRef);
+    await updateDoc(postRef, { likeCount: increment(-1) });
+    const updated = await getDoc(postRef);
+    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
+  } else {
+    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
+    await updateDoc(postRef, { likeCount: increment(1) });
+    const updated = await getDoc(postRef);
+    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
+  }
+}
+
+export async function checkLiked(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string,
+  uid: string
+): Promise<boolean> {
+  const snap = await getDoc(doc(likesCol(schoolDomain, boardId, postId), uid));
+  return snap.exists();
+}
+
+export async function fetchBestPosts(
+  schoolDomain: string,
+  topN = 20
+): Promise<(Post & { boardLabel: string })[]> {
+  const { BOARDS } = await import("../types/board");
+  const all: (Post & { boardLabel: string })[] = [];
+
+  await Promise.all(
+    BOARDS.map(async (board) => {
+      const q = query(postsCol(schoolDomain, board.id), orderBy("likeCount", "desc"), limit(topN));
+      const snap = await getDocs(q);
+      snap.docs.forEach((d) => {
+        const data = d.data();
+        all.push({
+          id: d.id,
+          ...(data as Omit<Post, "id">),
+          likeCount: (data.likeCount ?? 0) as number,
+          createdAt: toMs(data.createdAt),
+          boardLabel: board.label,
+        });
+      });
+    })
+  );
+
+  return all
+    .filter((p) => p.likeCount > 0)
+    .sort((a, b) => b.likeCount - a.likeCount)
+    .slice(0, topN);
 }
 
 export async function searchPosts(

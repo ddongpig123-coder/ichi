@@ -21,6 +21,7 @@ export interface Post {
   body: string;
   authorUid: string;      // stored but never displayed
   commentCount: number;
+  likeCount: number;
   createdAt: number;      // unix ms
 }
 

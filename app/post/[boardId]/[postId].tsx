@@ -17,6 +17,8 @@ import {
   fetchPost,
   fetchComments,
   createComment,
+  toggleLike,
+  checkLiked,
 } from "../../../src/services/boardService";
 import { BOARDS, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
@@ -37,6 +39,9 @@ export default function PostDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [liking, setLiking] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -44,11 +49,23 @@ export default function PostDetailScreen() {
     Promise.all([
       fetchPost(schoolDomain, boardId as BoardId, postId),
       fetchComments(schoolDomain, boardId as BoardId, postId),
-    ]).then(([p, c]) => {
+      user ? checkLiked(schoolDomain, boardId as BoardId, postId, user.uid) : Promise.resolve(false),
+    ]).then(([p, c, isLiked]) => {
       setPost(p);
       setComments(c);
+      setLiked(isLiked);
+      setLikeCount(p?.likeCount ?? 0);
     }).finally(() => setLoading(false));
   }, [schoolDomain, boardId, postId]);
+
+  async function handleLike() {
+    if (!user || !schoolDomain) return;
+    setLiking(true);
+    const result = await toggleLike(schoolDomain, boardId as BoardId, postId, user.uid);
+    setLiked(result.liked);
+    setLikeCount(result.likeCount);
+    setLiking(false);
+  }
 
   async function handleComment() {
     if (!commentText.trim()) return;
@@ -96,6 +113,15 @@ export default function PostDetailScreen() {
           </View>
           <View style={styles.divider} />
           <Text style={styles.postBody}>{post.body}</Text>
+          <TouchableOpacity
+            style={[styles.likeBtn, liked && styles.likeBtnActive]}
+            onPress={handleLike}
+            disabled={liking}
+          >
+            <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
+              {liked ? "❤️" : "🤍"} {likeCount}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Comments */}
@@ -142,6 +168,21 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, color: "#999" },
   divider: { height: 1, backgroundColor: "#F0F0F0", marginBottom: 16 },
   postBody: { fontSize: 15, color: "#333", lineHeight: 24 },
+  likeBtn: {
+    alignSelf: "flex-start",
+    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    backgroundColor: "#F9F9F9",
+  },
+  likeBtnActive: { borderColor: "#E8334A", backgroundColor: "#FFF0F2" },
+  likeBtnText: { fontSize: 14, color: "#888", fontWeight: "600" },
+  likeBtnTextActive: { color: "#E8334A" },
   commentHeader: { fontSize: 14, fontWeight: "700", color: "#555", padding: 16, paddingBottom: 8 },
   commentCard: { backgroundColor: "#fff", padding: 16, marginBottom: 1 },
   commentAuthor: { fontSize: 13, fontWeight: "600", color: "#2F6AD9", marginBottom: 4 },
