@@ -6,10 +6,10 @@ import {
   setDoc,
   doc,
   query,
-  orderBy,
   where,
   limit,
   onSnapshot,
+  orderBy,
   serverTimestamp,
   updateDoc,
   Timestamp,
@@ -47,9 +47,6 @@ export async function getOrCreateChat(
   if (!snap.exists()) {
     await setDoc(ref, {
       participants: [myUid, otherUid],
-      // map field for querying: participants.{uid} == true
-      [`participantMap.${myUid}`]: true,
-      [`participantMap.${otherUid}`]: true,
       relatedPostTitle,
       lastMessage: "",
       lastMessageAt: serverTimestamp(),
@@ -96,17 +93,19 @@ export async function fetchMyChats(
   schoolDomain: string,
   uid: string
 ): Promise<ChatRoom[]> {
+  // array-contains는 orderBy와 조합 시 인덱스 불필요, 정렬은 클라이언트에서
   const q = query(
     chatsCol(schoolDomain),
-    where(`participantMap.${uid}`, "==", true),
-    orderBy("lastMessageAt", "desc"),
+    where("participants", "array-contains", uid),
     limit(50)
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({
-    id: d.id,
-    ...(d.data() as Omit<ChatRoom, "id">),
-    lastMessageAt: toMs((d.data() as any).lastMessageAt),
-    createdAt: toMs((d.data() as any).createdAt),
-  }));
+  return snap.docs
+    .map((d) => ({
+      id: d.id,
+      ...(d.data() as Omit<ChatRoom, "id">),
+      lastMessageAt: toMs((d.data() as any).lastMessageAt),
+      createdAt: toMs((d.data() as any).createdAt),
+    }))
+    .sort((a, b) => b.lastMessageAt - a.lastMessageAt);
 }
