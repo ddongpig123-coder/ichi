@@ -18,6 +18,7 @@ export default function BoardsLayout() {
       <Stack.Screen name="[boardId]" options={{ title: "" }} />
       <Stack.Screen name="search" options={{ title: "検索" }} />
       <Stack.Screen name="best" options={{ title: "ベスト投稿" }} />
+      <Stack.Screen name="create" options={{ title: "掲示板を作成" }} />
     </Stack>
   );
 }

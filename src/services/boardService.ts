@@ -18,7 +18,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import type { BoardId, Post, Comment } from "../types/board";
+import type { BoardId, BoardMeta, Post, Comment } from "../types/board";
 
 // Extract school domain from email (e.g. "user@foo.ac.jp" → "foo.ac.jp")
 export function schoolDomainFromEmail(email: string): string {
@@ -156,15 +156,52 @@ export async function checkLiked(
   return snap.exists();
 }
 
+// ── Dynamic boards ─────────────────────────────────────
+
+function boardMetasCol(schoolDomain: string) {
+  return collection(db, "schools", schoolDomain, "boardMetas");
+}
+
+export async function fetchCustomBoards(schoolDomain: string): Promise<BoardMeta[]> {
+  const snap = await getDocs(query(boardMetasCol(schoolDomain), orderBy("createdAt", "asc")));
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<BoardMeta, "id">),
+    createdAt: toMs((d.data() as any).createdAt),
+  }));
+}
+
+export async function createBoard(
+  schoolDomain: string,
+  label: string,
+  description: string,
+  category: BoardMeta["category"],
+  createdBy: string
+): Promise<string> {
+  const ref = await addDoc(boardMetasCol(schoolDomain), {
+    label,
+    description,
+    category,
+    createdBy,
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
 export async function fetchBestPosts(
   schoolDomain: string,
-  topN = 20
+  topN = 20,
+  boards?: BoardMeta[]
 ): Promise<(Post & { boardLabel: string })[]> {
-  const { BOARDS } = await import("../types/board");
+  const { OFFICIAL_BOARDS } = await import("../types/board");
+  const allBoards: BoardMeta[] = boards ?? [
+    ...OFFICIAL_BOARDS,
+    ...(await fetchCustomBoards(schoolDomain)),
+  ];
   const all: (Post & { boardLabel: string })[] = [];
 
   await Promise.all(
-    BOARDS.map(async (board) => {
+    allBoards.map(async (board) => {
       const q = query(postsCol(schoolDomain, board.id), orderBy("likeCount", "desc"), limit(topN));
       const snap = await getDocs(q);
       snap.docs.forEach((d) => {
@@ -189,15 +226,20 @@ export async function fetchBestPosts(
 export async function searchPosts(
   schoolDomain: string,
   keyword: string,
-  pageSize = 30
+  pageSize = 30,
+  boards?: BoardMeta[]
 ): Promise<(Post & { boardLabel: string })[]> {
-  const { BOARDS } = await import("../types/board");
+  const { OFFICIAL_BOARDS } = await import("../types/board");
+  const allBoards: BoardMeta[] = boards ?? [
+    ...OFFICIAL_BOARDS,
+    ...(await fetchCustomBoards(schoolDomain)),
+  ];
   const results: (Post & { boardLabel: string })[] = [];
   const kw = keyword.trim().toLowerCase();
   if (!kw) return results;
 
   await Promise.all(
-    BOARDS.map(async (board) => {
+    allBoards.map(async (board) => {
       const q = query(postsCol(schoolDomain, board.id), orderBy("createdAt", "desc"), limit(pageSize));
       const snap = await getDocs(q);
       snap.docs.forEach((d) => {

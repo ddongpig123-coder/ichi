@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import {
   fetchPost,
@@ -20,6 +20,7 @@ import {
   toggleLike,
   checkLiked,
 } from "../../../src/services/boardService";
+import { getOrCreateChat } from "../../../src/services/chatService";
 import { BOARDS, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
 function timeAgo(ms: number): string {
@@ -33,6 +34,7 @@ function timeAgo(ms: number): string {
 export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
+  const router = useRouter();
 
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -57,6 +59,13 @@ export default function PostDetailScreen() {
       setLikeCount(p?.likeCount ?? 0);
     }).finally(() => setLoading(false));
   }, [schoolDomain, boardId, postId]);
+
+  async function handleDM() {
+    if (!user || !schoolDomain || !post) return;
+    if (user.uid === post.authorUid) return;
+    const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, post.authorUid, post.title);
+    router.push(`/(tabs)/messages/${chatRoomId}`);
+  }
 
   async function handleLike() {
     if (!user || !schoolDomain) return;
@@ -113,15 +122,22 @@ export default function PostDetailScreen() {
           </View>
           <View style={styles.divider} />
           <Text style={styles.postBody}>{post.body}</Text>
-          <TouchableOpacity
-            style={[styles.likeBtn, liked && styles.likeBtnActive]}
-            onPress={handleLike}
-            disabled={liking}
-          >
-            <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
-              {liked ? "❤️" : "🤍"} {likeCount}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.actionRow}>
+            <TouchableOpacity
+              style={[styles.likeBtn, liked && styles.likeBtnActive]}
+              onPress={handleLike}
+              disabled={liking}
+            >
+              <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
+                {liked ? "❤️" : "🤍"} {likeCount}
+              </Text>
+            </TouchableOpacity>
+            {user && post.authorUid !== user.uid && (
+              <TouchableOpacity style={styles.dmBtn} onPress={handleDM}>
+                <Text style={styles.dmBtnText}>💬 DM</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Comments */}
@@ -168,6 +184,7 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12, color: "#999" },
   divider: { height: 1, backgroundColor: "#F0F0F0", marginBottom: 16 },
   postBody: { fontSize: 15, color: "#333", lineHeight: 24 },
+  actionRow: { flexDirection: "row", gap: 10, marginTop: 20 },
   likeBtn: {
     alignSelf: "flex-start",
     marginTop: 20,
@@ -183,6 +200,17 @@ const styles = StyleSheet.create({
   likeBtnActive: { borderColor: "#E8334A", backgroundColor: "#FFF0F2" },
   likeBtnText: { fontSize: 14, color: "#888", fontWeight: "600" },
   likeBtnTextActive: { color: "#E8334A" },
+  dmBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    backgroundColor: "#F9F9F9",
+  },
+  dmBtnText: { fontSize: 14, color: "#555", fontWeight: "600" },
   commentHeader: { fontSize: 14, fontWeight: "700", color: "#555", padding: 16, paddingBottom: 8 },
   commentCard: { backgroundColor: "#fff", padding: 16, marginBottom: 1 },
   commentAuthor: { fontSize: 13, fontWeight: "600", color: "#2F6AD9", marginBottom: 4 },

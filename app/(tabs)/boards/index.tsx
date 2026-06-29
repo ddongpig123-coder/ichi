@@ -1,18 +1,33 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, SectionList } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, SectionList, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
-import { BOARDS, type BoardMeta } from "../../../src/types/board";
 import { usePinnedBoards } from "../../../src/hooks/usePinnedBoards";
+import { useBoards } from "../../../src/hooks/useBoards";
+import type { BoardMeta } from "../../../src/types/board";
+
+const CATEGORY_LABELS: Record<string, string> = {
+  official: "公式掲示板",
+  department: "学部別掲示板",
+  custom: "みんなの掲示板",
+};
 
 export default function BoardsScreen() {
   const router = useRouter();
-  const { pinned, isPinned, toggle, ready } = usePinnedBoards();
+  const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
+  const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
 
-  const pinnedBoards = BOARDS.filter((b) => isPinned(b.id));
-  const otherBoards = BOARDS.filter((b) => !isPinned(b.id));
+  const pinnedBoards = [...officialBoards, ...departmentBoards, ...userBoards].filter((b) =>
+    isPinned(b.id)
+  );
 
   const sections = [
     ...(pinnedBoards.length > 0 ? [{ title: "よく使う掲示板", data: pinnedBoards }] : []),
-    { title: "掲示板一覧", data: otherBoards },
+    { title: CATEGORY_LABELS.official, data: officialBoards.filter((b) => !isPinned(b.id)) },
+    ...(departmentBoards.length > 0
+      ? [{ title: CATEGORY_LABELS.department, data: departmentBoards.filter((b) => !isPinned(b.id)) }]
+      : []),
+    ...(userBoards.length > 0
+      ? [{ title: CATEGORY_LABELS.custom, data: userBoards.filter((b) => !isPinned(b.id)) }]
+      : []),
   ];
 
   function renderBoard({ item }: { item: BoardMeta }) {
@@ -36,24 +51,34 @@ export default function BoardsScreen() {
     );
   }
 
-  if (!ready) return <View style={styles.container} />;
+  if (!pinReady || loading) {
+    return <View style={styles.container}><ActivityIndicator style={{ marginTop: 40 }} color="#2F6AD9" /></View>;
+  }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.bestBanner} onPress={() => router.push("/(tabs)/boards/best")}>
-        <View>
-          <Text style={styles.bestTitle}>❤️ ベスト投稿</Text>
-          <Text style={styles.bestSub}>いいね数トップ20をチェック</Text>
-        </View>
-        <Text style={styles.bestArrow}>›</Text>
-      </TouchableOpacity>
-      <View style={styles.sep} />
-
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         SectionSeparatorComponent={() => <View style={styles.sectionSep} />}
+        ListHeaderComponent={
+          <>
+            <TouchableOpacity style={styles.bestBanner} onPress={() => router.push("/(tabs)/boards/best")}>
+              <View>
+                <Text style={styles.bestTitle}>❤️ ベスト投稿</Text>
+                <Text style={styles.bestSub}>いいね数トップ20をチェック</Text>
+              </View>
+              <Text style={styles.bestArrow}>›</Text>
+            </TouchableOpacity>
+            <View style={styles.sectionSep} />
+          </>
+        }
+        ListFooterComponent={
+          <TouchableOpacity style={styles.createBtn} onPress={() => router.push("/(tabs)/boards/create")}>
+            <Text style={styles.createBtnText}>＋ 掲示板を作成する</Text>
+          </TouchableOpacity>
+        }
         renderSectionHeader={({ section }) => (
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{section.title}</Text>
@@ -77,11 +102,7 @@ const styles = StyleSheet.create({
   bestTitle: { fontSize: 16, fontWeight: "700", color: "#E8334A", marginBottom: 2 },
   bestSub: { fontSize: 13, color: "#888" },
   bestArrow: { fontSize: 22, color: "#ccc" },
-  sectionHeader: {
-    backgroundColor: "#F5F7FA",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
+  sectionHeader: { backgroundColor: "#F5F7FA", paddingHorizontal: 16, paddingVertical: 8 },
   sectionTitle: { fontSize: 12, fontWeight: "700", color: "#999", letterSpacing: 0.5 },
   sectionSep: { height: 8, backgroundColor: "#F5F7FA" },
   row: {
@@ -98,4 +119,14 @@ const styles = StyleSheet.create({
   desc: { fontSize: 13, color: "#888" },
   pinBtn: { padding: 8 },
   pinIcon: { fontSize: 18 },
+  createBtn: {
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#2F6AD9",
+    borderStyle: "dashed",
+    alignItems: "center",
+  },
+  createBtnText: { color: "#2F6AD9", fontWeight: "700", fontSize: 15 },
 });
