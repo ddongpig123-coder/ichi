@@ -39,10 +39,8 @@ interface FriendsContextValue {
   nonFrequent: Friend[];
   promote: (id: string) => void;
   demote: (id: string) => void;
-  moveFrequentUp: (index: number) => void;
-  moveFrequentDown: (index: number) => void;
-  moveNonFrequentUp: (index: number) => void;
-  moveNonFrequentDown: (index: number) => void;
+  reorderFrequent: (ids: string[]) => void;
+  reorderNonFrequent: (ids: string[]) => void;
 }
 
 const FriendsContext = createContext<FriendsContextValue | null>(null);
@@ -74,40 +72,12 @@ export function FriendsProvider({ children }: { children: ReactNode }) {
     setNonFrequentIds((prev) => sortAlpha([...prev, id]));
   }
 
-  function moveFrequentUp(index: number) {
-    if (index <= 0) return;
-    setFrequentIds((prev) => {
-      const next = [...prev];
-      [next[index - 1], next[index]] = [next[index], next[index - 1]];
-      return next;
-    });
+  function reorderFrequent(ids: string[]) {
+    setFrequentIds(ids);
   }
 
-  function moveFrequentDown(index: number) {
-    setFrequentIds((prev) => {
-      if (index >= prev.length - 1) return prev;
-      const next = [...prev];
-      [next[index], next[index + 1]] = [next[index + 1], next[index]];
-      return next;
-    });
-  }
-
-  function moveNonFrequentUp(index: number) {
-    if (index <= 0) return;
-    setNonFrequentIds((prev) => {
-      const next = [...prev];
-      [next[index - 1], next[index]] = [next[index], next[index - 1]];
-      return next;
-    });
-  }
-
-  function moveNonFrequentDown(index: number) {
-    setNonFrequentIds((prev) => {
-      if (index >= prev.length - 1) return prev;
-      const next = [...prev];
-      [next[index], next[index + 1]] = [next[index + 1], next[index]];
-      return next;
-    });
+  function reorderNonFrequent(ids: string[]) {
+    setNonFrequentIds(ids);
   }
 
   return (
@@ -120,10 +90,8 @@ export function FriendsProvider({ children }: { children: ReactNode }) {
         nonFrequent,
         promote,
         demote,
-        moveFrequentUp,
-        moveFrequentDown,
-        moveNonFrequentUp,
-        moveNonFrequentDown,
+        reorderFrequent,
+        reorderNonFrequent,
       }}
     >
       {children}
