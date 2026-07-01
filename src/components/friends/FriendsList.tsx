@@ -1,22 +1,13 @@
-import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import DefaultAvatar from "../common/DefaultAvatar";
+import { useFriends } from "../../contexts/FriendsContext";
 
 const COLUMNS = 3;
-const MAX_VISIBLE_FRIENDS = COLUMNS * 2;
-
-const MOCK_FRIENDS = [
-  { id: "1", nickname: "りく", photoURL: null },
-  { id: "2", nickname: "さくらもち", photoURL: null },
-  { id: "3", nickname: "ゆうたろう", photoURL: null },
-  { id: "4", nickname: "ちょこばななだいすき", photoURL: null },
-  { id: "5", nickname: "あお", photoURL: null },
-];
 
 export default function FriendsList() {
   const router = useRouter();
-  const [friends] = useState(MOCK_FRIENDS.slice(0, MAX_VISIBLE_FRIENDS));
+  const { frequent } = useFriends();
 
   return (
     <View style={styles.section}>
@@ -31,7 +22,7 @@ export default function FriendsList() {
       </View>
 
       <View style={styles.frame}>
-        {friends.map((friend) => (
+        {frequent.map((friend) => (
           <View key={friend.id} style={styles.friendItem}>
             <DefaultAvatar size={40} />
             <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
@@ -70,5 +61,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginBottom: 12,
   },
-  nickname: { fontSize: 11, color: "#444", fontWeight: "600", maxWidth: "100%" },
+  nickname: { fontSize: 11, color: "#444", fontWeight: "600", maxWidth: "100%", marginTop: 4 },
 });

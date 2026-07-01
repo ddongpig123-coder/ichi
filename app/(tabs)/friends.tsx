@@ -2,53 +2,43 @@ import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import TimeTable from "../../src/components/timetable/TimeTable";
 import DefaultAvatar from "../../src/components/common/DefaultAvatar";
+import { useFriends } from "../../src/contexts/FriendsContext";
 import { MOCK_FRIEND_TIMETABLES } from "../../src/data/mockFriendTimetables";
-
-const INITIAL_FRIENDS = [
-  { id: "1", nickname: "りく" },
-  { id: "2", nickname: "さくらもち" },
-  { id: "3", nickname: "ゆうたろう" },
-  { id: "4", nickname: "ちょこばななだいすき" },
-  { id: "5", nickname: "あお" },
-];
 
 const CELL_HEIGHT = 42;
 
 export default function FriendsScreen() {
-  const [friends, setFriends] = useState(INITIAL_FRIENDS);
-  const [selectedId, setSelectedId] = useState(INITIAL_FRIENDS[0].id);
+  const { allFriends, frequent, nonFrequent } = useFriends();
+  const orderedAll = [...frequent, ...nonFrequent];
 
-  const sessions = MOCK_FRIEND_TIMETABLES[selectedId] ?? [];
-  const selectedFriend = friends.find((f) => f.id === selectedId) ?? friends[0];
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const effectiveId = selectedId ?? orderedAll[0]?.id ?? null;
 
-  function handleDelete(id: string) {
-    const remaining = friends.filter((f) => f.id !== id);
-    setFriends(remaining);
-    if (selectedId === id && remaining.length > 0) {
-      setSelectedId(remaining[0].id);
-    }
-  }
+  const sessions = effectiveId ? (MOCK_FRIEND_TIMETABLES[effectiveId] ?? []) : [];
+  const selectedFriend = allFriends.find((f) => f.id === effectiveId);
 
   return (
     <View style={styles.container}>
       {/* 시간표 영역 */}
-      <View style={styles.timetableSection}>
-        <Text style={styles.timetableLabel}>{selectedFriend?.nickname}さんの時間割</Text>
-        <TimeTable sessions={sessions} cellHeight={CELL_HEIGHT} />
-      </View>
+      {selectedFriend && (
+        <View style={styles.timetableSection}>
+          <Text style={styles.timetableLabel}>{selectedFriend.nickname}さんの時間割</Text>
+          <TimeTable sessions={sessions} cellHeight={CELL_HEIGHT} />
+        </View>
+      )}
 
       {/* 친구 목록 */}
       <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
-        {friends.map((friend) => (
+        {orderedAll.map((friend) => (
           <TouchableOpacity
             key={friend.id}
-            style={[styles.friendRow, friend.id === selectedId && styles.friendRowSelected]}
+            style={[styles.friendRow, friend.id === effectiveId && styles.friendRowSelected]}
             onPress={() => setSelectedId(friend.id)}
             activeOpacity={0.7}
           >
             <DefaultAvatar size={36} />
             <Text
-              style={[styles.nickname, friend.id === selectedId && styles.nicknameSelected]}
+              style={[styles.nickname, friend.id === effectiveId && styles.nicknameSelected]}
               numberOfLines={1}
             >
               {friend.nickname}
@@ -57,10 +47,7 @@ export default function FriendsScreen() {
               <TouchableOpacity style={styles.messageButton} onPress={() => {}}>
                 <Text style={styles.messageButtonText}>メッセージ</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => handleDelete(friend.id)}
-              >
+              <TouchableOpacity style={styles.deleteButton} onPress={() => {}}>
                 <Text style={styles.deleteButtonText}>削除</Text>
               </TouchableOpacity>
             </View>
@@ -113,9 +100,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
   },
-  nicknameSelected: {
-    color: "#2F6AD9",
-  },
+  nicknameSelected: { color: "#2F6AD9" },
   actions: {
     flexDirection: "row",
     alignItems: "center",
@@ -127,20 +112,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  messageButtonText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "700",
-  },
+  messageButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
   deleteButton: {
     backgroundColor: "#E2574C",
     borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  deleteButtonText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "700",
-  },
+  deleteButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
 });

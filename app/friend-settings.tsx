@@ -1,43 +1,242 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useState } from "react";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import DefaultAvatar from "../src/components/common/DefaultAvatar";
+import { useFriends } from "../src/contexts/FriendsContext";
 
-// TODO: 友達設定機能は未実装。現在はナビゲーション先のプレースホルダーのみ。
 export default function FriendSettingsScreen() {
   const router = useRouter();
+  const { frequent, nonFrequent, frequentIds, promote, demote, moveUp, moveDown } = useFriends();
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
+
+  function handleLongPress(id: string) {
+    setReorderingId((prev) => (prev === id ? null : id));
+  }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-      >
-        <Text style={styles.backIcon}>←</Text>
-      </TouchableOpacity>
-
-      <View style={styles.content}>
-        <Text style={styles.text}>友達設定（準備中）</Text>
+      {/* ヘッダー */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
+        >
+          <Text style={styles.backIcon}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>よく使う友達の編集</Text>
       </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* よく使う友達セクション */}
+        <Text style={styles.sectionLabel}>
+          よく使う友達 ({frequent.length}/6)
+        </Text>
+        {frequent.length === 0 && (
+          <Text style={styles.emptyText}>まだ追加されていません</Text>
+        )}
+        {frequent.map((friend, index) => {
+          const isReordering = reorderingId === friend.id;
+          return (
+            <TouchableOpacity
+              key={friend.id}
+              style={[styles.row, isReordering && styles.rowReordering]}
+              onLongPress={() => handleLongPress(friend.id)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.rowLeft}>
+                <Text style={styles.rankBadge}>{index + 1}</Text>
+                <DefaultAvatar size={36} />
+                <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
+              </View>
+
+              {isReordering ? (
+                // 並び替えモード: ↑↓ ボタン
+                <View style={styles.reorderButtons}>
+                  <TouchableOpacity
+                    style={[styles.arrowButton, index === 0 && styles.arrowButtonDisabled]}
+                    onPress={() => { moveUp(index); }}
+                    disabled={index === 0}
+                  >
+                    <Text style={styles.arrowText}>↑</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.arrowButton, index === frequent.length - 1 && styles.arrowButtonDisabled]}
+                    onPress={() => { moveDown(index); }}
+                    disabled={index === frequent.length - 1}
+                  >
+                    <Text style={styles.arrowText}>↓</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.doneButton}
+                    onPress={() => setReorderingId(null)}
+                  >
+                    <Text style={styles.doneButtonText}>完了</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={styles.demoteButton}
+                  onPress={() => {
+                    if (reorderingId) setReorderingId(null);
+                    demote(friend.id);
+                  }}
+                >
+                  <Text style={styles.demoteButtonText}>下げる</Text>
+                </TouchableOpacity>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+
+        {/* その他の友達セクション */}
+        <Text style={[styles.sectionLabel, { marginTop: 24 }]}>その他の友達</Text>
+        {nonFrequent.length === 0 && (
+          <Text style={styles.emptyText}>全員よく使う友達に追加済みです</Text>
+        )}
+        {nonFrequent.map((friend) => (
+          <View key={friend.id} style={styles.row}>
+            <View style={styles.rowLeft}>
+              <DefaultAvatar size={36} />
+              <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
+            </View>
+            <TouchableOpacity
+              style={[styles.promoteButton, frequentIds.length >= 6 && styles.promoteButtonDisabled]}
+              onPress={() => promote(friend.id)}
+              disabled={frequentIds.length >= 6}
+            >
+              <Text style={styles.promoteButtonText}>
+                {frequentIds.length >= 6 ? "上限に達した" : "上げる"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F7FA" },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingTop: 52,
+    paddingBottom: 12,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    gap: 10,
+  },
   backButton: {
-    position: "absolute",
-    top: 16,
-    left: 16,
     width: 36,
     height: 36,
     borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F7FA",
     borderWidth: 1,
     borderColor: "#E0E0E0",
-    zIndex: 1,
   },
   backIcon: { fontSize: 18, color: "#333" },
-  content: { flex: 1, justifyContent: "center", alignItems: "center" },
-  text: { fontSize: 14, color: "#888" },
+  headerTitle: { fontSize: 16, fontWeight: "700", color: "#1A1A2E" },
+
+  scrollContent: { padding: 16 },
+
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#888",
+    marginBottom: 8,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  emptyText: {
+    fontSize: 13,
+    color: "#aaa",
+    paddingVertical: 12,
+    textAlign: "center",
+  },
+
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 6,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: "#EBEBEB",
+  },
+  rowReordering: {
+    borderColor: "#2F6AD9",
+    backgroundColor: "#EEF4FF",
+  },
+  rowLeft: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  rankBadge: {
+    width: 20,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#2F6AD9",
+    textAlign: "center",
+  },
+  nickname: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1A1A2E",
+  },
+
+  reorderButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  arrowButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    backgroundColor: "#2F6AD9",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  arrowButtonDisabled: {
+    backgroundColor: "#C0C8D8",
+  },
+  arrowText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+  doneButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: "#E0E4EA",
+    marginLeft: 4,
+  },
+  doneButtonText: { fontSize: 12, fontWeight: "700", color: "#555" },
+
+  demoteButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: "#F0F0F0",
+  },
+  demoteButtonText: { fontSize: 12, fontWeight: "700", color: "#E2574C" },
+
+  promoteButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: "#2F6AD9",
+  },
+  promoteButtonDisabled: {
+    backgroundColor: "#C0C8D8",
+  },
+  promoteButtonText: { fontSize: 12, fontWeight: "700", color: "#fff" },
 });
