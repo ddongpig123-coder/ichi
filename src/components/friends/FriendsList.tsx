@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import FriendDetailModal from "./FriendDetailModal";
 
-// 3列 × 最大2行 = 6人まで折り返しなしで表示できるグリッド。
 const COLUMNS = 3;
 const MAX_VISIBLE_FRIENDS = COLUMNS * 2;
 
-// TODO: 実データ連携前のモック。友達一覧APIができたらここをpropsに置き換える。
 const MOCK_FRIENDS = [
   { id: "1", nickname: "りく", photoURL: null },
   { id: "2", nickname: "さくらもち", photoURL: null },
@@ -18,15 +15,7 @@ const MOCK_FRIENDS = [
 
 export default function FriendsList() {
   const router = useRouter();
-  const [friends, setFriends] = useState(MOCK_FRIENDS.slice(0, MAX_VISIBLE_FRIENDS));
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  const selectedFriend = friends.find((f) => f.id === selectedId) ?? null;
-
-  function handleDelete(id: string) {
-    setFriends((prev) => prev.filter((f) => f.id !== id));
-    setSelectedId(null);
-  }
+  const [friends] = useState(MOCK_FRIENDS.slice(0, MAX_VISIBLE_FRIENDS));
 
   return (
     <View style={styles.section}>
@@ -42,23 +31,12 @@ export default function FriendsList() {
 
       <View style={styles.frame}>
         {friends.map((friend) => (
-          <TouchableOpacity
-            key={friend.id}
-            style={styles.friendItem}
-            onPress={() => setSelectedId(friend.id)}
-          >
+          <View key={friend.id} style={styles.friendItem}>
             <View style={styles.avatarPlaceholder} />
             <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
-          </TouchableOpacity>
+          </View>
         ))}
       </View>
-
-      <FriendDetailModal
-        visible={selectedFriend !== null}
-        friend={selectedFriend}
-        onClose={() => setSelectedId(null)}
-        onDelete={handleDelete}
-      />
     </View>
   );
 }
