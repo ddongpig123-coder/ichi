@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import TimeTable from "../../src/components/timetable/TimeTable";
+import DefaultAvatar from "../../src/components/common/DefaultAvatar";
 import { MOCK_FRIEND_TIMETABLES } from "../../src/data/mockFriendTimetables";
 
 const INITIAL_FRIENDS = [
@@ -45,7 +46,7 @@ export default function FriendsScreen() {
             onPress={() => setSelectedId(friend.id)}
             activeOpacity={0.7}
           >
-            <View style={styles.avatarPlaceholder} />
+            <DefaultAvatar size={36} />
             <Text
               style={[styles.nickname, friend.id === selectedId && styles.nicknameSelected]}
               numberOfLines={1}
@@ -105,12 +106,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#EEF4FF",
     borderLeftWidth: 3,
     borderLeftColor: "#2F6AD9",
-  },
-  avatarPlaceholder: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#E0E4EA",
   },
   nickname: {
     flex: 1,

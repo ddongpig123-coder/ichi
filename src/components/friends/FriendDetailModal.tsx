@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, View, Text, TouchableOpacity, Pressable, Image, StyleSheet } from "react-native";
+import DefaultAvatar from "../common/DefaultAvatar";
 
 export interface FriendDetailModalProps {
   visible: boolean;
@@ -30,7 +31,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
               {friend.photoURL ? (
                 <Image source={{ uri: friend.photoURL }} style={styles.avatar} />
               ) : (
-                <View style={styles.avatarPlaceholder} />
+                <DefaultAvatar size={72} />
               )}
             </TouchableOpacity>
 
@@ -48,7 +49,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
           {friend.photoURL ? (
             <Image source={{ uri: friend.photoURL }} style={styles.avatarLarge} />
           ) : (
-            <View style={styles.avatarLargePlaceholder} />
+            <DefaultAvatar size={240} />
           )}
         </Pressable>
       </Modal>
@@ -106,13 +107,6 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: { color: "#fff", fontSize: 11, fontWeight: "700" },
   avatar: { width: 72, height: 72, borderRadius: 36, marginTop: 16 },
-  avatarPlaceholder: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: "#E0E4EA",
-    marginTop: 16,
-  },
   nickname: { fontSize: 16, fontWeight: "700", color: "#1A1A2E", marginTop: 12 },
   messageButton: {
     marginTop: 20,
@@ -131,7 +125,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avatarLarge: { width: 240, height: 240, borderRadius: 120 },
-  avatarLargePlaceholder: { width: 240, height: 240, borderRadius: 120, backgroundColor: "#3A3A3A" },
   confirmCard: {
     width: 260,
     backgroundColor: "#fff",

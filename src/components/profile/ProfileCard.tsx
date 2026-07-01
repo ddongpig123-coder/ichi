@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
 import { getUserProfile } from "../../services/userService";
+import DefaultAvatar from "../common/DefaultAvatar";
 
 export default function ProfileCard() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function ProfileCard() {
       {photoURL ? (
         <Image source={{ uri: photoURL }} style={styles.avatar} />
       ) : (
-        <View style={styles.avatarPlaceholder} />
+        <DefaultAvatar size={26} />
       )}
       <Text style={styles.nickname} numberOfLines={1}>{nickname ?? "ゲスト"}</Text>
     </TouchableOpacity>
@@ -44,6 +45,5 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   avatar: { width: 26, height: 26, borderRadius: 13 },
-  avatarPlaceholder: { width: 26, height: 26, borderRadius: 13, backgroundColor: "#E0E4EA" },
   nickname: { fontSize: 13, color: "#333", fontWeight: "600", maxWidth: 80 },
 });

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import DefaultAvatar from "../common/DefaultAvatar";
 
 const COLUMNS = 3;
 const MAX_VISIBLE_FRIENDS = COLUMNS * 2;
@@ -32,7 +33,7 @@ export default function FriendsList() {
       <View style={styles.frame}>
         {friends.map((friend) => (
           <View key={friend.id} style={styles.friendItem}>
-            <View style={styles.avatarPlaceholder} />
+            <DefaultAvatar size={40} />
             <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
           </View>
         ))}
@@ -68,13 +69,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 4,
     marginBottom: 12,
-  },
-  avatarPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E0E4EA",
-    marginBottom: 6,
   },
   nickname: { fontSize: 11, color: "#444", fontWeight: "600", maxWidth: "100%" },
 });
