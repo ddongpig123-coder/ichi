@@ -2,21 +2,16 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, useWindowDimensio
 import { DAYS, PERIODS, PERIOD_TIMES, type ClassSession, type Day, type Period } from "../../types/timetable";
 
 const TIME_COL_WIDTH = 30;
-const DEFAULT_cellHeight = 64;
+const CELL_HEIGHT = 64;
 
 interface TimeTableProps {
   sessions: ClassSession[];
   onPressSession?: (session: ClassSession) => void;
   onPressEmptyCell?: (day: Day, period: Period) => void;
-  /** コンテナ幅を明示指定する場合（モーダル内など）。省略時は画面幅を使用。 */
-  containerWidth?: number;
-  /** セルの高さ。省略時は 64。 */
-  cellHeight?: number;
 }
 
-export default function TimeTable({ sessions, onPressSession, onPressEmptyCell, containerWidth, cellHeight = DEFAULT_cellHeight }: TimeTableProps) {
-  const { width: screenWidth } = useWindowDimensions();
-  const width = containerWidth ?? screenWidth;
+export default function TimeTable({ sessions, onPressSession, onPressEmptyCell }: TimeTableProps) {
+  const { width } = useWindowDimensions();
   const cellWidth = (width - TIME_COL_WIDTH) / DAYS.length;
 
   function findSession(day: Day, period: Period) {
@@ -39,7 +34,7 @@ export default function TimeTable({ sessions, onPressSession, onPressEmptyCell, 
           const time = PERIOD_TIMES[period];
           return (
             <View key={period} style={styles.row}>
-              <View style={[styles.timeCell, { width: TIME_COL_WIDTH, height: cellHeight }]}>
+              <View style={[styles.timeCell, { width: TIME_COL_WIDTH }]}>
                 <Text style={styles.timeStart}>{time.start}</Text>
                 <Text style={styles.periodText}>{period}限</Text>
                 <Text style={styles.timeEnd}>{time.end}</Text>
@@ -49,7 +44,7 @@ export default function TimeTable({ sessions, onPressSession, onPressEmptyCell, 
                 return (
                   <TouchableOpacity
                     key={day}
-                    style={[styles.cell, { width: cellWidth, height: cellHeight }]}
+                    style={[styles.cell, { width: cellWidth }]}
                     activeOpacity={session ? 1 : 0.6}
                     onPress={() => {
                       if (session) {
@@ -97,6 +92,7 @@ const styles = StyleSheet.create({
   },
   headerText: { fontSize: 11, fontWeight: "700", color: "#444" },
   timeCell: {
+    height: CELL_HEIGHT,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#EDEFF3",
@@ -108,6 +104,7 @@ const styles = StyleSheet.create({
   periodText: { fontSize: 10, color: "#333", fontWeight: "600", marginVertical: 1 },
   timeEnd: { fontSize: 7, color: "#888" },
   cell: {
+    height: CELL_HEIGHT,
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderColor: "#E0E0E0",

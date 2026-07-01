@@ -1,16 +1,5 @@
 import { useState } from "react";
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  Pressable,
-  Image,
-  StyleSheet,
-  useWindowDimensions,
-} from "react-native";
-import TimeTable from "../timetable/TimeTable";
-import { useFriendTimetable } from "../../hooks/useFriendTimetable";
+import { Modal, View, Text, TouchableOpacity, Pressable, Image, StyleSheet } from "react-native";
 
 export interface FriendDetailModalProps {
   visible: boolean;
@@ -19,18 +8,9 @@ export interface FriendDetailModalProps {
   onDelete: (id: string) => void;
 }
 
-const MODAL_HORIZONTAL_MARGIN = 16;
-const COMPACT_CELL_HEIGHT = 40;
-
 export default function FriendDetailModal({ visible, friend, onClose, onDelete }: FriendDetailModalProps) {
-  const { width: screenWidth } = useWindowDimensions();
-  const modalWidth = screenWidth - MODAL_HORIZONTAL_MARGIN * 2;
-  const timetableWidth = modalWidth - 24; // card padding 12px × 2
-
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
-
-  const { sessions } = useFriendTimetable(friend?.id ?? null);
 
   if (!friend) return null;
 
@@ -38,8 +18,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
     <>
       <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
         <Pressable style={styles.overlay} onPress={onClose}>
-          <Pressable style={[styles.card, { width: modalWidth }]} onPress={() => {}}>
-            {/* 友達削除 — 右上固定 */}
+          <Pressable style={styles.card} onPress={() => {}}>
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => setConfirmVisible(true)}
@@ -47,42 +26,24 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
               <Text style={styles.deleteButtonText}>友達削除</Text>
             </TouchableOpacity>
 
-            {/* 프로필 행: 아바타 + 닉네임 */}
-            <View style={styles.profileRow}>
-              <TouchableOpacity onPress={() => setImagePreviewVisible(true)}>
-                {friend.photoURL ? (
-                  <Image source={{ uri: friend.photoURL }} style={styles.avatar} />
-                ) : (
-                  <View style={styles.avatarPlaceholder} />
-                )}
-              </TouchableOpacity>
-              <Text style={styles.nickname}>{friend.nickname}</Text>
-            </View>
+            <TouchableOpacity onPress={() => setImagePreviewVisible(true)}>
+              {friend.photoURL ? (
+                <Image source={{ uri: friend.photoURL }} style={styles.avatar} />
+              ) : (
+                <View style={styles.avatarPlaceholder} />
+              )}
+            </TouchableOpacity>
 
-            {/* 시간표 */}
-            <View style={styles.timetableWrapper}>
-              <TimeTable
-                sessions={sessions}
-                containerWidth={timetableWidth}
-                cellHeight={COMPACT_CELL_HEIGHT}
-              />
-            </View>
+            <Text style={styles.nickname}>{friend.nickname}</Text>
 
-            {/* 버튼 */}
-            <TouchableOpacity style={[styles.actionButton, styles.messageButton]}>
-              <Text style={styles.actionButtonText}>メッセージを送る</Text>
+            <TouchableOpacity style={styles.messageButton}>
+              <Text style={styles.messageButtonText}>メッセージを送る</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>
       </Modal>
 
-      {/* 프로필 이미지 확대 */}
-      <Modal
-        visible={imagePreviewVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setImagePreviewVisible(false)}
-      >
+      <Modal visible={imagePreviewVisible} transparent animationType="fade" onRequestClose={() => setImagePreviewVisible(false)}>
         <Pressable style={styles.previewOverlay} onPress={() => setImagePreviewVisible(false)}>
           {friend.photoURL ? (
             <Image source={{ uri: friend.photoURL }} style={styles.avatarLarge} />
@@ -92,13 +53,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
         </Pressable>
       </Modal>
 
-      {/* 삭제 확인 */}
-      <Modal
-        visible={confirmVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setConfirmVisible(false)}
-      >
+      <Modal visible={confirmVisible} transparent animationType="fade" onRequestClose={() => setConfirmVisible(false)}>
         <Pressable style={styles.overlay} onPress={() => setConfirmVisible(false)}>
           <Pressable style={styles.confirmCard} onPress={() => {}}>
             <Text style={styles.confirmText}>{friend.nickname}さんを友達から削除しますか？</Text>
@@ -134,47 +89,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
+    width: 260,
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 12,
-    paddingTop: 44,
-  },
-  profileRow: {
-    flexDirection: "row",
+    padding: 20,
     alignItems: "center",
-    gap: 10,
-    marginBottom: 10,
-  },
-  avatar: { width: 40, height: 40, borderRadius: 20 },
-  avatarPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E0E4EA",
-  },
-  nickname: { fontSize: 15, fontWeight: "700", color: "#1A1A2E" },
-  timetableWrapper: {
-    borderRadius: 6,
-    overflow: "hidden",
-    marginBottom: 10,
   },
   deleteButton: {
     position: "absolute",
-    top: 10,
-    right: 10,
+    top: 14,
+    right: 14,
     backgroundColor: "#E2574C",
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
   deleteButtonText: { color: "#fff", fontSize: 11, fontWeight: "700" },
-  actionButton: {
+  avatar: { width: 72, height: 72, borderRadius: 36, marginTop: 16 },
+  avatarPlaceholder: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#E0E4EA",
+    marginTop: 16,
+  },
+  nickname: { fontSize: 16, fontWeight: "700", color: "#1A1A2E", marginTop: 12 },
+  messageButton: {
+    marginTop: 20,
+    backgroundColor: "#2F6AD9",
     borderRadius: 8,
-    paddingVertical: 11,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    width: "100%",
     alignItems: "center",
   },
-  messageButton: { backgroundColor: "#2F6AD9" },
-  actionButtonText: { color: "#fff", fontWeight: "700", fontSize: 13 },
+  messageButtonText: { color: "#fff", fontWeight: "700", fontSize: 14 },
   previewOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.85)",
