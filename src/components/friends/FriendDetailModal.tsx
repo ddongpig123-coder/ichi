@@ -39,6 +39,14 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
       <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
         <Pressable style={styles.overlay} onPress={onClose}>
           <Pressable style={[styles.card, { width: modalWidth }]} onPress={() => {}}>
+            {/* 友達削除 — 右上固定 */}
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => setConfirmVisible(true)}
+            >
+              <Text style={styles.deleteButtonText}>友達削除</Text>
+            </TouchableOpacity>
+
             {/* 프로필 행: 아바타 + 닉네임 */}
             <View style={styles.profileRow}>
               <TouchableOpacity onPress={() => setImagePreviewVisible(true)}>
@@ -60,18 +68,10 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
               />
             </View>
 
-            {/* 버튼 행 */}
-            <View style={styles.buttonRow}>
-              <TouchableOpacity style={[styles.actionButton, styles.messageButton]}>
-                <Text style={styles.actionButtonText}>メッセージを送る</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.deleteButton]}
-                onPress={() => setConfirmVisible(true)}
-              >
-                <Text style={styles.actionButtonText}>友達削除</Text>
-              </TouchableOpacity>
-            </View>
+            {/* 버튼 */}
+            <TouchableOpacity style={[styles.actionButton, styles.messageButton]}>
+              <Text style={styles.actionButtonText}>メッセージを送る</Text>
+            </TouchableOpacity>
           </Pressable>
         </Pressable>
       </Modal>
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 12,
+    paddingTop: 44,
   },
   profileRow: {
     flexDirection: "row",
@@ -157,18 +158,22 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 10,
   },
-  buttonRow: {
-    flexDirection: "row",
-    gap: 8,
+  deleteButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "#E2574C",
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
+  deleteButtonText: { color: "#fff", fontSize: 11, fontWeight: "700" },
   actionButton: {
-    flex: 1,
     borderRadius: 8,
     paddingVertical: 11,
     alignItems: "center",
   },
   messageButton: { backgroundColor: "#2F6AD9" },
-  deleteButton: { backgroundColor: "#E2574C" },
   actionButtonText: { color: "#fff", fontWeight: "700", fontSize: 13 },
   previewOverlay: {
     flex: 1,
