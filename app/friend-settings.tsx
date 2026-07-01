@@ -1,86 +1,88 @@
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import DraggableFlatList, {
-  ScaleDecorator,
-  ShadowDecorator,
-  OpacityDecorator,
-  type RenderItemParams,
-} from "react-native-draggable-flatlist";
+import ReorderableList, {
+  useReorderableDrag,
+  reorderItems,
+  type ReorderableListReorderEvent,
+} from "react-native-reorderable-list";
 import DefaultAvatar from "../src/components/common/DefaultAvatar";
 import { useFriends, type Friend } from "../src/contexts/FriendsContext";
 
+// ── 자주 찾는 친구 행 ──────────────────────────────────────
+function FrequentItem({
+  item,
+  index,
+  total,
+  onDemote,
+}: {
+  item: Friend;
+  index: number;
+  total: number;
+  onDemote: (id: string) => void;
+}) {
+  const drag = useReorderableDrag();
+  return (
+    <Pressable style={styles.row} onLongPress={drag}>
+      <View style={styles.dragHandle}>
+        <Text style={styles.dragIcon}>≡</Text>
+      </View>
+      <Text style={styles.rankBadge}>{index + 1}</Text>
+      <DefaultAvatar size={36} />
+      <Text style={styles.nickname} numberOfLines={1}>{item.nickname}</Text>
+      <TouchableOpacity style={styles.demoteButton} onPress={() => onDemote(item.id)}>
+        <Text style={styles.demoteButtonText}>下げる</Text>
+      </TouchableOpacity>
+    </Pressable>
+  );
+}
+
+// ── 일반 친구 행 ────────────────────────────────────────────
+function NonFrequentItem({
+  item,
+  index,
+  isFull,
+  onPromote,
+}: {
+  item: Friend;
+  index: number;
+  isFull: boolean;
+  onPromote: (id: string) => void;
+}) {
+  const drag = useReorderableDrag();
+  return (
+    <Pressable style={styles.row} onLongPress={drag}>
+      <View style={styles.dragHandle}>
+        <Text style={styles.dragIcon}>≡</Text>
+      </View>
+      <Text style={styles.rankBadge}>{index + 1}</Text>
+      <DefaultAvatar size={36} />
+      <Text style={styles.nickname} numberOfLines={1}>{item.nickname}</Text>
+      <TouchableOpacity
+        style={[styles.promoteButton, isFull && styles.promoteButtonDisabled]}
+        onPress={() => onPromote(item.id)}
+        disabled={isFull}
+      >
+        <Text style={styles.promoteButtonText}>{isFull ? "上限" : "上げる"}</Text>
+      </TouchableOpacity>
+    </Pressable>
+  );
+}
+
+// ── 메인 화면 ───────────────────────────────────────────────
 export default function FriendSettingsScreen() {
   const router = useRouter();
   const { frequent, nonFrequent, frequentIds, promote, demote, reorderFrequent, reorderNonFrequent } = useFriends();
 
-  function renderFrequentItem({ item, drag, isActive, getIndex }: RenderItemParams<Friend>) {
-    const index = getIndex() ?? 0;
-    return (
-      <ShadowDecorator>
-        <ScaleDecorator>
-          <OpacityDecorator activeOpacity={0.5}>
-            <TouchableOpacity
-              style={[styles.row, isActive && styles.rowActive]}
-              onLongPress={drag}
-              activeOpacity={1}
-            >
-              <View style={styles.rowLeft}>
-                <Text style={[styles.rankBadge, isActive && styles.rankBadgeActive]}>
-                  {index + 1}
-                </Text>
-                <DefaultAvatar size={36} />
-                <Text style={styles.nickname} numberOfLines={1}>{item.nickname}</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.demoteButton}
-                onPress={() => demote(item.id)}
-              >
-                <Text style={styles.demoteButtonText}>下げる</Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </OpacityDecorator>
-        </ScaleDecorator>
-      </ShadowDecorator>
-    );
+  function handleFrequentReorder({ fromIndex, toIndex }: ReorderableListReorderEvent) {
+    reorderFrequent(reorderItems(frequentIds, fromIndex, toIndex));
   }
 
-  function renderNonFrequentItem({ item, drag, isActive, getIndex }: RenderItemParams<Friend>) {
-    const index = getIndex() ?? 0;
-    return (
-      <ShadowDecorator>
-        <ScaleDecorator>
-          <OpacityDecorator activeOpacity={0.5}>
-            <TouchableOpacity
-              style={[styles.row, isActive && styles.rowActive]}
-              onLongPress={drag}
-              activeOpacity={1}
-            >
-              <View style={styles.rowLeft}>
-                <Text style={[styles.rankBadge, isActive && styles.rankBadgeActive]}>
-                  {index + 1}
-                </Text>
-                <DefaultAvatar size={36} />
-                <Text style={styles.nickname} numberOfLines={1}>{item.nickname}</Text>
-              </View>
-              <TouchableOpacity
-                style={[styles.promoteButton, frequentIds.length >= 6 && styles.promoteButtonDisabled]}
-                onPress={() => promote(item.id)}
-                disabled={frequentIds.length >= 6}
-              >
-                <Text style={styles.promoteButtonText}>
-                  {frequentIds.length >= 6 ? "上限に達した" : "上げる"}
-                </Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </OpacityDecorator>
-        </ScaleDecorator>
-      </ShadowDecorator>
-    );
+  function handleNonFrequentReorder({ fromIndex, toIndex }: ReorderableListReorderEvent) {
+    reorderNonFrequent(reorderItems(nonFrequent.map((f) => f.id), fromIndex, toIndex));
   }
 
   return (
     <View style={styles.container}>
-      {/* ヘッダー */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -91,39 +93,55 @@ export default function FriendSettingsScreen() {
         <Text style={styles.headerTitle}>よく使う友達の編集</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} scrollEnabled>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* よく使う友達 */}
         <Text style={styles.sectionLabel}>よく使う友達 ({frequent.length}/6)</Text>
-        <Text style={styles.hint}>長押しでドラッグして順番を変更できます</Text>
+        <Text style={styles.hint}>≡ を長押しでドラッグ並び替え</Text>
 
         {frequent.length === 0 ? (
           <Text style={styles.emptyText}>まだ追加されていません</Text>
         ) : (
-          <DraggableFlatList
-            data={frequent}
-            keyExtractor={(item) => item.id}
-            renderItem={renderFrequentItem}
-            onDragEnd={({ data }) => reorderFrequent(data.map((f) => f.id))}
-            scrollEnabled={false}
-            containerStyle={styles.listContainer}
-          />
+          <View style={styles.listWrapper}>
+            <ReorderableList
+              data={frequent}
+              keyExtractor={(item) => item.id}
+              onReorder={handleFrequentReorder}
+              renderItem={({ item, index }) => (
+                <FrequentItem
+                  item={item}
+                  index={index}
+                  total={frequent.length}
+                  onDemote={demote}
+                />
+              )}
+              scrollEnabled={false}
+            />
+          </View>
         )}
 
         {/* その他の友達 */}
         <Text style={[styles.sectionLabel, { marginTop: 24 }]}>その他の友達</Text>
-        <Text style={styles.hint}>長押しでドラッグして順番を変更できます</Text>
+        <Text style={styles.hint}>≡ を長押しでドラッグ並び替え</Text>
 
         {nonFrequent.length === 0 ? (
           <Text style={styles.emptyText}>全員よく使う友達に追加済みです</Text>
         ) : (
-          <DraggableFlatList
-            data={nonFrequent}
-            keyExtractor={(item) => item.id}
-            renderItem={renderNonFrequentItem}
-            onDragEnd={({ data }) => reorderNonFrequent(data.map((f) => f.id))}
-            scrollEnabled={false}
-            containerStyle={styles.listContainer}
-          />
+          <View style={styles.listWrapper}>
+            <ReorderableList
+              data={nonFrequent}
+              keyExtractor={(item) => item.id}
+              onReorder={handleNonFrequentReorder}
+              renderItem={({ item, index }) => (
+                <NonFrequentItem
+                  item={item}
+                  index={index}
+                  isFull={frequentIds.length >= 6}
+                  onPromote={promote}
+                />
+              )}
+              scrollEnabled={false}
+            />
+          </View>
         )}
       </ScrollView>
     </View>
@@ -166,20 +184,19 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     letterSpacing: 0.5,
   },
-  hint: {
-    fontSize: 11,
-    color: "#bbb",
-    marginBottom: 10,
-  },
+  hint: { fontSize: 11, color: "#bbb", marginBottom: 10 },
   emptyText: {
     fontSize: 13,
     color: "#aaa",
     paddingVertical: 12,
     textAlign: "center",
   },
-  listContainer: {
+  listWrapper: {
     borderRadius: 10,
     overflow: "hidden",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#EBEBEB",
   },
 
   row: {
@@ -190,24 +207,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
-    gap: 10,
+    gap: 8,
   },
-  rowActive: {
-    backgroundColor: "#EEF4FF",
-    borderRadius: 10,
-    borderBottomWidth: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 8,
+  dragHandle: {
+    paddingHorizontal: 4,
+    paddingVertical: 6,
   },
-  rowLeft: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
+  dragIcon: { fontSize: 16, color: "#C0C8D8" },
   rankBadge: {
     width: 20,
     fontSize: 12,
@@ -215,7 +221,6 @@ const styles = StyleSheet.create({
     color: "#2F6AD9",
     textAlign: "center",
   },
-  rankBadgeActive: { color: "#1A4FA0" },
   nickname: {
     flex: 1,
     fontSize: 14,
