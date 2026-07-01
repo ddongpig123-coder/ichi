@@ -54,13 +54,13 @@ export default function FriendsScreen() {
             </Text>
             <View style={styles.actions}>
               <TouchableOpacity style={styles.messageButton} onPress={() => {}}>
-                <Text style={styles.messageButtonText}>쪽지</Text>
+                <Text style={styles.messageButtonText}>メッセージ</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={() => handleDelete(friend.id)}
               >
-                <Text style={styles.deleteButtonText}>삭제</Text>
+                <Text style={styles.deleteButtonText}>削除</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
