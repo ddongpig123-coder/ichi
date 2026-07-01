@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-nati
 import TimeTable from "../../src/components/timetable/TimeTable";
 import { MOCK_FRIEND_TIMETABLES } from "../../src/data/mockFriendTimetables";
 
-const FRIENDS = [
+const INITIAL_FRIENDS = [
   { id: "1", nickname: "りく" },
   { id: "2", nickname: "さくらもち" },
   { id: "3", nickname: "ゆうたろう" },
@@ -14,21 +14,31 @@ const FRIENDS = [
 const CELL_HEIGHT = 42;
 
 export default function FriendsScreen() {
-  const [selectedId, setSelectedId] = useState(FRIENDS[0].id);
+  const [friends, setFriends] = useState(INITIAL_FRIENDS);
+  const [selectedId, setSelectedId] = useState(INITIAL_FRIENDS[0].id);
+
   const sessions = MOCK_FRIEND_TIMETABLES[selectedId] ?? [];
-  const selectedFriend = FRIENDS.find((f) => f.id === selectedId)!;
+  const selectedFriend = friends.find((f) => f.id === selectedId) ?? friends[0];
+
+  function handleDelete(id: string) {
+    const remaining = friends.filter((f) => f.id !== id);
+    setFriends(remaining);
+    if (selectedId === id && remaining.length > 0) {
+      setSelectedId(remaining[0].id);
+    }
+  }
 
   return (
     <View style={styles.container}>
       {/* 시간표 영역 */}
       <View style={styles.timetableSection}>
-        <Text style={styles.timetableLabel}>{selectedFriend.nickname}さんの時間割</Text>
+        <Text style={styles.timetableLabel}>{selectedFriend?.nickname}さんの時間割</Text>
         <TimeTable sessions={sessions} cellHeight={CELL_HEIGHT} />
       </View>
 
       {/* 친구 목록 */}
       <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
-        {FRIENDS.map((friend, index) => (
+        {friends.map((friend) => (
           <TouchableOpacity
             key={friend.id}
             style={[styles.friendRow, friend.id === selectedId && styles.friendRowSelected]}
@@ -42,9 +52,17 @@ export default function FriendsScreen() {
             >
               {friend.nickname}
             </Text>
-            <TouchableOpacity style={styles.messageButton} onPress={() => {}}>
-              <Text style={styles.messageButtonText}>쪽지 보내기</Text>
-            </TouchableOpacity>
+            <View style={styles.actions}>
+              <TouchableOpacity style={styles.messageButton} onPress={() => {}}>
+                <Text style={styles.messageButtonText}>쪽지</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDelete(friend.id)}
+              >
+                <Text style={styles.deleteButtonText}>삭제</Text>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -103,15 +121,31 @@ const styles = StyleSheet.create({
   nicknameSelected: {
     color: "#2F6AD9",
   },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+  },
   messageButton: {
     backgroundColor: "#2F6AD9",
     borderRadius: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 6,
   },
   messageButtonText: {
     color: "#fff",
-    fontSize: 11,
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  deleteButton: {
+    backgroundColor: "#E2574C",
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  deleteButtonText: {
+    color: "#fff",
+    fontSize: 12,
     fontWeight: "700",
   },
 });
