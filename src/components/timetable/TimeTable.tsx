@@ -8,10 +8,13 @@ interface TimeTableProps {
   sessions: ClassSession[];
   onPressSession?: (session: ClassSession) => void;
   onPressEmptyCell?: (day: Day, period: Period) => void;
+  /** コンテナ幅を明示指定する場合（モーダル内など）。省略時は画面幅を使用。 */
+  containerWidth?: number;
 }
 
-export default function TimeTable({ sessions, onPressSession, onPressEmptyCell }: TimeTableProps) {
-  const { width } = useWindowDimensions();
+export default function TimeTable({ sessions, onPressSession, onPressEmptyCell, containerWidth }: TimeTableProps) {
+  const { width: screenWidth } = useWindowDimensions();
+  const width = containerWidth ?? screenWidth;
   const cellWidth = (width - TIME_COL_WIDTH) / DAYS.length;
 
   function findSession(day: Day, period: Period) {

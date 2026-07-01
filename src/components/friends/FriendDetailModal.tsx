@@ -1,5 +1,18 @@
 import { useState } from "react";
-import { Modal, View, Text, TouchableOpacity, Pressable, Image, StyleSheet } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  Pressable,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
+import TimeTable from "../timetable/TimeTable";
+import { useFriendTimetable } from "../../hooks/useFriendTimetable";
 
 export interface FriendDetailModalProps {
   visible: boolean;
@@ -8,9 +21,16 @@ export interface FriendDetailModalProps {
   onDelete: (id: string) => void;
 }
 
+const MODAL_HORIZONTAL_MARGIN = 20;
+
 export default function FriendDetailModal({ visible, friend, onClose, onDelete }: FriendDetailModalProps) {
+  const { width: screenWidth } = useWindowDimensions();
+  const modalWidth = screenWidth - MODAL_HORIZONTAL_MARGIN * 2;
+
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
+
+  const { sessions, loading } = useFriendTimetable(friend?.id ?? null);
 
   if (!friend) return null;
 
@@ -18,7 +38,8 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
     <>
       <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
         <Pressable style={styles.overlay} onPress={onClose}>
-          <Pressable style={styles.card} onPress={() => {}}>
+          <Pressable style={[styles.card, { width: modalWidth }]} onPress={() => {}}>
+            {/* 友達削除ボタン（右上固定） */}
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => setConfirmVisible(true)}
@@ -26,24 +47,49 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
               <Text style={styles.deleteButtonText}>友達削除</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setImagePreviewVisible(true)}>
-              {friend.photoURL ? (
-                <Image source={{ uri: friend.photoURL }} style={styles.avatar} />
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
+            >
+              {/* 友達の時間割 */}
+              <Text style={styles.sectionLabel}>{friend.nickname}さんの時間割</Text>
+              {loading ? (
+                <ActivityIndicator style={styles.loader} color="#2F6AD9" />
               ) : (
-                <View style={styles.avatarPlaceholder} />
+                <View style={styles.timetableWrapper}>
+                  <TimeTable sessions={sessions} containerWidth={modalWidth - 24} />
+                </View>
               )}
-            </TouchableOpacity>
 
-            <Text style={styles.nickname}>{friend.nickname}</Text>
+              {/* 区切り線 */}
+              <View style={styles.divider} />
 
-            <TouchableOpacity style={styles.messageButton}>
-              <Text style={styles.messageButtonText}>メッセージを送る</Text>
-            </TouchableOpacity>
+              {/* プロフィールセクション */}
+              <TouchableOpacity onPress={() => setImagePreviewVisible(true)} style={styles.avatarWrapper}>
+                {friend.photoURL ? (
+                  <Image source={{ uri: friend.photoURL }} style={styles.avatar} />
+                ) : (
+                  <View style={styles.avatarPlaceholder} />
+                )}
+              </TouchableOpacity>
+
+              <Text style={styles.nickname}>{friend.nickname}</Text>
+
+              <TouchableOpacity style={styles.messageButton}>
+                <Text style={styles.messageButtonText}>メッセージを送る</Text>
+              </TouchableOpacity>
+            </ScrollView>
           </Pressable>
         </Pressable>
       </Modal>
 
-      <Modal visible={imagePreviewVisible} transparent animationType="fade" onRequestClose={() => setImagePreviewVisible(false)}>
+      {/* プロフィール画像プレビュー */}
+      <Modal
+        visible={imagePreviewVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setImagePreviewVisible(false)}
+      >
         <Pressable style={styles.previewOverlay} onPress={() => setImagePreviewVisible(false)}>
           {friend.photoURL ? (
             <Image source={{ uri: friend.photoURL }} style={styles.avatarLarge} />
@@ -53,7 +99,13 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
         </Pressable>
       </Modal>
 
-      <Modal visible={confirmVisible} transparent animationType="fade" onRequestClose={() => setConfirmVisible(false)}>
+      {/* 削除確認 */}
+      <Modal
+        visible={confirmVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setConfirmVisible(false)}
+      >
         <Pressable style={styles.overlay} onPress={() => setConfirmVisible(false)}>
           <Pressable style={styles.confirmCard} onPress={() => {}}>
             <Text style={styles.confirmText}>{friend.nickname}さんを友達から削除しますか？</Text>
@@ -89,33 +141,55 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    width: 260,
+    maxHeight: "88%",
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
+    paddingTop: 14,
+    paddingHorizontal: 12,
+    paddingBottom: 0,
   },
   deleteButton: {
-    position: "absolute",
-    top: 14,
-    right: 14,
+    alignSelf: "flex-end",
     backgroundColor: "#E2574C",
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 5,
+    marginBottom: 8,
   },
   deleteButtonText: { color: "#fff", fontSize: 11, fontWeight: "700" },
-  avatar: { width: 72, height: 72, borderRadius: 36, marginTop: 16 },
+  scrollContent: {
+    paddingBottom: 20,
+    alignItems: "center",
+  },
+  sectionLabel: {
+    alignSelf: "flex-start",
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#1A1A2E",
+    marginBottom: 8,
+  },
+  loader: { marginVertical: 40 },
+  timetableWrapper: {
+    width: "100%",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  divider: {
+    width: "100%",
+    height: 1,
+    backgroundColor: "#E0E4EA",
+    marginVertical: 16,
+  },
+  avatarWrapper: { marginBottom: 8 },
+  avatar: { width: 72, height: 72, borderRadius: 36 },
   avatarPlaceholder: {
     width: 72,
     height: 72,
     borderRadius: 36,
     backgroundColor: "#E0E4EA",
-    marginTop: 16,
   },
-  nickname: { fontSize: 16, fontWeight: "700", color: "#1A1A2E", marginTop: 12 },
+  nickname: { fontSize: 16, fontWeight: "700", color: "#1A1A2E", marginBottom: 16 },
   messageButton: {
-    marginTop: 20,
     backgroundColor: "#2F6AD9",
     borderRadius: 8,
     paddingVertical: 12,
