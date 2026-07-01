@@ -4,18 +4,29 @@ import { useRouter } from "expo-router";
 import DefaultAvatar from "../src/components/common/DefaultAvatar";
 import { useFriends } from "../src/contexts/FriendsContext";
 
+type Section = "frequent" | "nonFrequent";
+
 export default function FriendSettingsScreen() {
   const router = useRouter();
-  const { frequent, nonFrequent, frequentIds, promote, demote, moveUp, moveDown } = useFriends();
-  const [reorderingId, setReorderingId] = useState<string | null>(null);
+  const {
+    frequent, nonFrequent, frequentIds,
+    promote, demote,
+    moveFrequentUp, moveFrequentDown,
+    moveNonFrequentUp, moveNonFrequentDown,
+  } = useFriends();
 
-  function handleLongPress(id: string) {
-    setReorderingId((prev) => (prev === id ? null : id));
+  const [reordering, setReordering] = useState<{ id: string; section: Section } | null>(null);
+
+  function handleLongPress(id: string, section: Section) {
+    setReordering((prev) => (prev?.id === id ? null : { id, section }));
+  }
+
+  function clearReorder() {
+    setReordering(null);
   }
 
   return (
     <View style={styles.container}>
-      {/* ヘッダー */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -27,20 +38,18 @@ export default function FriendSettingsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* よく使う友達セクション */}
-        <Text style={styles.sectionLabel}>
-          よく使う友達 ({frequent.length}/6)
-        </Text>
+        {/* よく使う友達 */}
+        <Text style={styles.sectionLabel}>よく使う友達 ({frequent.length}/6)</Text>
         {frequent.length === 0 && (
           <Text style={styles.emptyText}>まだ追加されていません</Text>
         )}
         {frequent.map((friend, index) => {
-          const isReordering = reorderingId === friend.id;
+          const isReordering = reordering?.id === friend.id && reordering.section === "frequent";
           return (
             <TouchableOpacity
               key={friend.id}
               style={[styles.row, isReordering && styles.rowReordering]}
-              onLongPress={() => handleLongPress(friend.id)}
+              onLongPress={() => handleLongPress(friend.id, "frequent")}
               activeOpacity={0.7}
             >
               <View style={styles.rowLeft}>
@@ -50,36 +59,29 @@ export default function FriendSettingsScreen() {
               </View>
 
               {isReordering ? (
-                // 並び替えモード: ↑↓ ボタン
                 <View style={styles.reorderButtons}>
                   <TouchableOpacity
                     style={[styles.arrowButton, index === 0 && styles.arrowButtonDisabled]}
-                    onPress={() => { moveUp(index); }}
+                    onPress={() => moveFrequentUp(index)}
                     disabled={index === 0}
                   >
                     <Text style={styles.arrowText}>↑</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.arrowButton, index === frequent.length - 1 && styles.arrowButtonDisabled]}
-                    onPress={() => { moveDown(index); }}
+                    onPress={() => moveFrequentDown(index)}
                     disabled={index === frequent.length - 1}
                   >
                     <Text style={styles.arrowText}>↓</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.doneButton}
-                    onPress={() => setReorderingId(null)}
-                  >
+                  <TouchableOpacity style={styles.doneButton} onPress={clearReorder}>
                     <Text style={styles.doneButtonText}>完了</Text>
                   </TouchableOpacity>
                 </View>
               ) : (
                 <TouchableOpacity
                   style={styles.demoteButton}
-                  onPress={() => {
-                    if (reorderingId) setReorderingId(null);
-                    demote(friend.id);
-                  }}
+                  onPress={() => { clearReorder(); demote(friend.id); }}
                 >
                   <Text style={styles.demoteButtonText}>下げる</Text>
                 </TouchableOpacity>
@@ -88,28 +90,60 @@ export default function FriendSettingsScreen() {
           );
         })}
 
-        {/* その他の友達セクション */}
+        {/* その他の友達 */}
         <Text style={[styles.sectionLabel, { marginTop: 24 }]}>その他の友達</Text>
         {nonFrequent.length === 0 && (
           <Text style={styles.emptyText}>全員よく使う友達に追加済みです</Text>
         )}
-        {nonFrequent.map((friend) => (
-          <View key={friend.id} style={styles.row}>
-            <View style={styles.rowLeft}>
-              <DefaultAvatar size={36} />
-              <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
-            </View>
+        {nonFrequent.map((friend, index) => {
+          const isReordering = reordering?.id === friend.id && reordering.section === "nonFrequent";
+          return (
             <TouchableOpacity
-              style={[styles.promoteButton, frequentIds.length >= 6 && styles.promoteButtonDisabled]}
-              onPress={() => promote(friend.id)}
-              disabled={frequentIds.length >= 6}
+              key={friend.id}
+              style={[styles.row, isReordering && styles.rowReordering]}
+              onLongPress={() => handleLongPress(friend.id, "nonFrequent")}
+              activeOpacity={0.7}
             >
-              <Text style={styles.promoteButtonText}>
-                {frequentIds.length >= 6 ? "上限に達した" : "上げる"}
-              </Text>
+              <View style={styles.rowLeft}>
+                <Text style={styles.rankBadge}>{index + 1}</Text>
+                <DefaultAvatar size={36} />
+                <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
+              </View>
+
+              {isReordering ? (
+                <View style={styles.reorderButtons}>
+                  <TouchableOpacity
+                    style={[styles.arrowButton, index === 0 && styles.arrowButtonDisabled]}
+                    onPress={() => moveNonFrequentUp(index)}
+                    disabled={index === 0}
+                  >
+                    <Text style={styles.arrowText}>↑</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.arrowButton, index === nonFrequent.length - 1 && styles.arrowButtonDisabled]}
+                    onPress={() => moveNonFrequentDown(index)}
+                    disabled={index === nonFrequent.length - 1}
+                  >
+                    <Text style={styles.arrowText}>↓</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.doneButton} onPress={clearReorder}>
+                    <Text style={styles.doneButtonText}>完了</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={[styles.promoteButton, frequentIds.length >= 6 && styles.promoteButtonDisabled]}
+                  onPress={() => { clearReorder(); promote(friend.id); }}
+                  disabled={frequentIds.length >= 6}
+                >
+                  <Text style={styles.promoteButtonText}>
+                    {frequentIds.length >= 6 ? "上限に達した" : "上げる"}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </TouchableOpacity>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
     </View>
   );
@@ -117,7 +151,6 @@ export default function FriendSettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F7FA" },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -141,15 +174,12 @@ const styles = StyleSheet.create({
   },
   backIcon: { fontSize: 18, color: "#333" },
   headerTitle: { fontSize: 16, fontWeight: "700", color: "#1A1A2E" },
-
   scrollContent: { padding: 16 },
-
   sectionLabel: {
     fontSize: 12,
     fontWeight: "700",
     color: "#888",
     marginBottom: 8,
-    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   emptyText: {
@@ -158,7 +188,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     textAlign: "center",
   },
-
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -194,7 +223,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#1A1A2E",
   },
-
   reorderButtons: {
     flexDirection: "row",
     alignItems: "center",
@@ -208,9 +236,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  arrowButtonDisabled: {
-    backgroundColor: "#C0C8D8",
-  },
+  arrowButtonDisabled: { backgroundColor: "#C0C8D8" },
   arrowText: { color: "#fff", fontSize: 14, fontWeight: "700" },
   doneButton: {
     paddingHorizontal: 10,
@@ -220,7 +246,6 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   doneButtonText: { fontSize: 12, fontWeight: "700", color: "#555" },
-
   demoteButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -228,15 +253,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
   demoteButtonText: { fontSize: 12, fontWeight: "700", color: "#E2574C" },
-
   promoteButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
     backgroundColor: "#2F6AD9",
   },
-  promoteButtonDisabled: {
-    backgroundColor: "#C0C8D8",
-  },
+  promoteButtonDisabled: { backgroundColor: "#C0C8D8" },
   promoteButtonText: { fontSize: 12, fontWeight: "700", color: "#fff" },
 });

@@ -6,7 +6,6 @@ export interface Friend {
   photoURL: string | null;
 }
 
-// 全友達リスト（将来的には Firestore から取得）
 export const ALL_FRIENDS: Friend[] = [
   { id: "1", nickname: "りく", photoURL: null },
   { id: "2", nickname: "さくらもち", photoURL: null },
@@ -18,59 +17,64 @@ export const ALL_FRIENDS: Friend[] = [
   { id: "8", nickname: "まなと", photoURL: null },
 ];
 
-function sortAlpha(friends: Friend[]) {
-  return [...friends].sort((a, b) => a.nickname.localeCompare(b.nickname, "ja"));
+function sortAlpha(ids: string[]) {
+  return [...ids].sort((a, b) => {
+    const fa = ALL_FRIENDS.find((f) => f.id === a)!;
+    const fb = ALL_FRIENDS.find((f) => f.id === b)!;
+    return fa.nickname.localeCompare(fb.nickname, "ja");
+  });
 }
 
-// 初期「よく使う友達」: 全友達をあいうえお順にして先頭6人
-const INITIAL_FREQUENT_IDS = sortAlpha(ALL_FRIENDS)
-  .slice(0, 6)
-  .map((f) => f.id);
+const ALL_IDS = ALL_FRIENDS.map((f) => f.id);
+const INITIAL_FREQUENT_IDS = sortAlpha(ALL_IDS).slice(0, 6);
+const INITIAL_NON_FREQUENT_IDS = sortAlpha(
+  ALL_IDS.filter((id) => !INITIAL_FREQUENT_IDS.includes(id))
+);
 
 interface FriendsContextValue {
   allFriends: Friend[];
-  frequentIds: string[];         // 順番つき、最大6人
-  frequent: Friend[];            // frequentIds 順に並んだ Friend[]
-  nonFrequent: Friend[];         // よく使わない友達（あいうえお順）
-  promote: (id: string) => void; // よく使うに追加
-  demote: (id: string) => void;  // よく使うから外す
-  moveUp: (index: number) => void;
-  moveDown: (index: number) => void;
+  frequentIds: string[];
+  nonFrequentIds: string[];
+  frequent: Friend[];
+  nonFrequent: Friend[];
+  promote: (id: string) => void;
+  demote: (id: string) => void;
+  moveFrequentUp: (index: number) => void;
+  moveFrequentDown: (index: number) => void;
+  moveNonFrequentUp: (index: number) => void;
+  moveNonFrequentDown: (index: number) => void;
 }
 
 const FriendsContext = createContext<FriendsContextValue | null>(null);
 
 export function FriendsProvider({ children }: { children: ReactNode }) {
   const [frequentIds, setFrequentIds] = useState<string[]>(INITIAL_FREQUENT_IDS);
+  const [nonFrequentIds, setNonFrequentIds] = useState<string[]>(INITIAL_NON_FREQUENT_IDS);
 
   const frequent = frequentIds
     .map((id) => ALL_FRIENDS.find((f) => f.id === id)!)
     .filter(Boolean);
 
-  const nonFrequent = sortAlpha(
-    ALL_FRIENDS.filter((f) => !frequentIds.includes(f.id))
-  );
+  const nonFrequent = nonFrequentIds
+    .map((id) => ALL_FRIENDS.find((f) => f.id === id)!)
+    .filter(Boolean);
 
   function promote(id: string) {
     if (frequentIds.includes(id) || frequentIds.length >= 6) return;
     // あいうえお順に挿入
-    const friend = ALL_FRIENDS.find((f) => f.id === id)!;
-    setFrequentIds((prev) => {
-      const newList = [...prev, id];
-      // 並べ替え: あいうえお順を保つ
-      return newList.sort((a, b) => {
-        const fa = ALL_FRIENDS.find((f) => f.id === a)!;
-        const fb = ALL_FRIENDS.find((f) => f.id === b)!;
-        return fa.nickname.localeCompare(fb.nickname, "ja");
-      });
-    });
+    setFrequentIds((prev) =>
+      sortAlpha([...prev, id])
+    );
+    setNonFrequentIds((prev) => prev.filter((fid) => fid !== id));
   }
 
   function demote(id: string) {
     setFrequentIds((prev) => prev.filter((fid) => fid !== id));
+    // あいうえお順に挿入
+    setNonFrequentIds((prev) => sortAlpha([...prev, id]));
   }
 
-  function moveUp(index: number) {
+  function moveFrequentUp(index: number) {
     if (index <= 0) return;
     setFrequentIds((prev) => {
       const next = [...prev];
@@ -79,8 +83,26 @@ export function FriendsProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  function moveDown(index: number) {
+  function moveFrequentDown(index: number) {
     setFrequentIds((prev) => {
+      if (index >= prev.length - 1) return prev;
+      const next = [...prev];
+      [next[index], next[index + 1]] = [next[index + 1], next[index]];
+      return next;
+    });
+  }
+
+  function moveNonFrequentUp(index: number) {
+    if (index <= 0) return;
+    setNonFrequentIds((prev) => {
+      const next = [...prev];
+      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      return next;
+    });
+  }
+
+  function moveNonFrequentDown(index: number) {
+    setNonFrequentIds((prev) => {
       if (index >= prev.length - 1) return prev;
       const next = [...prev];
       [next[index], next[index + 1]] = [next[index + 1], next[index]];
@@ -90,7 +112,19 @@ export function FriendsProvider({ children }: { children: ReactNode }) {
 
   return (
     <FriendsContext.Provider
-      value={{ allFriends: ALL_FRIENDS, frequentIds, frequent, nonFrequent, promote, demote, moveUp, moveDown }}
+      value={{
+        allFriends: ALL_FRIENDS,
+        frequentIds,
+        nonFrequentIds,
+        frequent,
+        nonFrequent,
+        promote,
+        demote,
+        moveFrequentUp,
+        moveFrequentDown,
+        moveNonFrequentUp,
+        moveNonFrequentDown,
+      }}
     >
       {children}
     </FriendsContext.Provider>
