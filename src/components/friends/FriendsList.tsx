@@ -24,7 +24,7 @@ export default function FriendsList() {
       <View style={styles.frame}>
         {frequent.map((friend) => (
           <View key={friend.id} style={styles.friendItem}>
-            <DefaultAvatar size={40} />
+            <DefaultAvatar size={30} />
             <Text style={styles.nickname} numberOfLines={1}>{friend.nickname}</Text>
           </View>
         ))}
@@ -34,7 +34,7 @@ export default function FriendsList() {
 }
 
 const styles = StyleSheet.create({
-  section: { marginTop: 16 },
+  section: { marginTop: 6, marginBottom: 8 },
   labelRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -52,14 +52,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E0E0E0",
     backgroundColor: "#fff",
-    paddingVertical: 14,
+    paddingVertical: 8,
     paddingHorizontal: 8,
   },
   friendItem: {
     width: `${100 / COLUMNS}%`,
     alignItems: "center",
     paddingHorizontal: 4,
-    marginBottom: 12,
+    marginBottom: 6,
   },
-  nickname: { fontSize: 11, color: "#444", fontWeight: "600", maxWidth: "100%", marginTop: 4 },
+  nickname: { fontSize: 10, color: "#444", fontWeight: "600", maxWidth: "100%", marginTop: 3 },
 });

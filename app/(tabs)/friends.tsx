@@ -1,33 +1,64 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TimeTable from "../../src/components/timetable/TimeTable";
 import DefaultAvatar from "../../src/components/common/DefaultAvatar";
+import SemesterSelector from "../../src/components/common/SemesterSelector";
+import AddFriendModal from "../../src/components/friends/AddFriendModal";
 import { useFriends } from "../../src/contexts/FriendsContext";
 import { MOCK_FRIEND_TIMETABLES } from "../../src/data/mockFriendTimetables";
+import {
+  type Semester,
+  type SemesterKey,
+  getCurrentSemester,
+  isSemesterAvailable,
+} from "../../src/data/semesterTimetables";
 
 const CELL_HEIGHT = 42;
 
 export default function FriendsScreen() {
+  const insets = useSafeAreaInsets();
   const { allFriends, frequent, nonFrequent } = useFriends();
   const orderedAll = [...frequent, ...nonFrequent];
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const effectiveId = selectedId ?? orderedAll[0]?.id ?? null;
+  const [addModalVisible, setAddModalVisible] = useState(false);
 
-  const sessions = effectiveId ? (MOCK_FRIEND_TIMETABLES[effectiveId] ?? []) : [];
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());
+
+  const semesterKey: SemesterKey = `${selectedYear}-${selectedSemester}`;
+  const friendKey = effectiveId ? `${effectiveId}-${semesterKey}` : null;
+  const sessions = friendKey ? (MOCK_FRIEND_TIMETABLES[friendKey] ?? []) : [];
   const selectedFriend = allFriends.find((f) => f.id === effectiveId);
 
   return (
-    <View style={styles.container}>
-      {/* 시간표 영역 */}
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.titleRow}>
+        <Text style={styles.titleText}>友達</Text>
+        <TouchableOpacity style={styles.addButton} onPress={() => setAddModalVisible(true)}>
+          <Text style={styles.addButtonText}>+ 追加</Text>
+        </TouchableOpacity>
+      </View>
+
+      <AddFriendModal visible={addModalVisible} onClose={() => setAddModalVisible(false)} />
+
       {selectedFriend && (
         <View style={styles.timetableSection}>
-          <Text style={styles.timetableLabel}>{selectedFriend.nickname}さんの時間割</Text>
+          <SemesterSelector
+            selectedYear={selectedYear}
+            selectedSemester={selectedSemester}
+            onChangeYear={(year) => {
+              setSelectedYear(year);
+              if (!isSemesterAvailable(year, selectedSemester)) setSelectedSemester("春");
+            }}
+            onChangeSemester={setSelectedSemester}
+          />
           <TimeTable sessions={sessions} cellHeight={CELL_HEIGHT} />
         </View>
       )}
 
-      {/* 친구 목록 */}
       <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
         {orderedAll.map((friend) => (
           <TouchableOpacity
@@ -61,19 +92,29 @@ export default function FriendsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F7FA" },
 
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+  },
+  titleText: { fontSize: 17, fontWeight: "700", color: "#1A1A2E" },
+  addButton: {
+    backgroundColor: "#2F6AD9",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  addButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
+
   timetableSection: {
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#E0E0E0",
-    paddingBottom: 8,
-  },
-  timetableLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#1A1A2E",
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 6,
   },
 
   listSection: { flex: 1 },
