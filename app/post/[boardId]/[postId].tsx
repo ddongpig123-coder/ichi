@@ -60,10 +60,10 @@ export default function PostDetailScreen() {
     }).finally(() => setLoading(false));
   }, [schoolDomain, boardId, postId]);
 
-  async function handleDM() {
+  async function handleSendMessage(targetUid: string) {
     if (!user || !schoolDomain || !post) return;
-    if (user.uid === post.authorUid) return;
-    const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, post.authorUid, post.title);
+    if (user.uid === targetUid) return;
+    const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, targetUid, post.title);
     router.push(`/(tabs)/messages/${chatRoomId}`);
   }
 
@@ -104,6 +104,13 @@ export default function PostDetailScreen() {
 
   const board = BOARDS.find((b) => b.id === boardId);
 
+  // 같은 사람이 여러 번 댓글을 달아도 같은 번호(匿名1, 匿名2...)가 유지되도록
+  // authorUid의 첫 등장 순서로 번호를 부여
+  const anonNumbers = new Map<string, number>();
+  for (const c of comments) {
+    if (!anonNumbers.has(c.authorUid)) anonNumbers.set(c.authorUid, anonNumbers.size + 1);
+  }
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -116,7 +123,12 @@ export default function PostDetailScreen() {
           <Text style={styles.boardTag}>{board?.label}</Text>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
-            <Text style={styles.meta}>匿名</Text>
+            <TouchableOpacity
+              disabled={!user || user.uid === post.authorUid}
+              onPress={() => handleSendMessage(post.authorUid)}
+            >
+              <Text style={styles.meta}>匿名</Text>
+            </TouchableOpacity>
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(post.createdAt)}</Text>
           </View>
@@ -132,19 +144,26 @@ export default function PostDetailScreen() {
                 {liked ? "❤️" : "🤍"} {likeCount}
               </Text>
             </TouchableOpacity>
-            {user && post.authorUid !== user.uid && (
-              <TouchableOpacity style={styles.dmBtn} onPress={handleDM}>
-                <Text style={styles.dmBtnText}>💬 DM</Text>
-              </TouchableOpacity>
-            )}
           </View>
         </View>
 
         {/* Comments */}
         <Text style={styles.commentHeader}>コメント {comments.length}</Text>
-        {comments.map((c, i) => (
+        {comments.map((c) => (
           <View key={c.id} style={styles.commentCard}>
-            <Text style={styles.commentAuthor}>匿名{i + 1}</Text>
+            <View style={styles.commentAuthorRow}>
+              <TouchableOpacity
+                disabled={!user || user.uid === c.authorUid}
+                onPress={() => handleSendMessage(c.authorUid)}
+              >
+                <Text style={styles.commentAuthor}>匿名{anonNumbers.get(c.authorUid)}</Text>
+              </TouchableOpacity>
+              {c.authorUid === post.authorUid && (
+                <View style={styles.authorTag}>
+                  <Text style={styles.authorTagText}>投稿者</Text>
+                </View>
+              )}
+            </View>
             <Text style={styles.commentBody}>{c.body}</Text>
             <Text style={styles.commentTime}>{timeAgo(c.createdAt)}</Text>
           </View>
@@ -200,20 +219,17 @@ const styles = StyleSheet.create({
   likeBtnActive: { borderColor: "#E8334A", backgroundColor: "#FFF0F2" },
   likeBtnText: { fontSize: 14, color: "#888", fontWeight: "600" },
   likeBtnTextActive: { color: "#E8334A" },
-  dmBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    backgroundColor: "#F9F9F9",
-  },
-  dmBtnText: { fontSize: 14, color: "#555", fontWeight: "600" },
   commentHeader: { fontSize: 14, fontWeight: "700", color: "#555", padding: 16, paddingBottom: 8 },
   commentCard: { backgroundColor: "#fff", padding: 16, marginBottom: 1 },
-  commentAuthor: { fontSize: 13, fontWeight: "600", color: "#2F6AD9", marginBottom: 4 },
+  commentAuthorRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
+  commentAuthor: { fontSize: 13, fontWeight: "600", color: "#2F6AD9" },
+  authorTag: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    backgroundColor: "#2F6AD9",
+  },
+  authorTagText: { fontSize: 10, fontWeight: "700", color: "#fff" },
   commentBody: { fontSize: 14, color: "#333", lineHeight: 22 },
   commentTime: { fontSize: 11, color: "#bbb", marginTop: 4 },
   inputBar: {
