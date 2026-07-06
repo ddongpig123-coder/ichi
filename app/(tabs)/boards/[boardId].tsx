@@ -8,10 +8,11 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
-import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { fetchPosts } from "../../../src/services/boardService";
-import { BOARDS, type BoardId, type Post } from "../../../src/types/board";
+import { OFFICIAL_BOARDS, type BoardId, type Post } from "../../../src/types/board";
+import { useBoards } from "../../../src/hooks/useBoards";
 
 function timeAgo(ms: number): string {
   const diff = Date.now() - ms;
@@ -25,8 +26,14 @@ export default function PostListScreen() {
   const { boardId } = useLocalSearchParams<{ boardId: string }>();
   const { schoolDomain } = useAuth();
   const router = useRouter();
+  const navigation = useNavigation();
+  const { allBoards } = useBoards();
 
-  const board = BOARDS.find((b) => b.id === boardId);
+  const board = allBoards.find((b) => b.id === boardId);
+
+  React.useEffect(() => {
+    if (board) navigation.setOptions({ title: board.label });
+  }, [board]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

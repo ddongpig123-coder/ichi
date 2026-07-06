@@ -1,6 +1,6 @@
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "../config/firebase";
-import type { UserProfile } from "../types/user";
+import type { AcademicInfo, UserProfile } from "../types/user";
 
 function userDoc(uid: string) {
   return doc(db, "users", uid);
@@ -27,18 +27,23 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   return snap.exists() ? (snap.data() as UserProfile) : null;
 }
 
+// 익명 사용자는 users/{uid} 문서가 없을 수 있으므로 setDoc(merge)로 자동 생성
 export async function updateNickname(uid: string, nickname: string): Promise<void> {
-  await updateDoc(userDoc(uid), { nickname });
+  await setDoc(userDoc(uid), { uid, nickname }, { merge: true });
 }
 
 export async function updatePhotoURL(uid: string, photoURL: string): Promise<void> {
-  await updateDoc(userDoc(uid), { photoURL });
+  await setDoc(userDoc(uid), { uid, photoURL }, { merge: true });
+}
+
+export async function updateAcademicInfo(uid: string, academic: AcademicInfo): Promise<void> {
+  await setDoc(userDoc(uid), { uid, academic }, { merge: true });
 }
 
 export async function addFriend(uid: string, friendUid: string): Promise<void> {
-  await updateDoc(userDoc(uid), { friendIds: arrayUnion(friendUid) });
+  await setDoc(userDoc(uid), { uid, friendIds: arrayUnion(friendUid) }, { merge: true });
 }
 
 export async function removeFriend(uid: string, friendUid: string): Promise<void> {
-  await updateDoc(userDoc(uid), { friendIds: arrayRemove(friendUid) });
+  await setDoc(userDoc(uid), { uid, friendIds: arrayRemove(friendUid) }, { merge: true });
 }
