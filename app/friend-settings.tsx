@@ -73,12 +73,12 @@ export default function FriendSettingsScreen() {
   const router = useRouter();
   const { frequent, nonFrequent, frequentIds, promote, demote, reorderFrequent, reorderNonFrequent } = useFriends();
 
-  function handleFrequentReorder({ fromIndex, toIndex }: ReorderableListReorderEvent) {
-    reorderFrequent(reorderItems(frequentIds, fromIndex, toIndex));
+  function handleFrequentReorder({ from, to }: ReorderableListReorderEvent) {
+    reorderFrequent(reorderItems(frequentIds, from, to));
   }
 
-  function handleNonFrequentReorder({ fromIndex, toIndex }: ReorderableListReorderEvent) {
-    reorderNonFrequent(reorderItems(nonFrequent.map((f) => f.id), fromIndex, toIndex));
+  function handleNonFrequentReorder({ from, to }: ReorderableListReorderEvent) {
+    reorderNonFrequent(reorderItems(nonFrequent.map((f) => f.id), from, to));
   }
 
   return (

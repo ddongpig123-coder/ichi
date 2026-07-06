@@ -6,7 +6,7 @@ import DefaultAvatar from "../../src/components/common/DefaultAvatar";
 import SemesterSelector from "../../src/components/common/SemesterSelector";
 import AddFriendModal from "../../src/components/friends/AddFriendModal";
 import { useFriends } from "../../src/contexts/FriendsContext";
-import { MOCK_FRIEND_TIMETABLES } from "../../src/data/mockFriendTimetables";
+import { MOCK_FRIEND_TIMETABLES, type FriendSemesterKey } from "../../src/data/mockFriendTimetables";
 import {
   type Semester,
   type SemesterKey,
@@ -29,7 +29,7 @@ export default function FriendsScreen() {
   const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());
 
   const semesterKey: SemesterKey = `${selectedYear}-${selectedSemester}`;
-  const friendKey = effectiveId ? `${effectiveId}-${semesterKey}` : null;
+  const friendKey = effectiveId ? (`${effectiveId}-${semesterKey}` as FriendSemesterKey) : null;
   const sessions = friendKey ? (MOCK_FRIEND_TIMETABLES[friendKey] ?? []) : [];
   const selectedFriend = allFriends.find((f) => f.id === effectiveId);
 

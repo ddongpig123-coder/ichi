@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ElementRef } from "react";
 import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from "react-native";
 import { type Semester, getAvailableYears, isSemesterAvailable } from "../../data/semesterTimetables";
 
@@ -13,10 +13,10 @@ export default function SemesterSelector({ selectedYear, selectedSemester, onCha
   const availableYears = getAvailableYears();
   const [pickerVisible, setPickerVisible] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
-  const yearButtonRef = useRef<TouchableOpacity>(null);
+  const yearButtonRef = useRef<ElementRef<typeof TouchableOpacity>>(null);
 
   function handleYearPress() {
-    yearButtonRef.current?.measure((_x, _y, _w, h, pageX, pageY) => {
+    yearButtonRef.current?.measure((_x: number, _y: number, _w: number, h: number, pageX: number, pageY: number) => {
       setDropdownPos({ top: pageY + h + 4, left: pageX });
       setPickerVisible(true);
     });
