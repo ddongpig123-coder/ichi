@@ -1,23 +1,245 @@
 rules_version = '2';
 
+// ============================================================
+// ichi Firestore セキュリティルール（拡張版）
+//
+// 【設計方針】
+// - 条件はヘルパー関数に集約し、フェーズ移行時は関数定義のみ変更する。
+//   例）成長期に「書き込みは認証ユーザーのみ」へ切り替える場合、
+//       canWriteContent() を isSignedIn() && !isAnonymous() に変えるだけ。
+// - まだ実装されていないコレクション（courses / reviews / reports /
+//   friendRequests / friendships / timetables / lounges）のルールを
+//   先行定義しておく。存在しないコレクションへのルールは無害。
+// - verified昇格・friendship作成などクライアントに任せると偽装可能な
+//   操作は、将来Cloud Functions（Admin SDK）に移す前提でTODOを明記。
+// ============================================================
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // ユーザープロフィール（ニックネーム・プロフィール写真・友達リスト）
-    // 本人のみ読み書き可能。パスワードはここに保存しない（Firebase Authが管理）。
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+    // ── ヘルパー ──────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // 掲示板（学校ごとに分離、ログイン済みユーザーのみ）
-    match /schools/{schoolDomain}/boards/{boardId}/posts/{postId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null && request.resource.data.authorUid == request.auth.uid;
-      allow update, delete: if request.auth != null && resource.data.authorUid == request.auth.uid;
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAnonymous() {
+      return request.auth.token.firebase.sign_in_provider == 'anonymous';
+    }
+
+    // コンテンツ書き込み権限（フェーズ移行スイッチ）
+    // 初期    : isSignedIn()                    ← 匿名ゲストも書き込み可
+    // 成長期  : isSignedIn() && !isAnonymous()  ← 書き込みのみ認証必須
+    function canWriteContent() {
+      return isSignedIn();
+    }
+
+    // 投稿者本人確認（作成時）
+    function isAuthor() {
+      return request.resource.data.authorUid == request.auth.uid;
+    }
+
+    // ── ユーザープロフィール ─────────────────────────────
+    // 本人のみ読み書き可能。パスワードはここに保存しない（Firebase Authが管理）。
+    // verificationLevel はクライアントから変更不可（自己昇格の防止）。
+    // 昇格はCloud Functions（Microsoft学校アカウント検証後）のみが行う。
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && (!('verificationLevel' in request.resource.data)
+            || request.resource.data.verificationLevel == 0);
+      allow update: if isOwner(uid)
+        && !request.resource.data.diff(resource.data)
+             .affectedKeys().hasAny(['verificationLevel']);
+      allow delete: if isOwner(uid);
+
+      // 学期別時間割（先輩時間割公開機能・Phase 2）
+      // visibility: "private" | "friends" | "department" | "public"
+      match /timetables/{semesterId} {
+        allow read: if isOwner(uid)
+          || (isSignedIn() && resource.data.visibility == 'public')
+          || (isSignedIn() && resource.data.visibility == 'friends'
+              && isFriendOf(uid))
+          || (isSignedIn() && resource.data.visibility == 'department'
+              && sameDepartment(uid));
+        allow write: if isOwner(uid);
+      }
+
+      // ブロックリスト（本人のみ。相手には見えない）
+      match /blocks/{blockedUid} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // 友達判定：friendships/{小さいuid_大きいuid} の存在で判定
+    function pairId(a, b) {
+      return a < b ? a + '_' + b : b + '_' + a;
+    }
+
+    function isFriendOf(uid) {
+      return exists(/databases/$(database)/documents/friendships/$(pairId(request.auth.uid, uid)));
+    }
+
+    // 同一学部判定（読み取り2回発生に注意）
+    function sameDepartment(uid) {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.department
+          == get(/databases/$(database)/documents/users/$(uid)).data.department;
+    }
+
+    // ── 友達申請 ─────────────────────────────────────────
+    // { fromUid, toUid, status: "pending"|"accepted"|"rejected", createdAt }
+    match /friendRequests/{requestId} {
+      allow read: if isSignedIn()
+        && (resource.data.fromUid == request.auth.uid
+            || resource.data.toUid == request.auth.uid);
+      allow create: if canWriteContent()
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.status == 'pending';
+      // 状態変更（承認/拒否）は受信者のみ。statusフィールド以外は変更不可。
+      allow update: if isSignedIn()
+        && resource.data.toUid == request.auth.uid
+        && request.resource.data.diff(resource.data)
+             .affectedKeys().hasOnly(['status']);
+      allow delete: if isSignedIn()
+        && (resource.data.fromUid == request.auth.uid
+            || resource.data.toUid == request.auth.uid);
+    }
+
+    // ── 友達関係（確定済み） ──────────────────────────────
+    // ドキュメントID: pairId(uid1, uid2)。participants: [uid1, uid2]
+    // TODO(server): 作成はCloud Functionsに移し、accepted済みの
+    // friendRequestが存在する場合のみ許可するのが理想。
+    match /friendships/{pairDocId} {
+      allow read: if isSignedIn()
+        && request.auth.uid in resource.data.participants;
+      allow create: if isSignedIn()
+        && request.auth.uid in request.resource.data.participants
+        && pairDocId == pairId(request.resource.data.participants[0],
+                               request.resource.data.participants[1]);
+      allow delete: if isSignedIn()
+        && request.auth.uid in resource.data.participants;
+    }
+
+    // ── 通報（アプリ審査要件・匿名性維持の前提） ─────────
+    // 書き込み専用。他ユーザーの通報履歴は誰にも読ませない。
+    // 閲覧・処理は運営（コンソール / Admin SDK）のみ。
+    match /reports/{reportId} {
+      allow read: if false;
+      allow create: if isSignedIn()
+        && request.resource.data.reporterUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ── 講義マスターデータ（シラバス由来 + クラウドソーシング） ──
+    // 公式クロールデータはAdmin SDKで投入（ルールを経由しない）。
+    // クライアントからの登録は未検証（verified: false）のみ許可。
+    // verified: true への昇格はCloud Functionsのみ（自作自演の防止）。
+    match /schools/{schoolDomain}/departments/{deptId}/courses/{courseId} {
+      allow read: if isSignedIn();
+      allow create: if canWriteContent()
+        && request.resource.data.verified == false
+        && request.resource.data.addedBy == request.auth.uid;
+      allow update, delete: if false;
+
+      // 講義レビュー（Phase 2）
+      // ドキュメントID = 投稿者uid（1人1講義1レビューを構造で強制）
+      // 構造化評価（rating 1〜5）+ 自由テキスト（言語別）
+      match /reviews/{reviewerUid} {
+        allow read: if isSignedIn();
+        allow create: if canWriteContent()
+          && request.auth.uid == reviewerUid
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5;
+        allow update: if isOwner(reviewerUid)
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5;
+        allow delete: if isOwner(reviewerUid);
+      }
+    }
+
+    // ── 掲示板共通ルール（学校掲示板・留学生ラウンジで共用） ──
+    // posts / comments / likes の権限パターンを関数化。
+    function canUpdatePost() {
+      return isSignedIn() && (
+        resource.data.authorUid == request.auth.uid ||
+        // いいね数・コメント数のカウンター更新は他ユーザー操作でも発生
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount']) ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount'])
+      );
+    }
+
+    match /schools/{schoolDomain} {
+
+      // 学校掲示板（学校ごとに分離）
+      match /boards/{boardId}/posts/{postId} {
+        allow read: if isSignedIn();
+        allow create: if canWriteContent() && isAuthor();
+        allow update: if canUpdatePost();
+        allow delete: if isSignedIn() && resource.data.authorUid == request.auth.uid;
+
+        match /comments/{commentId} {
+          allow read: if isSignedIn();
+          allow create: if canWriteContent() && isAuthor();
+          allow update, delete: if isSignedIn() && resource.data.authorUid == request.auth.uid;
+        }
+
+        // いいね（ドキュメントIDはユーザーのuid）。本人のみ作成・削除可能。
+        match /likes/{likeUid} {
+          allow read: if isSignedIn();
+          allow write: if isSignedIn() && request.auth.uid == likeUid;
+        }
+      }
+
+      // 学部別・カスタム掲示板のメタ情報
+      match /boardMetas/{boardMetaId} {
+        allow read: if isSignedIn();
+        allow create: if canWriteContent()
+          && request.resource.data.createdBy == request.auth.uid;
+        allow update, delete: if isSignedIn()
+          && resource.data.createdBy == request.auth.uid;
+      }
+
+      // 友達との個別チャット（参加者のみ読み書き可能）
+      match /chats/{chatId} {
+        allow read: if isSignedIn()
+          && (resource == null || request.auth.uid in resource.data.participants);
+        allow create: if isSignedIn()
+          && request.auth.uid in request.resource.data.participants;
+        allow update: if isSignedIn()
+          && request.auth.uid in resource.data.participants;
+
+        match /messages/{messageId} {
+          allow read: if isSignedIn()
+            && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
+          allow create: if isSignedIn()
+            && request.resource.data.senderUid == request.auth.uid
+            && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
+        }
+      }
+    }
+
+    // ── 留学生ラウンジ（全国単位の掲示板・Phase 1） ────────
+    // 学校掲示板と同じ権限パターン。学校選択のみで参加可能（低い参入障壁）。
+    match /lounges/{loungeId}/posts/{postId} {
+      allow read: if isSignedIn();
+      allow create: if canWriteContent() && isAuthor();
+      allow update: if canUpdatePost();
+      allow delete: if isSignedIn() && resource.data.authorUid == request.auth.uid;
 
       match /comments/{commentId} {
-        allow read: if request.auth != null;
-        allow create: if request.auth != null && request.resource.data.authorUid == request.auth.uid;
-        allow update, delete: if request.auth != null && resource.data.authorUid == request.auth.uid;
+        allow read: if isSignedIn();
+        allow create: if canWriteContent() && isAuthor();
+        allow update, delete: if isSignedIn() && resource.data.authorUid == request.auth.uid;
+      }
+
+      match /likes/{likeUid} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn() && request.auth.uid == likeUid;
       }
     }
   }
