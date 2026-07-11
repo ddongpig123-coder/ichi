@@ -36,7 +36,8 @@
 - [x] `UserProfile`에 `verificationLevel`, `language`, `department` 필드 추가 + 규칙 배포 (완료 7/11)
 - [x] `courses` / `reviews`(강의평) TypeScript 타입 정의 (완료 7/11, `src/types/course.ts`)
 - [x] 신고/차단 데이터 흐름 설계 문서 (완료 7/11, `docs/MODERATION.md`)
-- [ ] 이용약관·개인정보처리방침 초안 (한/일) — 익명 게시판 운영 조항, 로그 보관 정책
+- [x] 이용약관·개인정보처리방침 초안 (완료 7/11, `docs/legal/`) — 자리표시자([■]) 3종:
+      운영자 명의 / 문의 이메일 / 관할 법원. 12월 스토어 준비 때 확정·웹 게시
 - [x] CLAUDE.md 확장: 프로젝트 규칙·아키텍처 결정사항 기록 (완료 7/11, `AGENTS.md`)
 
 **예상 세션: 주 2회 × 3주 = 6세션.** 문서·타입 정의 위주라 세션당 토큰 소모 적음.
