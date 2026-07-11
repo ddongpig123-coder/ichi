@@ -33,11 +33,11 @@
 
 - [x] Firestore 보안 규칙 프로덕션 배포 (완료 7/6)
 - [x] 규칙 확장판 작성·커밋 — Phase 1~2 컬렉션 선행 정의 (완료 7/8)
-- [ ] `UserProfile`에 `verificationLevel`, `language`, `department` 필드 추가 + 규칙 배포
-- [ ] `courses` / `reviews`(강의평) TypeScript 타입 정의 (규칙과 1:1 대응)
-- [ ] 신고/차단 데이터 흐름 설계 문서 (`docs/MODERATION.md`) — 프로바이더책임제한법 대응 방침 포함
+- [x] `UserProfile`에 `verificationLevel`, `language`, `department` 필드 추가 + 규칙 배포 (완료 7/11)
+- [x] `courses` / `reviews`(강의평) TypeScript 타입 정의 (완료 7/11, `src/types/course.ts`)
+- [x] 신고/차단 데이터 흐름 설계 문서 (완료 7/11, `docs/MODERATION.md`)
 - [ ] 이용약관·개인정보처리방침 초안 (한/일) — 익명 게시판 운영 조항, 로그 보관 정책
-- [ ] CLAUDE.md 확장: 프로젝트 규칙·아키텍처 결정사항 기록 (두 사람의 Claude가 같은 지침 공유)
+- [x] CLAUDE.md 확장: 프로젝트 규칙·아키텍처 결정사항 기록 (완료 7/11, `AGENTS.md`)
 
 **예상 세션: 주 2회 × 3주 = 6세션.** 문서·타입 정의 위주라 세션당 토큰 소모 적음.
 
