@@ -19,6 +19,11 @@ export async function createUserProfile(
     photoURL: null,
     friendIds: [],
     createdAt: Date.now(),
+    // 認証レベルは必ず0で作成（昇格はCloud Functionsのみ。firestore.rulesで強制）
+    verificationLevel: 0,
+    language: "ja",
+    schoolDomain: null,
+    department: null,
   });
 }
 

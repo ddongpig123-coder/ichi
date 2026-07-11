@@ -36,7 +36,10 @@ function SecretValue({ value, visible, onToggle }: { value: string; visible: boo
 // 익명 사용자는 Firestore 문서가 없어 profile이 null일 수 있으므로
 // 저장 시 로컬 상태용 최소 프로필을 만들어 화면에 즉시 반영한다
 function stubProfile(uid: string): UserProfile {
-  return { uid, email: "", nickname: "", photoURL: null, friendIds: [], createdAt: Date.now() };
+  return {
+    uid, email: "", nickname: "", photoURL: null, friendIds: [], createdAt: Date.now(),
+    verificationLevel: 0, language: "ja", schoolDomain: null, department: null,
+  };
 }
 
 export default function ProfileScreen() {
