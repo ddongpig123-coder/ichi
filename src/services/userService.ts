@@ -27,6 +27,16 @@ export async function createUserProfile(
   });
 }
 
+// 初回進入時にusersドキュメントを保証する（匿名ユーザー含む）。
+// 存在しない場合のみ作成 — 時間割・友達など全データの土台になるため、
+// 認証方式に関係なく必ずドキュメントが存在する状態を作る。
+// verificationLevel は必ず0（firestore.rulesで強制済み）。
+export async function ensureUserProfile(uid: string, email: string | null): Promise<void> {
+  const snap = await getDoc(userDoc(uid));
+  if (snap.exists()) return;
+  await createUserProfile(uid, email ?? "", "ゲスト");
+}
+
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   const snap = await getDoc(userDoc(uid));
   return snap.exists() ? (snap.data() as UserProfile) : null;

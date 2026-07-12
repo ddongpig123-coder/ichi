@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, signInAnonymously, User } from "firebase/auth";
 import { auth } from "../config/firebase";
+import { ensureUserProfile } from "../services/userService";
 
 interface AuthContextValue {
   user: User | null;
@@ -21,6 +22,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       if (u) {
+        // 匿名ユーザー含め、初回進入時にusersドキュメントを保証する
+        // （時間割・友達データの土台。失敗してもアプリ利用自体は継続）
+        try {
+          await ensureUserProfile(u.uid, u.email);
+        } catch (e) {
+          console.warn("ensureUserProfile failed:", e);
+        }
         setUser(u);
         setLoading(false);
       } else {
