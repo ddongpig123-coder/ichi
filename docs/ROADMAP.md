@@ -48,6 +48,13 @@
 UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 작업.
 
 - 1주차: 회원가입/로그인 화면 정비 (이메일 + Microsoft 인증), `users` 문서 생성 흐름
+  - [x] 익명 포함 첫 진입 시 `users` 문서 자동 생성 (완료 7/12, `ensureUserProfile`)
+  - [x] Firebase 콘솔 Email/Password 인증 활성화 (완료 7/12)
+  - [x] 계정 연결: 게스트→이메일 승격 시 uid 유지 (완료 7/12, `linkAnonymousWithEmail`
+        + `app/account.tsx` 등록/로그인/로그아웃 화면 + 프로필 탭 계정 상태 행.
+        실서버 검증: 동일 uid로 익명→password 전환 확인)
+  - [ ] Microsoft 인증을 계정 연결 방식으로 통합 (Azure 리다이렉트 설정 + 폰 테스트 필요)
+  - [ ] 네이티브(Expo Go) 동작 확인 — 계정 등록 흐름 폰 테스트
 - 2주차: 시간표 실데이터화 — `users/{uid}/timetables/{semester}` 구조로 저장/로드,
   기존 학기 선택기·셀 편집 UI에 연결
 - 3주차: 친구 실데이터화 — `friendships`/`friendRequests` 컬렉션,
