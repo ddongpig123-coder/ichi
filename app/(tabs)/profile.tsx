@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,9 @@ import {
   Alert,
   Image,
 } from "react-native";
+import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
+import { auth } from "../../src/config/firebase";
 import { signOut } from "../../src/services/authService";
 import { getUserProfile, updateAcademicInfo } from "../../src/services/userService";
 import type { AcademicInfo, UserProfile } from "../../src/types/user";
@@ -43,25 +45,35 @@ function stubProfile(uid: string): UserProfile {
 }
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { user } = useAuth();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isGuest, setIsGuest] = useState(true);
   const [academicInput, setAcademicInput] = useState<AcademicInfo>(EMPTY_ACADEMIC);
   const [editingAcademic, setEditingAcademic] = useState(false);
   const [showGpa, setShowGpa] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
 
-  useEffect(() => {
-    if (!user) {
-      setProfile(null);
-      return;
-    }
-    // 익명 사용자는 문서가 없을 수 있음 (최초 저장 시 자동 생성됨)
-    getUserProfile(user.uid).then((p) => {
-      setProfile(p);
-      setAcademicInput(p?.academic ?? EMPTY_ACADEMIC);
-    });
-  }, [user]);
+  // 画面フォーカス毎に再取得する。
+  // linkWithCredential(アカウント連携)はuidが変わらず onAuthStateChanged が
+  // 再発火しないため、useEffect([user]) だけでは登録直後の状態変化を拾えない。
+  // 逆に初回マウント時は auth.currentUser がまだnullのことがあるため、
+  // コンテキストのuser(認証初期化完了で更新される)を依存に入れて両方カバーする。
+  useFocusEffect(
+    useCallback(() => {
+      const current = auth.currentUser ?? user;
+      setIsGuest(current?.isAnonymous ?? true);
+      if (!current) {
+        setProfile(null);
+        return;
+      }
+      getUserProfile(current.uid).then((p) => {
+        setProfile(p);
+        setAcademicInput(p?.academic ?? EMPTY_ACADEMIC);
+      });
+    }, [user])
+  );
 
   async function handleSaveAcademic() {
     if (!user) return;
@@ -80,6 +92,21 @@ export default function ProfileScreen() {
 
       <Text style={styles.label}>ニックネーム</Text>
       <Text style={styles.value}>{profile?.nickname || "ゲスト"}</Text>
+
+      {/* アカウント状態 — ゲストには登録を促し、登録済みなら管理画面へ */}
+      <TouchableOpacity style={styles.accountRow} onPress={() => router.push("/account")}>
+        {isGuest ? (
+          <>
+            <Text style={styles.accountRowText}>ゲスト利用中</Text>
+            <Text style={styles.accountRowAction}>アカウント登録 →</Text>
+          </>
+        ) : (
+          <>
+            <Text style={styles.accountRowText}>登録済み ✓</Text>
+            <Text style={styles.accountRowAction}>アカウント管理 →</Text>
+          </>
+        )}
+      </TouchableOpacity>
 
       {profile?.email ? (
         <>
@@ -226,4 +253,16 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", gap: 8 },
   signOutBtn: { marginTop: 20, alignItems: "center", paddingVertical: 10 },
   signOutText: { color: "#E2574C", fontWeight: "600" },
+  accountRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#EEF4FF",
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginTop: 12,
+  },
+  accountRowText: { fontSize: 13, fontWeight: "600", color: "#333" },
+  accountRowAction: { fontSize: 13, fontWeight: "700", color: "#2F6AD9" },
 });

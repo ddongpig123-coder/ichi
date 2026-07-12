@@ -42,6 +42,15 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   return snap.exists() ? (snap.data() as UserProfile) : null;
 }
 
+// アカウント連携(匿名→メール)完了時にemail/nicknameを反映する
+export async function updateAccountInfo(
+  uid: string,
+  email: string,
+  nickname: string
+): Promise<void> {
+  await setDoc(userDoc(uid), { uid, email, nickname }, { merge: true });
+}
+
 // 익명 사용자는 users/{uid} 문서가 없을 수 있으므로 setDoc(merge)로 자동 생성
 export async function updateNickname(uid: string, nickname: string): Promise<void> {
   await setDoc(userDoc(uid), { uid, nickname }, { merge: true });

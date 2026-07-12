@@ -2,6 +2,8 @@ import {
   signInWithCredential,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  EmailAuthProvider,
+  linkWithCredential,
   OAuthProvider,
   signOut as firebaseSignOut,
   User,
@@ -71,6 +73,28 @@ export async function signUpWithEmail(
 
 export async function signInWithEmail(email: string, password: string): Promise<User> {
   const result = await signInWithEmailAndPassword(auth, email, password);
+  return result.user;
+}
+
+// ── 匿名アカウントの昇格（アカウント連携） ────────────────────
+// ゲスト(匿名)のuidを維持したままメール認証情報を連結する。
+// 新規アカウントを作らないため、ゲスト時代の時間割・友達データがそのまま残る。
+// パスワードはFirebase Authに直接渡すのみ（保持・保存しない）。
+export async function linkAnonymousWithEmail(
+  email: string,
+  password: string,
+  nickname: string
+): Promise<User> {
+  const current = auth.currentUser;
+  if (!current) throw new Error("ログイン状態が確認できません");
+  if (!current.isAnonymous) throw new Error("既にアカウント登録済みです");
+
+  const credential = EmailAuthProvider.credential(email, password);
+  const result = await linkWithCredential(current, credential);
+
+  // usersドキュメントは ensureUserProfile で作成済み → email/nicknameのみ更新
+  const { updateAccountInfo } = await import("./userService");
+  await updateAccountInfo(result.user.uid, email, nickname);
   return result.user;
 }
 
