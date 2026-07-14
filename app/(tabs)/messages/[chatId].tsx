@@ -12,6 +12,8 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useBlock } from "../../../src/contexts/BlockContext";
+import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import { sendMessage, subscribeToMessages } from "../../../src/services/chatService";
 import type { Theme } from "../../../src/theme/themes";
 import type { ChatMessage } from "../../../src/types/chat";
@@ -25,10 +27,12 @@ export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{ chatId: string }>();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { isBlocked } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [modTarget, setModTarget] = useState<{ path: string; authorUid: string } | null>(null);
   const listRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -51,12 +55,33 @@ export default function ChatRoomScreen() {
 
   function renderMessage({ item }: { item: ChatMessage }) {
     const isMine = item.senderUid === user?.uid;
+
+    // ブロックした相手のメッセージは折りたたむ
+    if (!isMine && isBlocked(item.senderUid)) {
+      return (
+        <View style={styles.msgRow}>
+          <View style={[styles.bubble, styles.bubbleBlocked]}>
+            <Text style={styles.blockedText}>ブロックしたユーザーのメッセージです</Text>
+          </View>
+        </View>
+      );
+    }
+
     return (
       <View style={[styles.msgRow, isMine && styles.msgRowMine]}>
         {!isMine && (
-          <View style={styles.avatar}>
+          // アバターをタップで通報・ブロックメニュー
+          <TouchableOpacity
+            style={styles.avatar}
+            onPress={() =>
+              setModTarget({
+                path: `schools/${schoolDomain}/chats/${chatId}/messages/${item.id}`,
+                authorUid: item.senderUid,
+              })
+            }
+          >
             <Text style={styles.avatarText}>匿</Text>
-          </View>
+          </TouchableOpacity>
         )}
         <View style={[styles.bubble, isMine && styles.bubbleMine]}>
           <Text style={[styles.bubbleText, isMine && styles.bubbleTextMine]}>{item.text}</Text>
@@ -103,6 +128,16 @@ export default function ChatRoomScreen() {
           <Text style={styles.sendIcon}>➤</Text>
         </TouchableOpacity>
       </View>
+
+      {modTarget && (
+        <ModerationMenu
+          visible
+          onClose={() => setModTarget(null)}
+          targetType="message"
+          targetPath={modTarget.path}
+          targetAuthorUid={modTarget.authorUid}
+        />
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -142,6 +177,8 @@ function makeStyles(theme: Theme) {
       borderBottomLeftRadius: 16,
       borderBottomRightRadius: 4,
     },
+    bubbleBlocked: { backgroundColor: theme.background },
+    blockedText: { fontSize: 13, color: theme.textSecondary, fontStyle: "italic" },
     bubbleText: { fontSize: 15, color: theme.textPrimary, lineHeight: 22 },
     bubbleTextMine: { color: "#fff" },
     timeText: { fontSize: 10, color: theme.textSecondary, marginTop: 4, textAlign: "right" },

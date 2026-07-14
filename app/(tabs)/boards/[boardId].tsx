@@ -11,6 +11,7 @@ import {
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useBlock } from "../../../src/contexts/BlockContext";
 import { fetchPosts } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import { OFFICIAL_BOARDS, type BoardId, type Post } from "../../../src/types/board";
@@ -28,6 +29,7 @@ export default function PostListScreen() {
   const { boardId } = useLocalSearchParams<{ boardId: string }>();
   const { schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { isBlocked } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const navigation = useNavigation();
@@ -82,21 +84,27 @@ export default function PostListScreen() {
             <Text style={styles.empty}>まだ投稿がありません</Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() => router.push(`/post/${boardId}/${item.id}`)}
-          >
-            <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-            <View style={styles.meta}>
-              <Text style={styles.metaText}>匿名</Text>
-              <Text style={styles.metaText}>·</Text>
-              <Text style={styles.metaText}>{timeAgo(item.createdAt)}</Text>
-              <Text style={styles.metaText}>·</Text>
-              <Text style={styles.metaText}>💬 {item.commentCount}</Text>
+        renderItem={({ item }) =>
+          isBlocked(item.authorUid) ? (
+            <View style={styles.row}>
+              <Text style={styles.blockedText}>ブロックしたユーザーの投稿です</Text>
             </View>
-          </TouchableOpacity>
-        )}
+          ) : (
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => router.push(`/post/${boardId}/${item.id}`)}
+            >
+              <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+              <View style={styles.meta}>
+                <Text style={styles.metaText}>匿名</Text>
+                <Text style={styles.metaText}>·</Text>
+                <Text style={styles.metaText}>{timeAgo(item.createdAt)}</Text>
+                <Text style={styles.metaText}>·</Text>
+                <Text style={styles.metaText}>💬 {item.commentCount}</Text>
+              </View>
+            </TouchableOpacity>
+          )
+        }
       />
       <TouchableOpacity
         style={styles.fab}
@@ -118,6 +126,7 @@ function makeStyles(theme: Theme) {
     meta: { flexDirection: "row", gap: 6 },
     metaText: { fontSize: 12, color: theme.textSecondary },
     empty: { color: theme.textSecondary, fontSize: 14 },
+    blockedText: { fontSize: 13, color: theme.textSecondary, fontStyle: "italic" },
     fab: {
       position: "absolute",
       bottom: 24,

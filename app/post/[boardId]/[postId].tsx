@@ -22,6 +22,9 @@ import {
 } from "../../../src/services/boardService";
 import { getOrCreateChat } from "../../../src/services/chatService";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useBlock } from "../../../src/contexts/BlockContext";
+import ModerationMenu from "../../../src/components/common/ModerationMenu";
+import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
 import { BOARDS, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
@@ -37,8 +40,15 @@ export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { isBlocked } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
+
+  // 通報・ブロックメニューの対象
+  const [modTarget, setModTarget] = useState<
+    | { targetType: ReportTargetType; targetPath: string; targetAuthorUid: string }
+    | null
+  >(null);
 
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -135,6 +145,19 @@ export default function PostDetailScreen() {
             </TouchableOpacity>
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(post.createdAt)}</Text>
+            <View style={{ flex: 1 }} />
+            <TouchableOpacity
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={() =>
+                setModTarget({
+                  targetType: "post",
+                  targetPath: `schools/${schoolDomain}/boards/${boardId}/posts/${postId}`,
+                  targetAuthorUid: post.authorUid,
+                })
+              }
+            >
+              <Text style={styles.moreBtn}>⋯</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.divider} />
           <Text style={styles.postBody}>{post.body}</Text>
@@ -153,25 +176,44 @@ export default function PostDetailScreen() {
 
         {/* Comments */}
         <Text style={styles.commentHeader}>コメント {comments.length}</Text>
-        {comments.map((c) => (
-          <View key={c.id} style={styles.commentCard}>
-            <View style={styles.commentAuthorRow}>
-              <TouchableOpacity
-                disabled={!user || user.uid === c.authorUid}
-                onPress={() => handleSendMessage(c.authorUid)}
-              >
-                <Text style={styles.commentAuthor}>匿名{anonNumbers.get(c.authorUid)}</Text>
-              </TouchableOpacity>
-              {c.authorUid === post.authorUid && (
-                <View style={styles.authorTag}>
-                  <Text style={styles.authorTagText}>投稿者</Text>
-                </View>
-              )}
+        {comments.map((c) =>
+          isBlocked(c.authorUid) ? (
+            <View key={c.id} style={styles.commentCard}>
+              <Text style={styles.blockedText}>ブロックしたユーザーのコメントです</Text>
             </View>
-            <Text style={styles.commentBody}>{c.body}</Text>
-            <Text style={styles.commentTime}>{timeAgo(c.createdAt)}</Text>
-          </View>
-        ))}
+          ) : (
+            <View key={c.id} style={styles.commentCard}>
+              <View style={styles.commentAuthorRow}>
+                <TouchableOpacity
+                  disabled={!user || user.uid === c.authorUid}
+                  onPress={() => handleSendMessage(c.authorUid)}
+                >
+                  <Text style={styles.commentAuthor}>匿名{anonNumbers.get(c.authorUid)}</Text>
+                </TouchableOpacity>
+                {c.authorUid === post.authorUid && (
+                  <View style={styles.authorTag}>
+                    <Text style={styles.authorTagText}>投稿者</Text>
+                  </View>
+                )}
+                <View style={{ flex: 1 }} />
+                <TouchableOpacity
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  onPress={() =>
+                    setModTarget({
+                      targetType: "comment",
+                      targetPath: `schools/${schoolDomain}/boards/${boardId}/posts/${postId}/comments/${c.id}`,
+                      targetAuthorUid: c.authorUid,
+                    })
+                  }
+                >
+                  <Text style={styles.moreBtn}>⋯</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.commentBody}>{c.body}</Text>
+              <Text style={styles.commentTime}>{timeAgo(c.createdAt)}</Text>
+            </View>
+          )
+        )}
         <View style={{ height: 80 }} />
       </ScrollView>
 
@@ -193,6 +235,16 @@ export default function PostDetailScreen() {
           <Text style={styles.sendText}>送信</Text>
         </TouchableOpacity>
       </View>
+
+      {modTarget && (
+        <ModerationMenu
+          visible
+          onClose={() => setModTarget(null)}
+          targetType={modTarget.targetType}
+          targetPath={modTarget.targetPath}
+          targetAuthorUid={modTarget.targetAuthorUid}
+        />
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -204,8 +256,10 @@ function makeStyles(theme: Theme) {
     postCard: { backgroundColor: theme.card, padding: 20, marginBottom: 8 },
     boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600", marginBottom: 6 },
     postTitle: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 8 },
-    metaRow: { flexDirection: "row", gap: 6, marginBottom: 16 },
+    metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
     meta: { fontSize: 12, color: theme.textSecondary },
+    moreBtn: { fontSize: 20, color: theme.textSecondary, fontWeight: "700", paddingHorizontal: 4 },
+    blockedText: { fontSize: 13, color: theme.textSecondary, fontStyle: "italic" },
     divider: { height: 1, backgroundColor: theme.border, marginBottom: 16 },
     postBody: { fontSize: 15, color: theme.textPrimary, lineHeight: 24 },
     actionRow: { flexDirection: "row", gap: 10, marginTop: 20 },

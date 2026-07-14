@@ -66,9 +66,9 @@
 
 ## 6. 구현 체크리스트 (Phase 1, 9월 3주차)
 
-- [ ] 신고 UI (글/댓글/쪽지 "…" 메뉴) + `reportService.ts`
-- [ ] 차단 UI + `blockService.ts` + 클라이언트 필터링 훅 (`useBlockFilter`)
-- [ ] 삭제를 `deleted: true` 플래그 방식으로 변경 (posts/comments)
-- [ ] 금칙어 경고 (투고 전 검사)
-- [ ] 온보딩 EULA 동의 화면
-- [ ] 차단 목록 관리 화면 (프로필 설정 내)
+- [x] 신고 UI (글/댓글/쪽지 "…" 메뉴) + `reportService.ts` — 공통 `ModerationMenu`로 통합 (완료 7/14)
+- [x] 차단 UI + `blockService.ts` + 클라이언트 필터링 (`BlockContext.isBlocked`) — 게시글/댓글/쪽지 접기 (완료 7/14)
+- [x] 차단 목록 관리 화면 (프로필 → ブロックリスト) (완료 7/14)
+- [ ] 삭제를 `deleted: true` 플래그 방식으로 변경 (posts/comments) — 잔여
+- [ ] 금칙어 경고 (투고 전 검사) — 잔여
+- [ ] 온보딩 EULA 동의 화면 — 잔여 (9월 1주차 온보딩과 통합)
