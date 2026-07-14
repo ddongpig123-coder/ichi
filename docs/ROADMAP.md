@@ -64,6 +64,9 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
     Microsoft 측에서 거부 — 정상 동작. 충북대 메일로 확인됨)
 - 2주차: 시간표 실데이터화 — `users/{uid}/timetables/{semester}` 구조로 저장/로드,
   기존 학기 선택기·셀 편집 UI에 연결
+  - [x] `timetableService` + 홈 화면 Firestore 전환 (완료 7/15 — 목업 제거,
+        visibility: private 초기화, 실서버 저장/로드 사이클 검증. 웹 확인 완료,
+        폰 확인은 3주차 작업과 묶어서)
 - 3주차: 친구 실데이터화 — `friendships`/`friendRequests` 컬렉션,
   기존 AddFriendModal의 stub(`friendRequestService.ts`)을 실제 Firestore 쿼리로 교체,
   친구 수락 UI(받은 신청 목록) 신규 제작
