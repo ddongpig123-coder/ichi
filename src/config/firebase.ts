@@ -1,6 +1,12 @@
 import { initializeApp, getApps } from "firebase/app";
 import { Platform } from "react-native";
-import { initializeAuth, browserLocalPersistence, type Auth, type Persistence } from "firebase/auth";
+import {
+  initializeAuth,
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
+  type Auth,
+  type Persistence,
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -26,6 +32,11 @@ if (Platform.OS === "web") {
   persistence = getReactNativePersistence(AsyncStorage);
 }
 
-export const auth: Auth = initializeAuth(app, { persistence });
+// Webでは popupRedirectResolver を明示しないと signInWithPopup / linkWithPopup が
+// auth/argument-error で失敗する（initializeAuthはresolverを既定で含まない）
+export const auth: Auth = initializeAuth(app, {
+  persistence,
+  ...(Platform.OS === "web" ? { popupRedirectResolver: browserPopupRedirectResolver } : {}),
+});
 
 export const db = getFirestore(app);

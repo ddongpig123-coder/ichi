@@ -1,10 +1,40 @@
 import { useState } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../src/contexts/AuthContext";
-import { linkAnonymousWithEmail, signInWithEmail, signOut } from "../src/services/authService";
+import {
+  linkAnonymousWithEmail,
+  linkAnonymousWithMicrosoft,
+  signInWithEmail,
+  signInWithMicrosoft,
+  signOut,
+  isUniversityEmail,
+  MICROSOFT_WEB_ONLY_ERROR,
+} from "../src/services/authService";
+import { updateMicrosoftAccountInfo } from "../src/services/userService";
+
+// Alert.alert は react-native-web では何も表示されない(no-op)ため、
+// Webでは window.alert / window.confirm にフォールバックする
+function notify(title: string, message?: string) {
+  if (Platform.OS === "web") {
+    window.alert(message ? `${title}\n\n${message}` : title);
+  } else {
+    Alert.alert(title, message);
+  }
+}
+
+function confirmDialog(title: string, message: string, onConfirm: () => void) {
+  if (Platform.OS === "web") {
+    if (window.confirm(`${title}\n\n${message}`)) onConfirm();
+  } else {
+    Alert.alert(title, message, [
+      { text: "キャンセル", style: "cancel" },
+      { text: "OK", style: "destructive", onPress: onConfirm },
+    ]);
+  }
+}
 
 // アカウント登録・ログイン画面
 // ゲスト(匿名)ユーザー: メール登録(=アカウント連携。uidを維持しデータが残る) or 既存アカウントへログイン
@@ -27,23 +57,23 @@ export default function AccountScreen() {
   }
 
   async function handleRegister() {
-    if (!nickname.trim()) return Alert.alert("入力エラー", "ニックネームを入力してください");
-    if (!email.trim()) return Alert.alert("入力エラー", "メールアドレスを入力してください");
-    if (password.length < 6) return Alert.alert("入力エラー", "パスワードは6文字以上で入力してください");
-    if (password !== passwordConfirm) return Alert.alert("入力エラー", "パスワードが一致しません");
+    if (!nickname.trim()) return notify("入力エラー", "ニックネームを入力してください");
+    if (!email.trim()) return notify("入力エラー", "メールアドレスを入力してください");
+    if (password.length < 6) return notify("入力エラー", "パスワードは6文字以上で入力してください");
+    if (password !== passwordConfirm) return notify("入力エラー", "パスワードが一致しません");
 
     setBusy(true);
     try {
       await linkAnonymousWithEmail(email.trim(), password, nickname.trim());
-      Alert.alert("登録完了", "アカウントを登録しました。時間割や友達のデータはそのまま引き継がれます。");
+      notify("登録完了", "アカウントを登録しました。時間割や友達のデータはそのまま引き継がれます。");
       goBack();
     } catch (e: any) {
       if (e.code === "auth/email-already-in-use" || e.code === "auth/credential-already-in-use") {
-        Alert.alert("登録できません", "このメールアドレスは既に登録されています。ログインをお試しください。");
+        notify("登録できません", "このメールアドレスは既に登録されています。ログインをお試しください。");
       } else if (e.code === "auth/invalid-email") {
-        Alert.alert("登録できません", "メールアドレスの形式が正しくありません。");
+        notify("登録できません", "メールアドレスの形式が正しくありません。");
       } else {
-        Alert.alert("登録に失敗しました", e.message ?? String(e));
+        notify("登録に失敗しました", e.message ?? String(e));
       }
     } finally {
       setBusy(false);
@@ -51,31 +81,66 @@ export default function AccountScreen() {
   }
 
   async function handleLogin() {
-    if (!email.trim() || !password) return Alert.alert("入力エラー", "メールアドレスとパスワードを入力してください");
+    if (!email.trim() || !password) return notify("入力エラー", "メールアドレスとパスワードを入力してください");
     setBusy(true);
     try {
       await signInWithEmail(email.trim(), password);
-      Alert.alert("ログイン完了", "おかえりなさい。");
+      notify("ログイン完了", "おかえりなさい。");
       goBack();
     } catch (e: any) {
-      Alert.alert("ログインに失敗しました", "メールアドレスまたはパスワードをご確認ください。");
+      notify("ログインに失敗しました", "メールアドレスまたはパスワードをご確認ください。");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Microsoft(大学アカウント)連携 — Web専用。ネイティブ対応はPhase 1bで別途。
+  async function handleMicrosoft() {
+    setBusy(true);
+    try {
+      if (mode === "register") {
+        const u = await linkAnonymousWithMicrosoft();
+        const msEmail = u.email ?? "";
+        const isUni = isUniversityEmail(msEmail);
+        await updateMicrosoftAccountInfo(
+          u.uid,
+          msEmail,
+          u.displayName?.trim() || "ゲスト",
+          isUni ? msEmail.split("@")[1] : null
+        );
+        notify(
+          "登録完了",
+          isUni
+            ? "大学アカウントで登録しました。データはそのまま引き継がれます。"
+            : "登録しました。（大学アカウントではないため学校認証は付与されません）"
+        );
+      } else {
+        await signInWithMicrosoft();
+        notify("ログイン完了", "おかえりなさい。");
+      }
+      goBack();
+    } catch (e: any) {
+      if (e.message === MICROSOFT_WEB_ONLY_ERROR) {
+        notify("準備中", "モバイルアプリでのMicrosoft連携は現在準備中です。Web版をご利用ください。");
+      } else if (e.code === "auth/credential-already-in-use" || e.code === "auth/email-already-in-use") {
+        notify("登録できません", "このMicrosoftアカウントは既に登録されています。ログインをお試しください。");
+      } else if (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request") {
+        // ユーザーが自分で閉じた場合は何も表示しない
+      } else if (e.code === "auth/popup-blocked") {
+        notify("ポップアップがブロックされました", "ブラウザの設定でこのサイトのポップアップを許可してから、もう一度お試しください。");
+      } else {
+        notify("失敗しました", e.message ?? String(e));
+      }
     } finally {
       setBusy(false);
     }
   }
 
   async function handleSignOut() {
-    Alert.alert("ログアウト", "ログアウトしますか？", [
-      { text: "キャンセル", style: "cancel" },
-      {
-        text: "ログアウト",
-        style: "destructive",
-        onPress: async () => {
-          await signOut(); // 直後にAuthContextが匿名で自動再ログインする
-          goBack();
-        },
-      },
-    ]);
+    confirmDialog("ログアウト", "ログアウトしますか？", async () => {
+      await signOut(); // 直後にAuthContextが匿名で自動再ログインする
+      goBack();
+    });
   }
 
   return (
@@ -149,6 +214,15 @@ export default function AccountScreen() {
               <Text style={styles.primaryButtonText}>{busy ? "登録中…" : "登録する"}</Text>
             </TouchableOpacity>
 
+            <Text style={styles.dividerText}>または</Text>
+            <TouchableOpacity
+              style={[styles.microsoftButton, busy && styles.buttonDisabled]}
+              onPress={handleMicrosoft}
+              disabled={busy}
+            >
+              <Text style={styles.microsoftButtonText}>Microsoftで登録（大学アカウント）</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity onPress={() => setMode("login")}>
               <Text style={styles.switchText}>既にアカウントをお持ちの方はこちら（ログイン）</Text>
             </TouchableOpacity>
@@ -188,6 +262,15 @@ export default function AccountScreen() {
               disabled={busy}
             >
               <Text style={styles.primaryButtonText}>{busy ? "ログイン中…" : "ログイン"}</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.dividerText}>または</Text>
+            <TouchableOpacity
+              style={[styles.microsoftButton, busy && styles.buttonDisabled]}
+              onPress={handleMicrosoft}
+              disabled={busy}
+            >
+              <Text style={styles.microsoftButtonText}>Microsoftでログイン</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setMode("register")}>
@@ -262,4 +345,15 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textDecorationLine: "underline",
   },
+
+  dividerText: { textAlign: "center", color: "#999", fontSize: 12, marginVertical: 12 },
+  microsoftButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#2F2F2F",
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  microsoftButtonText: { color: "#2F2F2F", fontSize: 14, fontWeight: "700" },
 });

@@ -51,6 +51,18 @@ export async function updateAccountInfo(
   await setDoc(userDoc(uid), { uid, email, nickname }, { merge: true });
 }
 
+// Microsoft(大学アカウント)連携完了時に学校ドメインまで反映する。
+// verificationLevel の昇格はここでは行わない（クライアント変更は規칙で禁止。
+// TODO(server): Cloud Functions でメールドメイン検証後に昇格させる）。
+export async function updateMicrosoftAccountInfo(
+  uid: string,
+  email: string,
+  nickname: string,
+  schoolDomain: string | null
+): Promise<void> {
+  await setDoc(userDoc(uid), { uid, email, nickname, schoolDomain }, { merge: true });
+}
+
 // 익명 사용자는 users/{uid} 문서가 없을 수 있으므로 setDoc(merge)로 자동 생성
 export async function updateNickname(uid: string, nickname: string): Promise<void> {
   await setDoc(userDoc(uid), { uid, nickname }, { merge: true });

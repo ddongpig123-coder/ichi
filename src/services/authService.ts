@@ -1,57 +1,47 @@
 import {
-  signInWithCredential,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   EmailAuthProvider,
   linkWithCredential,
+  linkWithPopup,
+  signInWithPopup,
   OAuthProvider,
   signOut as firebaseSignOut,
   User,
 } from "firebase/auth";
-import {
-  makeRedirectUri,
-  useAuthRequest,
-  ResponseType,
-} from "expo-auth-session";
-import * as WebBrowser from "expo-web-browser";
+import { Platform } from "react-native";
 import { auth } from "../config/firebase";
 import { createUserProfile } from "./userService";
 
-WebBrowser.maybeCompleteAuthSession();
+// ── Microsoft（大学アカウント）認証 ──────────────────────────
+// FirebaseはMicrosoftのIDトークン直接検証を非対応のため、
+// Firebase Authのpopupフロー(__/auth/handler経由)を使用する。
+// 前提: Firebaseコンソール側でMicrosoftプロバイダ有効化済み +
+//       AzureアプリにリダイレクトURI https://ichi-6b8f7.firebaseapp.com/__/auth/handler 登録済み。
+// NOTE: popupはWeb専用。ネイティブ対応はPhase 1bで別途
+//       （expo-web-browser + カスタムスキーム or dev-client検討）。
+export const MICROSOFT_WEB_ONLY_ERROR = "MICROSOFT_WEB_ONLY";
 
-// Microsoft Azure AD endpoints — tenant "common" allows any org account
-const MICROSOFT_DISCOVERY = {
-  authorizationEndpoint:
-    "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-  tokenEndpoint:
-    "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-};
-
-export const MICROSOFT_CLIENT_ID =
-  process.env.EXPO_PUBLIC_MICROSOFT_CLIENT_ID ?? "";
-
-export function useMicrosoftAuth() {
-  const redirectUri = makeRedirectUri({ scheme: "uni-community" });
-
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      clientId: MICROSOFT_CLIENT_ID,
-      scopes: ["openid", "profile", "email", "User.Read"],
-      responseType: ResponseType.Code,
-      redirectUri,
-      extraParams: { prompt: "select_account" },
-    },
-    MICROSOFT_DISCOVERY
-  );
-
-  return { request, response, promptAsync, redirectUri };
+function microsoftProvider(): OAuthProvider {
+  const provider = new OAuthProvider("microsoft.com");
+  provider.setCustomParameters({ prompt: "select_account" });
+  return provider;
 }
 
-// Exchange Microsoft ID token for Firebase credential
-export async function signInWithMicrosoftToken(idToken: string): Promise<User> {
-  const provider = new OAuthProvider("microsoft.com");
-  const credential = provider.credential({ idToken });
-  const result = await signInWithCredential(auth, credential);
+// ゲスト(匿名)のuidを維持したままMicrosoftアカウントを連結する
+export async function linkAnonymousWithMicrosoft(): Promise<User> {
+  if (Platform.OS !== "web") throw new Error(MICROSOFT_WEB_ONLY_ERROR);
+  const current = auth.currentUser;
+  if (!current) throw new Error("ログイン状態が確認できません");
+  if (!current.isAnonymous) throw new Error("既にアカウント登録済みです");
+  const result = await linkWithPopup(current, microsoftProvider());
+  return result.user;
+}
+
+// 既にMicrosoft登録済みのユーザーのログイン
+export async function signInWithMicrosoft(): Promise<User> {
+  if (Platform.OS !== "web") throw new Error(MICROSOFT_WEB_ONLY_ERROR);
+  const result = await signInWithPopup(auth, microsoftProvider());
   return result.user;
 }
 
