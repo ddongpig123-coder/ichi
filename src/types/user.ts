@@ -36,4 +36,8 @@ export interface UserProfile {
   // 所属学部（先輩時間割の「学部公開」判定・講義検索の既定学部に使用）
   // ※ AcademicInfo.department は表示用の自由記述、こちらは判定用の正規値
   department: string | null;
+
+  // 友達リストの表示順（本人のみが読む設定値。friendships が関係の実体）
+  frequentFriendIds?: string[]; // よく会う友達（最大6人・ホーム画面表示）
+  friendListOrder?: string[];   // その他の友達の並び順
 }

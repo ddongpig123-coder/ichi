@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert, Platform } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { Theme } from "../../theme/themes";
 import { findUserByEmail, sendFriendRequest } from "../../services/friendRequestService";
-import type { RegisteredUser } from "../../data/mockRegisteredUsers";
+import type { PublicProfile } from "../../services/userService";
+
+// Alert.alert は react-native-web では no-op のため Web では window.alert へ
+function notify(title: string, message?: string) {
+  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
+  else Alert.alert(title, message);
+}
 
 interface Props {
   visible: boolean;
@@ -19,7 +25,8 @@ export default function AddFriendModal({ visible, onClose }: Props) {
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [email, setEmail] = useState("");
   const [lookupState, setLookupState] = useState<LookupState>("idle");
-  const [foundUser, setFoundUser] = useState<RegisteredUser | null>(null);
+  const [foundUser, setFoundUser] = useState<PublicProfile | null>(null);
+  const [busy, setBusy] = useState(false);
   const pressStartedInsideRef = useRef(false);
 
   useEffect(() => {
@@ -39,21 +46,50 @@ export default function AddFriendModal({ visible, onClose }: Props) {
     }
     setLookupState("checking");
     const timer = setTimeout(async () => {
-      const result = await findUserByEmail(trimmed);
-      setFoundUser(result);
-      setLookupState(result ? "found" : "notfound");
+      try {
+        const result = await findUserByEmail(trimmed);
+        setFoundUser(result);
+        setLookupState(result ? "found" : "notfound");
+      } catch (e) {
+        console.warn("email lookup failed:", e);
+        setFoundUser(null);
+        setLookupState("notfound");
+      }
     }, 400);
     return () => clearTimeout(timer);
   }, [email]);
 
   async function handleAdd() {
     if (lookupState !== "found" || !foundUser || !user) return;
-    await sendFriendRequest(user.uid, foundUser.uid);
-    Alert.alert("送信しました", `${foundUser.nickname}さんにフレンド申請を送りました。`);
-    onClose();
+    setBusy(true);
+    try {
+      const result = await sendFriendRequest(user.uid, foundUser.uid);
+      switch (result) {
+        case "sent":
+          notify("送信しました", `${foundUser.nickname}さんにフレンド申請を送りました。`);
+          onClose();
+          break;
+        case "self":
+          notify("送信できません", "自分自身に申請は送れません。");
+          break;
+        case "already-friends":
+          notify("既に友達です", `${foundUser.nickname}さんとは既に友達です。`);
+          break;
+        case "already-sent":
+          notify("送信済みです", "この相手への申請は既に送信済みです。承認をお待ちください。");
+          break;
+        case "incoming-exists":
+          notify("申請が届いています", `${foundUser.nickname}さんから既に申請が届いています。友達タブの受信箱から承認してください。`);
+          break;
+      }
+    } catch (e: any) {
+      notify("送信に失敗しました", e.message ?? String(e));
+    } finally {
+      setBusy(false);
+    }
   }
 
-  const addEnabled = lookupState === "found";
+  const addEnabled = lookupState === "found" && !busy;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>

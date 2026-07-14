@@ -59,11 +59,14 @@ service cloud.firestore {
       // 学期別時間割（先輩時間割公開機能・Phase 2）
       // visibility: "private" | "friends" | "department" | "public"
       match /timetables/{semesterId} {
+        // resource == null: その学期の時間割が未作成。友達には「空の時間割」として
+        // 見せたいので読み取り(null取得)を許可する（非公開設定との区別のため）。
         allow read: if isOwner(uid)
-          || (isSignedIn() && resource.data.visibility == 'public')
-          || (isSignedIn() && resource.data.visibility == 'friends'
+          || (isSignedIn() && resource == null && isFriendOf(uid))
+          || (isSignedIn() && resource != null && resource.data.visibility == 'public')
+          || (isSignedIn() && resource != null && resource.data.visibility == 'friends'
               && isFriendOf(uid))
-          || (isSignedIn() && resource.data.visibility == 'department'
+          || (isSignedIn() && resource != null && resource.data.visibility == 'department'
               && sameDepartment(uid));
         allow write: if isOwner(uid);
       }
@@ -87,6 +90,29 @@ service cloud.firestore {
     function sameDepartment(uid) {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.department
           == get(/databases/$(database)/documents/users/$(uid)).data.department;
+    }
+
+    // ── 公開プロフィール（友達検索・表示用の最小情報ミラー） ──
+    // users/{uid} 本体は本人のみ読めるため、他ユーザーに見せてよい情報
+    // （ニックネーム・写真・学校・学部）だけをここに複製する。
+    // GPA等の学業情報は絶対にここへ書かないこと。
+    match /usersPublic/{uid} {
+      allow read: if isSignedIn();
+      allow create, update: if isOwner(uid) && request.resource.data.uid == uid;
+      allow delete: if isOwner(uid);
+    }
+
+    // ── メール→uid 索引（メールアドレスによる友達検索用） ──
+    // 登録はAuthトークンのemailと一致する場合のみ = メール所有者本人だけが
+    // 自分の索引を作れる（他人のメールを自分のuidに向ける偽装は不可能）。
+    // ドキュメントIDは小文字メールアドレス。
+    match /emailIndex/{email} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create, update: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.auth.token.email == email;
+      allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
     }
 
     // ── 友達申請 ─────────────────────────────────────────
@@ -113,8 +139,9 @@ service cloud.firestore {
     // TODO(server): 作成はCloud Functionsに移し、accepted済みの
     // friendRequestが存在する場合のみ許可するのが理想。
     match /friendships/{pairDocId} {
+      // resource == null は「まだ友達でない」確認のためのget（存在チェック）を許可
       allow read: if isSignedIn()
-        && request.auth.uid in resource.data.participants;
+        && (resource == null || request.auth.uid in resource.data.participants);
       allow create: if isSignedIn()
         && request.auth.uid in request.resource.data.participants
         && pairDocId == pairId(request.resource.data.participants[0],

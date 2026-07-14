@@ -33,8 +33,10 @@ export async function getTimetable(
 }
 
 // セッション配列を丸ごと保存する。
-// initVisibility: ドキュメント新規作成時のみ true にして visibility を "private" で
-// 初期化する（既存ドキュメントでは本人が設定した visibility を上書きしないため merge のみ）。
+// initVisibility: ドキュメント新規作成時のみ true にして visibility を初期化する
+// （既存ドキュメントでは本人が設定した visibility を上書きしないため merge のみ）。
+// 既定は "friends" — 友達の時間割閲覧・重なり表示がアプリの中核価値のため、
+// 友達までは既定で公開する（Phase 2 の公開範囲設定UIで本人が変更可能）。
 export async function saveTimetableSessions(
   uid: string,
   semesterKey: string,
@@ -42,7 +44,7 @@ export async function saveTimetableSessions(
   opts?: { initVisibility?: boolean }
 ): Promise<void> {
   const data: Partial<TimetableDoc> = { sessions, updatedAt: Date.now() };
-  if (opts?.initVisibility) data.visibility = "private";
+  if (opts?.initVisibility) data.visibility = "friends";
   await setDoc(timetableRef(uid, semesterKey), data, { merge: true });
 }
 

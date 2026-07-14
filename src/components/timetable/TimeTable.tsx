@@ -4,7 +4,7 @@ import {
   useWindowDimensions, Modal, Pressable,
 } from "react-native";
 import { DAYS, PERIODS, PERIOD_TIMES, type ClassSession, type Day, type Period } from "../../types/timetable";
-import { ALL_FRIENDS, type Friend } from "../../contexts/FriendsContext";
+import { useFriends, type Friend } from "../../contexts/FriendsContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { Theme } from "../../theme/themes";
 import DefaultAvatar from "../common/DefaultAvatar";
@@ -41,10 +41,11 @@ function SessionCard({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { allFriends } = useFriends();
 
   const key = `${day}-${period}`;
   const overlappingFriends = (friendOverlaps?.[key] ?? [])
-    .map((id) => ALL_FRIENDS.find((f) => f.id === id))
+    .map((id) => allFriends.find((f) => f.id === id))
     .filter(Boolean) as Friend[];
 
   const firstFriend = overlappingFriends[0];

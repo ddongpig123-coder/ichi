@@ -9,9 +9,9 @@ import TimeTable from "../../src/components/timetable/TimeTable";
 import SessionFormModal, { type SessionFormValue } from "../../src/components/timetable/SessionFormModal";
 import FriendsList from "../../src/components/friends/FriendsList";
 import { getTimetable, saveTimetableSessions } from "../../src/services/timetableService";
+import { useFriendOverlaps } from "../../src/hooks/useFriendOverlaps";
 import type { ClassSession, Day, Period } from "../../src/types/timetable";
 import {
-  SEMESTER_FRIEND_OVERLAPS,
   type Semester,
   type SemesterKey,
   getCurrentSemester,
@@ -57,8 +57,8 @@ export default function HomeScreen() {
   }, [user, semesterKey]);
 
   const sessions = sessionsMap[semesterKey] ?? [];
-  // 友達との重なり表示は3〜4週目に実データ化予定（現在はモック）
-  const friendOverlaps = SEMESTER_FRIEND_OVERLAPS[semesterKey] ?? {};
+  // 同じ講義を取っている友達（実データ: 友達の公開時間割と突き合わせ）
+  const friendOverlaps = useFriendOverlaps(semesterKey, sessions);
 
   const [target, setTarget] = useState<{ day: Day; period: Period; session?: ClassSession } | null>(null);
 

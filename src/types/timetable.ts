@@ -34,11 +34,5 @@ export const EXTRA_COLORS = [
   "#CA8A04", "#475569",
 ];
 
-// 教務システム連携前の仮データ。ClassSession[] であれば useTimetable に渡すだけで
-// 表示に反映されるので、将来 Firestore などに置き換えても呼び出し側は変更不要。
-export const MOCK_TIMETABLE: ClassSession[] = [
-  { id: "1", day: "木", period: 1, name: "商品学A", teacher: "上原 義子", room: "1013教室", color: PRESET_COLORS[0] },
-  { id: "2", day: "水", period: 3, name: "レジャービジネス論", teacher: "野澤 智行", room: "1013教室", color: PRESET_COLORS[1] },
-  { id: "3", day: "木", period: 4, name: "商学専門演習（4年）", teacher: "鈴木 仁里", room: "2121番教室", color: PRESET_COLORS[2] },
-  { id: "4", day: "木", period: 5, name: "流通システム論B", teacher: "原 頼利", room: "1063教室", color: PRESET_COLORS[3] },
-];
+// 時間割データ本体は Firestore（users/{uid}/timetables/{semesterKey}）を参照。
+// 旧モックデータ(MOCK_TIMETABLE)は実データ移行に伴い削除済み。
