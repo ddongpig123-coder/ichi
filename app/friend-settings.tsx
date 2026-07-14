@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import ReorderableList, {
@@ -7,6 +8,8 @@ import ReorderableList, {
 } from "react-native-reorderable-list";
 import DefaultAvatar from "../src/components/common/DefaultAvatar";
 import { useFriends, type Friend } from "../src/contexts/FriendsContext";
+import { useTheme } from "../src/contexts/ThemeContext";
+import type { Theme } from "../src/theme/themes";
 
 // ── 자주 찾는 친구 행 ──────────────────────────────────────
 function FrequentItem({
@@ -21,6 +24,8 @@ function FrequentItem({
   onDemote: (id: string) => void;
 }) {
   const drag = useReorderableDrag();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   return (
     <Pressable style={styles.row} onLongPress={drag}>
       <View style={styles.dragHandle}>
@@ -49,6 +54,8 @@ function NonFrequentItem({
   onPromote: (id: string) => void;
 }) {
   const drag = useReorderableDrag();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   return (
     <Pressable style={styles.row} onLongPress={drag}>
       <View style={styles.dragHandle}>
@@ -71,6 +78,8 @@ function NonFrequentItem({
 // ── 메인 화면 ───────────────────────────────────────────────
 export default function FriendSettingsScreen() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { frequent, nonFrequent, frequentIds, promote, demote, reorderFrequent, reorderNonFrequent } = useFriends();
 
   function handleFrequentReorder({ from, to }: ReorderableListReorderEvent) {
@@ -148,100 +157,102 @@ export default function FriendSettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
 
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingTop: 52,
-    paddingBottom: 12,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-    gap: 10,
-  },
-  backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F7FA",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  backIcon: { fontSize: 18, color: "#333" },
-  headerTitle: { fontSize: 16, fontWeight: "700", color: "#1A1A2E" },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+      paddingTop: 52,
+      paddingBottom: 12,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+      gap: 10,
+    },
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.background,
+      borderWidth: 1,
+      borderColor: theme.border,
+    },
+    backIcon: { fontSize: 18, color: theme.textPrimary },
+    headerTitle: { fontSize: 16, fontWeight: "700", color: theme.textPrimary },
 
-  scrollContent: { padding: 16, paddingBottom: 40 },
+    scrollContent: { padding: 16, paddingBottom: 40 },
 
-  sectionLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#888",
-    marginBottom: 4,
-    letterSpacing: 0.5,
-  },
-  hint: { fontSize: 11, color: "#bbb", marginBottom: 10 },
-  emptyText: {
-    fontSize: 13,
-    color: "#aaa",
-    paddingVertical: 12,
-    textAlign: "center",
-  },
-  listWrapper: {
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#EBEBEB",
-  },
+    sectionLabel: {
+      fontSize: 12,
+      fontWeight: "700",
+      color: theme.textSecondary,
+      marginBottom: 4,
+      letterSpacing: 0.5,
+    },
+    hint: { fontSize: 11, color: theme.textSecondary, marginBottom: 10 },
+    emptyText: {
+      fontSize: 13,
+      color: theme.textSecondary,
+      paddingVertical: 12,
+      textAlign: "center",
+    },
+    listWrapper: {
+      borderRadius: 10,
+      overflow: "hidden",
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+    },
 
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
-    gap: 8,
-  },
-  dragHandle: {
-    paddingHorizontal: 4,
-    paddingVertical: 6,
-  },
-  dragIcon: { fontSize: 16, color: "#C0C8D8" },
-  rankBadge: {
-    width: 20,
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#2F6AD9",
-    textAlign: "center",
-  },
-  nickname: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1A1A2E",
-  },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.card,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+      gap: 8,
+    },
+    dragHandle: {
+      paddingHorizontal: 4,
+      paddingVertical: 6,
+    },
+    dragIcon: { fontSize: 16, color: theme.textSecondary },
+    rankBadge: {
+      width: 20,
+      fontSize: 12,
+      fontWeight: "700",
+      color: theme.primary,
+      textAlign: "center",
+    },
+    nickname: {
+      flex: 1,
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.textPrimary,
+    },
 
-  demoteButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: "#F0F0F0",
-  },
-  demoteButtonText: { fontSize: 12, fontWeight: "700", color: "#E2574C" },
+    demoteButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 6,
+      backgroundColor: theme.background,
+    },
+    demoteButtonText: { fontSize: 12, fontWeight: "700", color: theme.accent },
 
-  promoteButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: "#2F6AD9",
-  },
-  promoteButtonDisabled: { backgroundColor: "#C0C8D8" },
-  promoteButtonText: { fontSize: 12, fontWeight: "700", color: "#fff" },
-});
+    promoteButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 6,
+      backgroundColor: theme.primary,
+    },
+    promoteButtonDisabled: { backgroundColor: theme.textSecondary },
+    promoteButtonText: { fontSize: 12, fontWeight: "700", color: "#fff" },
+  });
+}

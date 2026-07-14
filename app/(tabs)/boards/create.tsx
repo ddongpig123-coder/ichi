@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,9 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 import { createBoard } from "../../../src/services/boardService";
+import type { Theme } from "../../../src/theme/themes";
 import type { BoardMeta } from "../../../src/types/board";
 
 const CATEGORIES: { value: BoardMeta["category"]; label: string; desc: string }[] = [
@@ -22,6 +24,8 @@ const CATEGORIES: { value: BoardMeta["category"]; label: string; desc: string }[
 
 export default function CreateBoardScreen() {
   const { user, schoolDomain } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [label, setLabel] = useState("");
   const [description, setDescription] = useState("");
@@ -70,7 +74,7 @@ export default function CreateBoardScreen() {
         <TextInput
           style={styles.input}
           placeholder="例：情報工学科、サークル情報など"
-          placeholderTextColor="#bbb"
+          placeholderTextColor={theme.textSecondary}
           value={label}
           onChangeText={setLabel}
           maxLength={30}
@@ -81,7 +85,7 @@ export default function CreateBoardScreen() {
         <TextInput
           style={[styles.input, styles.textarea]}
           placeholder="この掲示板について説明してください"
-          placeholderTextColor="#bbb"
+          placeholderTextColor={theme.textSecondary}
           value={description}
           onChangeText={setDescription}
           multiline
@@ -101,42 +105,44 @@ export default function CreateBoardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA", padding: 16 },
-  sectionLabel: { fontSize: 13, fontWeight: "700", color: "#555", marginTop: 20, marginBottom: 8 },
-  required: { color: "#E8334A" },
-  categoryRow: { flexDirection: "row", gap: 10 },
-  catBtn: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: "#E0E0E0",
-    backgroundColor: "#fff",
-  },
-  catBtnActive: { borderColor: "#2F6AD9", backgroundColor: "#EEF3FF" },
-  catLabel: { fontSize: 14, fontWeight: "700", color: "#888", marginBottom: 4 },
-  catLabelActive: { color: "#2F6AD9" },
-  catDesc: { fontSize: 11, color: "#bbb" },
-  catDescActive: { color: "#6D9EF5" },
-  input: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    padding: 14,
-    fontSize: 15,
-    color: "#1A1A2E",
-  },
-  textarea: { height: 80, textAlignVertical: "top" },
-  charCount: { fontSize: 11, color: "#bbb", textAlign: "right", marginTop: 4 },
-  submitBtn: {
-    marginTop: 32,
-    backgroundColor: "#2F6AD9",
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-  },
-  disabled: { opacity: 0.5 },
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background, padding: 16 },
+    sectionLabel: { fontSize: 13, fontWeight: "700", color: theme.textSecondary, marginTop: 20, marginBottom: 8 },
+    required: { color: theme.accent },
+    categoryRow: { flexDirection: "row", gap: 10 },
+    catBtn: {
+      flex: 1,
+      padding: 14,
+      borderRadius: 10,
+      borderWidth: 1.5,
+      borderColor: theme.border,
+      backgroundColor: theme.card,
+    },
+    catBtnActive: { borderColor: theme.primary, backgroundColor: theme.primary + "1A" },
+    catLabel: { fontSize: 14, fontWeight: "700", color: theme.textSecondary, marginBottom: 4 },
+    catLabelActive: { color: theme.primary },
+    catDesc: { fontSize: 11, color: theme.textSecondary },
+    catDescActive: { color: theme.primary },
+    input: {
+      backgroundColor: theme.card,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: theme.border,
+      padding: 14,
+      fontSize: 15,
+      color: theme.textPrimary,
+    },
+    textarea: { height: 80, textAlignVertical: "top" },
+    charCount: { fontSize: 11, color: theme.textSecondary, textAlign: "right", marginTop: 4 },
+    submitBtn: {
+      marginTop: 32,
+      backgroundColor: theme.primary,
+      borderRadius: 12,
+      padding: 16,
+      alignItems: "center",
+    },
+    disabled: { opacity: 0.5 },
+    submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  });
+}

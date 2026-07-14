@@ -1,10 +1,12 @@
-import { useState, useRef } from "react";
+import { useMemo, useState, useRef } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
   useWindowDimensions, Modal, Pressable,
 } from "react-native";
 import { DAYS, PERIODS, PERIOD_TIMES, type ClassSession, type Day, type Period } from "../../types/timetable";
 import { ALL_FRIENDS, type Friend } from "../../contexts/FriendsContext";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { Theme } from "../../theme/themes";
 import DefaultAvatar from "../common/DefaultAvatar";
 
 const TIME_COL_WIDTH = 30;
@@ -37,6 +39,8 @@ function SessionCard({
 }) {
   const [tooltip, setTooltip] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const key = `${day}-${period}`;
   const overlappingFriends = (friendOverlaps?.[key] ?? [])
@@ -95,6 +99,8 @@ export default function TimeTable({
   const { width } = useWindowDimensions();
   const cellWidth = (width - TIME_COL_WIDTH) / DAYS.length;
   const CELL_HEIGHT = cellHeight ?? 64;
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [friendListModal, setFriendListModal] = useState<Friend[] | null>(null);
 
@@ -178,109 +184,111 @@ export default function TimeTable({
   );
 }
 
-const styles = StyleSheet.create({
-  row: { flexDirection: "row" },
-  headerCell: {
-    height: HEADER_HEIGHT,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#EDEFF3",
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  headerText: { fontSize: 11, fontWeight: "700", color: "#444" },
-  timeCell: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#EDEFF3",
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  timeStart: { fontSize: 7, color: "#888" },
-  periodText: { fontSize: 10, color: "#333", fontWeight: "600", marginVertical: 1 },
-  timeEnd: { fontSize: 7, color: "#888" },
-  cell: {
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#E0E0E0",
-    backgroundColor: "#fff",
-    padding: 2,
-  },
-  sessionCard: {
-    flex: 1,
-    borderRadius: 4,
-    borderLeftWidth: 3,
-    padding: 3,
-  },
-  sessionName: { fontSize: 9, fontWeight: "700", color: "#1A1A2E" },
-  sessionTeacher: { fontSize: 8, color: "#555", marginTop: 1 },
-  sessionRoom: { fontSize: 8, color: "#888" },
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    row: { flexDirection: "row" },
+    headerCell: {
+      height: HEADER_HEIGHT,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.background,
+      borderRightWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: theme.border,
+    },
+    headerText: { fontSize: 11, fontWeight: "700", color: theme.textSecondary },
+    timeCell: {
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.background,
+      borderRightWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: theme.border,
+    },
+    timeStart: { fontSize: 7, color: theme.textSecondary },
+    periodText: { fontSize: 10, color: theme.textPrimary, fontWeight: "600", marginVertical: 1 },
+    timeEnd: { fontSize: 7, color: theme.textSecondary },
+    cell: {
+      borderRightWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: theme.border,
+      backgroundColor: theme.card,
+      padding: 2,
+    },
+    sessionCard: {
+      flex: 1,
+      borderRadius: 4,
+      borderLeftWidth: 3,
+      padding: 3,
+    },
+    sessionName: { fontSize: 9, fontWeight: "700", color: theme.textPrimary },
+    sessionTeacher: { fontSize: 8, color: theme.textSecondary, marginTop: 1 },
+    sessionRoom: { fontSize: 8, color: theme.textSecondary },
 
-  avatarWrapper: {
-    position: "absolute",
-    bottom: 3,
-    right: 3,
-  },
-  plusBadge: {
-    position: "absolute",
-    top: -4,
-    right: -4,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "#E2574C",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  plusText: { fontSize: 8, color: "#fff", fontWeight: "700", lineHeight: 10 },
+    avatarWrapper: {
+      position: "absolute",
+      bottom: 3,
+      right: 3,
+    },
+    plusBadge: {
+      position: "absolute",
+      top: -4,
+      right: -4,
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: theme.accent,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    plusText: { fontSize: 8, color: "#fff", fontWeight: "700", lineHeight: 10 },
 
-  textAreaWithAvatar: { paddingRight: 20 },
-  tooltip: {
-    position: "absolute",
-    top: 2,
-    left: 2,
-    right: 2,
-    backgroundColor: "rgba(0,0,0,0.65)",
-    borderRadius: 4,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-    zIndex: 10,
-  },
-  tooltipText: { fontSize: 9, color: "#fff", fontWeight: "600", textAlign: "center" },
+    textAreaWithAvatar: { paddingRight: 20 },
+    tooltip: {
+      position: "absolute",
+      top: 2,
+      left: 2,
+      right: 2,
+      backgroundColor: "rgba(0,0,0,0.65)",
+      borderRadius: 4,
+      paddingHorizontal: 4,
+      paddingVertical: 2,
+      zIndex: 10,
+    },
+    tooltipText: { fontSize: 9, color: "#fff", fontWeight: "600", textAlign: "center" },
 
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalBox: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    minWidth: 200,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  modalTitle: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#1A1A2E",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  modalRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingVertical: 6,
-    borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
-  },
-  modalNickname: { fontSize: 13, color: "#333", fontWeight: "600" },
-});
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalBox: {
+      backgroundColor: theme.card,
+      borderRadius: 14,
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      minWidth: 200,
+      shadowColor: "#000",
+      shadowOpacity: 0.15,
+      shadowRadius: 10,
+      elevation: 8,
+    },
+    modalTitle: {
+      fontSize: 13,
+      fontWeight: "700",
+      color: theme.textPrimary,
+      marginBottom: 12,
+      textAlign: "center",
+    },
+    modalRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      paddingVertical: 6,
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
+    },
+    modalNickname: { fontSize: 13, color: theme.textPrimary, fontWeight: "600" },
+  });
+}

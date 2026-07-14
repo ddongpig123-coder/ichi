@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 import { fetchPosts } from "../../../src/services/boardService";
+import type { Theme } from "../../../src/theme/themes";
 import { OFFICIAL_BOARDS, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
 
@@ -25,6 +27,8 @@ function timeAgo(ms: number): string {
 export default function PostListScreen() {
   const { boardId } = useLocalSearchParams<{ boardId: string }>();
   const { schoolDomain } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const navigation = useNavigation();
   const { allBoards } = useBoards();
@@ -61,7 +65,7 @@ export default function PostListScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#2F6AD9" />
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -104,30 +108,32 @@ export default function PostListScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
-  sep: { height: 1, backgroundColor: "#E8E8E8" },
-  row: { backgroundColor: "#fff", padding: 16 },
-  title: { fontSize: 15, fontWeight: "600", color: "#1A1A2E", marginBottom: 6 },
-  meta: { flexDirection: "row", gap: 6 },
-  metaText: { fontSize: 12, color: "#999" },
-  empty: { color: "#aaa", fontSize: 14 },
-  fab: {
-    position: "absolute",
-    bottom: 24,
-    right: 24,
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: "#2F6AD9",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  fabText: { color: "#fff", fontSize: 28, lineHeight: 32 },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
+    sep: { height: 1, backgroundColor: theme.border },
+    row: { backgroundColor: theme.card, padding: 16 },
+    title: { fontSize: 15, fontWeight: "600", color: theme.textPrimary, marginBottom: 6 },
+    meta: { flexDirection: "row", gap: 6 },
+    metaText: { fontSize: 12, color: theme.textSecondary },
+    empty: { color: theme.textSecondary, fontSize: 14 },
+    fab: {
+      position: "absolute",
+      bottom: 24,
+      right: 24,
+      width: 52,
+      height: 52,
+      borderRadius: 26,
+      backgroundColor: theme.primary,
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    fabText: { color: "#fff", fontSize: 28, lineHeight: 32 },
+  });
+}

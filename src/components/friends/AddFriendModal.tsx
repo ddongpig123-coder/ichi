@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { Theme } from "../../theme/themes";
 import { findUserByEmail, sendFriendRequest } from "../../services/friendRequestService";
 import type { RegisteredUser } from "../../data/mockRegisteredUsers";
 
@@ -13,6 +15,8 @@ type LookupState = "idle" | "checking" | "found" | "notfound";
 
 export default function AddFriendModal({ visible, onClose }: Props) {
   const { user } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [email, setEmail] = useState("");
   const [lookupState, setLookupState] = useState<LookupState>("idle");
   const [foundUser, setFoundUser] = useState<RegisteredUser | null>(null);
@@ -74,7 +78,7 @@ export default function AddFriendModal({ visible, onClose }: Props) {
           <TextInput
             style={styles.input}
             placeholder="メールアドレスを入力"
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.textSecondary}
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -102,65 +106,67 @@ export default function AddFriendModal({ visible, onClose }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  box: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    minWidth: 280,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1A1A2E",
-    marginBottom: 14,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#D0D8E8",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: "#333",
-  },
-  errorText: {
-    fontSize: 12,
-    color: "#E2574C",
-    marginTop: 6,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 18,
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  cancelText: { color: "#555", fontSize: 14, fontWeight: "700" },
-  addButton: {
-    flex: 1,
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  addButtonActive: { backgroundColor: "#2F6AD9" },
-  addButtonDisabled: { backgroundColor: "#C7CDD6" },
-  addText: { color: "#fff", fontSize: 14, fontWeight: "700" },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    box: {
+      backgroundColor: theme.card,
+      borderRadius: 14,
+      paddingVertical: 20,
+      paddingHorizontal: 20,
+      minWidth: 280,
+      shadowColor: "#000",
+      shadowOpacity: 0.15,
+      shadowRadius: 10,
+      elevation: 8,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: theme.textPrimary,
+      marginBottom: 14,
+      textAlign: "center",
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+    },
+    errorText: {
+      fontSize: 12,
+      color: theme.accent,
+      marginTop: 6,
+    },
+    buttonRow: {
+      flexDirection: "row",
+      gap: 10,
+      marginTop: 18,
+    },
+    cancelButton: {
+      flex: 1,
+      backgroundColor: theme.background,
+      borderRadius: 8,
+      paddingVertical: 10,
+      alignItems: "center",
+    },
+    cancelText: { color: theme.textSecondary, fontSize: 14, fontWeight: "700" },
+    addButton: {
+      flex: 1,
+      borderRadius: 8,
+      paddingVertical: 10,
+      alignItems: "center",
+    },
+    addButtonActive: { backgroundColor: theme.primary },
+    addButtonDisabled: { backgroundColor: theme.textSecondary },
+    addText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+  });
+}

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,9 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 import { searchPosts } from "../../../src/services/boardService";
+import type { Theme } from "../../../src/theme/themes";
 import type { Post } from "../../../src/types/board";
 
 type SearchResult = Post & { boardLabel: string };
@@ -26,6 +28,8 @@ function timeAgo(ms: number): string {
 
 export default function SearchScreen() {
   const { schoolDomain } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -50,7 +54,7 @@ export default function SearchScreen() {
           ref={inputRef}
           style={styles.input}
           placeholder="キーワードを入力..."
-          placeholderTextColor="#aaa"
+          placeholderTextColor={theme.textSecondary}
           value={keyword}
           onChangeText={setKeyword}
           onSubmitEditing={handleSearch}
@@ -64,7 +68,7 @@ export default function SearchScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#2F6AD9" />
+          <ActivityIndicator size="large" color={theme.primary} />
         </View>
       ) : (
         <FlatList
@@ -103,47 +107,49 @@ export default function SearchScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  searchBar: {
-    flexDirection: "row",
-    padding: 12,
-    gap: 8,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E8E8E8",
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: "#F0F2F5",
-    paddingHorizontal: 12,
-    fontSize: 15,
-    color: "#1A1A2E",
-  },
-  searchBtn: {
-    height: 40,
-    paddingHorizontal: 16,
-    backgroundColor: "#2F6AD9",
-    borderRadius: 8,
-    justifyContent: "center",
-  },
-  searchBtnText: { color: "#fff", fontWeight: "700", fontSize: 14 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
-  sep: { height: 1, backgroundColor: "#E8E8E8" },
-  row: { backgroundColor: "#fff", padding: 16 },
-  boardTag: {
-    alignSelf: "flex-start",
-    backgroundColor: "#EEF3FF",
-    borderRadius: 4,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    marginBottom: 6,
-  },
-  boardTagText: { fontSize: 11, color: "#2F6AD9", fontWeight: "600" },
-  title: { fontSize: 15, fontWeight: "600", color: "#1A1A2E", marginBottom: 6 },
-  meta: { flexDirection: "row", gap: 6 },
-  metaText: { fontSize: 12, color: "#999" },
-  empty: { color: "#aaa", fontSize: 14 },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    searchBar: {
+      flexDirection: "row",
+      padding: 12,
+      gap: 8,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    input: {
+      flex: 1,
+      height: 40,
+      borderRadius: 8,
+      backgroundColor: theme.background,
+      paddingHorizontal: 12,
+      fontSize: 15,
+      color: theme.textPrimary,
+    },
+    searchBtn: {
+      height: 40,
+      paddingHorizontal: 16,
+      backgroundColor: theme.primary,
+      borderRadius: 8,
+      justifyContent: "center",
+    },
+    searchBtnText: { color: "#fff", fontWeight: "700", fontSize: 14 },
+    center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
+    sep: { height: 1, backgroundColor: theme.border },
+    row: { backgroundColor: theme.card, padding: 16 },
+    boardTag: {
+      alignSelf: "flex-start",
+      backgroundColor: theme.primary + "1A",
+      borderRadius: 4,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      marginBottom: 6,
+    },
+    boardTagText: { fontSize: 11, color: theme.primary, fontWeight: "600" },
+    title: { fontSize: 15, fontWeight: "600", color: theme.textPrimary, marginBottom: 6 },
+    meta: { flexDirection: "row", gap: 6 },
+    metaText: { fontSize: 12, color: theme.textSecondary },
+    empty: { color: theme.textSecondary, fontSize: 14 },
+  });
+}

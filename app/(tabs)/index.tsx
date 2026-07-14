@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { View, StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "../../src/contexts/ThemeContext";
+import type { Theme } from "../../src/theme/themes";
 import SemesterSelector from "../../src/components/common/SemesterSelector";
 import TimeTable from "../../src/components/timetable/TimeTable";
 import SessionFormModal, { type SessionFormValue } from "../../src/components/timetable/SessionFormModal";
@@ -24,6 +26,8 @@ const FRIENDS_SECTION_H = 185;
 export default function HomeScreen() {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());
@@ -99,6 +103,8 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+  });
+}

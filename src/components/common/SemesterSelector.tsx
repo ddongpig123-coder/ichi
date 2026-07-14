@@ -1,6 +1,8 @@
-import { useRef, useState, type ElementRef } from "react";
+import { useMemo, useRef, useState, type ElementRef } from "react";
 import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from "react-native";
 import { type Semester, getAvailableYears, isSemesterAvailable } from "../../data/semesterTimetables";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { Theme } from "../../theme/themes";
 
 interface Props {
   selectedYear: number;
@@ -10,6 +12,8 @@ interface Props {
 }
 
 export default function SemesterSelector({ selectedYear, selectedSemester, onChangeYear, onChangeSemester }: Props) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const availableYears = getAvailableYears();
   const [pickerVisible, setPickerVisible] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
@@ -75,54 +79,56 @@ export default function SemesterSelector({ selectedYear, selectedSemester, onCha
   );
 }
 
-const styles = StyleSheet.create({
-  bar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-    gap: 12,
-  },
-  yearButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F0F4FF",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    gap: 4,
-  },
-  yearText: { fontSize: 15, fontWeight: "700", color: "#2F6AD9" },
-  yearArrow: { fontSize: 10, color: "#2F6AD9" },
-  semesterToggle: {
-    flexDirection: "row",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#D0D8E8",
-    overflow: "hidden",
-  },
-  semBtn: { paddingHorizontal: 14, paddingVertical: 6, backgroundColor: "#fff" },
-  semBtnActive: { backgroundColor: "#2F6AD9" },
-  semBtnDisabled: { opacity: 0.3 },
-  semBtnText: { fontSize: 13, fontWeight: "600", color: "#555" },
-  semBtnTextActive: { color: "#fff" },
-  overlay: { flex: 1, backgroundColor: "transparent" },
-  pickerBox: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 4,
-    minWidth: 140,
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 12,
-    elevation: 10,
-  },
-  pickerItem: { paddingVertical: 14, paddingHorizontal: 24, borderBottomWidth: 1, borderBottomColor: "#F5F5F5" },
-  pickerItemActive: { backgroundColor: "#F0F4FF" },
-  pickerItemText: { fontSize: 16, color: "#333", textAlign: "center" },
-  pickerItemTextActive: { color: "#2F6AD9", fontWeight: "700" },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    bar: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+      gap: 12,
+    },
+    yearButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.primary + "1A",
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      gap: 4,
+    },
+    yearText: { fontSize: 15, fontWeight: "700", color: theme.primary },
+    yearArrow: { fontSize: 10, color: theme.primary },
+    semesterToggle: {
+      flexDirection: "row",
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.border,
+      overflow: "hidden",
+    },
+    semBtn: { paddingHorizontal: 14, paddingVertical: 6, backgroundColor: theme.card },
+    semBtnActive: { backgroundColor: theme.primary },
+    semBtnDisabled: { opacity: 0.3 },
+    semBtnText: { fontSize: 13, fontWeight: "600", color: theme.textSecondary },
+    semBtnTextActive: { color: "#fff" },
+    overlay: { flex: 1, backgroundColor: "transparent" },
+    pickerBox: {
+      backgroundColor: theme.card,
+      borderRadius: 10,
+      paddingVertical: 4,
+      minWidth: 140,
+      shadowColor: "#000",
+      shadowOpacity: 0.18,
+      shadowOffset: { width: 0, height: 4 },
+      shadowRadius: 12,
+      elevation: 10,
+    },
+    pickerItem: { paddingVertical: 14, paddingHorizontal: 24, borderBottomWidth: 1, borderBottomColor: theme.border },
+    pickerItemActive: { backgroundColor: theme.primary + "1A" },
+    pickerItemText: { fontSize: 16, color: theme.textPrimary, textAlign: "center" },
+    pickerItemTextActive: { color: theme.primary, fontWeight: "700" },
+  });
+}

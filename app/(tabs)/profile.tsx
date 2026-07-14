@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -12,8 +12,10 @@ import {
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { auth } from "../../src/config/firebase";
+import { useTheme } from "../../src/contexts/ThemeContext";
 import { signOut } from "../../src/services/authService";
 import { getUserProfile, updateAcademicInfo } from "../../src/services/userService";
+import { THEME_IDS, THEMES, type Theme } from "../../src/theme/themes";
 import type { AcademicInfo, UserProfile } from "../../src/types/user";
 
 const EMPTY_ACADEMIC: AcademicInfo = {
@@ -26,7 +28,17 @@ const EMPTY_ACADEMIC: AcademicInfo = {
 };
 
 // 은행 잔액 숨기기 스타일: 기본은 ●●●● 로 가리고, 누르면 표시/숨김 토글
-function SecretValue({ value, visible, onToggle }: { value: string; visible: boolean; onToggle: () => void }) {
+function SecretValue({
+  value,
+  visible,
+  onToggle,
+  styles,
+}: {
+  value: string;
+  visible: boolean;
+  onToggle: () => void;
+  styles: ReturnType<typeof makeStyles>;
+}) {
   return (
     <TouchableOpacity style={styles.secretRow} onPress={onToggle}>
       <Text style={styles.value}>{visible ? (value || "未設定") : "●●●●"}</Text>
@@ -47,6 +59,8 @@ function stubProfile(uid: string): UserProfile {
 export default function ProfileScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const { theme, themeId, setThemeId } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isGuest, setIsGuest] = useState(true);
@@ -129,7 +143,7 @@ export default function ProfileScreen() {
           <TextInput
             style={styles.input}
             placeholder="例: 経済学部"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.textSecondary}
             value={academicInput.department}
             onChangeText={(t) => setAcademicInput((a) => ({ ...a, department: t }))}
           />
@@ -137,7 +151,7 @@ export default function ProfileScreen() {
           <TextInput
             style={styles.input}
             placeholder="例: 2"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
             value={academicInput.grade}
             onChangeText={(t) => setAcademicInput((a) => ({ ...a, grade: t }))}
@@ -146,7 +160,7 @@ export default function ProfileScreen() {
           <TextInput
             style={styles.input}
             placeholder="例: 3.42"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.textSecondary}
             keyboardType="decimal-pad"
             value={academicInput.gpa}
             onChangeText={(t) => setAcademicInput((a) => ({ ...a, gpa: t }))}
@@ -156,7 +170,7 @@ export default function ProfileScreen() {
             <TextInput
               style={[styles.input, { flex: 1 }]}
               placeholder="例: 68"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               keyboardType="number-pad"
               value={academicInput.earnedCredits}
               onChangeText={(t) => setAcademicInput((a) => ({ ...a, earnedCredits: t }))}
@@ -164,7 +178,7 @@ export default function ProfileScreen() {
             <TextInput
               style={[styles.input, { flex: 1 }]}
               placeholder="例: 124"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               keyboardType="number-pad"
               value={academicInput.requiredCredits}
               onChangeText={(t) => setAcademicInput((a) => ({ ...a, requiredCredits: t }))}
@@ -174,7 +188,7 @@ export default function ProfileScreen() {
           <TextInput
             style={styles.input}
             placeholder="例: 12"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
             value={academicInput.courseCount}
             onChangeText={(t) => setAcademicInput((a) => ({ ...a, courseCount: t }))}
@@ -193,6 +207,7 @@ export default function ProfileScreen() {
             value={profile?.academic?.gpa ?? ""}
             visible={showGpa}
             onToggle={() => setShowGpa((v) => !v)}
+            styles={styles}
           />
           <Text style={styles.label}>取得単位</Text>
           <SecretValue
@@ -203,6 +218,7 @@ export default function ProfileScreen() {
             }
             visible={showCredits}
             onToggle={() => setShowCredits((v) => !v)}
+            styles={styles}
           />
           <Text style={styles.label}>今学期の履修科目数</Text>
           <Text style={styles.value}>
@@ -210,6 +226,37 @@ export default function ProfileScreen() {
           </Text>
         </>
       )}
+
+      {/* テーマ選択 — 즉시 적용 + AsyncStorage 저장 */}
+      <View style={styles.sectionHeaderRow}>
+        <Text style={styles.sectionTitle}>🎨 テーマ</Text>
+      </View>
+      <View style={styles.themeGrid}>
+        {THEME_IDS.map((id) => {
+          const t = THEMES[id];
+          const selected = id === themeId;
+          return (
+            <TouchableOpacity
+              key={id}
+              style={[
+                styles.themeCard,
+                { backgroundColor: t.background, borderColor: selected ? theme.primary : theme.border },
+                selected && styles.themeCardSelected,
+              ]}
+              onPress={() => setThemeId(id)}
+            >
+              <View style={styles.themeSwatchRow}>
+                <View style={[styles.themeSwatch, { backgroundColor: t.primary }]} />
+                <View style={[styles.themeSwatch, { backgroundColor: t.accent }]} />
+                <View style={[styles.themeSwatch, { backgroundColor: t.card, borderWidth: 1, borderColor: t.border }]} />
+              </View>
+              <Text style={[styles.themeLabel, { color: t.textPrimary }]}>
+                {t.label}{selected ? " ✓" : ""}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
 
       {/* 로그인 기능은 나중에 다시 붙일 예정 — 이메일 계정일 때만 로그아웃 노출 */}
       {user && !user.isAnonymous ? (
@@ -221,48 +268,64 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  formContainer: { padding: 20, gap: 10 },
-  input: {
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: "#333",
-    backgroundColor: "#fff",
-  },
-  avatar: { width: 72, height: 72, borderRadius: 36, alignSelf: "center", marginBottom: 8 },
-  label: { fontSize: 12, color: "#888", marginTop: 8 },
-  value: { fontSize: 15, fontWeight: "600", color: "#1A1A2E" },
-  sectionHeaderRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 20,
-    borderTopWidth: 1,
-    borderColor: "#E8E8E8",
-    paddingTop: 16,
-  },
-  sectionTitle: { fontSize: 15, fontWeight: "700", color: "#1A1A2E" },
-  editText: { fontSize: 13, fontWeight: "700", color: "#2F6AD9" },
-  secretRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  eyeIcon: { fontSize: 14 },
-  row: { flexDirection: "row", gap: 8 },
-  signOutBtn: { marginTop: 20, alignItems: "center", paddingVertical: 10 },
-  signOutText: { color: "#E2574C", fontWeight: "600" },
-  accountRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#EEF4FF",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginTop: 12,
-  },
-  accountRowText: { fontSize: 13, fontWeight: "600", color: "#333" },
-  accountRowAction: { fontSize: 13, fontWeight: "700", color: "#2F6AD9" },
-});
+// 테마가 바뀌면 색이 함께 바뀌도록 StyleSheet를 테마 함수로 생성
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    formContainer: { padding: 20, gap: 10 },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+      backgroundColor: theme.card,
+    },
+    avatar: { width: 72, height: 72, borderRadius: 36, alignSelf: "center", marginBottom: 8 },
+    label: { fontSize: 12, color: theme.textSecondary, marginTop: 8 },
+    value: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
+    sectionHeaderRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginTop: 20,
+      borderTopWidth: 1,
+      borderColor: theme.border,
+      paddingTop: 16,
+    },
+    sectionTitle: { fontSize: 15, fontWeight: "700", color: theme.textPrimary },
+    editText: { fontSize: 13, fontWeight: "700", color: theme.primary },
+    secretRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    eyeIcon: { fontSize: 14 },
+    row: { flexDirection: "row", gap: 8 },
+    themeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+    themeCard: {
+      width: "30%",
+      minWidth: 96,
+      borderWidth: 2,
+      borderRadius: 12,
+      padding: 10,
+      gap: 8,
+    },
+    themeCardSelected: { borderWidth: 2 },
+    themeSwatchRow: { flexDirection: "row", gap: 4 },
+    themeSwatch: { width: 16, height: 16, borderRadius: 8 },
+    themeLabel: { fontSize: 12, fontWeight: "700" },
+    signOutBtn: { marginTop: 20, alignItems: "center", paddingVertical: 10 },
+    signOutText: { color: theme.accent, fontWeight: "600" },
+    accountRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: theme.primary + "1A",
+      borderRadius: 8,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      marginTop: 12,
+    },
+    accountRowText: { fontSize: 13, fontWeight: "600", color: theme.textPrimary },
+    accountRowAction: { fontSize: 13, fontWeight: "700", color: theme.primary },
+  });
+}

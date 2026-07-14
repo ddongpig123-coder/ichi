@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,9 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 import { sendMessage, subscribeToMessages } from "../../../src/services/chatService";
+import type { Theme } from "../../../src/theme/themes";
 import type { ChatMessage } from "../../../src/types/chat";
 
 function timeStr(ms: number): string {
@@ -22,6 +24,8 @@ function timeStr(ms: number): string {
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{ chatId: string }>();
   const { user, schoolDomain } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -85,7 +89,7 @@ export default function ChatRoomScreen() {
         <TextInput
           style={styles.input}
           placeholder="メッセージを入力..."
-          placeholderTextColor="#aaa"
+          placeholderTextColor={theme.textSecondary}
           value={text}
           onChangeText={setText}
           multiline
@@ -103,72 +107,74 @@ export default function ChatRoomScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  list: { flex: 1, backgroundColor: "#F5F7FA" },
-  listContent: { padding: 16, gap: 12 },
-  empty: { flex: 1, alignItems: "center", paddingTop: 60 },
-  emptyText: { color: "#bbb", fontSize: 14 },
-  msgRow: { flexDirection: "row", alignItems: "flex-end", gap: 8 },
-  msgRowMine: { flexDirection: "row-reverse" },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#EEF3FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: { fontSize: 13, color: "#2F6AD9", fontWeight: "700" },
-  bubble: {
-    maxWidth: "72%",
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  bubbleMine: {
-    backgroundColor: "#2F6AD9",
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 4,
-  },
-  bubbleText: { fontSize: 15, color: "#1A1A2E", lineHeight: 22 },
-  bubbleTextMine: { color: "#fff" },
-  timeText: { fontSize: 10, color: "#bbb", marginTop: 4, textAlign: "right" },
-  timeTextMine: { color: "rgba(255,255,255,0.6)" },
-  inputBar: {
-    flexDirection: "row",
-    padding: 10,
-    paddingBottom: Platform.OS === "ios" ? 24 : 10,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#E8E8E8",
-    alignItems: "flex-end",
-    gap: 8,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: "#F5F7FA",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: "#333",
-    maxHeight: 100,
-  },
-  sendBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: "#2F6AD9",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  disabled: { opacity: 0.4 },
-  sendIcon: { color: "#fff", fontSize: 16 },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    list: { flex: 1, backgroundColor: theme.background },
+    listContent: { padding: 16, gap: 12 },
+    empty: { flex: 1, alignItems: "center", paddingTop: 60 },
+    emptyText: { color: theme.textSecondary, fontSize: 14 },
+    msgRow: { flexDirection: "row", alignItems: "flex-end", gap: 8 },
+    msgRowMine: { flexDirection: "row-reverse" },
+    avatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: theme.primary + "1A",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    avatarText: { fontSize: 13, color: theme.primary, fontWeight: "700" },
+    bubble: {
+      maxWidth: "72%",
+      backgroundColor: theme.card,
+      borderRadius: 16,
+      borderBottomLeftRadius: 4,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.06,
+      shadowRadius: 3,
+      elevation: 1,
+    },
+    bubbleMine: {
+      backgroundColor: theme.primary,
+      borderBottomLeftRadius: 16,
+      borderBottomRightRadius: 4,
+    },
+    bubbleText: { fontSize: 15, color: theme.textPrimary, lineHeight: 22 },
+    bubbleTextMine: { color: "#fff" },
+    timeText: { fontSize: 10, color: theme.textSecondary, marginTop: 4, textAlign: "right" },
+    timeTextMine: { color: "rgba(255,255,255,0.6)" },
+    inputBar: {
+      flexDirection: "row",
+      padding: 10,
+      paddingBottom: Platform.OS === "ios" ? 24 : 10,
+      backgroundColor: theme.card,
+      borderTopWidth: 1,
+      borderColor: theme.border,
+      alignItems: "flex-end",
+      gap: 8,
+    },
+    input: {
+      flex: 1,
+      backgroundColor: theme.background,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+      maxHeight: 100,
+    },
+    sendBtn: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: theme.primary,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    disabled: { opacity: 0.4 },
+    sendIcon: { color: "#fff", fontSize: 16 },
+  });
+}
