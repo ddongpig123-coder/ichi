@@ -58,7 +58,8 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         검증 완료. ~.ac.jp면 schoolDomain 자동 기록. **웹 전용**, 네이티브는 9월 2주차)
   - [x] 폰(Expo Go) 게시판 탭 크래시 수정 (완료 7/14 — async-storage 버전 불일치.
         `npx expo install --fix`로 SDK 56 정렬 + usePinnedBoards 에러 내성)
-  - [ ] 네이티브(Expo Go) 동작 확인 — 계정 등록 흐름 + 게시판 탭 재확인 (폰 테스트)
+  - [x] 네이티브(Expo Go) 동작 확인 (완료 7/14 — 터널 모드 폰 테스트, 게시판 탭
+        크래시 수정 후 정상 동작 확인)
   - 참고: Microsoft 로그인은 M365 도입 대학의 계정만 가능 (개인/비M365 대학 메일은
     Microsoft 측에서 거부 — 정상 동작. 충북대 메일로 확인됨)
 - 2주차: 시간표 실데이터화 — `users/{uid}/timetables/{semester}` 구조로 저장/로드,
