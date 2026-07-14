@@ -9,10 +9,14 @@ export function usePinnedBoards() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
-      if (raw) setPinned(JSON.parse(raw) as BoardId[]);
-      setReady(true);
-    });
+    // ストレージ読み込みに失敗しても画面自体は表示させる
+    // （過去にネイティブモジュール不一致でここが落ちて掲示板タブ全体が開けなくなった）
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((raw) => {
+        if (raw) setPinned(JSON.parse(raw) as BoardId[]);
+      })
+      .catch((e) => console.warn("pinnedBoards load failed:", e))
+      .finally(() => setReady(true));
   }, []);
 
   const toggle = useCallback(async (id: BoardId) => {
