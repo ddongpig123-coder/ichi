@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "../../src/contexts/ThemeContext";
+import type { Theme } from "../../src/theme/themes";
 import TimeTable from "../../src/components/timetable/TimeTable";
 import DefaultAvatar from "../../src/components/common/DefaultAvatar";
 import SemesterSelector from "../../src/components/common/SemesterSelector";
@@ -18,6 +20,8 @@ const CELL_HEIGHT = 42;
 
 export default function FriendsScreen() {
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { allFriends, frequent, nonFrequent } = useFriends();
   const orderedAll = [...frequent, ...nonFrequent];
 
@@ -89,76 +93,78 @@ export default function FriendsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
 
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-  },
-  titleText: { fontSize: 17, fontWeight: "700", color: "#1A1A2E" },
-  addButton: {
-    backgroundColor: "#2F6AD9",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  addButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    titleText: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
+    addButton: {
+      backgroundColor: theme.primary,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    addButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
 
-  timetableSection: {
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-  },
+    timetableSection: {
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
 
-  listSection: { flex: 1 },
-  listContent: { paddingVertical: 4 },
+    listSection: { flex: 1 },
+    listContent: { paddingVertical: 4 },
 
-  friendRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
-    gap: 10,
-  },
-  friendRowSelected: {
-    backgroundColor: "#EEF4FF",
-    borderLeftWidth: 3,
-    borderLeftColor: "#2F6AD9",
-  },
-  nickname: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-  },
-  nicknameSelected: { color: "#2F6AD9" },
-  actions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 20,
-  },
-  messageButton: {
-    backgroundColor: "#2F6AD9",
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  messageButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
-  deleteButton: {
-    backgroundColor: "#E2574C",
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  deleteButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
-});
+    friendRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+      gap: 10,
+    },
+    friendRowSelected: {
+      backgroundColor: theme.primary + "1A",
+      borderLeftWidth: 3,
+      borderLeftColor: theme.primary,
+    },
+    nickname: {
+      flex: 1,
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.textPrimary,
+    },
+    nicknameSelected: { color: theme.primary },
+    actions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 20,
+    },
+    messageButton: {
+      backgroundColor: theme.primary,
+      borderRadius: 6,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    messageButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
+    deleteButton: {
+      backgroundColor: theme.accent,
+      borderRadius: 6,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    deleteButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
+  });
+}
