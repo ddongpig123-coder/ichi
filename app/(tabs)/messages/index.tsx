@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 import { fetchMyChats } from "../../../src/services/chatService";
+import type { Theme } from "../../../src/theme/themes";
 import type { ChatRoom } from "../../../src/types/chat";
 
 function timeAgo(ms: number): string {
@@ -23,6 +25,8 @@ function timeAgo(ms: number): string {
 
 export default function MessagesInboxScreen() {
   const { user, schoolDomain } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [chats, setChats] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +52,7 @@ export default function MessagesInboxScreen() {
   }
 
   if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" color="#2F6AD9" /></View>;
+    return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
   }
 
   return (
@@ -89,27 +93,29 @@ export default function MessagesInboxScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
-  sep: { height: 1, backgroundColor: "#E8E8E8" },
-  emptyIcon: { fontSize: 40, marginBottom: 12 },
-  empty: { fontSize: 15, color: "#888", fontWeight: "600" },
-  emptySub: { fontSize: 13, color: "#bbb", marginTop: 6 },
-  row: { flexDirection: "row", backgroundColor: "#fff", padding: 16, alignItems: "center", gap: 12 },
-  avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: "#EEF3FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: { fontSize: 18, color: "#2F6AD9", fontWeight: "700" },
-  content: { flex: 1 },
-  topRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 2 },
-  name: { fontSize: 15, fontWeight: "700", color: "#1A1A2E" },
-  time: { fontSize: 11, color: "#bbb" },
-  postRef: { fontSize: 11, color: "#2F6AD9", marginBottom: 3 },
-  lastMsg: { fontSize: 13, color: "#888" },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
+    sep: { height: 1, backgroundColor: theme.border },
+    emptyIcon: { fontSize: 40, marginBottom: 12 },
+    empty: { fontSize: 15, color: theme.textSecondary, fontWeight: "600" },
+    emptySub: { fontSize: 13, color: theme.textSecondary, marginTop: 6 },
+    row: { flexDirection: "row", backgroundColor: theme.card, padding: 16, alignItems: "center", gap: 12 },
+    avatar: {
+      width: 46,
+      height: 46,
+      borderRadius: 23,
+      backgroundColor: theme.primary + "1A",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    avatarText: { fontSize: 18, color: theme.primary, fontWeight: "700" },
+    content: { flex: 1 },
+    topRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 2 },
+    name: { fontSize: 15, fontWeight: "700", color: theme.textPrimary },
+    time: { fontSize: 11, color: theme.textSecondary },
+    postRef: { fontSize: 11, color: theme.primary, marginBottom: 3 },
+    lastMsg: { fontSize: 13, color: theme.textSecondary },
+  });
+}

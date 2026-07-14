@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,8 @@ import {
   checkLiked,
 } from "../../../src/services/boardService";
 import { getOrCreateChat } from "../../../src/services/chatService";
+import { useTheme } from "../../../src/contexts/ThemeContext";
+import type { Theme } from "../../../src/theme/themes";
 import { BOARDS, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
 function timeAgo(ms: number): string {
@@ -34,6 +36,8 @@ function timeAgo(ms: number): string {
 export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
 
   const [post, setPost] = useState<Post | null>(null);
@@ -95,11 +99,11 @@ export default function PostDetailScreen() {
   }
 
   if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" color="#2F6AD9" /></View>;
+    return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
   }
 
   if (!post) {
-    return <View style={styles.center}><Text>投稿が見つかりません</Text></View>;
+    return <View style={styles.center}><Text style={{ color: theme.textSecondary }}>投稿が見つかりません</Text></View>;
   }
 
   const board = BOARDS.find((b) => b.id === boardId);
@@ -176,7 +180,7 @@ export default function PostDetailScreen() {
         <TextInput
           style={styles.input}
           placeholder="コメントを入力..."
-          placeholderTextColor="#aaa"
+          placeholderTextColor={theme.textSecondary}
           value={commentText}
           onChangeText={setCommentText}
           multiline
@@ -193,71 +197,73 @@ export default function PostDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  postCard: { backgroundColor: "#fff", padding: 20, marginBottom: 8 },
-  boardTag: { fontSize: 12, color: "#2F6AD9", fontWeight: "600", marginBottom: 6 },
-  postTitle: { fontSize: 20, fontWeight: "700", color: "#1A1A2E", marginBottom: 8 },
-  metaRow: { flexDirection: "row", gap: 6, marginBottom: 16 },
-  meta: { fontSize: 12, color: "#999" },
-  divider: { height: 1, backgroundColor: "#F0F0F0", marginBottom: 16 },
-  postBody: { fontSize: 15, color: "#333", lineHeight: 24 },
-  actionRow: { flexDirection: "row", gap: 10, marginTop: 20 },
-  likeBtn: {
-    alignSelf: "flex-start",
-    marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    backgroundColor: "#F9F9F9",
-  },
-  likeBtnActive: { borderColor: "#E8334A", backgroundColor: "#FFF0F2" },
-  likeBtnText: { fontSize: 14, color: "#888", fontWeight: "600" },
-  likeBtnTextActive: { color: "#E8334A" },
-  commentHeader: { fontSize: 14, fontWeight: "700", color: "#555", padding: 16, paddingBottom: 8 },
-  commentCard: { backgroundColor: "#fff", padding: 16, marginBottom: 1 },
-  commentAuthorRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
-  commentAuthor: { fontSize: 13, fontWeight: "600", color: "#2F6AD9" },
-  authorTag: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    backgroundColor: "#2F6AD9",
-  },
-  authorTagText: { fontSize: 10, fontWeight: "700", color: "#fff" },
-  commentBody: { fontSize: 14, color: "#333", lineHeight: 22 },
-  commentTime: { fontSize: 11, color: "#bbb", marginTop: 4 },
-  inputBar: {
-    flexDirection: "row",
-    padding: 10,
-    paddingBottom: Platform.OS === "ios" ? 24 : 10,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#E8E8E8",
-    alignItems: "flex-end",
-    gap: 8,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: "#F5F7FA",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: "#333",
-    maxHeight: 100,
-  },
-  sendBtn: {
-    backgroundColor: "#2F6AD9",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  disabled: { opacity: 0.4 },
-  sendText: { color: "#fff", fontWeight: "700", fontSize: 14 },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    center: { flex: 1, justifyContent: "center", alignItems: "center" },
+    postCard: { backgroundColor: theme.card, padding: 20, marginBottom: 8 },
+    boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600", marginBottom: 6 },
+    postTitle: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 8 },
+    metaRow: { flexDirection: "row", gap: 6, marginBottom: 16 },
+    meta: { fontSize: 12, color: theme.textSecondary },
+    divider: { height: 1, backgroundColor: theme.border, marginBottom: 16 },
+    postBody: { fontSize: 15, color: theme.textPrimary, lineHeight: 24 },
+    actionRow: { flexDirection: "row", gap: 10, marginTop: 20 },
+    likeBtn: {
+      alignSelf: "flex-start",
+      marginTop: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: theme.border,
+      backgroundColor: theme.background,
+    },
+    likeBtnActive: { borderColor: theme.accent, backgroundColor: theme.accent + "1A" },
+    likeBtnText: { fontSize: 14, color: theme.textSecondary, fontWeight: "600" },
+    likeBtnTextActive: { color: theme.accent },
+    commentHeader: { fontSize: 14, fontWeight: "700", color: theme.textSecondary, padding: 16, paddingBottom: 8 },
+    commentCard: { backgroundColor: theme.card, padding: 16, marginBottom: 1 },
+    commentAuthorRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
+    commentAuthor: { fontSize: 13, fontWeight: "600", color: theme.primary },
+    authorTag: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      backgroundColor: theme.primary,
+    },
+    authorTagText: { fontSize: 10, fontWeight: "700", color: "#fff" },
+    commentBody: { fontSize: 14, color: theme.textPrimary, lineHeight: 22 },
+    commentTime: { fontSize: 11, color: theme.textSecondary, marginTop: 4 },
+    inputBar: {
+      flexDirection: "row",
+      padding: 10,
+      paddingBottom: Platform.OS === "ios" ? 24 : 10,
+      backgroundColor: theme.card,
+      borderTopWidth: 1,
+      borderColor: theme.border,
+      alignItems: "flex-end",
+      gap: 8,
+    },
+    input: {
+      flex: 1,
+      backgroundColor: theme.background,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+      maxHeight: 100,
+    },
+    sendBtn: {
+      backgroundColor: theme.primary,
+      borderRadius: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+    },
+    disabled: { opacity: 0.4 },
+    sendText: { color: "#fff", fontWeight: "700", fontSize: 14 },
+  });
+}

@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { useRouter } from "expo-router";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 
 function SearchButton() {
   const router = useRouter();
@@ -12,8 +13,15 @@ function SearchButton() {
 }
 
 export default function BoardsLayout() {
+  const { theme } = useTheme();
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.card },
+        headerTintColor: theme.textPrimary,
+        contentStyle: { backgroundColor: theme.background },
+      }}
+    >
       <Stack.Screen name="index" options={{ title: "掲示板", headerRight: () => <SearchButton /> }} />
       <Stack.Screen name="[boardId]" options={{ title: "" }} />
       <Stack.Screen name="search" options={{ title: "検索" }} />

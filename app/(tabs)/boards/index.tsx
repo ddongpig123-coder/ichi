@@ -1,7 +1,10 @@
+import { useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, SectionList, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { usePinnedBoards } from "../../../src/hooks/usePinnedBoards";
 import { useBoards } from "../../../src/hooks/useBoards";
+import { useTheme } from "../../../src/contexts/ThemeContext";
+import type { Theme } from "../../../src/theme/themes";
 import type { BoardMeta } from "../../../src/types/board";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -12,6 +15,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 export default function BoardsScreen() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
   const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
 
@@ -52,7 +57,7 @@ export default function BoardsScreen() {
   }
 
   if (!pinReady || loading) {
-    return <View style={styles.container}><ActivityIndicator style={{ marginTop: 40 }} color="#2F6AD9" /></View>;
+    return <View style={styles.container}><ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} /></View>;
   }
 
   return (
@@ -90,43 +95,45 @@ export default function BoardsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  bestBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#fff",
-    padding: 20,
-  },
-  bestTitle: { fontSize: 16, fontWeight: "700", color: "#E8334A", marginBottom: 2 },
-  bestSub: { fontSize: 13, color: "#888" },
-  bestArrow: { fontSize: 22, color: "#ccc" },
-  sectionHeader: { backgroundColor: "#F5F7FA", paddingHorizontal: 16, paddingVertical: 8 },
-  sectionTitle: { fontSize: 12, fontWeight: "700", color: "#999", letterSpacing: 0.5 },
-  sectionSep: { height: 8, backgroundColor: "#F5F7FA" },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingVertical: 16,
-    paddingLeft: 20,
-    paddingRight: 12,
-  },
-  rowContent: { flex: 1 },
-  sep: { height: 1, backgroundColor: "#E8E8E8" },
-  label: { fontSize: 16, fontWeight: "700", color: "#1A1A2E", marginBottom: 4 },
-  desc: { fontSize: 13, color: "#888" },
-  pinBtn: { padding: 8 },
-  pinIcon: { fontSize: 18 },
-  createBtn: {
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: "#2F6AD9",
-    borderStyle: "dashed",
-    alignItems: "center",
-  },
-  createBtnText: { color: "#2F6AD9", fontWeight: "700", fontSize: 15 },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    bestBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme.card,
+      padding: 20,
+    },
+    bestTitle: { fontSize: 16, fontWeight: "700", color: theme.accent, marginBottom: 2 },
+    bestSub: { fontSize: 13, color: theme.textSecondary },
+    bestArrow: { fontSize: 22, color: theme.textSecondary },
+    sectionHeader: { backgroundColor: theme.background, paddingHorizontal: 16, paddingVertical: 8 },
+    sectionTitle: { fontSize: 12, fontWeight: "700", color: theme.textSecondary, letterSpacing: 0.5 },
+    sectionSep: { height: 8, backgroundColor: theme.background },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.card,
+      paddingVertical: 16,
+      paddingLeft: 20,
+      paddingRight: 12,
+    },
+    rowContent: { flex: 1 },
+    sep: { height: 1, backgroundColor: theme.border },
+    label: { fontSize: 16, fontWeight: "700", color: theme.textPrimary, marginBottom: 4 },
+    desc: { fontSize: 13, color: theme.textSecondary },
+    pinBtn: { padding: 8 },
+    pinIcon: { fontSize: 18 },
+    createBtn: {
+      margin: 16,
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 1.5,
+      borderColor: theme.primary,
+      borderStyle: "dashed",
+      alignItems: "center",
+    },
+    createBtnText: { color: theme.primary, fontWeight: "700", fontSize: 15 },
+  });
+}

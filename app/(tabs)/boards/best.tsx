@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 import { fetchBestPosts } from "../../../src/services/boardService";
+import type { Theme } from "../../../src/theme/themes";
 import type { Post } from "../../../src/types/board";
 
 type BestPost = Post & { boardLabel: string };
@@ -25,6 +27,8 @@ function timeAgo(ms: number): string {
 
 export default function BestPostsScreen() {
   const { schoolDomain } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [posts, setPosts] = useState<BestPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +51,7 @@ export default function BestPostsScreen() {
   }
 
   if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" color="#2F6AD9" /></View>;
+    return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
   }
 
   return (
@@ -97,34 +101,36 @@ export default function BestPostsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
-  header: { padding: 20, paddingBottom: 12 },
-  headerTitle: { fontSize: 20, fontWeight: "800", color: "#1A1A2E" },
-  headerSub: { fontSize: 13, color: "#888", marginTop: 4 },
-  sep: { height: 1, backgroundColor: "#E8E8E8" },
-  row: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    padding: 16,
-    alignItems: "center",
-    gap: 12,
-  },
-  rankBadge: { width: 32, alignItems: "center" },
-  rank: { fontSize: 16, fontWeight: "700", color: "#aaa" },
-  rankTop: { color: "#E8334A" },
-  content: { flex: 1 },
-  tagRow: { flexDirection: "row", marginBottom: 4 },
-  boardTag: {
-    backgroundColor: "#EEF3FF",
-    borderRadius: 4,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  boardTagText: { fontSize: 11, color: "#2F6AD9", fontWeight: "600" },
-  title: { fontSize: 15, fontWeight: "600", color: "#1A1A2E", marginBottom: 6 },
-  meta: { flexDirection: "row", gap: 6 },
-  metaText: { fontSize: 12, color: "#999" },
-  empty: { color: "#aaa", fontSize: 14, textAlign: "center", lineHeight: 22 },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
+    header: { padding: 20, paddingBottom: 12 },
+    headerTitle: { fontSize: 20, fontWeight: "800", color: theme.textPrimary },
+    headerSub: { fontSize: 13, color: theme.textSecondary, marginTop: 4 },
+    sep: { height: 1, backgroundColor: theme.border },
+    row: {
+      flexDirection: "row",
+      backgroundColor: theme.card,
+      padding: 16,
+      alignItems: "center",
+      gap: 12,
+    },
+    rankBadge: { width: 32, alignItems: "center" },
+    rank: { fontSize: 16, fontWeight: "700", color: theme.textSecondary },
+    rankTop: { color: theme.accent },
+    content: { flex: 1 },
+    tagRow: { flexDirection: "row", marginBottom: 4 },
+    boardTag: {
+      backgroundColor: theme.primary + "1A",
+      borderRadius: 4,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+    },
+    boardTagText: { fontSize: 11, color: theme.primary, fontWeight: "600" },
+    title: { fontSize: 15, fontWeight: "600", color: theme.textPrimary, marginBottom: 6 },
+    meta: { flexDirection: "row", gap: 6 },
+    metaText: { fontSize: 12, color: theme.textSecondary },
+    empty: { color: theme.textSecondary, fontSize: 14, textAlign: "center", lineHeight: 22 },
+  });
+}

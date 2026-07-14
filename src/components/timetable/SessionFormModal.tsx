@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Modal,
   View,
@@ -9,6 +9,8 @@ import {
   Pressable,
 } from "react-native";
 import { PRESET_COLORS, EXTRA_COLORS, type Day, type Period } from "../../types/timetable";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { Theme } from "../../theme/themes";
 
 export interface SessionFormValue {
   name: string;
@@ -36,6 +38,8 @@ export default function SessionFormModal({
   onSubmit,
   onDelete,
 }: SessionFormModalProps) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [name, setName] = useState("");
   const [teacher, setTeacher] = useState("");
   const [room, setRoom] = useState("");
@@ -80,21 +84,21 @@ export default function SessionFormModal({
           <TextInput
             style={styles.input}
             placeholder="講義名"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.textSecondary}
             value={name}
             onChangeText={setName}
           />
           <TextInput
             style={styles.input}
             placeholder="担当教授"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.textSecondary}
             value={teacher}
             onChangeText={setTeacher}
           />
           <TextInput
             style={styles.input}
             placeholder="教室"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.textSecondary}
             value={room}
             onChangeText={setRoom}
           />
@@ -160,73 +164,75 @@ export default function SessionFormModal({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  card: {
-    width: 300,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  title: { fontSize: 16, fontWeight: "700", color: "#1A1A2E" },
-  subtitle: { fontSize: 12, color: "#888", marginTop: 2, marginBottom: 12 },
-  deleteButton: {
-    backgroundColor: "#FDECEC",
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  deleteButtonText: { color: "#E2574C", fontSize: 12, fontWeight: "700" },
-  input: {
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 10,
-  },
-  label: { fontSize: 12, color: "#888", marginBottom: 8, marginTop: 4 },
-  colorRow: { flexDirection: "row", gap: 10, flexWrap: "wrap" },
-  swatch: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
-  swatchSelected: { borderColor: "#1A1A2E" },
-  addSwatch: {
-    backgroundColor: "#F0F0F0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  addSwatchText: { fontSize: 16, color: "#888", fontWeight: "700" },
-  palette: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
-  },
-  buttonRow: { flexDirection: "row", gap: 10, marginTop: 20 },
-  button: { flex: 1, borderRadius: 8, paddingVertical: 12, alignItems: "center" },
-  cancelButton: { backgroundColor: "#F0F0F0" },
-  cancelText: { color: "#666", fontWeight: "600" },
-  submitButton: { backgroundColor: "#2F6AD9" },
-  disabled: { opacity: 0.5 },
-  submitText: { color: "#fff", fontWeight: "700" },
-});
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    card: {
+      width: 300,
+      backgroundColor: theme.card,
+      borderRadius: 12,
+      padding: 20,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+    },
+    title: { fontSize: 16, fontWeight: "700", color: theme.textPrimary },
+    subtitle: { fontSize: 12, color: theme.textSecondary, marginTop: 2, marginBottom: 12 },
+    deleteButton: {
+      backgroundColor: theme.accent + "1A",
+      borderRadius: 6,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+    },
+    deleteButtonText: { color: theme.accent, fontSize: 12, fontWeight: "700" },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+      marginBottom: 10,
+    },
+    label: { fontSize: 12, color: theme.textSecondary, marginBottom: 8, marginTop: 4 },
+    colorRow: { flexDirection: "row", gap: 10, flexWrap: "wrap" },
+    swatch: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      borderWidth: 2,
+      borderColor: "transparent",
+    },
+    swatchSelected: { borderColor: theme.textPrimary },
+    addSwatch: {
+      backgroundColor: theme.background,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    addSwatchText: { fontSize: 16, color: theme.textSecondary, fontWeight: "700" },
+    palette: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 10,
+      marginTop: 12,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
+    },
+    buttonRow: { flexDirection: "row", gap: 10, marginTop: 20 },
+    button: { flex: 1, borderRadius: 8, paddingVertical: 12, alignItems: "center" },
+    cancelButton: { backgroundColor: theme.background },
+    cancelText: { color: theme.textSecondary, fontWeight: "600" },
+    submitButton: { backgroundColor: theme.primary },
+    disabled: { opacity: 0.5 },
+    submitText: { color: "#fff", fontWeight: "700" },
+  });
+}
