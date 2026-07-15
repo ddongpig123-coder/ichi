@@ -9,13 +9,11 @@ import {
   RefreshControl,
 } from "react-native";
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
-import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
-import { fetchPosts } from "../../../src/services/boardService";
+import { fetchLoungePosts } from "../../../src/services/loungeService";
 import type { Theme } from "../../../src/theme/themes";
-import { OFFICIAL_BOARDS, type BoardId, type Post } from "../../../src/types/board";
-import { useBoards } from "../../../src/hooks/useBoards";
+import { LOUNGES, type LoungeId, type LoungePost } from "../../../src/types/lounge";
 
 function timeAgo(ms: number): string {
   const diff = Date.now() - ms;
@@ -25,32 +23,30 @@ function timeAgo(ms: number): string {
   return `${Math.floor(diff / 86400000)}日前`;
 }
 
-export default function PostListScreen() {
-  const { boardId } = useLocalSearchParams<{ boardId: string }>();
-  const { schoolDomain } = useAuth();
+export default function LoungePostListScreen() {
+  const { loungeId } = useLocalSearchParams<{ loungeId: string }>();
   const { theme } = useTheme();
   const { isBlocked } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const navigation = useNavigation();
-  const { allBoards } = useBoards();
 
-  const board = allBoards.find((b) => b.id === boardId);
+  const lounge = LOUNGES.find((l) => l.id === loungeId);
 
   React.useEffect(() => {
-    if (board) navigation.setOptions({ title: board.label });
-  }, [board]);
-  const [posts, setPosts] = useState<Post[]>([]);
+    if (lounge) navigation.setOptions({ title: lounge.label });
+  }, [lounge]);
+
+  const [posts, setPosts] = useState<LoungePost[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
-    if (!schoolDomain || !boardId) return;
-    const { posts: p } = await fetchPosts(schoolDomain, boardId as BoardId);
+    if (!loungeId) return;
+    const p = await fetchLoungePosts(loungeId as LoungeId);
     setPosts(p);
-  }, [schoolDomain, boardId]);
+  }, [loungeId]);
 
-  // 화면 포커스될 때마다 새로고침 (글 작성 후 돌아올 때 포함)
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
@@ -92,13 +88,15 @@ export default function PostListScreen() {
           ) : (
             <TouchableOpacity
               style={styles.row}
-              onPress={() => router.push(`/post/${boardId}/${item.id}`)}
+              onPress={() => router.push(`/lounge/${loungeId}/${item.id}`)}
             >
               <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
               <View style={styles.meta}>
                 <Text style={styles.metaText}>匿名</Text>
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>{timeAgo(item.createdAt)}</Text>
+                <Text style={styles.metaText}>·</Text>
+                <Text style={styles.metaText}>❤️ {item.likeCount}</Text>
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>💬 {item.commentCount}</Text>
               </View>
@@ -108,7 +106,7 @@ export default function PostListScreen() {
       />
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => router.push(`/post/${boardId}/write`)}
+        onPress={() => router.push(`/lounge/${loungeId}/write`)}
       >
         <Text style={styles.fabText}>＋</Text>
       </TouchableOpacity>

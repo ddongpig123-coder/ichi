@@ -69,6 +69,14 @@ export default function BoardsScreen() {
         SectionSeparatorComponent={() => <View style={styles.sectionSep} />}
         ListHeaderComponent={
           <>
+            <TouchableOpacity style={styles.loungeBanner} onPress={() => router.push("/lounge")}>
+              <View>
+                <Text style={styles.loungeTitle}>🌏 留学生ラウンジ</Text>
+                <Text style={styles.loungeSub}>全国の留学生と情報交換（ビザ・バイト・住まいなど）</Text>
+              </View>
+              <Text style={styles.bestArrow}>›</Text>
+            </TouchableOpacity>
+            <View style={styles.sectionSep} />
             <TouchableOpacity style={styles.bestBanner} onPress={() => router.push("/(tabs)/boards/best")}>
               <View>
                 <Text style={styles.bestTitle}>❤️ ベスト投稿</Text>
@@ -108,6 +116,15 @@ function makeStyles(theme: Theme) {
     bestTitle: { fontSize: 16, fontWeight: "700", color: theme.accent, marginBottom: 2 },
     bestSub: { fontSize: 13, color: theme.textSecondary },
     bestArrow: { fontSize: 22, color: theme.textSecondary },
+    loungeBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme.primary + "14",
+      padding: 20,
+    },
+    loungeTitle: { fontSize: 16, fontWeight: "700", color: theme.primary, marginBottom: 2 },
+    loungeSub: { fontSize: 13, color: theme.textSecondary, maxWidth: 260 },
     sectionHeader: { backgroundColor: theme.background, paddingHorizontal: 16, paddingVertical: 8 },
     sectionTitle: { fontSize: 12, fontWeight: "700", color: theme.textSecondary, letterSpacing: 0.5 },
     sectionSep: { height: 8, backgroundColor: theme.background },

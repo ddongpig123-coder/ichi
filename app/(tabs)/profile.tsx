@@ -258,6 +258,15 @@ export default function ProfileScreen() {
         })}
       </View>
 
+      {/* 設定 — ブロックリスト管理など */}
+      <View style={styles.sectionHeaderRow}>
+        <Text style={styles.sectionTitle}>⚙️ 設定</Text>
+      </View>
+      <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/blocked-users")}>
+        <Text style={styles.settingText}>🚫 ブロックリスト</Text>
+        <Text style={styles.settingArrow}>›</Text>
+      </TouchableOpacity>
+
       {/* 로그인 기능은 나중에 다시 붙일 예정 — 이메일 계정일 때만 로그아웃 노출 */}
       {user && !user.isAnonymous ? (
         <TouchableOpacity style={styles.signOutBtn} onPress={() => signOut()}>
@@ -327,5 +336,17 @@ function makeStyles(theme: Theme) {
     },
     accountRowText: { fontSize: 13, fontWeight: "600", color: theme.textPrimary },
     accountRowAction: { fontSize: 13, fontWeight: "700", color: theme.primary },
+    settingRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: theme.card,
+      borderRadius: 8,
+      paddingHorizontal: 14,
+      paddingVertical: 14,
+      marginTop: 8,
+    },
+    settingText: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
+    settingArrow: { fontSize: 20, color: theme.textSecondary },
   });
 }

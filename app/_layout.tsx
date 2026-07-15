@@ -1,6 +1,7 @@
 import { Stack, ThemeProvider as NavThemeProvider, DefaultTheme, DarkTheme } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "../src/contexts/AuthContext";
+import { BlockProvider } from "../src/contexts/BlockContext";
 import { FriendsProvider } from "../src/contexts/FriendsContext";
 import { ThemeProvider, useTheme } from "../src/contexts/ThemeContext";
 
@@ -32,9 +33,11 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider>
         <AuthProvider>
-          <FriendsProvider>
-            <ThemedStack />
-          </FriendsProvider>
+          <BlockProvider>
+            <FriendsProvider>
+              <ThemedStack />
+            </FriendsProvider>
+          </BlockProvider>
         </AuthProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

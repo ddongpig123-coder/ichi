@@ -13,20 +13,20 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
-import {
-  fetchPost,
-  fetchComments,
-  createComment,
-  toggleLike,
-  checkLiked,
-} from "../../../src/services/boardService";
-import { getOrCreateChat } from "../../../src/services/chatService";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import {
+  fetchLoungePost,
+  fetchLoungeComments,
+  createLoungeComment,
+  toggleLoungeLike,
+  checkLoungeLiked,
+} from "../../../src/services/loungeService";
+import { getOrCreateChat } from "../../../src/services/chatService";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
-import { BOARDS, type BoardId, type Post, type Comment } from "../../../src/types/board";
+import { LOUNGES, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
 
 function timeAgo(ms: number): string {
   const diff = Date.now() - ms;
@@ -36,43 +36,41 @@ function timeAgo(ms: number): string {
   return `${Math.floor(diff / 86400000)}日前`;
 }
 
-export default function PostDetailScreen() {
-  const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
+export default function LoungePostDetailScreen() {
+  const { loungeId, postId } = useLocalSearchParams<{ loungeId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
   const { isBlocked } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
 
-  // 通報・ブロックメニューの対象
-  const [modTarget, setModTarget] = useState<
-    | { targetType: ReportTargetType; targetPath: string; targetAuthorUid: string }
-    | null
-  >(null);
-
-  const [post, setPost] = useState<Post | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [post, setPost] = useState<LoungePost | null>(null);
+  const [comments, setComments] = useState<LoungeComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [liking, setLiking] = useState(false);
+  const [modTarget, setModTarget] = useState<
+    | { targetType: ReportTargetType; targetPath: string; targetAuthorUid: string }
+    | null
+  >(null);
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    if (!schoolDomain || !boardId || !postId) return;
+    if (!loungeId || !postId) return;
     Promise.all([
-      fetchPost(schoolDomain, boardId as BoardId, postId),
-      fetchComments(schoolDomain, boardId as BoardId, postId),
-      user ? checkLiked(schoolDomain, boardId as BoardId, postId, user.uid) : Promise.resolve(false),
+      fetchLoungePost(loungeId as LoungeId, postId),
+      fetchLoungeComments(loungeId as LoungeId, postId),
+      user ? checkLoungeLiked(loungeId as LoungeId, postId, user.uid) : Promise.resolve(false),
     ]).then(([p, c, isLiked]) => {
       setPost(p);
       setComments(c);
       setLiked(isLiked);
       setLikeCount(p?.likeCount ?? 0);
     }).finally(() => setLoading(false));
-  }, [schoolDomain, boardId, postId]);
+  }, [loungeId, postId]);
 
   async function handleSendMessage(targetUid: string) {
     if (!user || !schoolDomain || !post) return;
@@ -82,9 +80,9 @@ export default function PostDetailScreen() {
   }
 
   async function handleLike() {
-    if (!user || !schoolDomain) return;
+    if (!user) return;
     setLiking(true);
-    const result = await toggleLike(schoolDomain, boardId as BoardId, postId, user.uid);
+    const result = await toggleLoungeLike(loungeId as LoungeId, postId, user.uid);
     setLiked(result.liked);
     setLikeCount(result.likeCount);
     setLiking(false);
@@ -92,12 +90,12 @@ export default function PostDetailScreen() {
 
   async function handleComment() {
     if (!commentText.trim()) return;
-    if (!user || !schoolDomain) { Alert.alert("ログインが必要です"); return; }
+    if (!user) { Alert.alert("ログインが必要です"); return; }
 
     setSubmitting(true);
     try {
-      await createComment(schoolDomain, boardId as BoardId, postId, user.uid, commentText.trim());
-      const updated = await fetchComments(schoolDomain, boardId as BoardId, postId);
+      await createLoungeComment(loungeId as LoungeId, postId, user.uid, commentText.trim());
+      const updated = await fetchLoungeComments(loungeId as LoungeId, postId);
       setComments(updated);
       setCommentText("");
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
@@ -116,10 +114,8 @@ export default function PostDetailScreen() {
     return <View style={styles.center}><Text style={{ color: theme.textSecondary }}>投稿が見つかりません</Text></View>;
   }
 
-  const board = BOARDS.find((b) => b.id === boardId);
+  const lounge = LOUNGES.find((l) => l.id === loungeId);
 
-  // 같은 사람이 여러 번 댓글을 달아도 같은 번호(匿名1, 匿名2...)가 유지되도록
-  // authorUid의 첫 등장 순서로 번호를 부여
   const anonNumbers = new Map<string, number>();
   for (const c of comments) {
     if (!anonNumbers.has(c.authorUid)) anonNumbers.set(c.authorUid, anonNumbers.size + 1);
@@ -132,9 +128,8 @@ export default function PostDetailScreen() {
       keyboardVerticalOffset={90}
     >
       <ScrollView ref={scrollRef} style={styles.container}>
-        {/* Post */}
         <View style={styles.postCard}>
-          <Text style={styles.boardTag}>{board?.label}</Text>
+          <Text style={styles.boardTag}>{lounge?.icon} {lounge?.label}</Text>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
             <TouchableOpacity
@@ -151,7 +146,7 @@ export default function PostDetailScreen() {
               onPress={() =>
                 setModTarget({
                   targetType: "post",
-                  targetPath: `schools/${schoolDomain}/boards/${boardId}/posts/${postId}`,
+                  targetPath: `lounges/${loungeId}/posts/${postId}`,
                   targetAuthorUid: post.authorUid,
                 })
               }
@@ -174,7 +169,6 @@ export default function PostDetailScreen() {
           </View>
         </View>
 
-        {/* Comments */}
         <Text style={styles.commentHeader}>コメント {comments.length}</Text>
         {comments.map((c) =>
           isBlocked(c.authorUid) ? (
@@ -201,7 +195,7 @@ export default function PostDetailScreen() {
                   onPress={() =>
                     setModTarget({
                       targetType: "comment",
-                      targetPath: `schools/${schoolDomain}/boards/${boardId}/posts/${postId}/comments/${c.id}`,
+                      targetPath: `lounges/${loungeId}/posts/${postId}/comments/${c.id}`,
                       targetAuthorUid: c.authorUid,
                     })
                   }
@@ -217,7 +211,6 @@ export default function PostDetailScreen() {
         <View style={{ height: 80 }} />
       </ScrollView>
 
-      {/* Comment input */}
       <View style={styles.inputBar}>
         <TextInput
           style={styles.input}
