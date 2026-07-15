@@ -40,4 +40,7 @@ export interface UserProfile {
   // 友達リストの表示順（本人のみが読む設定値。friendships が関係の実体）
   frequentFriendIds?: string[]; // よく会う友達（最大6人・ホーム画面表示）
   friendListOrder?: string[];   // その他の友達の並び順
+
+  // 利用規約への同意日時（オンボーディング完了時に記録。EULA要件の証跡）
+  agreedTermsAt?: number;
 }

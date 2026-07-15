@@ -1,8 +1,24 @@
-import { Tabs } from "expo-router";
+import { useEffect, useState } from "react";
+import { Tabs, Redirect } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { useI18n } from "../../src/contexts/I18nContext";
+import { ONBOARDED_KEY } from "../onboarding";
 
 export default function TabsLayout() {
   const { theme } = useTheme();
+  const { t } = useI18n();
+
+  // 初回起動判定: 未オンボーディングならオンボーディング画面へ
+  const [onboarded, setOnboarded] = useState<boolean | null>(null);
+  useEffect(() => {
+    AsyncStorage.getItem(ONBOARDED_KEY)
+      .then((v) => setOnboarded(v === "1"))
+      .catch(() => setOnboarded(true)); // 判定不能時はブロックしない
+  }, []);
+
+  if (onboarded === null) return null; // フラグ読込中（一瞬）
+  if (!onboarded) return <Redirect href="/onboarding" />;
 
   return (
     <Tabs
@@ -14,11 +30,11 @@ export default function TabsLayout() {
         headerTintColor: theme.textPrimary,
       }}
     >
-      <Tabs.Screen name="index" options={{ title: "ホーム", headerShown: false }} />
-      <Tabs.Screen name="boards" options={{ title: "掲示板", headerShown: false }} />
-      <Tabs.Screen name="friends" options={{ title: "友達", headerShown: false }} />
-      <Tabs.Screen name="messages" options={{ title: "メッセージ", headerShown: false }} />
-      <Tabs.Screen name="profile" options={{ title: "プロフィール" }} />
+      <Tabs.Screen name="index" options={{ title: t("tabs.home"), headerShown: false }} />
+      <Tabs.Screen name="boards" options={{ title: t("tabs.boards"), headerShown: false }} />
+      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false }} />
+      <Tabs.Screen name="messages" options={{ title: t("tabs.messages"), headerShown: false }} />
+      <Tabs.Screen name="profile" options={{ title: t("tabs.profile") }} />
     </Tabs>
   );
 }

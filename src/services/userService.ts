@@ -165,6 +165,21 @@ export async function updateAcademicInfo(uid: string, academic: AcademicInfo): P
   }
 }
 
+// オンボーディング完了時の一括保存（規約同意日時・言語・学校）。
+// 学校は公開情報（先輩時間割の学部公開判定等に使用）なので usersPublic にもミラーする。
+export async function completeOnboarding(
+  uid: string,
+  language: UserProfile["language"],
+  schoolDomain: string | null
+): Promise<void> {
+  await setDoc(
+    userDoc(uid),
+    { uid, language, schoolDomain, agreedTermsAt: Date.now() },
+    { merge: true }
+  );
+  await writePublicMirror(uid, { schoolDomain });
+}
+
 // 自分の友達リスト表示順（よく会う友達など）の保存。users本体のみでよい。
 export async function saveFriendOrders(
   uid: string,
