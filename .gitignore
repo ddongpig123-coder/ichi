@@ -30,8 +30,14 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# local env files (Firebase 키·Microsoft 클라이언트 ID — 절대 커밋 금지)
+.env
 .env*.local
+
+# Firebase Admin SDK 서비스 계정 키 (크롤러용 — 유출 시 DB 전체 권한 노출)
+*serviceAccount*.json
+*service-account*.json
+scripts/keys/
 
 # typescript
 *.tsbuildinfo

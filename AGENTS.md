@@ -31,6 +31,13 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - 기능 단위로 커밋. 브랜치: 태희 = `taehui`, 준희 = `junhee`, 병합 후 `master` 푸시
 - 규칙 배포: `npx firebase-tools deploy --only firestore:rules` (프로젝트 ichi-6b8f7)
 
+## 병렬 작업 축 (충돌 방지)
+- 태희 축: 인증/시간표/친구/i18n·온보딩 — `authService`, `timetableService`, `friendRequestService`, 관련 화면
+- 준희 축: 게시판/쪽지/라운지/신고·차단/테마 — `boardService`, `loungeService`, `chatService`, 관련 화면
+- `firestore.rules`·`src/types/` 변경과 규칙 배포는 태희 창구로 일원화
+- **크롤러(scripts/) 작업 시**: 적재 데이터는 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.
+  서비스 계정 키는 절대 커밋 금지 (.gitignore에 패턴 등록됨)
+
 ## 현재 상태 요약 (2026-07 기준)
 - 실데이터: 게시판/쪽지/프로필 학업정보 (Firestore 연동 완료)
 - 목업: 친구 목록, 시간표, 친구 시간표 (8월 실데이터 전환 예정 — ROADMAP 참조)
