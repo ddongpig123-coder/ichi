@@ -93,11 +93,17 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         timeAgo/요일 표기 헬퍼 일원화, 프로필에 언어 토글(🌐) 추가, Microsoft 버튼
         "認証バッジ付与" 라벨 적용(사전 키). 웹 E2E: 온보딩 한국어→전 탭 확인, 토글 왕복.
         잔여(데이터 마스터): 게시판/라운지/테마 이름의 ko 필드는 별도 작업
-  - Microsoft 네이티브(폰) 연동 구현 (현재 웹 전용 — expo-web-browser 방식)
-  - 학교 이메일 인증 링크(sendEmailVerification) 추가 — M365 없는 대학 커버용.
-    대학 판정은 `.ac.jp` 접미사 규칙 유지(일본 인가 대학 전용 도메인이라 화이트리스트 불필요),
-    학교명 표시용 마스터 데이터(도메인↔학교명)는 온보딩 학교 선택과 함께 구축
-  - Microsoft 버튼에 "認証バッジ付与" 라벨로 이메일 등록과 역할 차별화
+  - [x] 학교 이메일 인증 링크 완료 (7/16) — sendEmailVerification 자동 발송(대학 메일 등록 시),
+        계정 화면에 인증 섹션(발송/확인 버튼), 인증 배지(계정+프로필). 배지 판정은
+        `대학 메일 && (emailVerified || Microsoft 연계)` — verificationLevel 승격은 서버 책무 유지.
+        실메일 수신 왕복 테스트는 실계정으로 확인 필요
+  - [x] Microsoft 버튼 "認証バッジ付与" 라벨 적용 (7/16, i18n 사전 키)
+  - Microsoft 네이티브(폰) 연동 — **보류 (결정 필요)**. Firebase JS SDK는 Microsoft 토큰의
+    signInWithCredential 검증 미지원(7/14 확인)이라 클라이언트 단독 구현 불가. 선택지:
+    (a) Cloud Functions 커스텀 토큰 중계 — Blaze 요금제 필요
+    (b) dev-client(EAS build) + @react-native-firebase 전환 — 12월 EAS Build 계획과 합류 가능
+    → 권장: (b)로 12월에 흡수. 폰에서는 방금 구현한 학교 이메일 인증이 배지 경로를 커버하므로
+    긴급성 낮음. 결정은 태희 확인 후
 - 3주차: 신고 기능 (글/댓글/쪽지 신고 → `reports` 컬렉션), 차단 기능 (차단 유저 콘텐츠 필터링)
   - [x] 완료 (7/14) — `reportService`/`blockService`, `BlockContext`(앱 전역 차단목록),
         공통 `ModerationMenu`(通報 이유 6종 + ブロック 확인), 게시글/댓글/쪽지 렌더 시
