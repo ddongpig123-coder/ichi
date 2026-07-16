@@ -12,8 +12,12 @@ import {
   signInWithMicrosoft,
   signOut,
   isUniversityEmail,
+  isSchoolVerified,
+  sendSchoolVerificationEmail,
+  reloadAndCheckEmailVerified,
   MICROSOFT_WEB_ONLY_ERROR,
 } from "../src/services/authService";
+import { auth } from "../src/config/firebase";
 import { updateMicrosoftAccountInfo } from "../src/services/userService";
 
 // Alert.alert は react-native-web では何も表示されない(no-op)ため、
@@ -56,8 +60,11 @@ export default function AccountScreen() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [busy, setBusy] = useState(false);
+  // 学校認証バッジ表示。auth.currentUser基準（reload後の最新状態を反映するためローカルstate）
+  const [verified, setVerified] = useState(() => isSchoolVerified(auth.currentUser));
 
   const isGuest = user?.isAnonymous ?? true;
+  const isUniEmail = !!user?.email && isUniversityEmail(user.email);
 
   function goBack() {
     router.canGoBack() ? router.back() : router.replace("/(tabs)");
@@ -72,6 +79,10 @@ export default function AccountScreen() {
     setBusy(true);
     try {
       await linkAnonymousWithEmail(email.trim(), password, nickname.trim());
+      // 大学メールなら所有確認の認証メールを自動送信（失敗しても登録は成立）
+      if (isUniversityEmail(email.trim())) {
+        sendSchoolVerificationEmail().catch(() => {});
+      }
       notify(t("account.registerDone"), t("account.registerDoneMessage"));
       goBack();
     } catch (e: any) {
@@ -141,6 +152,31 @@ export default function AccountScreen() {
     }
   }
 
+  async function handleSendVerification() {
+    setBusy(true);
+    try {
+      await sendSchoolVerificationEmail();
+      notify(t("account.verificationSent"), t("account.verificationSentMessage"));
+    } catch (e: any) {
+      notify(t("account.sendFailed"), e.message ?? String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleCheckVerification() {
+    setBusy(true);
+    try {
+      await reloadAndCheckEmailVerified();
+      const ok = isSchoolVerified(auth.currentUser);
+      setVerified(ok);
+      if (ok) notify(t("account.verifiedNow"));
+      else notify(t("account.notVerifiedYet"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function handleSignOut() {
     confirmDialog(
       t("account.logout"),
@@ -166,6 +202,38 @@ export default function AccountScreen() {
             <Text style={styles.title}>{t("account.title")}</Text>
             <Text style={styles.label}>{t("account.email")}</Text>
             <Text style={styles.value}>{user?.email ?? "-"}</Text>
+
+            {/* 学校メール認証 — 大学メール(.ac.jp等)のみ対象。M365連携済みなら認証済み扱い */}
+            {isUniEmail && verified && (
+              <View style={styles.verifiedBadge}>
+                <Text style={styles.verifiedBadgeText}>✓ {t("account.verifiedBadge")}</Text>
+              </View>
+            )}
+            {isUniEmail && !verified && (
+              <>
+                <Text style={styles.label}>{t("account.verifySection")}</Text>
+                <Text style={styles.description}>{t("account.verifyDescription")}</Text>
+                <View style={styles.verifyButtonRow}>
+                  <TouchableOpacity
+                    style={[styles.verifyButton, busy && styles.buttonDisabled]}
+                    onPress={handleSendVerification}
+                    disabled={busy}
+                  >
+                    <Text style={styles.verifyButtonText}>{t("account.sendVerification")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.verifyButtonSecondary, busy && styles.buttonDisabled]}
+                    onPress={handleCheckVerification}
+                    disabled={busy}
+                  >
+                    <Text style={styles.verifyButtonSecondaryText}>
+                      {t("account.checkVerification")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+
             <TouchableOpacity style={styles.dangerButton} onPress={handleSignOut}>
               <Text style={styles.dangerButtonText}>{t("account.logout")}</Text>
             </TouchableOpacity>
@@ -355,6 +423,35 @@ const styles = StyleSheet.create({
   },
 
   dividerText: { textAlign: "center", color: "#999", fontSize: 12, marginVertical: 12 },
+
+  verifiedBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: "#E8F5E9",
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginTop: 12,
+  },
+  verifiedBadgeText: { color: "#2E7D32", fontSize: 13, fontWeight: "700" },
+  verifyButtonRow: { flexDirection: "row", gap: 10, marginTop: 12 },
+  verifyButton: {
+    flex: 1,
+    backgroundColor: "#2F6AD9",
+    borderRadius: 8,
+    paddingVertical: 11,
+    alignItems: "center",
+  },
+  verifyButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
+  verifyButtonSecondary: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#2F6AD9",
+    borderRadius: 8,
+    paddingVertical: 11,
+    alignItems: "center",
+  },
+  verifyButtonSecondaryText: { color: "#2F6AD9", fontSize: 13, fontWeight: "700" },
   microsoftButton: {
     backgroundColor: "#fff",
     borderWidth: 1,

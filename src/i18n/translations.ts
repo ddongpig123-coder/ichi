@@ -100,6 +100,18 @@ const ja = {
   "account.errPopupBlockedMessage":
     "ブラウザの設定でこのサイトのポップアップを許可してから、もう一度お試しください。",
   "account.errFailed": "失敗しました",
+  "account.verifySection": "学校メール認証",
+  "account.verifyDescription":
+    "大学メール（~.ac.jp）の所有確認のため、認証メールのリンクを開いてください。認証されると学校認証バッジが付きます。",
+  "account.sendVerification": "認証メールを送信",
+  "account.verificationSent": "認証メールを送信しました",
+  "account.verificationSentMessage":
+    "メールボックスに届いたリンクを開いた後、「認証を確認」を押してください。",
+  "account.checkVerification": "認証を確認",
+  "account.verifiedNow": "学校認証が完了しました 🎉",
+  "account.notVerifiedYet":
+    "まだ認証が確認できません。メールのリンクを開いてから、もう一度お試しください。",
+  "account.sendFailed": "送信に失敗しました",
 
   // 友達
   "friends.title": "友達",
@@ -380,6 +392,18 @@ const ko: Record<TranslationKey, string> = {
   "account.errPopupBlockedMessage":
     "브라우저 설정에서 이 사이트의 팝업을 허용한 뒤 다시 시도해 주세요.",
   "account.errFailed": "실패했습니다",
+  "account.verifySection": "학교 메일 인증",
+  "account.verifyDescription":
+    "대학 메일(~.ac.jp) 소유 확인을 위해 인증 메일의 링크를 열어 주세요. 인증되면 학교 인증 배지가 붙습니다.",
+  "account.sendVerification": "인증 메일 보내기",
+  "account.verificationSent": "인증 메일을 보냈습니다",
+  "account.verificationSentMessage":
+    "메일함에 도착한 링크를 연 뒤 「인증 확인」을 눌러 주세요.",
+  "account.checkVerification": "인증 확인",
+  "account.verifiedNow": "학교 인증이 완료되었습니다 🎉",
+  "account.notVerifiedYet":
+    "아직 인증이 확인되지 않습니다. 메일의 링크를 연 뒤 다시 시도해 주세요.",
+  "account.sendFailed": "전송에 실패했습니다",
 
   "friends.title": "친구",
   "friends.add": "+ 추가",

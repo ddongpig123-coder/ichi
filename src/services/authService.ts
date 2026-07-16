@@ -6,6 +6,7 @@ import {
   linkWithPopup,
   signInWithPopup,
   OAuthProvider,
+  sendEmailVerification,
   signOut as firebaseSignOut,
   User,
 } from "firebase/auth";
@@ -97,4 +98,34 @@ export function isUniversityEmail(email: string): boolean {
     ".university",
   ];
   return allowed.some((suffix) => email.endsWith(suffix));
+}
+
+// ── 学校メール認証（sendEmailVerification） ──────────────────
+// M365未導入の大学をカバーするための所有確認。認証されると学校認証バッジを表示する。
+// verificationLevel の昇格はサーバー側(Cloud Functions)の責務のまま — ここでは
+// Firebase Auth の emailVerified フラグのみを使う（クライアントからFirestoreは触らない）。
+
+export async function sendSchoolVerificationEmail(): Promise<void> {
+  const u = auth.currentUser;
+  if (!u || !u.email) throw new Error("ログイン状態が確認できません");
+  await sendEmailVerification(u);
+}
+
+// メールのリンクを開いた後に呼ぶ。Authユーザーを再読込して認証状態を反映する。
+export async function reloadAndCheckEmailVerified(): Promise<boolean> {
+  const u = auth.currentUser;
+  if (!u) return false;
+  await u.reload();
+  return u.emailVerified;
+}
+
+export function isMicrosoftLinked(user: User): boolean {
+  return user.providerData.some((p) => p.providerId === "microsoft.com");
+}
+
+// 学校認証バッジの表示判定:
+// 大学メール かつ（メール認証済み or Microsoft(M365)連携済み = 組織アカウントで所有証明済み）
+export function isSchoolVerified(user: User | null): boolean {
+  if (!user?.email || !isUniversityEmail(user.email)) return false;
+  return user.emailVerified || isMicrosoftLinked(user);
 }

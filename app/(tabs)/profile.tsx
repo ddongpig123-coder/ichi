@@ -14,7 +14,7 @@ import { useAuth } from "../../src/contexts/AuthContext";
 import { auth } from "../../src/config/firebase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
-import { signOut } from "../../src/services/authService";
+import { signOut, isSchoolVerified } from "../../src/services/authService";
 import { getUserProfile, updateAcademicInfo } from "../../src/services/userService";
 import { THEME_IDS, THEMES, type Theme } from "../../src/theme/themes";
 import type { AcademicInfo, UserProfile } from "../../src/types/user";
@@ -120,7 +120,10 @@ export default function ProfileScreen() {
           </>
         ) : (
           <>
-            <Text style={styles.accountRowText}>{t("account.registeredBadge")}</Text>
+            <Text style={styles.accountRowText}>
+              {t("account.registeredBadge")}
+              {isSchoolVerified(auth.currentUser) ? ` ・ ${t("account.verifiedBadge")}` : ""}
+            </Text>
             <Text style={styles.accountRowAction}>{t("account.goManage")}</Text>
           </>
         )}
