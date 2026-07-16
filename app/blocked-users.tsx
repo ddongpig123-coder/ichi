@@ -10,6 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import { useBlock } from "../src/contexts/BlockContext";
 import { useTheme } from "../src/contexts/ThemeContext";
+import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
 
 // ブロックしたユーザーの一覧・解除。プロフィールから遷移。
@@ -17,6 +18,7 @@ import type { Theme } from "../src/theme/themes";
 export default function BlockedUsersScreen() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { blockedUsers, unblock, ready } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
@@ -29,7 +31,7 @@ export default function BlockedUsersScreen() {
         >
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>ブロックリスト</Text>
+        <Text style={styles.headerTitle}>{t("blocked.title")}</Text>
         <View style={{ width: 28 }} />
       </View>
 
@@ -42,20 +44,20 @@ export default function BlockedUsersScreen() {
           ItemSeparatorComponent={() => <View style={styles.sep} />}
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={styles.emptyText}>ブロックしたユーザーはいません</Text>
+              <Text style={styles.emptyText}>{t("blocked.empty")}</Text>
             </View>
           }
           renderItem={({ item }) => (
             <View style={styles.row}>
               <View style={styles.avatar}>
-                <Text style={styles.avatarText}>匿</Text>
+                <Text style={styles.avatarText}>{t("messages.anonChar")}</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.name}>匿名ユーザー</Text>
+                <Text style={styles.name}>{t("messages.anonUser")}</Text>
                 <Text style={styles.uid}>{item.blockedUid.slice(0, 8)}…</Text>
               </View>
               <TouchableOpacity style={styles.unblockBtn} onPress={() => unblock(item.blockedUid)}>
-                <Text style={styles.unblockText}>解除</Text>
+                <Text style={styles.unblockText}>{t("blocked.unblock")}</Text>
               </TouchableOpacity>
             </View>
           )}

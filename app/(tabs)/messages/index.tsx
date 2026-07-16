@@ -11,21 +11,16 @@ import {
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
+import { timeAgo } from "../../../src/i18n/translations";
 import { fetchMyChats } from "../../../src/services/chatService";
 import type { Theme } from "../../../src/theme/themes";
 import type { ChatRoom } from "../../../src/types/chat";
 
-function timeAgo(ms: number): string {
-  const diff = Date.now() - ms;
-  if (diff < 60000) return "たった今";
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`;
-  return `${Math.floor(diff / 86400000)}日前`;
-}
-
 export default function MessagesInboxScreen() {
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [chats, setChats] = useState<ChatRoom[]>([]);
@@ -65,8 +60,8 @@ export default function MessagesInboxScreen() {
       ListEmptyComponent={
         <View style={styles.center}>
           <Text style={styles.emptyIcon}>💬</Text>
-          <Text style={styles.empty}>まだメッセージがありません</Text>
-          <Text style={styles.emptySub}>投稿から著者にDMを送れます</Text>
+          <Text style={styles.empty}>{t("messages.empty")}</Text>
+          <Text style={styles.emptySub}>{t("messages.emptyHint")}</Text>
         </View>
       }
       renderItem={({ item }) => (
@@ -75,16 +70,16 @@ export default function MessagesInboxScreen() {
           onPress={() => router.push(`/(tabs)/messages/${item.id}`)}
         >
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>匿</Text>
+            <Text style={styles.avatarText}>{t("messages.anonChar")}</Text>
           </View>
           <View style={styles.content}>
             <View style={styles.topRow}>
-              <Text style={styles.name}>匿名ユーザー</Text>
-              <Text style={styles.time}>{timeAgo(item.lastMessageAt)}</Text>
+              <Text style={styles.name}>{t("messages.anonUser")}</Text>
+              <Text style={styles.time}>{timeAgo(language, item.lastMessageAt)}</Text>
             </View>
             <Text style={styles.postRef} numberOfLines={1}>📌 {item.relatedPostTitle}</Text>
             <Text style={styles.lastMsg} numberOfLines={1}>
-              {item.lastMessage || "メッセージを開始しました"}
+              {item.lastMessage || t("messages.started")}
             </Text>
           </View>
         </TouchableOpacity>

@@ -13,6 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
 import { createLoungePost } from "../../../src/services/loungeService";
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, type LoungeId } from "../../../src/types/lounge";
@@ -21,6 +22,7 @@ export default function LoungeWriteScreen() {
   const { loungeId } = useLocalSearchParams<{ loungeId: string }>();
   const { user } = useAuth();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
 
@@ -30,16 +32,16 @@ export default function LoungeWriteScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit() {
-    if (!title.trim()) { Alert.alert("タイトルを入力してください"); return; }
-    if (!body.trim())  { Alert.alert("本文を入力してください"); return; }
-    if (!user) { Alert.alert("ログインが必要です"); return; }
+    if (!title.trim()) { Alert.alert(t("post.titleRequired")); return; }
+    if (!body.trim())  { Alert.alert(t("post.bodyRequired")); return; }
+    if (!user) { Alert.alert(t("post.loginRequired")); return; }
 
     setSubmitting(true);
     try {
       await createLoungePost(loungeId as LoungeId, user.uid, title.trim(), body.trim());
       router.back();
     } catch (e: any) {
-      Alert.alert("投稿に失敗しました", e.message);
+      Alert.alert(t("post.submitFailed"), e.message);
     } finally {
       setSubmitting(false);
     }
@@ -52,11 +54,11 @@ export default function LoungeWriteScreen() {
     >
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
         <Text style={styles.boardName}>{lounge?.icon} {lounge?.label}</Text>
-        <Text style={styles.anon}>全国の留学生に匿名で投稿されます</Text>
+        <Text style={styles.anon}>{t("lounge.anonNotice")}</Text>
 
         <TextInput
           style={styles.titleInput}
-          placeholder="タイトル"
+          placeholder={t("post.titlePlaceholder")}
           placeholderTextColor={theme.textSecondary}
           value={title}
           onChangeText={setTitle}
@@ -64,7 +66,7 @@ export default function LoungeWriteScreen() {
         />
         <TextInput
           style={styles.bodyInput}
-          placeholder="本文を入力..."
+          placeholder={t("post.bodyPlaceholder")}
           placeholderTextColor={theme.textSecondary}
           value={body}
           onChangeText={setBody}
@@ -77,7 +79,7 @@ export default function LoungeWriteScreen() {
           onPress={handleSubmit}
           disabled={submitting}
         >
-          <Text style={styles.submitText}>{submitting ? "投稿中..." : "投稿する"}</Text>
+          <Text style={styles.submitText}>{submitting ? t("post.submitting") : t("post.submit")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

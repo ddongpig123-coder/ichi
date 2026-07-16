@@ -12,23 +12,18 @@ import {
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
+import { timeAgo } from "../../../src/i18n/translations";
 import { searchPosts } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import type { Post } from "../../../src/types/board";
 
 type SearchResult = Post & { boardLabel: string };
 
-function timeAgo(ms: number): string {
-  const diff = Date.now() - ms;
-  if (diff < 60000) return "たった今";
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`;
-  return `${Math.floor(diff / 86400000)}日前`;
-}
-
 export default function SearchScreen() {
   const { schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [keyword, setKeyword] = useState("");
@@ -53,7 +48,7 @@ export default function SearchScreen() {
         <TextInput
           ref={inputRef}
           style={styles.input}
-          placeholder="キーワードを入力..."
+          placeholder={t("boards.searchPlaceholder")}
           placeholderTextColor={theme.textSecondary}
           value={keyword}
           onChangeText={setKeyword}
@@ -62,7 +57,7 @@ export default function SearchScreen() {
           autoFocus
         />
         <TouchableOpacity style={styles.searchBtn} onPress={handleSearch}>
-          <Text style={styles.searchBtnText}>検索</Text>
+          <Text style={styles.searchBtnText}>{t("boards.searchTitle")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -79,7 +74,7 @@ export default function SearchScreen() {
           ListEmptyComponent={
             searched ? (
               <View style={styles.center}>
-                <Text style={styles.empty}>「{keyword}」の結果が見つかりません</Text>
+                <Text style={styles.empty}>「{keyword}」{t("boards.noResultsSuffix")}</Text>
               </View>
             ) : null
           }
@@ -93,9 +88,9 @@ export default function SearchScreen() {
               </View>
               <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
               <View style={styles.meta}>
-                <Text style={styles.metaText}>匿名</Text>
+                <Text style={styles.metaText}>{t("boards.anonymous")}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>{timeAgo(item.createdAt)}</Text>
+                <Text style={styles.metaText}>{timeAgo(language, item.createdAt)}</Text>
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>💬 {item.commentCount}</Text>
               </View>

@@ -1,9 +1,11 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useI18n } from "../src/contexts/I18nContext";
 
 // TODO: プロフィール設定機能は未実装。現在はナビゲーション先のプレースホルダーのみ。
 export default function ProfileSettingsScreen() {
   const router = useRouter();
+  const { t } = useI18n();
 
   return (
     <View style={styles.container}>
@@ -15,7 +17,7 @@ export default function ProfileSettingsScreen() {
       </TouchableOpacity>
 
       <View style={styles.content}>
-        <Text style={styles.text}>プロフィール設定（準備中）</Text>
+        <Text style={styles.text}>{t("profile.settingsPreparing")}</Text>
       </View>
     </View>
   );

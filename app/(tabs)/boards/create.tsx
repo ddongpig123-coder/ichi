@@ -13,19 +13,20 @@ import {
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
 import { createBoard } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import type { BoardMeta } from "../../../src/types/board";
 
-const CATEGORIES: { value: BoardMeta["category"]; label: string; desc: string }[] = [
-  { value: "department", label: "学部別掲示板", desc: "特定の学部・学科向け" },
-  { value: "custom",     label: "カスタム掲示板", desc: "自由にテーマを設定" },
-];
-
 export default function CreateBoardScreen() {
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  const categories: { value: BoardMeta["category"]; label: string; desc: string }[] = [
+    { value: "department", label: t("boards.department"), desc: t("boards.categoryDepartmentDesc") },
+    { value: "custom", label: t("boards.categoryCustom"), desc: t("boards.categoryCustomDesc") },
+  ];
   const router = useRouter();
   const [label, setLabel] = useState("");
   const [description, setDescription] = useState("");
@@ -33,14 +34,14 @@ export default function CreateBoardScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit() {
-    if (!label.trim()) { Alert.alert("掲示板名を入力してください"); return; }
+    if (!label.trim()) { Alert.alert(t("boards.nameRequired")); return; }
     if (!user || !schoolDomain) return;
     setSubmitting(true);
     try {
       await createBoard(schoolDomain, label.trim(), description.trim(), category, user.uid);
       router.back();
     } catch (e: any) {
-      Alert.alert("作成に失敗しました", e.message);
+      Alert.alert(t("boards.createFailed"), e.message);
     } finally {
       setSubmitting(false);
     }
@@ -52,9 +53,9 @@ export default function CreateBoardScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.sectionLabel}>カテゴリ</Text>
+        <Text style={styles.sectionLabel}>{t("boards.category")}</Text>
         <View style={styles.categoryRow}>
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <TouchableOpacity
               key={cat.value}
               style={[styles.catBtn, category === cat.value && styles.catBtnActive]}
@@ -70,10 +71,10 @@ export default function CreateBoardScreen() {
           ))}
         </View>
 
-        <Text style={styles.sectionLabel}>掲示板名 <Text style={styles.required}>*</Text></Text>
+        <Text style={styles.sectionLabel}>{t("boards.nameLabel")} <Text style={styles.required}>*</Text></Text>
         <TextInput
           style={styles.input}
-          placeholder="例：情報工学科、サークル情報など"
+          placeholder={t("boards.namePlaceholder")}
           placeholderTextColor={theme.textSecondary}
           value={label}
           onChangeText={setLabel}
@@ -81,10 +82,10 @@ export default function CreateBoardScreen() {
         />
         <Text style={styles.charCount}>{label.length}/30</Text>
 
-        <Text style={styles.sectionLabel}>説明</Text>
+        <Text style={styles.sectionLabel}>{t("boards.descLabel")}</Text>
         <TextInput
           style={[styles.input, styles.textarea]}
-          placeholder="この掲示板について説明してください"
+          placeholder={t("boards.descPlaceholder")}
           placeholderTextColor={theme.textSecondary}
           value={description}
           onChangeText={setDescription}
@@ -98,7 +99,9 @@ export default function CreateBoardScreen() {
           onPress={handleSubmit}
           disabled={submitting}
         >
-          <Text style={styles.submitText}>{submitting ? "作成中..." : "掲示板を作成"}</Text>
+          <Text style={styles.submitText}>
+            {submitting ? t("boards.creating") : t("boards.createSubmit")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

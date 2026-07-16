@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
 import { LOUNGES, type LoungeMeta } from "../../src/types/lounge";
 
@@ -9,6 +10,7 @@ import { LOUNGES, type LoungeMeta } from "../../src/types/lounge";
 export default function LoungeHomeScreen() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   function renderItem({ item }: { item: LoungeMeta }) {
@@ -35,8 +37,8 @@ export default function LoungeHomeScreen() {
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         ListHeaderComponent={
           <View style={styles.banner}>
-            <Text style={styles.bannerTitle}>🌏 留学生ラウンジ</Text>
-            <Text style={styles.bannerSub}>学校を越えて、全国の留学生と情報交換</Text>
+            <Text style={styles.bannerTitle}>{t("boards.loungeTitle")}</Text>
+            <Text style={styles.bannerSub}>{t("lounge.bannerSub")}</Text>
           </View>
         }
         renderItem={renderItem}

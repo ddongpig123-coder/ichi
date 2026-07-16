@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, type ElementRef } from "react";
 import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from "react-native";
 import { type Semester, getAvailableYears, isSemesterAvailable } from "../../data/semesterTimetables";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 
 export default function SemesterSelector({ selectedYear, selectedSemester, onChangeYear, onChangeSemester }: Props) {
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const availableYears = getAvailableYears();
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -37,7 +39,7 @@ export default function SemesterSelector({ selectedYear, selectedSemester, onCha
   return (
     <View style={styles.bar}>
       <TouchableOpacity ref={yearButtonRef} style={styles.yearButton} onPress={handleYearPress}>
-        <Text style={styles.yearText}>{selectedYear}年</Text>
+        <Text style={styles.yearText}>{selectedYear}{t("timetable.yearSuffix")}</Text>
         <Text style={styles.yearArrow}>▼</Text>
       </TouchableOpacity>
 
@@ -52,7 +54,9 @@ export default function SemesterSelector({ selectedYear, selectedSemester, onCha
               onPress={() => available && onChangeSemester(sem)}
               disabled={!available}
             >
-              <Text style={[styles.semBtnText, active && styles.semBtnTextActive]}>{sem}学期</Text>
+              <Text style={[styles.semBtnText, active && styles.semBtnTextActive]}>
+                {sem === "春" ? t("timetable.springSemester") : t("timetable.fallSemester")}
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -68,7 +72,7 @@ export default function SemesterSelector({ selectedYear, selectedSemester, onCha
                 onPress={() => selectYear(year)}
               >
                 <Text style={[styles.pickerItemText, selectedYear === year && styles.pickerItemTextActive]}>
-                  {year}年
+                  {year}{t("timetable.yearSuffix")}
                 </Text>
               </TouchableOpacity>
             ))}

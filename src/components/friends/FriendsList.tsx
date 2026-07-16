@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import DefaultAvatar from "../common/DefaultAvatar";
 import { useFriends } from "../../contexts/FriendsContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
 
 const COLUMNS = 3;
@@ -12,12 +13,13 @@ export default function FriendsList() {
   const router = useRouter();
   const { frequent } = useFriends();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
     <View style={styles.section}>
       <View style={styles.labelRow}>
-        <Text style={styles.label}>友達</Text>
+        <Text style={styles.label}>{t("home.friendsSection")}</Text>
         <TouchableOpacity
           style={styles.editButton}
           onPress={() => router.push("/friend-settings")}

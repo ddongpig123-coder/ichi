@@ -6,6 +6,8 @@ import {
 import { DAYS, PERIODS, PERIOD_TIMES, type ClassSession, type Day, type Period } from "../../types/timetable";
 import { useFriends, type Friend } from "../../contexts/FriendsContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
+import { dayLabel } from "../../i18n/translations";
 import type { Theme } from "../../theme/themes";
 import DefaultAvatar from "../common/DefaultAvatar";
 
@@ -101,6 +103,7 @@ export default function TimeTable({
   const cellWidth = (width - TIME_COL_WIDTH) / DAYS.length;
   const CELL_HEIGHT = cellHeight ?? 64;
   const { theme } = useTheme();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [friendListModal, setFriendListModal] = useState<Friend[] | null>(null);
@@ -120,7 +123,7 @@ export default function TimeTable({
       >
         <Pressable style={styles.modalOverlay} onPress={() => setFriendListModal(null)}>
           <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>一緒に受けている友達</Text>
+            <Text style={styles.modalTitle}>{t("home.overlapPopupTitle")}</Text>
             {friendListModal?.map((friend) => (
               <View key={friend.id} style={styles.modalRow}>
                 <DefaultAvatar size={28} />
@@ -136,7 +139,7 @@ export default function TimeTable({
         <View style={[styles.headerCell, { width: TIME_COL_WIDTH }]} />
         {DAYS.map((day) => (
           <View key={day} style={[styles.headerCell, { width: cellWidth }]}>
-            <Text style={styles.headerText}>{day}</Text>
+            <Text style={styles.headerText}>{dayLabel(language, day)}</Text>
           </View>
         ))}
       </View>
@@ -148,7 +151,7 @@ export default function TimeTable({
             <View key={period} style={styles.row}>
               <View style={[styles.timeCell, { width: TIME_COL_WIDTH, height: CELL_HEIGHT }]}>
                 <Text style={styles.timeStart}>{time.start}</Text>
-                <Text style={styles.periodText}>{period}限</Text>
+                <Text style={styles.periodText}>{period}{t("timetable.periodSuffix")}</Text>
                 <Text style={styles.timeEnd}>{time.end}</Text>
               </View>
               {DAYS.map((day) => {

@@ -24,22 +24,17 @@ import {
 } from "../../../src/services/loungeService";
 import { getOrCreateChat } from "../../../src/services/chatService";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
+import { useI18n } from "../../../src/contexts/I18nContext";
+import { timeAgo } from "../../../src/i18n/translations";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
-
-function timeAgo(ms: number): string {
-  const diff = Date.now() - ms;
-  if (diff < 60000) return "たった今";
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`;
-  return `${Math.floor(diff / 86400000)}日前`;
-}
 
 export default function LoungePostDetailScreen() {
   const { loungeId, postId } = useLocalSearchParams<{ loungeId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { t, language } = useI18n();
   const { isBlocked } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
@@ -90,7 +85,7 @@ export default function LoungePostDetailScreen() {
 
   async function handleComment() {
     if (!commentText.trim()) return;
-    if (!user) { Alert.alert("ログインが必要です"); return; }
+    if (!user) { Alert.alert(t("post.loginRequired")); return; }
 
     setSubmitting(true);
     try {
@@ -100,7 +95,7 @@ export default function LoungePostDetailScreen() {
       setCommentText("");
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
-      Alert.alert("コメントに失敗しました", e.message);
+      Alert.alert(t("post.commentFailed"), e.message);
     } finally {
       setSubmitting(false);
     }
@@ -111,7 +106,7 @@ export default function LoungePostDetailScreen() {
   }
 
   if (!post) {
-    return <View style={styles.center}><Text style={{ color: theme.textSecondary }}>投稿が見つかりません</Text></View>;
+    return <View style={styles.center}><Text style={{ color: theme.textSecondary }}>{t("post.notFound")}</Text></View>;
   }
 
   const lounge = LOUNGES.find((l) => l.id === loungeId);
@@ -136,10 +131,10 @@ export default function LoungePostDetailScreen() {
               disabled={!user || user.uid === post.authorUid}
               onPress={() => handleSendMessage(post.authorUid)}
             >
-              <Text style={styles.meta}>匿名</Text>
+              <Text style={styles.meta}>{t("boards.anonymous")}</Text>
             </TouchableOpacity>
             <Text style={styles.meta}>·</Text>
-            <Text style={styles.meta}>{timeAgo(post.createdAt)}</Text>
+            <Text style={styles.meta}>{timeAgo(language, post.createdAt)}</Text>
             <View style={{ flex: 1 }} />
             <TouchableOpacity
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -169,11 +164,11 @@ export default function LoungePostDetailScreen() {
           </View>
         </View>
 
-        <Text style={styles.commentHeader}>コメント {comments.length}</Text>
+        <Text style={styles.commentHeader}>{t("post.commentsHeader")} {comments.length}</Text>
         {comments.map((c) =>
           isBlocked(c.authorUid) ? (
             <View key={c.id} style={styles.commentCard}>
-              <Text style={styles.blockedText}>ブロックしたユーザーのコメントです</Text>
+              <Text style={styles.blockedText}>{t("post.blockedComment")}</Text>
             </View>
           ) : (
             <View key={c.id} style={styles.commentCard}>
@@ -182,11 +177,11 @@ export default function LoungePostDetailScreen() {
                   disabled={!user || user.uid === c.authorUid}
                   onPress={() => handleSendMessage(c.authorUid)}
                 >
-                  <Text style={styles.commentAuthor}>匿名{anonNumbers.get(c.authorUid)}</Text>
+                  <Text style={styles.commentAuthor}>{t("boards.anonymous")}{anonNumbers.get(c.authorUid)}</Text>
                 </TouchableOpacity>
                 {c.authorUid === post.authorUid && (
                   <View style={styles.authorTag}>
-                    <Text style={styles.authorTagText}>投稿者</Text>
+                    <Text style={styles.authorTagText}>{t("post.authorTag")}</Text>
                   </View>
                 )}
                 <View style={{ flex: 1 }} />
@@ -204,7 +199,7 @@ export default function LoungePostDetailScreen() {
                 </TouchableOpacity>
               </View>
               <Text style={styles.commentBody}>{c.body}</Text>
-              <Text style={styles.commentTime}>{timeAgo(c.createdAt)}</Text>
+              <Text style={styles.commentTime}>{timeAgo(language, c.createdAt)}</Text>
             </View>
           )
         )}
@@ -214,7 +209,7 @@ export default function LoungePostDetailScreen() {
       <View style={styles.inputBar}>
         <TextInput
           style={styles.input}
-          placeholder="コメントを入力..."
+          placeholder={t("post.commentPlaceholder")}
           placeholderTextColor={theme.textSecondary}
           value={commentText}
           onChangeText={setCommentText}
@@ -225,7 +220,7 @@ export default function LoungePostDetailScreen() {
           onPress={handleComment}
           disabled={!commentText.trim() || submitting}
         >
-          <Text style={styles.sendText}>送信</Text>
+          <Text style={styles.sendText}>{t("common.send")}</Text>
         </TouchableOpacity>
       </View>
 

@@ -13,6 +13,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import { sendMessage, subscribeToMessages } from "../../../src/services/chatService";
 import type { Theme } from "../../../src/theme/themes";
@@ -28,6 +29,7 @@ export default function ChatRoomScreen() {
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
   const { isBlocked } = useBlock();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
@@ -61,7 +63,7 @@ export default function ChatRoomScreen() {
       return (
         <View style={styles.msgRow}>
           <View style={[styles.bubble, styles.bubbleBlocked]}>
-            <Text style={styles.blockedText}>ブロックしたユーザーのメッセージです</Text>
+            <Text style={styles.blockedText}>{t("messages.blockedMessage")}</Text>
           </View>
         </View>
       );
@@ -80,7 +82,7 @@ export default function ChatRoomScreen() {
               })
             }
           >
-            <Text style={styles.avatarText}>匿</Text>
+            <Text style={styles.avatarText}>{t("messages.anonChar")}</Text>
           </TouchableOpacity>
         )}
         <View style={[styles.bubble, isMine && styles.bubbleMine]}>
@@ -106,14 +108,14 @@ export default function ChatRoomScreen() {
         renderItem={renderMessage}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>メッセージを送ってみましょう</Text>
+            <Text style={styles.emptyText}>{t("messages.emptyRoom")}</Text>
           </View>
         }
       />
       <View style={styles.inputBar}>
         <TextInput
           style={styles.input}
-          placeholder="メッセージを入力..."
+          placeholder={t("messages.inputPlaceholder")}
           placeholderTextColor={theme.textSecondary}
           value={text}
           onChangeText={setText}

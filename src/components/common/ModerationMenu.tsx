@@ -14,7 +14,19 @@ import { useBlock } from "../../contexts/BlockContext";
 import { createReport } from "../../services/reportService";
 import { REPORT_REASONS, type ReportReason, type ReportTargetType } from "../../types/moderation";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
+import type { TranslationKey } from "../../i18n/translations";
 import type { Theme } from "../../theme/themes";
+
+// 通報理由 → 辞書キー（ラベル文字列は translations.ts 側で管理）
+const REASON_KEYS: Record<ReportReason, TranslationKey> = {
+  spam: "report.reasonSpam",
+  abuse: "report.reasonAbuse",
+  defamation: "report.reasonDefamation",
+  privacy: "report.reasonPrivacy",
+  illegal: "report.reasonIllegal",
+  other: "report.reasonOther",
+};
 
 // 投稿・コメント・メッセージ共通の「⋯」メニュー。
 // menu → 通報(理由選択) / ブロック(確認) の2段構成。
@@ -43,6 +55,7 @@ export default function ModerationMenu({
   const { user } = useAuth();
   const { block } = useBlock();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [mode, setMode] = useState<Mode>("menu");
@@ -77,10 +90,10 @@ export default function ModerationMenu({
         detail,
       });
       handleClose();
-      Alert.alert("通報を受け付けました", "ご協力ありがとうございます。運営が確認します。");
+      Alert.alert(t("report.submitted"), t("report.submittedMessage"));
     } catch (e: any) {
       setSubmitting(false);
-      Alert.alert("通報に失敗しました", e?.message ?? "");
+      Alert.alert(t("report.failed"), e?.message ?? "");
     }
   }
 
@@ -91,10 +104,10 @@ export default function ModerationMenu({
       await block(targetAuthorUid);
       handleClose();
       onBlocked?.();
-      Alert.alert("ブロックしました", "このユーザーの投稿は表示されなくなります。");
+      Alert.alert(t("report.blocked"), t("report.blockedMessage"));
     } catch (e: any) {
       setSubmitting(false);
-      Alert.alert("ブロックに失敗しました", e?.message ?? "");
+      Alert.alert(t("report.blockFailed"), e?.message ?? "");
     }
   }
 
@@ -105,22 +118,22 @@ export default function ModerationMenu({
           {mode === "menu" && (
             <>
               <TouchableOpacity style={styles.menuItem} onPress={() => setMode("report")}>
-                <Text style={styles.menuText}>🚩 通報する</Text>
+                <Text style={styles.menuText}>{t("report.menuReport")}</Text>
               </TouchableOpacity>
               {showBlock && (
                 <TouchableOpacity style={styles.menuItem} onPress={() => setMode("confirmBlock")}>
-                  <Text style={styles.menuTextDanger}>🚫 ブロックする</Text>
+                  <Text style={styles.menuTextDanger}>{t("report.menuBlock")}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={[styles.menuItem, styles.cancelItem]} onPress={handleClose}>
-                <Text style={styles.cancelText}>キャンセル</Text>
+                <Text style={styles.cancelText}>{t("common.cancel")}</Text>
               </TouchableOpacity>
             </>
           )}
 
           {mode === "report" && (
             <>
-              <Text style={styles.title}>通報の理由を選択</Text>
+              <Text style={styles.title}>{t("report.chooseReason")}</Text>
               {REPORT_REASONS.map((r) => (
                 <TouchableOpacity
                   key={r.value}
@@ -129,13 +142,13 @@ export default function ModerationMenu({
                 >
                   <Text style={[styles.reasonText, reason === r.value && styles.reasonTextActive]}>
                     {reason === r.value ? "● " : "○ "}
-                    {r.label}
+                    {t(REASON_KEYS[r.value])}
                   </Text>
                 </TouchableOpacity>
               ))}
               <TextInput
                 style={styles.detailInput}
-                placeholder="詳細（任意）"
+                placeholder={t("report.detailPlaceholder")}
                 placeholderTextColor={theme.textSecondary}
                 value={detail}
                 onChangeText={setDetail}
@@ -144,7 +157,7 @@ export default function ModerationMenu({
               />
               <View style={styles.actionRow}>
                 <TouchableOpacity style={styles.secondaryBtn} onPress={() => setMode("menu")}>
-                  <Text style={styles.secondaryText}>戻る</Text>
+                  <Text style={styles.secondaryText}>{t("common.back")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.primaryBtn, (!reason || submitting) && styles.disabled]}
@@ -154,7 +167,7 @@ export default function ModerationMenu({
                   {submitting ? (
                     <ActivityIndicator color="#fff" size="small" />
                   ) : (
-                    <Text style={styles.primaryText}>送信</Text>
+                    <Text style={styles.primaryText}>{t("common.send")}</Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -163,14 +176,11 @@ export default function ModerationMenu({
 
           {mode === "confirmBlock" && (
             <>
-              <Text style={styles.title}>このユーザーをブロック</Text>
-              <Text style={styles.confirmDesc}>
-                ブロックすると、このユーザーの投稿・コメント・メッセージが表示されなくなります。
-                いつでも設定から解除できます。
-              </Text>
+              <Text style={styles.title}>{t("report.blockTitle")}</Text>
+              <Text style={styles.confirmDesc}>{t("report.blockDesc")}</Text>
               <View style={styles.actionRow}>
                 <TouchableOpacity style={styles.secondaryBtn} onPress={() => setMode("menu")}>
-                  <Text style={styles.secondaryText}>戻る</Text>
+                  <Text style={styles.secondaryText}>{t("common.back")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.dangerBtn, submitting && styles.disabled]}
@@ -180,7 +190,7 @@ export default function ModerationMenu({
                   {submitting ? (
                     <ActivityIndicator color="#fff" size="small" />
                   ) : (
-                    <Text style={styles.primaryText}>ブロックする</Text>
+                    <Text style={styles.primaryText}>{t("report.blockAction")}</Text>
                   )}
                 </TouchableOpacity>
               </View>

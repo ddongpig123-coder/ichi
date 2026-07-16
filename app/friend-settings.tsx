@@ -9,6 +9,7 @@ import ReorderableList, {
 import DefaultAvatar from "../src/components/common/DefaultAvatar";
 import { useFriends, type Friend } from "../src/contexts/FriendsContext";
 import { useTheme } from "../src/contexts/ThemeContext";
+import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
 
 // ── 자주 찾는 친구 행 ──────────────────────────────────────
@@ -25,6 +26,7 @@ function FrequentItem({
 }) {
   const drag = useReorderableDrag();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   return (
     <Pressable style={styles.row} onLongPress={drag}>
@@ -35,7 +37,7 @@ function FrequentItem({
       <DefaultAvatar size={36} />
       <Text style={styles.nickname} numberOfLines={1}>{item.nickname}</Text>
       <TouchableOpacity style={styles.demoteButton} onPress={() => onDemote(item.id)}>
-        <Text style={styles.demoteButtonText}>下げる</Text>
+        <Text style={styles.demoteButtonText}>{t("friends.demote")}</Text>
       </TouchableOpacity>
     </Pressable>
   );
@@ -55,6 +57,7 @@ function NonFrequentItem({
 }) {
   const drag = useReorderableDrag();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   return (
     <Pressable style={styles.row} onLongPress={drag}>
@@ -69,7 +72,9 @@ function NonFrequentItem({
         onPress={() => onPromote(item.id)}
         disabled={isFull}
       >
-        <Text style={styles.promoteButtonText}>{isFull ? "上限" : "上げる"}</Text>
+        <Text style={styles.promoteButtonText}>
+          {isFull ? t("friends.promoteFull") : t("friends.promote")}
+        </Text>
       </TouchableOpacity>
     </Pressable>
   );
@@ -79,6 +84,7 @@ function NonFrequentItem({
 export default function FriendSettingsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { frequent, nonFrequent, frequentIds, promote, demote, reorderFrequent, reorderNonFrequent } = useFriends();
 
@@ -99,16 +105,16 @@ export default function FriendSettingsScreen() {
         >
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>よく使う友達の編集</Text>
+        <Text style={styles.headerTitle}>{t("friends.settingsTitle")}</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* よく使う友達 */}
-        <Text style={styles.sectionLabel}>よく使う友達 ({frequent.length}/6)</Text>
-        <Text style={styles.hint}>≡ を長押しでドラッグ並び替え</Text>
+        <Text style={styles.sectionLabel}>{t("friends.frequentSection")} ({frequent.length}/6)</Text>
+        <Text style={styles.hint}>{t("friends.dragHint")}</Text>
 
         {frequent.length === 0 ? (
-          <Text style={styles.emptyText}>まだ追加されていません</Text>
+          <Text style={styles.emptyText}>{t("friends.frequentEmpty")}</Text>
         ) : (
           <View style={styles.listWrapper}>
             <ReorderableList
@@ -129,11 +135,11 @@ export default function FriendSettingsScreen() {
         )}
 
         {/* その他の友達 */}
-        <Text style={[styles.sectionLabel, { marginTop: 24 }]}>その他の友達</Text>
-        <Text style={styles.hint}>≡ を長押しでドラッグ並び替え</Text>
+        <Text style={[styles.sectionLabel, { marginTop: 24 }]}>{t("friends.otherSection")}</Text>
+        <Text style={styles.hint}>{t("friends.dragHint")}</Text>
 
         {nonFrequent.length === 0 ? (
-          <Text style={styles.emptyText}>全員よく使う友達に追加済みです</Text>
+          <Text style={styles.emptyText}>{t("friends.otherEmpty")}</Text>
         ) : (
           <View style={styles.listWrapper}>
             <ReorderableList

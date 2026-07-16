@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert, Platform } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
 import { findUserByEmail, sendFriendRequest } from "../../services/friendRequestService";
 import type { PublicProfile } from "../../services/userService";
@@ -22,6 +23,7 @@ type LookupState = "idle" | "checking" | "found" | "notfound";
 export default function AddFriendModal({ visible, onClose }: Props) {
   const { user } = useAuth();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [email, setEmail] = useState("");
   const [lookupState, setLookupState] = useState<LookupState>("idle");
@@ -66,24 +68,24 @@ export default function AddFriendModal({ visible, onClose }: Props) {
       const result = await sendFriendRequest(user.uid, foundUser.uid);
       switch (result) {
         case "sent":
-          notify("送信しました", `${foundUser.nickname}さんにフレンド申請を送りました。`);
+          notify(t("friends.requestSentTitle"), `${foundUser.nickname}${t("friends.requestSentSuffix")}`);
           onClose();
           break;
         case "self":
-          notify("送信できません", "自分自身に申請は送れません。");
+          notify(t("friends.cannotSendTitle"), t("friends.cannotSendSelf"));
           break;
         case "already-friends":
-          notify("既に友達です", `${foundUser.nickname}さんとは既に友達です。`);
+          notify(t("friends.alreadyFriendsTitle"), `${foundUser.nickname}${t("friends.alreadyFriendsSuffix")}`);
           break;
         case "already-sent":
-          notify("送信済みです", "この相手への申請は既に送信済みです。承認をお待ちください。");
+          notify(t("friends.alreadySentTitle"), t("friends.alreadySentMessage"));
           break;
         case "incoming-exists":
-          notify("申請が届いています", `${foundUser.nickname}さんから既に申請が届いています。友達タブの受信箱から承認してください。`);
+          notify(t("friends.incomingExistsTitle"), `${foundUser.nickname}${t("friends.incomingExistsSuffix")}`);
           break;
       }
     } catch (e: any) {
-      notify("送信に失敗しました", e.message ?? String(e));
+      notify(t("friends.sendFailed"), e.message ?? String(e));
     } finally {
       setBusy(false);
     }
@@ -109,11 +111,11 @@ export default function AddFriendModal({ visible, onClose }: Props) {
           onPressIn={() => { pressStartedInsideRef.current = true; }}
           onPress={(e) => e.stopPropagation()}
         >
-          <Text style={styles.title}>友達追加</Text>
+          <Text style={styles.title}>{t("friends.addTitle")}</Text>
 
           <TextInput
             style={styles.input}
-            placeholder="メールアドレスを入力"
+            placeholder={t("friends.emailPlaceholder")}
             placeholderTextColor={theme.textSecondary}
             value={email}
             onChangeText={setEmail}
@@ -121,19 +123,19 @@ export default function AddFriendModal({ visible, onClose }: Props) {
             keyboardType="email-address"
           />
           {lookupState === "notfound" && (
-            <Text style={styles.errorText}>存在しないユーザーです</Text>
+            <Text style={styles.errorText}>{t("friends.userNotFound")}</Text>
           )}
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelText}>取消</Text>
+              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.addButton, addEnabled ? styles.addButtonActive : styles.addButtonDisabled]}
               onPress={handleAdd}
               disabled={!addEnabled}
             >
-              <Text style={styles.addText}>追加</Text>
+              <Text style={styles.addText}>{t("common.add")}</Text>
             </TouchableOpacity>
           </View>
         </Pressable>

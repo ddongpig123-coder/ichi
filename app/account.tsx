@@ -4,6 +4,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../src/contexts/AuthContext";
+import { useI18n } from "../src/contexts/I18nContext";
 import {
   linkAnonymousWithEmail,
   linkAnonymousWithMicrosoft,
@@ -25,13 +26,18 @@ function notify(title: string, message?: string) {
   }
 }
 
-function confirmDialog(title: string, message: string, onConfirm: () => void) {
+function confirmDialog(
+  title: string,
+  message: string,
+  onConfirm: () => void,
+  labels: { cancel: string; ok: string }
+) {
   if (Platform.OS === "web") {
     if (window.confirm(`${title}\n\n${message}`)) onConfirm();
   } else {
     Alert.alert(title, message, [
-      { text: "キャンセル", style: "cancel" },
-      { text: "OK", style: "destructive", onPress: onConfirm },
+      { text: labels.cancel, style: "cancel" },
+      { text: labels.ok, style: "destructive", onPress: onConfirm },
     ]);
   }
 }
@@ -42,6 +48,7 @@ function confirmDialog(title: string, message: string, onConfirm: () => void) {
 export default function AccountScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const { t } = useI18n();
 
   const [mode, setMode] = useState<"register" | "login">("register");
   const [nickname, setNickname] = useState("");
@@ -57,23 +64,23 @@ export default function AccountScreen() {
   }
 
   async function handleRegister() {
-    if (!nickname.trim()) return notify("入力エラー", "ニックネームを入力してください");
-    if (!email.trim()) return notify("入力エラー", "メールアドレスを入力してください");
-    if (password.length < 6) return notify("入力エラー", "パスワードは6文字以上で入力してください");
-    if (password !== passwordConfirm) return notify("入力エラー", "パスワードが一致しません");
+    if (!nickname.trim()) return notify(t("account.inputError"), t("account.errNickname"));
+    if (!email.trim()) return notify(t("account.inputError"), t("account.errEmail"));
+    if (password.length < 6) return notify(t("account.inputError"), t("account.errPasswordLength"));
+    if (password !== passwordConfirm) return notify(t("account.inputError"), t("account.errPasswordMismatch"));
 
     setBusy(true);
     try {
       await linkAnonymousWithEmail(email.trim(), password, nickname.trim());
-      notify("登録完了", "アカウントを登録しました。時間割や友達のデータはそのまま引き継がれます。");
+      notify(t("account.registerDone"), t("account.registerDoneMessage"));
       goBack();
     } catch (e: any) {
       if (e.code === "auth/email-already-in-use" || e.code === "auth/credential-already-in-use") {
-        notify("登録できません", "このメールアドレスは既に登録されています。ログインをお試しください。");
+        notify(t("account.errCannotRegister"), t("account.errEmailInUse"));
       } else if (e.code === "auth/invalid-email") {
-        notify("登録できません", "メールアドレスの形式が正しくありません。");
+        notify(t("account.errCannotRegister"), t("account.errInvalidEmail"));
       } else {
-        notify("登録に失敗しました", e.message ?? String(e));
+        notify(t("account.errRegisterFailed"), e.message ?? String(e));
       }
     } finally {
       setBusy(false);
@@ -81,14 +88,14 @@ export default function AccountScreen() {
   }
 
   async function handleLogin() {
-    if (!email.trim() || !password) return notify("入力エラー", "メールアドレスとパスワードを入力してください");
+    if (!email.trim() || !password) return notify(t("account.inputError"), t("account.errLoginInput"));
     setBusy(true);
     try {
       await signInWithEmail(email.trim(), password);
-      notify("ログイン完了", "おかえりなさい。");
+      notify(t("account.loginDone"), t("account.welcomeBack"));
       goBack();
     } catch (e: any) {
-      notify("ログインに失敗しました", "メールアドレスまたはパスワードをご確認ください。");
+      notify(t("account.errLoginFailed"), t("account.errLoginCheck"));
     } finally {
       setBusy(false);
     }
@@ -105,31 +112,29 @@ export default function AccountScreen() {
         await updateMicrosoftAccountInfo(
           u.uid,
           msEmail,
-          u.displayName?.trim() || "ゲスト",
+          u.displayName?.trim() || t("common.guest"),
           isUni ? msEmail.split("@")[1] : null
         );
         notify(
-          "登録完了",
-          isUni
-            ? "大学アカウントで登録しました。データはそのまま引き継がれます。"
-            : "登録しました。（大学アカウントではないため学校認証は付与されません）"
+          t("account.registerDone"),
+          isUni ? t("account.msRegisterDoneUni") : t("account.msRegisterDoneNonUni")
         );
       } else {
         await signInWithMicrosoft();
-        notify("ログイン完了", "おかえりなさい。");
+        notify(t("account.loginDone"), t("account.welcomeBack"));
       }
       goBack();
     } catch (e: any) {
       if (e.message === MICROSOFT_WEB_ONLY_ERROR) {
-        notify("準備中", "モバイルアプリでのMicrosoft連携は現在準備中です。Web版をご利用ください。");
+        notify(t("account.msPreparingTitle"), t("account.msWebOnly"));
       } else if (e.code === "auth/credential-already-in-use" || e.code === "auth/email-already-in-use") {
-        notify("登録できません", "このMicrosoftアカウントは既に登録されています。ログインをお試しください。");
+        notify(t("account.errCannotRegister"), t("account.errMsInUse"));
       } else if (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request") {
         // ユーザーが自分で閉じた場合は何も表示しない
       } else if (e.code === "auth/popup-blocked") {
-        notify("ポップアップがブロックされました", "ブラウザの設定でこのサイトのポップアップを許可してから、もう一度お試しください。");
+        notify(t("account.errPopupBlocked"), t("account.errPopupBlockedMessage"));
       } else {
-        notify("失敗しました", e.message ?? String(e));
+        notify(t("account.errFailed"), e.message ?? String(e));
       }
     } finally {
       setBusy(false);
@@ -137,10 +142,15 @@ export default function AccountScreen() {
   }
 
   async function handleSignOut() {
-    confirmDialog("ログアウト", "ログアウトしますか？", async () => {
-      await signOut(); // 直後にAuthContextが匿名で自動再ログインする
-      goBack();
-    });
+    confirmDialog(
+      t("account.logout"),
+      t("account.logoutConfirm"),
+      async () => {
+        await signOut(); // 直後にAuthContextが匿名で自動再ログインする
+        goBack();
+      },
+      { cancel: t("common.cancel"), ok: t("common.ok") }
+    );
   }
 
   return (
@@ -153,31 +163,28 @@ export default function AccountScreen() {
         {!isGuest ? (
           // ── 登録済みユーザー ──
           <>
-            <Text style={styles.title}>アカウント</Text>
-            <Text style={styles.label}>メールアドレス</Text>
+            <Text style={styles.title}>{t("account.title")}</Text>
+            <Text style={styles.label}>{t("account.email")}</Text>
             <Text style={styles.value}>{user?.email ?? "-"}</Text>
             <TouchableOpacity style={styles.dangerButton} onPress={handleSignOut}>
-              <Text style={styles.dangerButtonText}>ログアウト</Text>
+              <Text style={styles.dangerButtonText}>{t("account.logout")}</Text>
             </TouchableOpacity>
           </>
         ) : mode === "register" ? (
           // ── ゲスト: 新規登録（アカウント連携） ──
           <>
-            <Text style={styles.title}>アカウント登録</Text>
-            <Text style={styles.description}>
-              登録すると、機種変更やアプリ再インストール後もデータを引き継げます。
-              いま使っている時間割・友達はそのまま残ります。
-            </Text>
+            <Text style={styles.title}>{t("account.registerTitle")}</Text>
+            <Text style={styles.description}>{t("account.registerDescription")}</Text>
 
-            <Text style={styles.label}>ニックネーム</Text>
+            <Text style={styles.label}>{t("account.nickname")}</Text>
             <TextInput
               style={styles.input}
-              placeholder="例: たろう"
+              placeholder={t("account.nicknamePlaceholder")}
               placeholderTextColor="#aaa"
               value={nickname}
               onChangeText={setNickname}
             />
-            <Text style={styles.label}>メールアドレス</Text>
+            <Text style={styles.label}>{t("account.email")}</Text>
             <TextInput
               style={styles.input}
               placeholder="example@meiji.ac.jp"
@@ -187,7 +194,7 @@ export default function AccountScreen() {
               value={email}
               onChangeText={setEmail}
             />
-            <Text style={styles.label}>パスワード（6文字以上）</Text>
+            <Text style={styles.label}>{t("account.password")}</Text>
             <TextInput
               style={styles.input}
               placeholder="••••••"
@@ -196,7 +203,7 @@ export default function AccountScreen() {
               value={password}
               onChangeText={setPassword}
             />
-            <Text style={styles.label}>パスワード（確認）</Text>
+            <Text style={styles.label}>{t("account.passwordConfirm")}</Text>
             <TextInput
               style={styles.input}
               placeholder="••••••"
@@ -211,32 +218,31 @@ export default function AccountScreen() {
               onPress={handleRegister}
               disabled={busy}
             >
-              <Text style={styles.primaryButtonText}>{busy ? "登録中…" : "登録する"}</Text>
+              <Text style={styles.primaryButtonText}>
+                {busy ? t("account.registering") : t("account.register")}
+              </Text>
             </TouchableOpacity>
 
-            <Text style={styles.dividerText}>または</Text>
+            <Text style={styles.dividerText}>{t("account.or")}</Text>
             <TouchableOpacity
               style={[styles.microsoftButton, busy && styles.buttonDisabled]}
               onPress={handleMicrosoft}
               disabled={busy}
             >
-              <Text style={styles.microsoftButtonText}>Microsoftで登録（大学アカウント）</Text>
+              <Text style={styles.microsoftButtonText}>{t("account.microsoftRegister")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setMode("login")}>
-              <Text style={styles.switchText}>既にアカウントをお持ちの方はこちら（ログイン）</Text>
+              <Text style={styles.switchText}>{t("account.toLogin")}</Text>
             </TouchableOpacity>
           </>
         ) : (
           // ── ゲスト: 既存アカウントへログイン ──
           <>
-            <Text style={styles.title}>ログイン</Text>
-            <Text style={styles.warningText}>
-              ※ ログインすると、ゲストとして作成した現在のデータ（時間割など）には
-              アクセスできなくなります。
-            </Text>
+            <Text style={styles.title}>{t("account.login")}</Text>
+            <Text style={styles.warningText}>{t("account.loginWarning")}</Text>
 
-            <Text style={styles.label}>メールアドレス</Text>
+            <Text style={styles.label}>{t("account.email")}</Text>
             <TextInput
               style={styles.input}
               placeholder="example@meiji.ac.jp"
@@ -246,7 +252,7 @@ export default function AccountScreen() {
               value={email}
               onChangeText={setEmail}
             />
-            <Text style={styles.label}>パスワード</Text>
+            <Text style={styles.label}>{t("account.passwordLabel")}</Text>
             <TextInput
               style={styles.input}
               placeholder="••••••"
@@ -261,20 +267,22 @@ export default function AccountScreen() {
               onPress={handleLogin}
               disabled={busy}
             >
-              <Text style={styles.primaryButtonText}>{busy ? "ログイン中…" : "ログイン"}</Text>
+              <Text style={styles.primaryButtonText}>
+                {busy ? t("account.loggingIn") : t("account.login")}
+              </Text>
             </TouchableOpacity>
 
-            <Text style={styles.dividerText}>または</Text>
+            <Text style={styles.dividerText}>{t("account.or")}</Text>
             <TouchableOpacity
               style={[styles.microsoftButton, busy && styles.buttonDisabled]}
               onPress={handleMicrosoft}
               disabled={busy}
             >
-              <Text style={styles.microsoftButtonText}>Microsoftでログイン</Text>
+              <Text style={styles.microsoftButtonText}>{t("account.microsoftLogin")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setMode("register")}>
-              <Text style={styles.switchText}>新規登録はこちら</Text>
+              <Text style={styles.switchText}>{t("account.toRegister")}</Text>
             </TouchableOpacity>
           </>
         )}

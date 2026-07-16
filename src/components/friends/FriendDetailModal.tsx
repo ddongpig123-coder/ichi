@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Modal, View, Text, TouchableOpacity, Pressable, Image, StyleSheet } from "react-native";
 import DefaultAvatar from "../common/DefaultAvatar";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
 
 export interface FriendDetailModalProps {
@@ -13,6 +14,7 @@ export interface FriendDetailModalProps {
 
 export default function FriendDetailModal({ visible, friend, onClose, onDelete }: FriendDetailModalProps) {
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -28,7 +30,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
               style={styles.deleteButton}
               onPress={() => setConfirmVisible(true)}
             >
-              <Text style={styles.deleteButtonText}>友達削除</Text>
+              <Text style={styles.deleteButtonText}>{t("friends.removeButton")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setImagePreviewVisible(true)}>
@@ -42,7 +44,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
             <Text style={styles.nickname}>{friend.nickname}</Text>
 
             <TouchableOpacity style={styles.messageButton}>
-              <Text style={styles.messageButtonText}>メッセージを送る</Text>
+              <Text style={styles.messageButtonText}>{t("friends.sendMessage")}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>
@@ -61,13 +63,13 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
       <Modal visible={confirmVisible} transparent animationType="fade" onRequestClose={() => setConfirmVisible(false)}>
         <Pressable style={styles.overlay} onPress={() => setConfirmVisible(false)}>
           <Pressable style={styles.confirmCard} onPress={() => {}}>
-            <Text style={styles.confirmText}>{friend.nickname}さんを友達から削除しますか？</Text>
+            <Text style={styles.confirmText}>{friend.nickname}{t("friends.removeConfirm")}</Text>
             <View style={styles.confirmButtonRow}>
               <TouchableOpacity
                 style={[styles.confirmButton, styles.cancelButton]}
                 onPress={() => setConfirmVisible(false)}
               >
-                <Text style={styles.cancelButtonText}>キャンセル</Text>
+                <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.confirmButton, styles.confirmDeleteButton]}
@@ -76,7 +78,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
                   onDelete(friend.id);
                 }}
               >
-                <Text style={styles.confirmDeleteButtonText}>削除</Text>
+                <Text style={styles.confirmDeleteButtonText}>{t("common.delete")}</Text>
               </TouchableOpacity>
             </View>
           </Pressable>

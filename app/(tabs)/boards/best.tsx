@@ -11,23 +11,18 @@ import {
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
+import { timeAgo } from "../../../src/i18n/translations";
 import { fetchBestPosts } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import type { Post } from "../../../src/types/board";
 
 type BestPost = Post & { boardLabel: string };
 
-function timeAgo(ms: number): string {
-  const diff = Date.now() - ms;
-  if (diff < 60000) return "たった今";
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`;
-  return `${Math.floor(diff / 86400000)}日前`;
-}
-
 export default function BestPostsScreen() {
   const { schoolDomain } = useAuth();
   const { theme } = useTheme();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [posts, setPosts] = useState<BestPost[]>([]);
@@ -63,13 +58,13 @@ export default function BestPostsScreen() {
       ItemSeparatorComponent={() => <View style={styles.sep} />}
       ListHeaderComponent={
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>❤️ ベスト投稿</Text>
-          <Text style={styles.headerSub}>いいね数トップ20</Text>
+          <Text style={styles.headerTitle}>{t("boards.bestTitle")}</Text>
+          <Text style={styles.headerSub}>{t("boards.bestHeaderSub")}</Text>
         </View>
       }
       ListEmptyComponent={
         <View style={styles.center}>
-          <Text style={styles.empty}>まだベスト投稿がありません{"\n"}投稿にいいねをしてみよう！</Text>
+          <Text style={styles.empty}>{t("boards.bestEmpty")}</Text>
         </View>
       }
       renderItem={({ item, index }) => (
@@ -92,7 +87,7 @@ export default function BestPostsScreen() {
               <Text style={styles.metaText}>·</Text>
               <Text style={styles.metaText}>💬 {item.commentCount}</Text>
               <Text style={styles.metaText}>·</Text>
-              <Text style={styles.metaText}>{timeAgo(item.createdAt)}</Text>
+              <Text style={styles.metaText}>{timeAgo(language, item.createdAt)}</Text>
             </View>
           </View>
         </TouchableOpacity>

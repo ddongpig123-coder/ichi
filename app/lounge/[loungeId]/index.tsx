@@ -11,21 +11,16 @@ import {
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
+import { timeAgo } from "../../../src/i18n/translations";
 import { fetchLoungePosts } from "../../../src/services/loungeService";
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, type LoungeId, type LoungePost } from "../../../src/types/lounge";
 
-function timeAgo(ms: number): string {
-  const diff = Date.now() - ms;
-  if (diff < 60000) return "たった今";
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}時間前`;
-  return `${Math.floor(diff / 86400000)}日前`;
-}
-
 export default function LoungePostListScreen() {
   const { loungeId } = useLocalSearchParams<{ loungeId: string }>();
   const { theme } = useTheme();
+  const { t, language } = useI18n();
   const { isBlocked } = useBlock();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
@@ -77,13 +72,13 @@ export default function LoungePostListScreen() {
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         ListEmptyComponent={
           <View style={styles.center}>
-            <Text style={styles.empty}>まだ投稿がありません</Text>
+            <Text style={styles.empty}>{t("boards.noPosts")}</Text>
           </View>
         }
         renderItem={({ item }) =>
           isBlocked(item.authorUid) ? (
             <View style={styles.row}>
-              <Text style={styles.blockedText}>ブロックしたユーザーの投稿です</Text>
+              <Text style={styles.blockedText}>{t("boards.blockedPost")}</Text>
             </View>
           ) : (
             <TouchableOpacity
@@ -92,9 +87,9 @@ export default function LoungePostListScreen() {
             >
               <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
               <View style={styles.meta}>
-                <Text style={styles.metaText}>匿名</Text>
+                <Text style={styles.metaText}>{t("boards.anonymous")}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>{timeAgo(item.createdAt)}</Text>
+                <Text style={styles.metaText}>{timeAgo(language, item.createdAt)}</Text>
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>❤️ {item.likeCount}</Text>
                 <Text style={styles.metaText}>·</Text>

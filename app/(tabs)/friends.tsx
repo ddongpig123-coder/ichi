@@ -10,6 +10,7 @@ import SemesterSelector from "../../src/components/common/SemesterSelector";
 import AddFriendModal from "../../src/components/friends/AddFriendModal";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useFriends } from "../../src/contexts/FriendsContext";
+import { useI18n } from "../../src/contexts/I18nContext";
 import {
   acceptFriendRequest,
   fetchReceivedRequests,
@@ -32,13 +33,18 @@ function notify(title: string, message?: string) {
   else Alert.alert(title, message);
 }
 
-function confirmDialog(title: string, message: string, onConfirm: () => void) {
+function confirmDialog(
+  title: string,
+  message: string,
+  onConfirm: () => void,
+  labels: { cancel: string; ok: string }
+) {
   if (Platform.OS === "web") {
     if (window.confirm(`${title}\n\n${message}`)) onConfirm();
   } else {
     Alert.alert(title, message, [
-      { text: "キャンセル", style: "cancel" },
-      { text: "OK", style: "destructive", onPress: onConfirm },
+      { text: labels.cancel, style: "cancel" },
+      { text: labels.ok, style: "destructive", onPress: onConfirm },
     ]);
   }
 }
@@ -51,6 +57,7 @@ export default function FriendsScreen() {
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { user } = useAuth();
+  const { t } = useI18n();
   const { allFriends, frequent, nonFrequent, loading, removeFriend, refresh } = useFriends();
   const orderedAll = [...frequent, ...nonFrequent];
 
@@ -79,9 +86,12 @@ export default function FriendsScreen() {
       await acceptFriendRequest(req);
       setRequests((prev) => prev.filter((r) => r.id !== req.id));
       await refresh(); // 友達一覧に即反映
-      notify("承認しました", `${req.sender?.nickname ?? "相手"}さんと友達になりました。`);
+      notify(
+        t("friends.acceptedTitle"),
+        `${req.sender?.nickname ?? t("friends.defaultPartner")}${t("friends.becameFriendsSuffix")}`
+      );
     } catch (e: any) {
-      notify("承認に失敗しました", e.message ?? String(e));
+      notify(t("friends.acceptFailed"), e.message ?? String(e));
     }
   }
 
@@ -90,7 +100,7 @@ export default function FriendsScreen() {
       await rejectFriendRequest(req.id);
       setRequests((prev) => prev.filter((r) => r.id !== req.id));
     } catch (e: any) {
-      notify("操作に失敗しました", e.message ?? String(e));
+      notify(t("friends.actionFailed"), e.message ?? String(e));
     }
   }
 
@@ -119,22 +129,27 @@ export default function FriendsScreen() {
   const selectedFriend = allFriends.find((f) => f.id === effectiveId);
 
   function handleRemove(friendId: string, nickname: string) {
-    confirmDialog("友達を削除", `${nickname}さんを友達から削除しますか？`, async () => {
-      try {
-        await removeFriend(friendId);
-        if (selectedId === friendId) setSelectedId(null);
-      } catch (e: any) {
-        notify("削除に失敗しました", e.message ?? String(e));
-      }
-    });
+    confirmDialog(
+      t("friends.removeTitle"),
+      `${nickname}${t("friends.removeConfirm")}`,
+      async () => {
+        try {
+          await removeFriend(friendId);
+          if (selectedId === friendId) setSelectedId(null);
+        } catch (e: any) {
+          notify(t("friends.deleteFailed"), e.message ?? String(e));
+        }
+      },
+      { cancel: t("common.cancel"), ok: t("common.ok") }
+    );
   }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.titleRow}>
-        <Text style={styles.titleText}>友達</Text>
+        <Text style={styles.titleText}>{t("friends.title")}</Text>
         <TouchableOpacity style={styles.addButton} onPress={() => setAddModalVisible(true)}>
-          <Text style={styles.addButtonText}>+ 追加</Text>
+          <Text style={styles.addButtonText}>{t("friends.add")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -143,18 +158,18 @@ export default function FriendsScreen() {
       {/* 受信箱: 保留中の申請があるときだけ表示 */}
       {requests.length > 0 && (
         <View style={styles.inboxSection}>
-          <Text style={styles.inboxTitle}>フレンド申請（{requests.length}）</Text>
+          <Text style={styles.inboxTitle}>{t("friends.requestsTitle")}（{requests.length}）</Text>
           {requests.map((req) => (
             <View key={req.id} style={styles.inboxRow}>
               <DefaultAvatar size={30} />
               <Text style={styles.inboxNickname} numberOfLines={1}>
-                {req.sender?.nickname ?? "不明なユーザー"}
+                {req.sender?.nickname ?? t("friends.unknownUser")}
               </Text>
               <TouchableOpacity style={styles.acceptButton} onPress={() => handleAccept(req)}>
-                <Text style={styles.acceptButtonText}>承認</Text>
+                <Text style={styles.acceptButtonText}>{t("friends.accept")}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.rejectButton} onPress={() => handleReject(req)}>
-                <Text style={styles.rejectButtonText}>拒否</Text>
+                <Text style={styles.rejectButtonText}>{t("friends.reject")}</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -175,7 +190,7 @@ export default function FriendsScreen() {
           {friendSessions === "private" ? (
             <View style={styles.privateBox}>
               <Text style={styles.privateText}>
-                {selectedFriend.nickname}さんの時間割は非公開です
+                {selectedFriend.nickname}{t("friends.timetablePrivate")}
               </Text>
             </View>
           ) : (
@@ -187,8 +202,8 @@ export default function FriendsScreen() {
       <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
         {!loading && orderedAll.length === 0 && (
           <View style={styles.emptyBox}>
-            <Text style={styles.emptyText}>まだ友達がいません</Text>
-            <Text style={styles.emptySubText}>右上の「+ 追加」からメールアドレスで友達を追加できます</Text>
+            <Text style={styles.emptyText}>{t("friends.empty")}</Text>
+            <Text style={styles.emptySubText}>{t("friends.emptyHint")}</Text>
           </View>
         )}
         {orderedAll.map((friend) => (
@@ -207,13 +222,13 @@ export default function FriendsScreen() {
             </Text>
             <View style={styles.actions}>
               <TouchableOpacity style={styles.messageButton} onPress={() => {}}>
-                <Text style={styles.messageButtonText}>メッセージ</Text>
+                <Text style={styles.messageButtonText}>{t("friends.message")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={() => handleRemove(friend.id, friend.nickname)}
               >
-                <Text style={styles.deleteButtonText}>削除</Text>
+                <Text style={styles.deleteButtonText}>{t("common.delete")}</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>

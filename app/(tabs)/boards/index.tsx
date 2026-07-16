@@ -4,18 +4,14 @@ import { useRouter } from "expo-router";
 import { usePinnedBoards } from "../../../src/hooks/usePinnedBoards";
 import { useBoards } from "../../../src/hooks/useBoards";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { useI18n } from "../../../src/contexts/I18nContext";
 import type { Theme } from "../../../src/theme/themes";
 import type { BoardMeta } from "../../../src/types/board";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  official: "公式掲示板",
-  department: "学部別掲示板",
-  custom: "みんなの掲示板",
-};
 
 export default function BoardsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
   const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
@@ -25,13 +21,13 @@ export default function BoardsScreen() {
   );
 
   const sections = [
-    ...(pinnedBoards.length > 0 ? [{ title: "よく使う掲示板", data: pinnedBoards }] : []),
-    { title: CATEGORY_LABELS.official, data: officialBoards.filter((b) => !isPinned(b.id)) },
+    ...(pinnedBoards.length > 0 ? [{ title: t("boards.pinnedSection"), data: pinnedBoards }] : []),
+    { title: t("boards.official"), data: officialBoards.filter((b) => !isPinned(b.id)) },
     ...(departmentBoards.length > 0
-      ? [{ title: CATEGORY_LABELS.department, data: departmentBoards.filter((b) => !isPinned(b.id)) }]
+      ? [{ title: t("boards.department"), data: departmentBoards.filter((b) => !isPinned(b.id)) }]
       : []),
     ...(userBoards.length > 0
-      ? [{ title: CATEGORY_LABELS.custom, data: userBoards.filter((b) => !isPinned(b.id)) }]
+      ? [{ title: t("boards.custom"), data: userBoards.filter((b) => !isPinned(b.id)) }]
       : []),
   ];
 
@@ -71,16 +67,16 @@ export default function BoardsScreen() {
           <>
             <TouchableOpacity style={styles.loungeBanner} onPress={() => router.push("/lounge")}>
               <View>
-                <Text style={styles.loungeTitle}>🌏 留学生ラウンジ</Text>
-                <Text style={styles.loungeSub}>全国の留学生と情報交換（ビザ・バイト・住まいなど）</Text>
+                <Text style={styles.loungeTitle}>{t("boards.loungeTitle")}</Text>
+                <Text style={styles.loungeSub}>{t("boards.loungeSub")}</Text>
               </View>
               <Text style={styles.bestArrow}>›</Text>
             </TouchableOpacity>
             <View style={styles.sectionSep} />
             <TouchableOpacity style={styles.bestBanner} onPress={() => router.push("/(tabs)/boards/best")}>
               <View>
-                <Text style={styles.bestTitle}>❤️ ベスト投稿</Text>
-                <Text style={styles.bestSub}>いいね数トップ20をチェック</Text>
+                <Text style={styles.bestTitle}>{t("boards.bestTitle")}</Text>
+                <Text style={styles.bestSub}>{t("boards.bestSub")}</Text>
               </View>
               <Text style={styles.bestArrow}>›</Text>
             </TouchableOpacity>
@@ -89,7 +85,7 @@ export default function BoardsScreen() {
         }
         ListFooterComponent={
           <TouchableOpacity style={styles.createBtn} onPress={() => router.push("/(tabs)/boards/create")}>
-            <Text style={styles.createBtnText}>＋ 掲示板を作成する</Text>
+            <Text style={styles.createBtnText}>{t("boards.createButton")}</Text>
           </TouchableOpacity>
         }
         renderSectionHeader={({ section }) => (

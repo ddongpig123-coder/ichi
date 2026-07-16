@@ -1,6 +1,7 @@
 import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { useI18n } from "../../src/contexts/I18nContext";
 
 // post/_layout と同じく、戻るは実際の前画面へ（グループ初期画面へ飛ばさない）
 function BackButton() {
@@ -19,6 +20,7 @@ function BackButton() {
 
 export default function LoungeLayout() {
   const { theme } = useTheme();
+  const { t } = useI18n();
   return (
     <Stack
       screenOptions={{
@@ -29,10 +31,10 @@ export default function LoungeLayout() {
         contentStyle: { backgroundColor: theme.background },
       }}
     >
-      <Stack.Screen name="index" options={{ title: "留学生ラウンジ" }} />
+      <Stack.Screen name="index" options={{ title: t("lounge.screenTitle") }} />
       <Stack.Screen name="[loungeId]/index" options={{ title: "" }} />
-      <Stack.Screen name="[loungeId]/write" options={{ title: "新規投稿" }} />
-      <Stack.Screen name="[loungeId]/[postId]" options={{ title: "投稿" }} />
+      <Stack.Screen name="[loungeId]/write" options={{ title: t("post.writeScreenTitle") }} />
+      <Stack.Screen name="[loungeId]/[postId]" options={{ title: t("post.screenTitle") }} />
     </Stack>
   );
 }

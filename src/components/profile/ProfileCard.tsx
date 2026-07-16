@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
 import { getUserProfile } from "../../services/userService";
 import DefaultAvatar from "../common/DefaultAvatar";
@@ -11,6 +12,7 @@ export default function ProfileCard() {
   const router = useRouter();
   const { user } = useAuth();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [nickname, setNickname] = useState<string | null>(null);
   const [photoURL, setPhotoURL] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export default function ProfileCard() {
       ) : (
         <DefaultAvatar size={26} />
       )}
-      <Text style={styles.nickname} numberOfLines={1}>{nickname ?? "ゲスト"}</Text>
+      <Text style={styles.nickname} numberOfLines={1}>{nickname ?? t("common.guest")}</Text>
     </TouchableOpacity>
   );
 }

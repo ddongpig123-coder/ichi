@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { PRESET_COLORS, EXTRA_COLORS, type Day, type Period } from "../../types/timetable";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useI18n } from "../../contexts/I18nContext";
+import { dayLabel } from "../../i18n/translations";
 import type { Theme } from "../../theme/themes";
 
 export interface SessionFormValue {
@@ -39,6 +41,7 @@ export default function SessionFormModal({
   onDelete,
 }: SessionFormModalProps) {
   const { theme } = useTheme();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [name, setName] = useState("");
   const [teacher, setTeacher] = useState("");
@@ -69,41 +72,45 @@ export default function SessionFormModal({
         <Pressable style={styles.card} onPress={() => {}}>
           <View style={styles.header}>
             <View>
-              <Text style={styles.title}>{isEditing ? "講義を編集" : "講義を追加"}</Text>
+              <Text style={styles.title}>
+                {isEditing ? t("timetable.editTitle") : t("timetable.addTitle")}
+              </Text>
               {day && period && (
-                <Text style={styles.subtitle}>{day}曜日 ・ {period}限</Text>
+                <Text style={styles.subtitle}>
+                  {dayLabel(language, day)}{t("timetable.daySuffix")} ・ {period}{t("timetable.periodSuffix")}
+                </Text>
               )}
             </View>
             {isEditing && (
               <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
-                <Text style={styles.deleteButtonText}>削除</Text>
+                <Text style={styles.deleteButtonText}>{t("common.delete")}</Text>
               </TouchableOpacity>
             )}
           </View>
 
           <TextInput
             style={styles.input}
-            placeholder="講義名"
+            placeholder={t("timetable.name")}
             placeholderTextColor={theme.textSecondary}
             value={name}
             onChangeText={setName}
           />
           <TextInput
             style={styles.input}
-            placeholder="担当教授"
+            placeholder={t("timetable.teacher")}
             placeholderTextColor={theme.textSecondary}
             value={teacher}
             onChangeText={setTeacher}
           />
           <TextInput
             style={styles.input}
-            placeholder="教室"
+            placeholder={t("timetable.room")}
             placeholderTextColor={theme.textSecondary}
             value={room}
             onChangeText={setRoom}
           />
 
-          <Text style={styles.label}>カラー</Text>
+          <Text style={styles.label}>{t("timetable.color")}</Text>
           <View style={styles.colorRow}>
             {PRESET_COLORS.map((c) => (
               <TouchableOpacity
@@ -148,14 +155,14 @@ export default function SessionFormModal({
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onClose}>
-              <Text style={styles.cancelText}>キャンセル</Text>
+              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.submitButton, !name.trim() && styles.disabled]}
               onPress={handleSubmit}
               disabled={!name.trim()}
             >
-              <Text style={styles.submitText}>{isEditing ? "保存" : "追加"}</Text>
+              <Text style={styles.submitText}>{isEditing ? t("common.save") : t("common.add")}</Text>
             </TouchableOpacity>
           </View>
         </Pressable>

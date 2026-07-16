@@ -13,6 +13,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { auth } from "../../src/config/firebase";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { useI18n } from "../../src/contexts/I18nContext";
 import { signOut } from "../../src/services/authService";
 import { getUserProfile, updateAcademicInfo } from "../../src/services/userService";
 import { THEME_IDS, THEMES, type Theme } from "../../src/theme/themes";
@@ -33,15 +34,17 @@ function SecretValue({
   visible,
   onToggle,
   styles,
+  emptyLabel,
 }: {
   value: string;
   visible: boolean;
   onToggle: () => void;
   styles: ReturnType<typeof makeStyles>;
+  emptyLabel: string;
 }) {
   return (
     <TouchableOpacity style={styles.secretRow} onPress={onToggle}>
-      <Text style={styles.value}>{visible ? (value || "未設定") : "●●●●"}</Text>
+      <Text style={styles.value}>{visible ? (value || emptyLabel) : "●●●●"}</Text>
       <Text style={styles.eyeIcon}>{visible ? "🙈" : "👁"}</Text>
     </TouchableOpacity>
   );
@@ -60,6 +63,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { theme, themeId, setThemeId } = useTheme();
+  const { t, language, setLanguage } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -96,7 +100,7 @@ export default function ProfileScreen() {
       setProfile((p) => ({ ...(p ?? stubProfile(user.uid)), academic: academicInput }));
       setEditingAcademic(false);
     } catch (e: any) {
-      Alert.alert("保存に失敗しました", e.message);
+      Alert.alert(t("common.saveFailed"), e.message);
     }
   }
 
@@ -104,103 +108,103 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.formContainer}>
       {profile?.photoURL ? <Image source={{ uri: profile.photoURL }} style={styles.avatar} /> : null}
 
-      <Text style={styles.label}>ニックネーム</Text>
-      <Text style={styles.value}>{profile?.nickname || "ゲスト"}</Text>
+      <Text style={styles.label}>{t("account.nickname")}</Text>
+      <Text style={styles.value}>{profile?.nickname || t("common.guest")}</Text>
 
       {/* アカウント状態 — ゲストには登録を促し、登録済みなら管理画面へ */}
       <TouchableOpacity style={styles.accountRow} onPress={() => router.push("/account")}>
         {isGuest ? (
           <>
-            <Text style={styles.accountRowText}>ゲスト利用中</Text>
-            <Text style={styles.accountRowAction}>アカウント登録 →</Text>
+            <Text style={styles.accountRowText}>{t("account.guestBadge")}</Text>
+            <Text style={styles.accountRowAction}>{t("account.goRegister")}</Text>
           </>
         ) : (
           <>
-            <Text style={styles.accountRowText}>登録済み ✓</Text>
-            <Text style={styles.accountRowAction}>アカウント管理 →</Text>
+            <Text style={styles.accountRowText}>{t("account.registeredBadge")}</Text>
+            <Text style={styles.accountRowAction}>{t("account.goManage")}</Text>
           </>
         )}
       </TouchableOpacity>
 
       {profile?.email ? (
         <>
-          <Text style={styles.label}>メールアドレス</Text>
+          <Text style={styles.label}>{t("account.email")}</Text>
           <Text style={styles.value}>{profile.email}</Text>
         </>
       ) : null}
 
       {/* 学業情報 — 본인만 볼 수 있는 정보. GPA/単位는 기본 숨김, 탭하면 표시 */}
       <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>🔒 学業情報</Text>
+        <Text style={styles.sectionTitle}>{t("profile.academicInfo")}</Text>
         <TouchableOpacity onPress={() => (editingAcademic ? handleSaveAcademic() : setEditingAcademic(true))}>
-          <Text style={styles.editText}>{editingAcademic ? "保存" : "編集"}</Text>
+          <Text style={styles.editText}>{editingAcademic ? t("common.save") : t("common.edit")}</Text>
         </TouchableOpacity>
       </View>
 
       {editingAcademic ? (
         <>
-          <Text style={styles.label}>学部・学科</Text>
+          <Text style={styles.label}>{t("profile.department")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="例: 経済学部"
+            placeholder={t("profile.departmentPlaceholder")}
             placeholderTextColor={theme.textSecondary}
             value={academicInput.department}
-            onChangeText={(t) => setAcademicInput((a) => ({ ...a, department: t }))}
+            onChangeText={(v) => setAcademicInput((a) => ({ ...a, department: v }))}
           />
-          <Text style={styles.label}>学年</Text>
+          <Text style={styles.label}>{t("profile.grade")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="例: 2"
+            placeholder={t("profile.gradePlaceholder")}
             placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
             value={academicInput.grade}
-            onChangeText={(t) => setAcademicInput((a) => ({ ...a, grade: t }))}
+            onChangeText={(v) => setAcademicInput((a) => ({ ...a, grade: v }))}
           />
           <Text style={styles.label}>GPA</Text>
           <TextInput
             style={styles.input}
-            placeholder="例: 3.42"
+            placeholder={t("profile.gpaPlaceholder")}
             placeholderTextColor={theme.textSecondary}
             keyboardType="decimal-pad"
             value={academicInput.gpa}
-            onChangeText={(t) => setAcademicInput((a) => ({ ...a, gpa: t }))}
+            onChangeText={(v) => setAcademicInput((a) => ({ ...a, gpa: v }))}
           />
-          <Text style={styles.label}>取得単位 / 卒業必要単位</Text>
+          <Text style={styles.label}>{t("profile.creditsLabel")}</Text>
           <View style={styles.row}>
             <TextInput
               style={[styles.input, { flex: 1 }]}
-              placeholder="例: 68"
+              placeholder={t("profile.earnedPlaceholder")}
               placeholderTextColor={theme.textSecondary}
               keyboardType="number-pad"
               value={academicInput.earnedCredits}
-              onChangeText={(t) => setAcademicInput((a) => ({ ...a, earnedCredits: t }))}
+              onChangeText={(v) => setAcademicInput((a) => ({ ...a, earnedCredits: v }))}
             />
             <TextInput
               style={[styles.input, { flex: 1 }]}
-              placeholder="例: 124"
+              placeholder={t("profile.requiredPlaceholder")}
               placeholderTextColor={theme.textSecondary}
               keyboardType="number-pad"
               value={academicInput.requiredCredits}
-              onChangeText={(t) => setAcademicInput((a) => ({ ...a, requiredCredits: t }))}
+              onChangeText={(v) => setAcademicInput((a) => ({ ...a, requiredCredits: v }))}
             />
           </View>
-          <Text style={styles.label}>今学期の履修科目数</Text>
+          <Text style={styles.label}>{t("profile.courseCount")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="例: 12"
+            placeholder={t("profile.courseCountPlaceholder")}
             placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
             value={academicInput.courseCount}
-            onChangeText={(t) => setAcademicInput((a) => ({ ...a, courseCount: t }))}
+            onChangeText={(v) => setAcademicInput((a) => ({ ...a, courseCount: v }))}
           />
         </>
       ) : (
         <>
-          <Text style={styles.label}>学部・学科 / 学年</Text>
+          <Text style={styles.label}>{t("profile.departmentGrade")}</Text>
           <Text style={styles.value}>
             {profile?.academic?.department || profile?.academic?.grade
-              ? `${profile?.academic?.department ?? ""}${profile?.academic?.grade ? ` ${profile.academic.grade}年` : ""}`.trim()
-              : "未設定"}
+              ? `${profile?.academic?.department ?? ""}${profile?.academic?.grade ? ` ${profile.academic.grade}${t("profile.gradeSuffix")}` : ""}`.trim()
+              : t("common.notSet")}
           </Text>
           <Text style={styles.label}>GPA</Text>
           <SecretValue
@@ -208,69 +212,81 @@ export default function ProfileScreen() {
             visible={showGpa}
             onToggle={() => setShowGpa((v) => !v)}
             styles={styles}
+            emptyLabel={t("common.notSet")}
           />
-          <Text style={styles.label}>取得単位</Text>
+          <Text style={styles.label}>{t("profile.earnedCredits")}</Text>
           <SecretValue
             value={
               profile?.academic?.earnedCredits
-                ? `${profile.academic.earnedCredits}${profile.academic.requiredCredits ? ` / ${profile.academic.requiredCredits}` : ""}単位`
+                ? `${profile.academic.earnedCredits}${profile.academic.requiredCredits ? ` / ${profile.academic.requiredCredits}` : ""}${t("profile.creditsSuffix")}`
                 : ""
             }
             visible={showCredits}
             onToggle={() => setShowCredits((v) => !v)}
             styles={styles}
+            emptyLabel={t("common.notSet")}
           />
-          <Text style={styles.label}>今学期の履修科目数</Text>
+          <Text style={styles.label}>{t("profile.courseCount")}</Text>
           <Text style={styles.value}>
-            {profile?.academic?.courseCount ? `${profile.academic.courseCount}科目` : "未設定"}
+            {profile?.academic?.courseCount
+              ? `${profile.academic.courseCount}${t("profile.courseSuffix")}`
+              : t("common.notSet")}
           </Text>
         </>
       )}
 
       {/* テーマ選択 — 즉시 적용 + AsyncStorage 저장 */}
       <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>🎨 テーマ</Text>
+        <Text style={styles.sectionTitle}>{t("profile.themeSection")}</Text>
       </View>
       <View style={styles.themeGrid}>
         {THEME_IDS.map((id) => {
-          const t = THEMES[id];
+          const th = THEMES[id];
           const selected = id === themeId;
           return (
             <TouchableOpacity
               key={id}
               style={[
                 styles.themeCard,
-                { backgroundColor: t.background, borderColor: selected ? theme.primary : theme.border },
+                { backgroundColor: th.background, borderColor: selected ? theme.primary : theme.border },
                 selected && styles.themeCardSelected,
               ]}
               onPress={() => setThemeId(id)}
             >
               <View style={styles.themeSwatchRow}>
-                <View style={[styles.themeSwatch, { backgroundColor: t.primary }]} />
-                <View style={[styles.themeSwatch, { backgroundColor: t.accent }]} />
-                <View style={[styles.themeSwatch, { backgroundColor: t.card, borderWidth: 1, borderColor: t.border }]} />
+                <View style={[styles.themeSwatch, { backgroundColor: th.primary }]} />
+                <View style={[styles.themeSwatch, { backgroundColor: th.accent }]} />
+                <View style={[styles.themeSwatch, { backgroundColor: th.card, borderWidth: 1, borderColor: th.border }]} />
               </View>
-              <Text style={[styles.themeLabel, { color: t.textPrimary }]}>
-                {t.label}{selected ? " ✓" : ""}
+              <Text style={[styles.themeLabel, { color: th.textPrimary }]}>
+                {th.label}{selected ? " ✓" : ""}
               </Text>
             </TouchableOpacity>
           );
         })}
       </View>
 
-      {/* 設定 — ブロックリスト管理など */}
+      {/* 設定 — ブロックリスト管理・表示言語 */}
       <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>⚙️ 設定</Text>
+        <Text style={styles.sectionTitle}>{t("profile.settingsSection")}</Text>
       </View>
       <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/blocked-users")}>
-        <Text style={styles.settingText}>🚫 ブロックリスト</Text>
+        <Text style={styles.settingText}>{t("profile.blockList")}</Text>
         <Text style={styles.settingArrow}>›</Text>
+      </TouchableOpacity>
+      {/* 표시 언어 토글 — 온보딩 이후에도 한/일 전환 가능하게 (AsyncStorage 저장) */}
+      <TouchableOpacity
+        style={styles.settingRow}
+        onPress={() => setLanguage(language === "ja" ? "ko" : "ja")}
+      >
+        <Text style={styles.settingText}>{t("profile.languageRow")}</Text>
+        <Text style={styles.settingText}>{language === "ja" ? "日本語" : "한국어"}</Text>
       </TouchableOpacity>
 
       {/* 로그인 기능은 나중에 다시 붙일 예정 — 이메일 계정일 때만 로그아웃 노출 */}
       {user && !user.isAnonymous ? (
         <TouchableOpacity style={styles.signOutBtn} onPress={() => signOut()}>
-          <Text style={styles.signOutText}>ログアウト</Text>
+          <Text style={styles.signOutText}>{t("account.logout")}</Text>
         </TouchableOpacity>
       ) : null}
     </ScrollView>
