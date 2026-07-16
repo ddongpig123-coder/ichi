@@ -98,12 +98,13 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         `대학 메일 && (emailVerified || Microsoft 연계)` — verificationLevel 승격은 서버 책무 유지.
         실메일 수신 왕복 테스트는 실계정으로 확인 필요
   - [x] Microsoft 버튼 "認証バッジ付与" 라벨 적용 (7/16, i18n 사전 키)
-  - Microsoft 네이티브(폰) 연동 — **보류 (결정 필요)**. Firebase JS SDK는 Microsoft 토큰의
-    signInWithCredential 검증 미지원(7/14 확인)이라 클라이언트 단독 구현 불가. 선택지:
-    (a) Cloud Functions 커스텀 토큰 중계 — Blaze 요금제 필요
-    (b) dev-client(EAS build) + @react-native-firebase 전환 — 12월 EAS Build 계획과 합류 가능
-    → 권장: (b)로 12월에 흡수. 폰에서는 방금 구현한 학교 이메일 인증이 배지 경로를 커버하므로
-    긴급성 낮음. 결정은 태희 확인 후
+  - [x] Microsoft 네이티브(폰) 연동 — **12월로 이관 확정 (7/16 태희 결정)**.
+        Firebase JS SDK는 Microsoft 토큰의 signInWithCredential 검증 미지원(7/14 확인)이라
+        클라이언트 단독 구현 불가. dev-client(EAS build) + @react-native-firebase 전환으로
+        12월 1주차 EAS Build 작업에 흡수. 폰에서는 학교 이메일 인증이 배지 경로를 커버하므로
+        그때까지 공백 없음 (Cloud Functions 커스텀 토큰 중계안은 Blaze 요금제 필요라 기각)
+  - **→ 9월 2주차 실행 항목 전부 완료 (7/16).** 잔여 후속: 실계정 메일 인증 왕복 테스트,
+    게시판/라운지/테마 마스터 데이터의 ko 이름 필드
 - 3주차: 신고 기능 (글/댓글/쪽지 신고 → `reports` 컬렉션), 차단 기능 (차단 유저 콘텐츠 필터링)
   - [x] 완료 (7/14) — `reportService`/`blockService`, `BlockContext`(앱 전역 차단목록),
         공통 `ModerationMenu`(通報 이유 6종 + ブロック 확인), 게시글/댓글/쪽지 렌더 시
@@ -148,6 +149,8 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
 목표: **기능 추가 없이 완성도만.** 12/31 기능 동결.
 
 - 1주차: TestFlight 베타 배포 (EAS Build), 협력자 10~20명 모집·초대 (유학생회 접촉은 11월부터)
+  - EAS Build 전환 시 Microsoft 네이티브 연동 포함 — dev-client + @react-native-firebase/auth로
+    구현 (9월 2주차에서 이관. Expo Go + Firebase JS SDK로는 불가 — 7/14 확인)
 - 2주차: 베타 피드백 반영 라운드 1 — 크래시/치명 버그 우선
 - 3주차: 스토어 자산 — 스크린샷(일/한), 앱 설명, 개인정보처리방침 웹페이지 게시,
   심사용 데모 계정 준비, 연령 등급 설문
