@@ -33,6 +33,12 @@ yarn-error.*
 # local env files
 .env*.local
 
+# Firebase Admin SDK 서비스 계정 키 (절대 커밋 금지 — 유출 시 DB 전체 권한 탈취됨)
+serviceAccount*.json
+*-firebase-adminsdk-*.json
+scripts/keys/
+scripts/**/serviceAccount*.json
+
 # typescript
 *.tsbuildinfo
 

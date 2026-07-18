@@ -17,6 +17,8 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - Firestore 경로: 학교 스코프는 `schools/{schoolDomain}/...`, 전국 스코프는 `lounges/...`
 - 타입은 `src/types/`에 정의하고 `firestore.rules`의 검증 조건과 1:1 일치시킬 것
 - 신규 컬렉션 추가 시 **규칙(firestore.rules) 먼저, 코드 나중** — 규칙에 없는 컬렉션 접근은 전부 거부됨
+- **크롤러/적재 스크립트 출력은 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것** — 앱 강의 검색 UX가 이 형식을 기준으로 동작함. 임의 필드 구조 금지. 공식 크롤 데이터는 `addedBy: "official"`, `verified: true`, Firestore 경로 `schools/{schoolDomain}/departments/{deptId}/courses/{courseId}`
+- 크롤러 등 로컬 스크립트는 `scripts/` 폴더에 둘 것 (앱 번들에 포함 안 됨)
 
 ## 불변 제약 (보안)
 - `.env`는 절대 커밋 금지 (Firebase 키, Microsoft 클라이언트 ID)
@@ -24,6 +26,7 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - `verificationLevel`은 클라이언트에서 생성 시 0 고정, 수정 금지 (규칙 강제)
 - 투고의 `authorUid`는 법적 대응용 — 익명화하거나 제거하지 말 것
 - 삭제는 hard delete 대신 `deleted: true` 플래그 (Phase 1부터)
+- **Firebase Admin SDK 서비스 계정 JSON 키는 절대 커밋 금지** (유출 시 DB 전체 권한 탈취). `.gitignore`에 `serviceAccount*.json`, `scripts/keys/` 등록됨. 키는 로컬에만 두고 경로를 env로 주입
 
 ## 작업 절차
 - 커밋 전 `npx tsc --noEmit` 통과 필수
