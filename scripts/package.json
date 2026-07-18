@@ -1,0 +1,13 @@
+{
+  "name": "ichi-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ichi 데이터 수집·적재 로컬 스크립트 (앱 번들과 분리). 크롤러 출력은 반드시 src/types/course.ts의 Course 타입을 따를 것.",
+  "scripts": {
+    "crawl": "node crawl-syllabus.mjs"
+  },
+  "dependencies": {
+    "node-html-parser": "^7.0.1"
+  }
+}

@@ -1,0 +1,247 @@
+// ============================================================
+// 明治大学 Oh-o! Meiji 公開シラバス クローラー
+// 로드맵 Phase 1c. 출력은 src/types/course.ts의 Course 타입을 따름.
+//
+// 사용법:
+//   node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 [--max-pages N]
+//
+// 출력: scripts/output/courses-{category}-{nendo}-{semester}.json  (Course[])
+//
+// ⚠️ 서버 예의: 요청 간 딜레이 + 재시도 백오프 준수. 대량 실행은 저속으로.
+// ⚠️ 이 스크립트는 로컬 JSON까지만 생성. Firestore 적재는 후속(load-firestore.mjs).
+// ============================================================
+
+import { parse } from "node-html-parser";
+import { writeFile, mkdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// ── 설정 ─────────────────────────────────────────────────
+const BASE = "https://www.oh-o.meiji.ac.jp";
+const SEARCH_PAGE = `${BASE}/syllabus/search?langCd=ja`;
+const EXECUTE = `${BASE}/syllabus/search/execute`;
+const PER_PAGE = 50;         // 페이지당 과목 수(사이트 고정)
+const DELAY_MS = 1500;       // 요청 간 딜레이(예의)
+const MAX_RETRY = 3;         // 실패 시 재시도 횟수
+const USER_AGENT =
+  "ichi-syllabus-crawler/1.0 (Meiji student community app; contact: ddongpig123@gmail.com)";
+
+// Course 타입에 맞춘 값들
+const VALID_DAYS = ["月", "火", "水", "木", "金", "土"];   // Day
+const VALID_PERIODS = [1, 2, 3, 4, 5, 6, 7];               // Period
+
+// 학부 코드(category) 참고표 — README에도 있음
+const FACULTY_LABELS = {
+  "11": "法学部", "12": "商学部", "13": "政治経済学部", "14": "文学部",
+  "15": "理工学部", "16": "農学部", "17": "経営学部", "18": "情報コミュニケーション学部",
+  "19": "国際日本学部", "26": "総合数理学部",
+};
+
+// ── 유틸 ─────────────────────────────────────────────────
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// 전각공백·연속공백 정규화
+function clean(s) {
+  return (s ?? "").replace(/　/g, " ").replace(/\s+/g, " ").trim();
+}
+
+// "月 1" → { day: "月", period: 1 } / 파싱 불가(집중강의 등)면 null
+function parseDayPeriod(raw) {
+  const t = clean(raw);
+  const m = t.match(/([月火水木金土])\s*([1-7])/);
+  if (!m) return null;
+  const day = m[1];
+  const period = Number(m[2]);
+  if (!VALID_DAYS.includes(day) || !VALID_PERIODS.includes(period)) return null;
+  return { day, period };
+}
+
+// "春"/"秋" → Course.Semester
+function parseSemester(raw) {
+  const t = clean(raw);
+  if (t.includes("春")) return "春";
+  if (t.includes("秋")) return "秋";
+  return null;
+}
+
+// 총건수 파싱 → 페이지 수.
+// 주의: HTML에 "検索結果が1000件を超えるため…" 안내문이 먼저 나오므로
+// 단순 "N件" 매칭은 안 됨. "N件 が該当" / "N件 中" 표기를 총건수로 사용.
+function parseTotalPages(html) {
+  const m = html.match(/([\d,]+)\s*件\s*(?:が該当|中)/);
+  if (!m) return null;
+  const total = Number(m[1].replace(/,/g, ""));
+  // 비로그인(unloginFlag) 시 1000건 초과분은 표시 제한될 수 있음 → 경고
+  const capped = /検索結果が\s*1000\s*件を超える/.test(html);
+  return { total, pages: Math.max(1, Math.ceil(total / PER_PAGE)), capped };
+}
+
+// ── HTTP ─────────────────────────────────────────────────
+function buildUrl(category, nendo, semester, page) {
+  const params = new URLSearchParams({
+    page: String(page),
+    unloginFlag: "1",
+    langCd: "ja",
+    category,
+    nendo: String(nendo),
+    semester: String(semester),
+    yobiType: "", jigenCd: "", campus: "", kogiName: "", teacherName: "",
+    freeWord: "", shusai: "", gbndai: "", level: "", jukei: "", kLang: "",
+    searchFlag: "1", clickSearchBtn: "1",
+  });
+  return `${EXECUTE}?${params.toString()}`;
+}
+
+async function fetchText(url, cookie) {
+  const headers = { "User-Agent": USER_AGENT, "Accept-Language": "ja" };
+  if (cookie) headers["Cookie"] = cookie;
+  const res = await fetch(url, { headers });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  return { html: await res.text(), setCookie: res.headers.get("set-cookie") };
+}
+
+async function fetchWithRetry(url, cookie) {
+  let lastErr;
+  for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+    try {
+      return await fetchText(url, cookie);
+    } catch (e) {
+      lastErr = e;
+      const backoff = DELAY_MS * attempt * attempt; // 지수 백오프
+      console.warn(`  ⚠️ 시도 ${attempt}/${MAX_RETRY} 실패: ${e.message} → ${backoff}ms 후 재시도`);
+      await sleep(backoff);
+    }
+  }
+  throw lastErr;
+}
+
+// ── 파싱 ─────────────────────────────────────────────────
+// idCount는 페이지 간 유지되어야 하므로(전역 유니크 id) 호출자가 넘겨준다
+function parseCourses(html, { nendo, idCount }) {
+  const root = parse(html);
+  const items = root.querySelectorAll(".result-list");
+  const courses = [];
+  const skipped = [];
+
+  for (const el of items) {
+    const name = clean(el.querySelector(".syllabus-search-result-course-name")?.text);
+    const teacher = clean(el.querySelector(".syllabus-search-result-teacher-name")?.text);
+    const dayRaw = el.querySelector(".syllabus-search-result-day-of-week")?.text;
+    const campus = clean(el.querySelector(".syllabus-search-result-campus")?.text) || null;
+    const courseNumber = clean(el.querySelector(".syllabus-search-result-kamokunum")?.text) || null;
+    const semester = parseSemester(el.querySelector(".syllabus-search-result-section")?.text);
+
+    const dp = parseDayPeriod(dayRaw);
+    if (!name || !dp || !semester) {
+      skipped.push({ name, dayRaw: clean(dayRaw), reason: !dp ? "요일/교시 파싱불가" : !semester ? "학기 파싱불가" : "이름 없음" });
+      continue;
+    }
+
+    // id: courseNumber(없으면 name) + day + period, 충돌 시 -2, -3...
+    const baseId = `${courseNumber ?? name}-${dp.day}${dp.period}`
+      .replace(/[^\w가-힣ぁ-んァ-ヶ一-龯]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const seen = (idCount.get(baseId) ?? 0) + 1;
+    idCount.set(baseId, seen);
+    const id = seen === 1 ? baseId : `${baseId}-${seen}`;
+
+    // Course 타입 (src/types/course.ts)
+    courses.push({
+      id,
+      name,
+      teacher,
+      day: dp.day,
+      period: dp.period,
+      semester,
+      year: Number(nendo),
+      campus,
+      courseNumber,
+      credits: null,      // 상세페이지 필요 — 후속
+      sourceUrl: null,    // 리스트에 상세 URL 없음 — 후속
+      addedBy: "official",
+      verified: true,
+      confirmCount: 0,
+      createdAt: Date.now(),
+    });
+  }
+
+  return { courses, skipped };
+}
+
+// ── CLI 파싱 ─────────────────────────────────────────────
+function parseArgs(argv) {
+  const args = {};
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i].startsWith("--")) args[argv[i].slice(2)] = argv[i + 1];
+  }
+  return args;
+}
+
+// ── 메인 ─────────────────────────────────────────────────
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  const category = args.category ?? "12";
+  const nendo = args.nendo ?? "2026";
+  const semester = args.semester ?? "10"; // 10=春 20=秋 00=전체
+  const maxPages = args["max-pages"] ? Number(args["max-pages"]) : Infinity;
+
+  const semLabel = { "10": "春", "20": "秋", "00": "全" }[semester] ?? semester;
+  console.log(`\n📚 크롤 시작: ${FACULTY_LABELS[category] ?? category} / ${nendo}년 / ${semLabel}학기`);
+
+  // 세션 쿠키가 필요할 수 있으므로 검색 페이지 1회 선방문(fallback 대비)
+  let cookie = null;
+  try {
+    const seed = await fetchText(SEARCH_PAGE);
+    if (seed.setCookie) cookie = seed.setCookie.split(";")[0];
+  } catch { /* 쿠키 없어도 대부분 동작 */ }
+  await sleep(DELAY_MS);
+
+  // 1페이지로 총 페이지 수 파악
+  const first = await fetchWithRetry(buildUrl(category, nendo, semester, 1), cookie);
+  const totalInfo = parseTotalPages(first.html);
+  const lastPage = Math.min(totalInfo?.pages ?? 1, maxPages);
+  console.log(`   총 ${totalInfo?.total ?? "?"}건 → ${totalInfo?.pages ?? "?"}페이지 (이번 실행: ${lastPage}페이지)`);
+  if (totalInfo?.capped) {
+    console.warn(`   ⚠️ 비로그인 시 1000건 초과분은 표시 제한될 수 있음. 전체 수집은 학과(gbn) 필터로 1000건 이하로 쪼개 실행 권장.`);
+  }
+
+  const all = [];
+  const allSkipped = [];
+  const idCount = new Map(); // 전 페이지 공유 → id 전역 유니크 보장
+
+  // 1페이지는 이미 받았으니 재사용
+  for (let page = 1; page <= lastPage; page++) {
+    let html;
+    if (page === 1) {
+      html = first.html;
+    } else {
+      await sleep(DELAY_MS);
+      const res = await fetchWithRetry(buildUrl(category, nendo, semester, page), cookie);
+      html = res.html;
+    }
+    const { courses, skipped } = parseCourses(html, { nendo, idCount });
+    all.push(...courses);
+    allSkipped.push(...skipped);
+    console.log(`   page ${page}/${lastPage}: ${courses.length}과목 수집${skipped.length ? ` (${skipped.length} 스킵)` : ""}`);
+  }
+
+  // 저장
+  const outDir = join(__dirname, "output");
+  await mkdir(outDir, { recursive: true });
+  const outPath = join(outDir, `courses-${category}-${nendo}-${semester}.json`);
+  await writeFile(outPath, JSON.stringify(all, null, 2), "utf-8");
+
+  console.log(`\n✅ 완료: ${all.length}과목 → ${outPath}`);
+  if (allSkipped.length) {
+    console.log(`⏭️  스킵 ${allSkipped.length}건 (요일/교시·학기 없는 집중강의 등):`);
+    for (const s of allSkipped.slice(0, 10)) console.log(`   - "${s.name}" [${s.dayRaw}] ${s.reason}`);
+    if (allSkipped.length > 10) console.log(`   ... 외 ${allSkipped.length - 10}건`);
+  }
+}
+
+main().catch((e) => {
+  console.error("❌ 크롤 실패:", e);
+  process.exit(1);
+});

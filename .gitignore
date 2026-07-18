@@ -39,6 +39,10 @@ serviceAccount*.json
 scripts/keys/
 scripts/**/serviceAccount*.json
 
+# 크롤러 출력 (대용량 데이터 — 커밋 제외)
+scripts/output/
+scripts/node_modules/
+
 # typescript
 *.tsbuildinfo
 
