@@ -10,8 +10,8 @@
 //
 //   --dry-run : Admin SDK 없이 데이터 검증 + 적재 시뮬레이션만 (키 불필요)
 //   --school  : schoolDomain (기본 meiji.ac.jp)
-//               ※ 현재 앱 AuthContext는 "global" 사용 중 — 검색 UX 붙일 때(10월 3주차)
-//                 태희와 schoolDomain 정책 확정 후 실제 적재할 것
+//               ※ 2026-07 태희와 합의: schoolDomain = "meiji.ac.jp" 확정.
+//                 실제 적재 시점은 검색 UX(10월 3주차) 착수 직전.
 //   --dept    : deptId (기본: 파일명의 category 코드. 예: 12=商学部)
 //   --key     : 서비스 계정 키 경로 (기본 keys/serviceAccount.json)
 //               ⚠️ 키는 절대 커밋 금지 (.gitignore 등록됨)

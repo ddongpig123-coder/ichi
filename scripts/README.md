@@ -76,8 +76,9 @@ npm install firebase-admin
 node load-firestore.mjs --file output/courses-12-2026-10.json --dept 12 --school meiji.ac.jp
 ```
 
-- `--school` 기본값은 `meiji.ac.jp`. **현재 앱 AuthContext는 `"global"`을 쓰고 있으므로, 검색 UX 작업(10월 3주차) 때 태희와 schoolDomain 정책을 확정한 뒤 실제 적재할 것**
+- `--school` 기본값은 **`meiji.ac.jp`** — 2026-07 태희와 합의로 확정된 schoolDomain
 - `--dept` 기본값은 파일명의 category 코드 (예: 12)
+- **적재 시점**: 검색 UX(10월 3주차) 착수 직전. 그 전까지는 `--dry-run`으로만 검증
 
 > ⚠️ **서비스 계정 JSON 키는 절대 커밋 금지** (유출 시 DB 전체 권한 탈취).
 > `.gitignore`에 `serviceAccount*.json`, `scripts/keys/` 등록됨. 키는 로컬 `scripts/keys/`에만 둘 것.
