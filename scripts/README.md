@@ -19,7 +19,11 @@ Node 18+ 필요 (내장 `fetch` 사용).
 `Course[]` JSON으로 저장한다.
 
 ```bash
+# 소량 테스트 (1페이지 = 50과목)
 node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 --max-pages 1
+
+# 전체 수집 + 단위수까지 (상학부 1학기 ≈ 35분)
+node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 --details
 ```
 
 | 인자 | 설명 | 예 |
@@ -28,6 +32,9 @@ node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 --max-pages 1
 | `--nendo` | 개강 연도 | `2026` |
 | `--semester` | `10`=春 / `20`=秋 / `00`=전체 | `10` |
 | `--max-pages` | 최대 페이지 수(테스트용, 생략 시 전체) | `1` |
+| `--details` | 상세페이지 방문해 `credits`(単位数) 채움. 과목당 1요청 추가 | |
+
+`sourceUrl`(시라버스 상세 URL)은 `--details` 없이도 리스트에서 자동 추출된다.
 
 출력: `scripts/output/courses-{category}-{nendo}-{semester}.json` (git 추적 안 함)
 
@@ -51,20 +58,36 @@ node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 --max-pages 1
 ### 서버 예의
 
 - 요청 간 **1.5초 딜레이**, 실패 시 **최대 3회 지수 백오프** 재시도 (스크립트 내장)
-- 페이지당 50과목. 상학부 1개 학기 ≈ 28페이지
+- 페이지당 50과목. 상학부 1개 학기 ≈ 28페이지 (1,376건)
+- "검색결과 1000건 초과" 안내문이 뜨지만 **실측상 전 페이지 접근 가능** (2026-07 검증, 분할 불필요)
 - 전체 수집(전 학부 × 2학기)은 저속으로 나눠 실행할 것
 - User-Agent에 연락처 명시됨
 
-## 2. Firestore 적재 (후속 — load-firestore.mjs, 미구현)
+## 2. Firestore 적재 (load-firestore.mjs)
 
 크롤 JSON을 Firebase Admin SDK로 `schools/{schoolDomain}/departments/{deptId}/courses/{courseId}`에 적재.
 
+```bash
+# 키 없이 검증만 (Course 타입·id 중복 체크 + 시뮬레이션)
+node load-firestore.mjs --file output/courses-12-2026-10.json --dry-run
+
+# 실제 적재 (서비스 계정 키 필요, firebase-admin 별도 설치)
+npm install firebase-admin
+node load-firestore.mjs --file output/courses-12-2026-10.json --dept 12 --school meiji.ac.jp
+```
+
+- `--school` 기본값은 `meiji.ac.jp`. **현재 앱 AuthContext는 `"global"`을 쓰고 있으므로, 검색 UX 작업(10월 3주차) 때 태희와 schoolDomain 정책을 확정한 뒤 실제 적재할 것**
+- `--dept` 기본값은 파일명의 category 코드 (예: 12)
+
 > ⚠️ **서비스 계정 JSON 키는 절대 커밋 금지** (유출 시 DB 전체 권한 탈취).
-> `.gitignore`에 `serviceAccount*.json`, `scripts/keys/` 등록됨. 키는 로컬 `scripts/keys/`에만 두고 경로를 env로 주입.
+> `.gitignore`에 `serviceAccount*.json`, `scripts/keys/` 등록됨. 키는 로컬 `scripts/keys/`에만 둘 것.
+> 키 발급: Firebase 콘솔 → 프로젝트 설정 → 서비스 계정 → 새 비공개 키 생성
 
 ## 다음 할 일
 
-- [ ] `--semester 20`(秋) 및 전 학부 수집
-- [ ] 상세페이지 크롤로 `credits`(단위수)·`sourceUrl` 채우기 (현재 null)
-- [ ] `load-firestore.mjs`: Admin SDK 적재 (서비스 계정 키 준비 후)
+- [x] 상세페이지 크롤로 `credits`·`sourceUrl` 채우기 (`--details`)
+- [x] 1000건 제한 검증 → 제한 없음 확인
+- [x] `load-firestore.mjs` (dry-run 검증 완료)
+- [ ] 秋학기·전 학부 수집 (상학부 春+秋는 수집됨)
+- [ ] 실제 Firestore 적재 (서비스 계정 키 + schoolDomain 정책 확정 후)
 - [ ] 다른 유명 대학 확장 (구조 다름 — 대학별 파서 분리)

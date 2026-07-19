@@ -3,7 +3,11 @@
 // 로드맵 Phase 1c. 출력은 src/types/course.ts의 Course 타입을 따름.
 //
 // 사용법:
-//   node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 [--max-pages N]
+//   node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 [--max-pages N] [--details]
+//
+//   --details : 각 과목의 시라버스 상세페이지(/syllabus/syllabusView)를 방문해
+//               credits(単位数)를 채운다. 과목당 1회 요청이 추가되므로 오래 걸림.
+//               (sourceUrl은 상세 방문 없이 리스트에서 추출됨)
 //
 // 출력: scripts/output/courses-{category}-{nendo}-{semester}.json  (Course[])
 //
@@ -73,7 +77,8 @@ function parseTotalPages(html) {
   const m = html.match(/([\d,]+)\s*件\s*(?:が該当|中)/);
   if (!m) return null;
   const total = Number(m[1].replace(/,/g, ""));
-  // 비로그인(unloginFlag) 시 1000건 초과분은 표시 제한될 수 있음 → 경고
+  // "1000건 초과" 안내문이 뜨지만 실측 결과 페이지네이션은 전건 접근 가능
+  // (2026-07 검증: 商学部 1376건, page 21·28 정상 반환). 안내용으로만 표시.
   const capped = /検索結果が\s*1000\s*件を超える/.test(html);
   return { total, pages: Math.max(1, Math.ceil(total / PER_PAGE)), capped };
 }
@@ -132,6 +137,9 @@ function parseCourses(html, { nendo, idCount }) {
     const campus = clean(el.querySelector(".syllabus-search-result-campus")?.text) || null;
     const courseNumber = clean(el.querySelector(".syllabus-search-result-kamokunum")?.text) || null;
     const semester = parseSemester(el.querySelector(".syllabus-search-result-section")?.text);
+    // 상세 URL: <a data="/syllabus/syllabusView?syllabusYear=...&kougicd=..."> 속성에서 추출
+    const detailPath = el.querySelector("a.link-txt")?.getAttribute("data") ?? null;
+    const sourceUrl = detailPath ? BASE + detailPath.replace(/&amp;/g, "&") : null;
 
     const dp = parseDayPeriod(dayRaw);
     if (!name || !dp || !semester) {
@@ -158,8 +166,8 @@ function parseCourses(html, { nendo, idCount }) {
       year: Number(nendo),
       campus,
       courseNumber,
-      credits: null,      // 상세페이지 필요 — 후속
-      sourceUrl: null,    // 리스트에 상세 URL 없음 — 후속
+      credits: null,      // --details 옵션 시 상세페이지에서 채움
+      sourceUrl,          // 시라버스 상세페이지 URL (리스트에서 추출)
       addedBy: "official",
       verified: true,
       confirmCount: 0,
@@ -170,11 +178,45 @@ function parseCourses(html, { nendo, idCount }) {
   return { courses, skipped };
 }
 
+// 상세페이지 HTML에서 単位数 파싱.
+// 구조: <span>単位数</span> 라벨 컬럼 → 다음 값 컬럼 <div>2</div>
+function parseCredits(html) {
+  const m = html.match(/単位数<\/span>[\s\S]{0,400}?<div>\s*([\d.]+)\s*<\/div>/);
+  return m ? Number(m[1]) : null;
+}
+
+// --details: 각 과목 상세페이지 방문해 credits 채우기 (과목당 1요청 + 딜레이)
+async function fillCredits(courses, cookie) {
+  const targets = courses.filter((c) => c.sourceUrl);
+  console.log(`\n📄 상세 크롤 시작: ${targets.length}과목 (예상 ${Math.round((targets.length * DELAY_MS) / 60000)}분)`);
+  let filled = 0, failed = 0;
+  for (let i = 0; i < targets.length; i++) {
+    const c = targets[i];
+    await sleep(DELAY_MS);
+    try {
+      const { html } = await fetchWithRetry(c.sourceUrl, cookie);
+      const credits = parseCredits(html);
+      if (credits !== null) { c.credits = credits; filled++; }
+      else failed++;
+    } catch {
+      failed++;
+    }
+    if ((i + 1) % 25 === 0 || i + 1 === targets.length) {
+      console.log(`   상세 ${i + 1}/${targets.length} (credits 채움 ${filled}, 실패 ${failed})`);
+    }
+  }
+  return { filled, failed };
+}
+
 // ── CLI 파싱 ─────────────────────────────────────────────
 function parseArgs(argv) {
   const args = {};
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i].startsWith("--")) args[argv[i].slice(2)] = argv[i + 1];
+    if (!argv[i].startsWith("--")) continue;
+    const key = argv[i].slice(2);
+    const next = argv[i + 1];
+    // 값이 없는 플래그(--details 등)는 true
+    args[key] = next && !next.startsWith("--") ? next : true;
   }
   return args;
 }
@@ -204,7 +246,7 @@ async function main() {
   const lastPage = Math.min(totalInfo?.pages ?? 1, maxPages);
   console.log(`   총 ${totalInfo?.total ?? "?"}건 → ${totalInfo?.pages ?? "?"}페이지 (이번 실행: ${lastPage}페이지)`);
   if (totalInfo?.capped) {
-    console.warn(`   ⚠️ 비로그인 시 1000건 초과분은 표시 제한될 수 있음. 전체 수집은 학과(gbn) 필터로 1000건 이하로 쪼개 실행 권장.`);
+    console.log(`   ℹ️ "1000건 초과" 안내문 있음 — 실측상 전 페이지 접근 가능 (표시 제한 없음)`);
   }
 
   const all = [];
@@ -227,11 +269,18 @@ async function main() {
     console.log(`   page ${page}/${lastPage}: ${courses.length}과목 수집${skipped.length ? ` (${skipped.length} 스킵)` : ""}`);
   }
 
-  // 저장
+  // 저장 (상세 크롤 전에 1차 저장 — 중간 실패해도 리스트 데이터는 보존)
   const outDir = join(__dirname, "output");
   await mkdir(outDir, { recursive: true });
   const outPath = join(outDir, `courses-${category}-${nendo}-${semester}.json`);
   await writeFile(outPath, JSON.stringify(all, null, 2), "utf-8");
+
+  // --details: 상세페이지에서 credits 채우고 재저장
+  if (args.details) {
+    const { filled, failed } = await fillCredits(all, cookie);
+    await writeFile(outPath, JSON.stringify(all, null, 2), "utf-8");
+    console.log(`   credits: ${filled} 채움 / ${failed} 실패`);
+  }
 
   console.log(`\n✅ 완료: ${all.length}과목 → ${outPath}`);
   if (allSkipped.length) {
