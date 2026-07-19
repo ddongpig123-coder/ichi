@@ -34,10 +34,16 @@ yarn-error.*
 .env
 .env*.local
 
-# Firebase Admin SDK 서비스 계정 키 (크롤러용 — 유출 시 DB 전체 권한 노출)
+# Firebase Admin SDK 서비스 계정 키 (절대 커밋 금지 — 유출 시 DB 전체 권한 탈취됨)
 *serviceAccount*.json
 *service-account*.json
+*-firebase-adminsdk-*.json
 scripts/keys/
+scripts/**/serviceAccount*.json
+
+# 크롤러 출력 (대용량 데이터 — 커밋 제외)
+scripts/output/
+scripts/node_modules/
 
 # typescript
 *.tsbuildinfo
