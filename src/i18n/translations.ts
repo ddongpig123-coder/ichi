@@ -299,6 +299,23 @@ const ja = {
   "profile.blockList": "🚫 ブロックリスト",
   "profile.languageRow": "🌐 言語",
   "profile.settingsPreparing": "プロフィール設定（準備中）",
+
+  // 講義検索（Phase 1c）
+  "courseSearch.title": "講義を検索",
+  "courseSearch.entry": "＋ 講義を検索して追加",
+  "courseSearch.departmentLabel": "学部",
+  "courseSearch.departmentPlaceholder": "学部を選択",
+  "courseSearch.keywordPlaceholder": "講義名・教員名で検索...",
+  "courseSearch.search": "検索",
+  "courseSearch.selectDepartmentFirst": "まず学部を選んでください",
+  "courseSearch.noResults": "該当する講義がありません",
+  "courseSearch.prefixHint": "講義名は先頭から一致するものが表示されます",
+  "courseSearch.mockNotice": "サンプルデータ表示中（講義データの投入待ち）",
+  "courseSearch.add": "時間割に追加",
+  "courseSearch.added": "時間割に追加しました",
+  "courseSearch.occupied": "この時間にはすでに講義が入っています",
+  "courseSearch.credits": "単位",
+  "courseSearch.manualHint": "見つからない場合は時間割のマスを直接タップして手入力できます",
 } as const;
 
 const ko: Record<TranslationKey, string> = {
@@ -581,6 +598,23 @@ const ko: Record<TranslationKey, string> = {
   "profile.blockList": "🚫 차단 목록",
   "profile.languageRow": "🌐 언어",
   "profile.settingsPreparing": "프로필 설정 (준비 중)",
+
+  // 강의 검색 (Phase 1c)
+  "courseSearch.title": "강의 검색",
+  "courseSearch.entry": "＋ 강의 검색해서 추가",
+  "courseSearch.departmentLabel": "학부",
+  "courseSearch.departmentPlaceholder": "학부 선택",
+  "courseSearch.keywordPlaceholder": "강의명·교수명으로 검색...",
+  "courseSearch.search": "검색",
+  "courseSearch.selectDepartmentFirst": "먼저 학부를 선택하세요",
+  "courseSearch.noResults": "해당하는 강의가 없습니다",
+  "courseSearch.prefixHint": "강의명은 앞부분이 일치하는 것만 표시됩니다",
+  "courseSearch.mockNotice": "샘플 데이터 표시 중 (강의 데이터 적재 대기)",
+  "courseSearch.add": "시간표에 추가",
+  "courseSearch.added": "시간표에 추가했습니다",
+  "courseSearch.occupied": "이 시간에는 이미 강의가 있습니다",
+  "courseSearch.credits": "학점",
+  "courseSearch.manualHint": "찾는 강의가 없으면 시간표 칸을 직접 눌러 수동 입력할 수 있습니다",
 };
 
 export type TranslationKey = keyof typeof ja;
