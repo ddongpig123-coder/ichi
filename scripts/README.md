@@ -36,6 +36,18 @@ node crawl-syllabus.mjs --category 12 --nendo 2026 --semester 10 --details
 
 `sourceUrl`(시라버스 상세 URL)은 `--details` 없이도 리스트에서 자동 추출된다.
 
+### 의도적으로 수집하지 않는 과목 (2026-07 결정)
+
+`Course` 타입이 `day`/`period`를 필수로 요구하므로 아래는 스킵된다. 로그에 스킵 사유가 출력됨.
+
+| 대상 | 예 | 비고 |
+|---|---|---|
+| 요일·교시가 없는 과목 | 집중강의, `フィールドスタディ`, `スポーツ実習`, 대학원 `〔Ｍ〕` 과목 | 시간표 그리드에 배치 불가 |
+| **일요일(日) 과목** | `総合学際演習（４年）` [日 7] | `Day` 타입이 月〜土 6일뿐. 학부당 0~1건 수준 |
+
+`通年`(연간) 과목은 스킵하지 않고 **春·秋 양쪽에 등록**한다 (B안).
+강의 검색에서 위 과목들도 노출하려면 `src/types/timetable.ts`의 `DAYS`·`Course` 타입 확장이 필요 — 태희 창구.
+
 출력: `scripts/output/courses-{category}-{nendo}-{semester}.json` (git 추적 안 함)
 
 ### 학부 코드 (category)
@@ -76,8 +88,9 @@ npm install firebase-admin
 node load-firestore.mjs --file output/courses-12-2026-10.json --dept 12 --school meiji.ac.jp
 ```
 
-- `--school` 기본값은 `meiji.ac.jp`. **현재 앱 AuthContext는 `"global"`을 쓰고 있으므로, 검색 UX 작업(10월 3주차) 때 태희와 schoolDomain 정책을 확정한 뒤 실제 적재할 것**
+- `--school` 기본값은 **`meiji.ac.jp`** — 2026-07 태희와 합의로 확정된 schoolDomain
 - `--dept` 기본값은 파일명의 category 코드 (예: 12)
+- **적재 시점**: 검색 UX(10월 3주차) 착수 직전. 그 전까지는 `--dry-run`으로만 검증
 
 > ⚠️ **서비스 계정 JSON 키는 절대 커밋 금지** (유출 시 DB 전체 권한 탈취).
 > `.gitignore`에 `serviceAccount*.json`, `scripts/keys/` 등록됨. 키는 로컬 `scripts/keys/`에만 둘 것.

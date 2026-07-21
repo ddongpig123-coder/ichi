@@ -32,7 +32,10 @@ const MAX_RETRY = 3;         // 실패 시 재시도 횟수
 const USER_AGENT =
   "ichi-syllabus-crawler/1.0 (Meiji student community app; contact: ddongpig123@gmail.com)";
 
-// Course 타입에 맞춘 값들
+// Course 타입에 맞춘 값들 (src/types/timetable.ts의 Day/Period와 1:1)
+// ※ 日曜日(일요일)은 Day 타입에 없어 의도적으로 제외한다 (2026-07 결정).
+//   실제 대상 과목은 극소수(商학부 "総合学際演習（４年）" [日 7] 등 학부당 0~1건).
+//   필요해지면 src/types/timetable.ts의 DAYS 확장부터 (태희 창구).
 const VALID_DAYS = ["月", "火", "水", "木", "金", "土"];   // Day
 const VALID_PERIODS = [1, 2, 3, 4, 5, 6, 7];               // Period
 
@@ -62,12 +65,17 @@ function parseDayPeriod(raw) {
   return { day, period };
 }
 
-// "春"/"秋" → Course.Semester
-function parseSemester(raw) {
+// section 값 → Course.Semester[] (복수 반환)
+// 실제 사이트 값 예: "春" / "秋" / "春後"(春학기 후반) / "通年集中" / "通年"
+// 通年(1년 내내)은 Course.Semester("春"|"秋")로 표현 불가 → 春·秋 양쪽에 등록한다.
+// (2026-07 결정 B안. 실제로 通年 수업은 두 학기 모두 나가므로 시간표상으로도 맞음)
+function parseSemesters(raw) {
   const t = clean(raw);
-  if (t.includes("春")) return "春";
-  if (t.includes("秋")) return "秋";
-  return null;
+  if (t.includes("通年")) return ["春", "秋"];
+  const out = [];
+  if (t.includes("春")) out.push("春");
+  if (t.includes("秋")) out.push("秋");
+  return out.length ? out : null;
 }
 
 // 총건수 파싱 → 페이지 수.
@@ -136,43 +144,46 @@ function parseCourses(html, { nendo, idCount }) {
     const dayRaw = el.querySelector(".syllabus-search-result-day-of-week")?.text;
     const campus = clean(el.querySelector(".syllabus-search-result-campus")?.text) || null;
     const courseNumber = clean(el.querySelector(".syllabus-search-result-kamokunum")?.text) || null;
-    const semester = parseSemester(el.querySelector(".syllabus-search-result-section")?.text);
+    const semesters = parseSemesters(el.querySelector(".syllabus-search-result-section")?.text);
     // 상세 URL: <a data="/syllabus/syllabusView?syllabusYear=...&kougicd=..."> 속성에서 추출
     const detailPath = el.querySelector("a.link-txt")?.getAttribute("data") ?? null;
     const sourceUrl = detailPath ? BASE + detailPath.replace(/&amp;/g, "&") : null;
 
     const dp = parseDayPeriod(dayRaw);
-    if (!name || !dp || !semester) {
-      skipped.push({ name, dayRaw: clean(dayRaw), reason: !dp ? "요일/교시 파싱불가" : !semester ? "학기 파싱불가" : "이름 없음" });
+    if (!name || !dp || !semesters) {
+      skipped.push({ name, dayRaw: clean(dayRaw), reason: !dp ? "요일/교시 파싱불가" : !semesters ? "학기 파싱불가" : "이름 없음" });
       continue;
     }
 
-    // id: courseNumber(없으면 name) + day + period, 충돌 시 -2, -3...
-    const baseId = `${courseNumber ?? name}-${dp.day}${dp.period}`
-      .replace(/[^\w가-힣ぁ-んァ-ヶ一-龯]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    const seen = (idCount.get(baseId) ?? 0) + 1;
-    idCount.set(baseId, seen);
-    const id = seen === 1 ? baseId : `${baseId}-${seen}`;
+    // 通年이면 春·秋 두 건으로 등록된다
+    for (const semester of semesters) {
+      // id에 semester 포함 — 春/秋를 같은 Firestore 컬렉션에 적재해도 충돌하지 않도록
+      const baseId = `${courseNumber ?? name}-${semester}-${dp.day}${dp.period}`
+        .replace(/[^\w가-힣ぁ-んァ-ヶ一-龯]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      const seen = (idCount.get(baseId) ?? 0) + 1;
+      idCount.set(baseId, seen);
+      const id = seen === 1 ? baseId : `${baseId}-${seen}`;
 
-    // Course 타입 (src/types/course.ts)
-    courses.push({
-      id,
-      name,
-      teacher,
-      day: dp.day,
-      period: dp.period,
-      semester,
-      year: Number(nendo),
-      campus,
-      courseNumber,
-      credits: null,      // --details 옵션 시 상세페이지에서 채움
-      sourceUrl,          // 시라버스 상세페이지 URL (리스트에서 추출)
-      addedBy: "official",
-      verified: true,
-      confirmCount: 0,
-      createdAt: Date.now(),
-    });
+      // Course 타입 (src/types/course.ts)
+      courses.push({
+        id,
+        name,
+        teacher,
+        day: dp.day,
+        period: dp.period,
+        semester,
+        year: Number(nendo),
+        campus,
+        courseNumber,
+        credits: null,      // --details 옵션 시 상세페이지에서 채움
+        sourceUrl,          // 시라버스 상세페이지 URL (리스트에서 추출)
+        addedBy: "official",
+        verified: true,
+        confirmCount: 0,
+        createdAt: Date.now(),
+      });
+    }
   }
 
   return { courses, skipped };
@@ -185,24 +196,32 @@ function parseCredits(html) {
   return m ? Number(m[1]) : null;
 }
 
-// --details: 각 과목 상세페이지 방문해 credits 채우기 (과목당 1요청 + 딜레이)
+// --details: 상세페이지 방문해 credits 채우기.
+// 通年 과목은 春·秋 두 건으로 복제되어 sourceUrl이 같으므로 URL 단위로 1회만 요청한다.
 async function fillCredits(courses, cookie) {
-  const targets = courses.filter((c) => c.sourceUrl);
-  console.log(`\n📄 상세 크롤 시작: ${targets.length}과목 (예상 ${Math.round((targets.length * DELAY_MS) / 60000)}분)`);
+  const byUrl = new Map(); // sourceUrl → 같은 URL을 쓰는 과목들
+  for (const c of courses) {
+    if (!c.sourceUrl) continue;
+    if (!byUrl.has(c.sourceUrl)) byUrl.set(c.sourceUrl, []);
+    byUrl.get(c.sourceUrl).push(c);
+  }
+  const urls = [...byUrl.keys()];
+  console.log(`\n📄 상세 크롤 시작: ${urls.length}건 (${courses.length}과목, 예상 ${Math.round((urls.length * DELAY_MS) / 60000)}분)`);
   let filled = 0, failed = 0;
-  for (let i = 0; i < targets.length; i++) {
-    const c = targets[i];
+  for (let i = 0; i < urls.length; i++) {
     await sleep(DELAY_MS);
     try {
-      const { html } = await fetchWithRetry(c.sourceUrl, cookie);
+      const { html } = await fetchWithRetry(urls[i], cookie);
       const credits = parseCredits(html);
-      if (credits !== null) { c.credits = credits; filled++; }
-      else failed++;
+      if (credits !== null) {
+        for (const c of byUrl.get(urls[i])) c.credits = credits;
+        filled++;
+      } else failed++;
     } catch {
       failed++;
     }
-    if ((i + 1) % 25 === 0 || i + 1 === targets.length) {
-      console.log(`   상세 ${i + 1}/${targets.length} (credits 채움 ${filled}, 실패 ${failed})`);
+    if ((i + 1) % 25 === 0 || i + 1 === urls.length) {
+      console.log(`   상세 ${i + 1}/${urls.length} (credits 채움 ${filled}, 실패 ${failed})`);
     }
   }
   return { filled, failed };
