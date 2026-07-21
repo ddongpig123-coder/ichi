@@ -174,16 +174,37 @@ async function main() {
   const db = getFirestore(app);
   const col = db.collection("schools").doc(school).collection("departments").doc(dept).collection("courses");
 
-  // Firestore batch는 500건 제한 → 400건씩 커밋
-  const CHUNK = 400;
+  // Firestore batch는 500건 제한. 큰 배치는 DEADLINE_EXCEEDED가 나기 쉬워 기본 200건.
+  // (2026-07-22: 400건으로 총합수리 秋 적재 시 "Deadline exceeded after 0.514s" 발생)
+  const CHUNK = Number(args.chunk ?? 200);
+  const MAX_RETRY = 4;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
   let written = 0;
   for (let i = 0; i < courses.length; i += CHUNK) {
-    const batch = db.batch();
-    for (const c of courses.slice(i, i + CHUNK)) {
-      batch.set(col.doc(safeDocId(c.id)), toFirestoreDoc(c));
+    const slice = courses.slice(i, i + CHUNK);
+
+    // 커밋은 일시적 네트워크/데드라인 오류로 실패할 수 있으므로 지수 백오프 재시도.
+    // batch.set은 멱등(같은 문서ID 덮어쓰기)이라 재시도해도 중복이 생기지 않는다.
+    let lastErr;
+    for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+      try {
+        const batch = db.batch();
+        for (const c of slice) batch.set(col.doc(safeDocId(c.id)), toFirestoreDoc(c));
+        await batch.commit();
+        lastErr = null;
+        break;
+      } catch (e) {
+        lastErr = e;
+        if (attempt === MAX_RETRY) break;
+        const backoff = 1000 * 2 ** (attempt - 1);
+        console.warn(`   ⚠️ 커밋 실패(${attempt}/${MAX_RETRY}): ${e.code ?? e.message} → ${backoff}ms 후 재시도`);
+        await sleep(backoff);
+      }
     }
-    await batch.commit();
-    written += Math.min(CHUNK, courses.length - i);
+    if (lastErr) throw lastErr;
+
+    written += slice.length;
     console.log(`   적재 ${written}/${courses.length}`);
   }
 
