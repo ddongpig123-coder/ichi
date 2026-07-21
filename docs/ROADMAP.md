@@ -142,9 +142,13 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
   - [ ] **Firestore 적재는 검색 UX 착수 직전에 실행** (서비스계정 키만 있으면 즉시 가능)
   - [x] `load-firestore.mjs`에 `nameGrams`(2-gram) 추가 + `confirmCount` 제거 (7/21).
         합성 픽스처로 dry-run 검증 완료 (실크롤 JSON은 데스크톱 PC에만 있음)
-  - [ ] **조건부 적재 (7/21 통화 합의)**: 상학부(12) 秋학기 먼저 적재 → 검색 UX 검증 →
-        이상 없으면 전 학부 20,022건 일괄. 서비스 계정 키는 실행자가 각자 발급·로컬 보관
-        (전송 금지, 7/18 원칙)
+  - [x] ✅ **Firestore 적재 완료 (7/22, 준희)** — 상학부(12) 秋 1,354건 선행 적재 →
+        Firestore에서 `nameGrams` array-contains 검색 동작 확인(マーケ50/会計20/企業5) →
+        전 학부 20,022건 일괄 적재. 경로 `schools/meiji.ac.jp/departments/{dept}/courses`
+        - 버그 수정: firebase-admin **v14 ESM은 `admin.credential.cert`가 undefined** →
+          modular API(`firebase-admin/app`)로 교체 (커밋 14953e7). 태희도 적재 시 동일 코드 사용
+        - 서비스 계정 키는 각자 발급·로컬 보관 (전송 금지, 7/18 원칙) — `scripts/keys/`는 gitignore
+        - 재적재는 문서ID 동일하므로 멱등(덮어쓰기) — 안전하게 반복 가능
 - 3주차: 앱에 "강의 검색 → 탭 추가" UX — 학부 선택, 검색, 시간표에 원탭 등록
   (수동 입력은 폴백으로 유지, 입력 데이터는 `verified:false`로 courses에 승격 대기)
   - [x] ✅ **화면 구현 완료 (7/21)** — `app/course-search.tsx`(학부 칩 10개·검색·결과·원탭 등록),

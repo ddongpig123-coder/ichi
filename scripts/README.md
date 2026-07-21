@@ -90,7 +90,32 @@ node load-firestore.mjs --file output/courses-12-2026-10.json --dept 12 --school
 
 - `--school` 기본값은 **`meiji.ac.jp`** — 2026-07 태희와 합의로 확정된 schoolDomain
 - `--dept` 기본값은 파일명의 category 코드 (예: 12)
-- **적재 시점**: 검색 UX(10월 3주차) 착수 직전. 그 전까지는 `--dry-run`으로만 검증
+
+> ⚠️ **firebase-admin v14 주의** (2026-07-22 확인): 구 네임스페이스 API
+> `admin.credential.cert(...)`는 ESM에서 `undefined`다. 반드시 modular API
+> (`firebase-admin/app`의 `initializeApp`/`cert`, `firebase-admin/firestore`의 `getFirestore`)를 쓸 것.
+
+### 전 파일 일괄 적재
+
+```powershell
+Get-ChildItem output\courses-*.json | ForEach-Object {
+  $dept = ($_.Name -split '-')[1]
+  node load-firestore.mjs --file "output/$($_.Name)" --dept $dept
+}
+```
+
+같은 파일을 다시 적재해도 문서 ID가 같으므로 덮어쓰기(멱등)라 안전하다.
+
+### ⚠️ JSON 레코드 수 ≠ Firestore 문서 수 (정상)
+
+전 학부 JSON 합계는 **20,022 레코드**지만 Firestore 문서는 **19,672개**다. 350건 차이는 버그가 아니다.
+
+`通年` 과목은 春 검색·秋 검색 양쪽 결과에 나오므로 `courses-{dept}-2026-10.json`과
+`-20.json` **두 파일 모두에** 春·秋 2건씩 들어간다. 같은 학부 컬렉션에 적재하면
+id(`{courseNumber}-{semester}-{day}{period}`)가 같아 덮어쓰기되어 중복이 자연히 제거된다.
+
+학부별 실제 문서 수를 확인하려면 각 학부의 春·秋 파일 id 합집합 크기를 세면 된다.
+(예: 政経 JSON 2,597 → 고유 id 2,445 → Firestore 2,445 ✓)
 
 ### 적재 시 크롤 JSON과 달라지는 것 (2026-07-21 결정)
 
