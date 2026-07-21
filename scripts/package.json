@@ -8,6 +8,7 @@
     "crawl": "node crawl-syllabus.mjs"
   },
   "dependencies": {
+    "firebase-admin": "^14.2.0",
     "node-html-parser": "^7.0.1"
   }
 }

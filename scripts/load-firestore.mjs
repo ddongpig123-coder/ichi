@@ -151,9 +151,12 @@ async function main() {
 
   // ── 실제 적재 (Admin SDK는 여기서만 로드 — dry-run은 키 불필요) ──
   const keyPath = isAbsolute(args.key ?? "") ? args.key : join(__dirname, args.key ?? "keys/serviceAccount.json");
-  let admin;
+  // firebase-admin v10+ 의 modular API를 쓴다.
+  // (구 네임스페이스 API `admin.credential.cert`는 v14 ESM에서 undefined — 2026-07 확인)
+  let initializeApp, cert, getFirestore;
   try {
-    admin = await import("firebase-admin");
+    ({ initializeApp, cert } = await import("firebase-admin/app"));
+    ({ getFirestore } = await import("firebase-admin/firestore"));
   } catch {
     console.error("firebase-admin이 없습니다. scripts/에서 `npm install firebase-admin` 후 재실행하세요.");
     process.exit(1);
@@ -167,8 +170,8 @@ async function main() {
     process.exit(1);
   }
 
-  admin.default.initializeApp({ credential: admin.default.credential.cert(key) });
-  const db = admin.default.firestore();
+  const app = initializeApp({ credential: cert(key) });
+  const db = getFirestore(app);
   const col = db.collection("schools").doc(school).collection("departments").doc(dept).collection("courses");
 
   // Firestore batch는 500건 제한 → 400건씩 커밋
