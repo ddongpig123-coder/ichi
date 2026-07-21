@@ -15,6 +15,8 @@ import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { createLoungePost } from "../../../src/services/loungeService";
+import { findBannedWords } from "../../../src/utils/contentFilter";
+import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, type LoungeId } from "../../../src/types/lounge";
 
@@ -30,12 +32,21 @@ export default function LoungeWriteScreen() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
 
   async function handleSubmit() {
     if (!title.trim()) { Alert.alert(t("post.titleRequired")); return; }
     if (!body.trim())  { Alert.alert(t("post.bodyRequired")); return; }
     if (!user) { Alert.alert(t("post.loginRequired")); return; }
 
+    const hits = findBannedWords(title, body);
+    if (hits.length) { setBannedWords(hits); return; }
+    await submitPost();
+  }
+
+  async function submitPost() {
+    if (!user) return;
+    setBannedWords([]);
     setSubmitting(true);
     try {
       await createLoungePost(loungeId as LoungeId, user.uid, title.trim(), body.trim());
@@ -82,6 +93,13 @@ export default function LoungeWriteScreen() {
           <Text style={styles.submitText}>{submitting ? t("post.submitting") : t("post.submit")}</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BannedWordWarning
+        visible={bannedWords.length > 0}
+        words={bannedWords}
+        onEdit={() => setBannedWords([])}
+        onProceed={submitPost}
+      />
     </KeyboardAvoidingView>
   );
 }

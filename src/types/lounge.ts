@@ -19,6 +19,7 @@ export const LOUNGES: LoungeMeta[] = [
   { id: "job", label: "就活・キャリア", description: "就職活動・インターン・進路", icon: "🎓" },
 ];
 
+// deleted の扱いは src/types/board.ts の Post と同じ（MODERATION.md §1）
 export interface LoungePost {
   id: string;
   loungeId: LoungeId;
@@ -28,6 +29,8 @@ export interface LoungePost {
   commentCount: number;
   likeCount: number;
   createdAt: number;
+  deleted?: boolean;
+  deletedAt?: number;
 }
 
 export interface LoungeComment {
@@ -36,4 +39,6 @@ export interface LoungeComment {
   body: string;
   authorUid: string;
   createdAt: number;
+  deleted?: boolean;
+  deletedAt?: number;
 }

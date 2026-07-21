@@ -174,6 +174,10 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
 적재 완료 후 `courseService.COURSE_DATA_LOADED = true`로 바꾸고 파일째 삭제하면 같이 해결됨.
 
 준희 담당: Phase 1b 잔여 (soft delete, 금칙어 경고)
+  - [x] ✅ **완료 (7/21)** — soft delete(게시판·라운지, 규칙 변경 불필요) + 금칙어 경고
+        (ja/ko 시드 리스트, 정규화로 「병 신」류 회피 방어). 웹 E2E 검증 완료.
+        상세는 MODERATION.md §6. EULA 항목은 이미 완료돼 있어 체크리스트만 정정
+  - [ ] 잔여: 규칙에서 `allow delete` 제거(태희 창구), 금칙어 리스트 확충, 쪽지 미적용
 - 4주차: 크라우드소싱 승격 로직 (동일 강의 N명 확인 시 verified), 버퍼 주간
   - [x] **설계 확정 (7/21 통화)** — courses는 `update: false` 유지(자작자연 원천 차단,
         Blaze 불필요). 대신 `courses/{id}/confirms/{uid}` 서브컬렉션을 create/delete-only로
