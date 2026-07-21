@@ -6,9 +6,11 @@
 // 形式は必ず src/types/course.ts の Course に従う — 実データと同じ形なので差し替え時に
 // 画面側の変更は不要。
 import type { Course } from "../types/course";
+import { makeBigrams } from "../utils/ngram";
 
 // 商学部（deptId "12"）2026年度 春学期の実データから抜粋した形の見本。
-const MOCK_12: Course[] = [
+// nameGrams は実データ(適載時)と同じく makeBigrams で生成する — ハードコードしない。
+const MOCK_12: Omit<Course, "nameGrams">[] = [
   {
     id: "(CO)CMM311J-春-月2",
     name: "マーケティング企画Ａ",
@@ -23,7 +25,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -40,7 +41,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -57,7 +57,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -74,7 +73,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -91,7 +89,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -108,7 +105,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -125,7 +121,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -142,7 +137,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -159,7 +153,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -176,7 +169,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -193,7 +185,6 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
   {
@@ -210,12 +201,11 @@ const MOCK_12: Course[] = [
     sourceUrl: null,
     addedBy: "official",
     verified: true,
-    confirmCount: 0,
     createdAt: 1753000000000,
   },
 ];
 
 // 学部コード → モック講義。未収録の学部は空配列（「結果なし」表示になる）。
 export const MOCK_COURSES: Record<string, Course[]> = {
-  "12": MOCK_12,
+  "12": MOCK_12.map((c) => ({ ...c, nameGrams: makeBigrams(c.name) })),
 };
