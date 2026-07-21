@@ -171,6 +171,19 @@ service cloud.firestore {
         && request.resource.data.addedBy == request.auth.uid;
       allow update, delete: if false;
 
+      // クラウドソーシング確認（ユーザー登録講義の実在確認）。
+      // ドキュメントID = uid で「1人1回」を構造強制。create/delete のみで
+      // courses 本体を update せずに済むため、Blaze(Cloud Functions)不要で
+      // 自作自演を防げる。confirms の件数が閾値以上ならクライアントが verified 相当と判定。
+      match /confirms/{uid} {
+        allow read: if isSignedIn();
+        allow create: if canWriteContent()
+          && request.auth.uid == uid
+          && request.resource.data.uid == uid;
+        allow delete: if isOwner(uid);
+        allow update: if false;
+      }
+
       // 講義レビュー（Phase 2）
       // ドキュメントID = 投稿者uid（1人1講義1レビューを構造で強制）
       // 構造化評価（rating 1〜5）+ 自由テキスト（言語別）
