@@ -32,7 +32,10 @@ const MAX_RETRY = 3;         // 실패 시 재시도 횟수
 const USER_AGENT =
   "ichi-syllabus-crawler/1.0 (Meiji student community app; contact: ddongpig123@gmail.com)";
 
-// Course 타입에 맞춘 값들
+// Course 타입에 맞춘 값들 (src/types/timetable.ts의 Day/Period와 1:1)
+// ※ 日曜日(일요일)은 Day 타입에 없어 의도적으로 제외한다 (2026-07 결정).
+//   실제 대상 과목은 극소수(商학부 "総合学際演習（４年）" [日 7] 등 학부당 0~1건).
+//   필요해지면 src/types/timetable.ts의 DAYS 확장부터 (태희 창구).
 const VALID_DAYS = ["月", "火", "水", "木", "金", "土"];   // Day
 const VALID_PERIODS = [1, 2, 3, 4, 5, 6, 7];               // Period
 
