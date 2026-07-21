@@ -29,7 +29,21 @@ export interface Course {
   sourceUrl: string | null; // シラバス詳細ページURL
   addedBy: CourseSource;
   verified: boolean;        // クライアント作成時はfalse固定（rulesで強制）
-  confirmCount: number;     // クラウドソーシング確認数（N人でverified昇格）
+  // 部分一致検索用の講義名2-gram配列。Firestoreは前方一致しかできないため、
+  // array-contains でクエリ語の1-gramを引き当て → クライアントで全文含有を再判定する。
+  // 生成規則は src/utils/ngram.ts の makeBigrams（クローラー load-firestore.mjs と同一実装）。
+  nameGrams: string[];
+  createdAt: number;
+  // ※ confirmCount(クラウドソーシング確認数)はフィールドではなく confirms サブコレクションで管理。
+  //   courses を update: false のまま保てる（Blaze不要）。CourseConfirm を参照。
+}
+
+// クラウドソーシング確認（同じ講義を実在確認したユーザー）。
+// パス: schools/{schoolDomain}/departments/{deptId}/courses/{courseId}/confirms/{uid}
+// ドキュメントID = uid で「1人1回」を構造強制。confirms の件数が N 以上なら
+// クライアント側で verified 相当として扱う（courses.verified の昇格は行わない）。
+export interface CourseConfirm {
+  uid: string;
   createdAt: number;
 }
 
