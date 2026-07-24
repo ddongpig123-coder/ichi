@@ -351,3 +351,16 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
       `app/privacy.tsx`의 `[■운영자명]`/`[■연락처메일]`/`[■관할법원]`. 스토어 제출 전 필수.
 - [ ] **서비스 계정 키** — 크롤러 Firestore 적재용. 각자 Firebase 콘솔에서 발급·로컬 보관
       (`scripts/keys/`, gitignore됨). 전송 금지.
+
+### 기술 부채 (구조 수정 필요 — 개발 과제)
+
+- [ ] **schoolDomain "global" 고정 해소** (2026-07-22 발견) — `AuthContext.schoolDomain`이
+      `"global"` 하드코딩이라 게시판·강의검색이 전부 global 스코프로 동작. 그러나:
+      - 강의 데이터는 학교별(`schools/meiji.ac.jp/...`)로 적재됨 → 강의검색은 임시로
+        `users.schoolDomain` 직접 조회로 우회함(course-search.tsx). courseService는 정상.
+      - **학교 게시판이 여전히 `schools/global/boards`에 쌓임** → §5 재론금지
+        "학교 게시판은 학교별 분리" 원칙과 배치. AGENTS.md 아키텍처 규칙과도 어긋남.
+      - **해야 할 것**: AuthContext가 `users.schoolDomain`(온보딩 저장값)을 로드해 제공,
+        게시판/라운지/강의 전부 실교 스코프로 통일. 학교 미선택("기타") 폴백 정책 정의.
+      - **주의**: 전환 시 기존 global 테스트 게시글은 scope 이동으로 안 보이게 됨(무방,
+        테스트 데이터). 준희 축(게시판) 포함이라 준희 복귀 후 조율 권장.
