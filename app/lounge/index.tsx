@@ -4,13 +4,13 @@ import { useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
-import { LOUNGES, type LoungeMeta } from "../../src/types/lounge";
+import { LOUNGES, loungeLabel, loungeDescription, type LoungeMeta } from "../../src/types/lounge";
 
 // 全国の留学生が学校の枠を越えて交流するラウンジ。カテゴリ一覧。
 export default function LoungeHomeScreen() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   function renderItem({ item }: { item: LoungeMeta }) {
@@ -21,8 +21,8 @@ export default function LoungeHomeScreen() {
       >
         <Text style={styles.icon}>{item.icon}</Text>
         <View style={{ flex: 1 }}>
-          <Text style={styles.label}>{item.label}</Text>
-          <Text style={styles.desc}>{item.description}</Text>
+          <Text style={styles.label}>{loungeLabel(item, language)}</Text>
+          <Text style={styles.desc}>{loungeDescription(item, language)}</Text>
         </View>
         <Text style={styles.arrow}>›</Text>
       </TouchableOpacity>

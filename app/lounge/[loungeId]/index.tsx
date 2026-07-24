@@ -15,7 +15,7 @@ import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchLoungePosts } from "../../../src/services/loungeService";
 import type { Theme } from "../../../src/theme/themes";
-import { LOUNGES, type LoungeId, type LoungePost } from "../../../src/types/lounge";
+import { LOUNGES, loungeLabel, type LoungeId, type LoungePost } from "../../../src/types/lounge";
 
 export default function LoungePostListScreen() {
   const { loungeId } = useLocalSearchParams<{ loungeId: string }>();
@@ -29,8 +29,8 @@ export default function LoungePostListScreen() {
   const lounge = LOUNGES.find((l) => l.id === loungeId);
 
   React.useEffect(() => {
-    if (lounge) navigation.setOptions({ title: lounge.label });
-  }, [lounge]);
+    if (lounge) navigation.setOptions({ title: loungeLabel(lounge, language) });
+  }, [lounge, language]);
 
   const [posts, setPosts] = useState<LoungePost[]>([]);
   const [loading, setLoading] = useState(true);

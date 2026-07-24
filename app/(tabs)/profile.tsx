@@ -16,7 +16,7 @@ import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { signOut, isSchoolVerified } from "../../src/services/authService";
 import { getUserProfile, updateAcademicInfo } from "../../src/services/userService";
-import { THEME_IDS, THEMES, type Theme } from "../../src/theme/themes";
+import { THEME_IDS, THEMES, themeLabel, type Theme } from "../../src/theme/themes";
 import type { AcademicInfo, UserProfile } from "../../src/types/user";
 
 const EMPTY_ACADEMIC: AcademicInfo = {
@@ -262,7 +262,7 @@ export default function ProfileScreen() {
                 <View style={[styles.themeSwatch, { backgroundColor: th.card, borderWidth: 1, borderColor: th.border }]} />
               </View>
               <Text style={[styles.themeLabel, { color: th.textPrimary }]}>
-                {th.label}{selected ? " ✓" : ""}
+                {themeLabel(th, language)}{selected ? " ✓" : ""}
               </Text>
             </TouchableOpacity>
           );

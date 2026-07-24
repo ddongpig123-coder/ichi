@@ -16,7 +16,7 @@ import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchPosts } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
-import { OFFICIAL_BOARDS, type BoardId, type Post } from "../../../src/types/board";
+import { OFFICIAL_BOARDS, boardLabel, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
 
 export default function PostListScreen() {
@@ -33,8 +33,8 @@ export default function PostListScreen() {
   const board = allBoards.find((b) => b.id === boardId);
 
   React.useEffect(() => {
-    if (board) navigation.setOptions({ title: board.label });
-  }, [board]);
+    if (board) navigation.setOptions({ title: boardLabel(board, language) });
+  }, [board, language]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

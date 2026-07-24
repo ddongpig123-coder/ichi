@@ -20,6 +20,15 @@ export interface Theme {
   timetableCells: string[]; // 과목 자동 배정용 8색
 }
 
+// テーマ名は固有ブランド名なので韓国語は音写。ja(正本)は各Theme.labelに保持。
+const THEME_LABEL_KO: Record<ThemeId, string> = {
+  sky: "스카이", washi: "와시", soda: "소다",
+  akane: "아카네", midnight: "미드나이트", sumire: "스미레",
+};
+export function themeLabel(t: Theme, lang: "ja" | "ko"): string {
+  return lang === "ko" ? THEME_LABEL_KO[t.id] : t.label;
+}
+
 export const THEMES: Record<ThemeId, Theme> = {
   // 기존 파랑 디자인 그대로 — 기본값
   sky: {

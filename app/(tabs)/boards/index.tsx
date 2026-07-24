@@ -6,12 +6,12 @@ import { useBoards } from "../../../src/hooks/useBoards";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import type { Theme } from "../../../src/theme/themes";
-import type { BoardMeta } from "../../../src/types/board";
+import { boardLabel, boardDescription, type BoardMeta } from "../../../src/types/board";
 
 export default function BoardsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
   const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
@@ -38,8 +38,8 @@ export default function BoardsScreen() {
         onPress={() => router.push(`/(tabs)/boards/${item.id}`)}
       >
         <View style={styles.rowContent}>
-          <Text style={styles.label}>{item.label}</Text>
-          <Text style={styles.desc}>{item.description}</Text>
+          <Text style={styles.label}>{boardLabel(item, language)}</Text>
+          <Text style={styles.desc}>{boardDescription(item, language)}</Text>
         </View>
         <TouchableOpacity
           style={styles.pinBtn}

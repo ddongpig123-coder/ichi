@@ -18,13 +18,13 @@ import { createLoungePost } from "../../../src/services/loungeService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
-import { LOUNGES, type LoungeId } from "../../../src/types/lounge";
+import { LOUNGES, loungeLabel, type LoungeId } from "../../../src/types/lounge";
 
 export default function LoungeWriteScreen() {
   const { loungeId } = useLocalSearchParams<{ loungeId: string }>();
   const { user } = useAuth();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
 
@@ -64,7 +64,7 @@ export default function LoungeWriteScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text style={styles.boardName}>{lounge?.icon} {lounge?.label}</Text>
+        <Text style={styles.boardName}>{lounge?.icon} {lounge ? loungeLabel(lounge, language) : ""}</Text>
         <Text style={styles.anon}>{t("lounge.anonNotice")}</Text>
 
         <TextInput

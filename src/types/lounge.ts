@@ -5,19 +5,29 @@ export type LoungeId = "visa" | "parttime" | "housing" | "market" | "job";
 
 export interface LoungeMeta {
   id: LoungeId;
-  label: string;
+  label: string;         // 日本語（正本）
   description: string;
+  labelKo: string;       // 韓国語表示名
+  descriptionKo: string;
   icon: string;
 }
 
 // ROADMAP 9月4週: ビザ / アルバイト / 不動産 / 中古 / 就職 の5カテゴリ
 export const LOUNGES: LoungeMeta[] = [
-  { id: "visa", label: "ビザ・在留", description: "ビザ・在留資格の情報交換", icon: "🛂" },
-  { id: "parttime", label: "アルバイト", description: "バイト探し・体験談", icon: "💼" },
-  { id: "housing", label: "住まい・不動産", description: "部屋探し・引っ越し・契約", icon: "🏠" },
-  { id: "market", label: "売買・譲渡", description: "中古品の売買・ゆずります", icon: "🛒" },
-  { id: "job", label: "就活・キャリア", description: "就職活動・インターン・進路", icon: "🎓" },
+  { id: "visa", label: "ビザ・在留", description: "ビザ・在留資格の情報交換", labelKo: "비자·체류", descriptionKo: "비자·체류자격 정보 교환", icon: "🛂" },
+  { id: "parttime", label: "アルバイト", description: "バイト探し・体験談", labelKo: "아르바이트", descriptionKo: "알바 찾기·경험담", icon: "💼" },
+  { id: "housing", label: "住まい・不動産", description: "部屋探し・引っ越し・契約", labelKo: "집·부동산", descriptionKo: "방 구하기·이사·계약", icon: "🏠" },
+  { id: "market", label: "売買・譲渡", description: "中古品の売買・ゆずります", labelKo: "매매·양도", descriptionKo: "중고품 매매·나눔", icon: "🛒" },
+  { id: "job", label: "就活・キャリア", description: "就職活動・インターン・進路", labelKo: "취업·커리어", descriptionKo: "취업활동·인턴·진로", icon: "🎓" },
 ];
+
+// 表示言語に応じたラウンジ名・説明を返す。
+export function loungeLabel(l: LoungeMeta, lang: "ja" | "ko"): string {
+  return lang === "ko" ? l.labelKo : l.label;
+}
+export function loungeDescription(l: LoungeMeta, lang: "ja" | "ko"): string {
+  return lang === "ko" ? l.descriptionKo : l.description;
+}
 
 // deleted の扱いは src/types/board.ts の Post と同じ（MODERATION.md §1）
 export interface LoungePost {
