@@ -22,6 +22,10 @@ export const OFFICIAL_BOARDS: BoardMeta[] = [
 // 旧名称のエイリアス（既存コードの互換性維持）
 export const BOARDS = OFFICIAL_BOARDS;
 
+// deleted: hard delete の代わりに立てるフラグ（MODERATION.md §1）。
+// 発信者情報開示請求に備え、投稿記録は原則6ヶ月保存する必要があるため
+// ドキュメント自体は消さない。既存ドキュメントにはこのフィールドが無いので
+// 省略可能にしてある（undefined = 未削除）。
 export interface Post {
   id: string;
   boardId: BoardId;
@@ -32,6 +36,8 @@ export interface Post {
   commentCount: number;
   likeCount: number;
   createdAt: number;
+  deleted?: boolean;
+  deletedAt?: number;
 }
 
 export interface Comment {
@@ -40,4 +46,6 @@ export interface Comment {
   body: string;
   authorUid: string;
   createdAt: number;
+  deleted?: boolean;
+  deletedAt?: number;
 }

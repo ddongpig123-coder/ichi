@@ -80,11 +80,17 @@ export async function fetchPosts(
     : query(postsCol(schoolDomain, boardId), orderBy("createdAt", "desc"), limit(pageSize));
 
   const snap = await getDocs(q);
-  const posts: Post[] = snap.docs.map((d) => ({
-    id: d.id,
-    ...(d.data() as Omit<Post, "id">),
-    createdAt: toMs(d.data().createdAt),
-  }));
+  // 削除済みはクライアントで除外する。既存ドキュメントには deleted フィールドが
+  // 無く、Firestore の where("deleted","!=",true) はフィールド欠落を拾えないため。
+  // ページあたりの表示件数は削除ぶん減るが、lastDoc は取得した最後のドキュメントを
+  // そのまま返すのでページングはずれない。
+  const posts: Post[] = snap.docs
+    .map((d) => ({
+      id: d.id,
+      ...(d.data() as Omit<Post, "id">),
+      createdAt: toMs(d.data().createdAt),
+    }))
+    .filter((p) => !p.deleted);
   return { posts, lastDoc: snap.docs[snap.docs.length - 1] ?? null };
 }
 
@@ -116,6 +122,37 @@ export async function createComment(
   // increment counter on the post
   await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
     commentCount: increment(1),
+  });
+}
+
+// ── 削除（ソフトデリート） ──────────────────────────────
+// MODERATION.md §1: hard delete せず deleted フラグを立て、記録は6ヶ月保存する。
+// firestore.rules の canUpdatePost() / comments の update が本人更新を許可済みなので
+// ルール変更は不要。本文は残す（開示請求時に内容の特定が必要なため）。
+export async function softDeletePost(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string
+): Promise<void> {
+  await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
+    deleted: true,
+    deletedAt: Date.now(),
+  });
+}
+
+export async function softDeleteComment(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string,
+  commentId: string
+): Promise<void> {
+  await updateDoc(doc(commentsCol(schoolDomain, boardId, postId), commentId), {
+    deleted: true,
+    deletedAt: Date.now(),
+  });
+  // 削除済みコメントは一覧の件数に数えない
+  await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
+    commentCount: increment(-1),
   });
 }
 
@@ -206,6 +243,7 @@ export async function fetchBestPosts(
       const snap = await getDocs(q);
       snap.docs.forEach((d) => {
         const data = d.data();
+        if (data.deleted) return;
         all.push({
           id: d.id,
           ...(data as Omit<Post, "id">),
@@ -244,6 +282,7 @@ export async function searchPosts(
       const snap = await getDocs(q);
       snap.docs.forEach((d) => {
         const data = d.data();
+        if (data.deleted) return;
         if (
           data.title?.toLowerCase().includes(kw) ||
           data.body?.toLowerCase().includes(kw)

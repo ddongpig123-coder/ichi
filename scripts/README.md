@@ -90,7 +90,54 @@ node load-firestore.mjs --file output/courses-12-2026-10.json --dept 12 --school
 
 - `--school` 기본값은 **`meiji.ac.jp`** — 2026-07 태희와 합의로 확정된 schoolDomain
 - `--dept` 기본값은 파일명의 category 코드 (예: 12)
-- **적재 시점**: 검색 UX(10월 3주차) 착수 직전. 그 전까지는 `--dry-run`으로만 검증
+
+> ⚠️ **firebase-admin v14 주의** (2026-07-22 확인): 구 네임스페이스 API
+> `admin.credential.cert(...)`는 ESM에서 `undefined`다. 반드시 modular API
+> (`firebase-admin/app`의 `initializeApp`/`cert`, `firebase-admin/firestore`의 `getFirestore`)를 쓸 것.
+
+### 전 파일 일괄 적재
+
+```powershell
+Get-ChildItem output\courses-*.json | ForEach-Object {
+  $dept = ($_.Name -split '-')[1]
+  node load-firestore.mjs --file "output/$($_.Name)" --dept $dept
+}
+```
+
+같은 파일을 다시 적재해도 문서 ID가 같으므로 덮어쓰기(멱등)라 안전하다.
+
+### ⚠️ JSON 레코드 수 ≠ Firestore 문서 수 (정상)
+
+전 학부 JSON 합계는 **20,022 레코드**지만 Firestore 문서는 **19,672개**다. 350건 차이는 버그가 아니다.
+
+`通年` 과목은 春 검색·秋 검색 양쪽 결과에 나오므로 `courses-{dept}-2026-10.json`과
+`-20.json` **두 파일 모두에** 春·秋 2건씩 들어간다. 같은 학부 컬렉션에 적재하면
+id(`{courseNumber}-{semester}-{day}{period}`)가 같아 덮어쓰기되어 중복이 자연히 제거된다.
+
+학부별 실제 문서 수를 확인하려면 각 학부의 春·秋 파일 id 합집합 크기를 세면 된다.
+(예: 政経 JSON 2,597 → 고유 id 2,445 → Firestore 2,445 ✓)
+
+### 적재 시 크롤 JSON과 달라지는 것 (2026-07-21 결정)
+
+크롤 JSON 자체는 그대로 두고, **적재 순간에만** 아래를 적용한다 (재크롤 불필요).
+
+| 항목 | 처리 |
+|---|---|
+| `confirmCount` | **제거**. 승격 판정은 `courses/{id}/confirms/{uid}` 서브컬렉션의 문서 수로 파생 |
+| `nameGrams` | **추가**. 강의명의 2-gram 배열 — 부분일치 검색용 |
+
+> ⚠️ `makeBigrams`는 앱의 `src/utils/ngram.ts`와 **완전히 동일**해야 한다.
+> scripts/는 별도 패키지라 import가 불가능해 복제되어 있다. 한쪽만 고치면
+> 적재된 gram과 앱이 만드는 검색 gram이 어긋나 **검색이 조용히 0건**이 된다.
+> 사양: NFKC → 소문자 → 공백 제거 → 인접 2글자 슬라이딩 → 중복 제거.
+
+검색 흐름: 앱이 `array-contains`로 대표 gram 1개를 매칭 → 클라이언트에서 전문 포함 재필터.
+
+**주의**: 정규화가 공백을 제거하므로 재필터도 반드시 **정규화된 문자열끼리** 비교해야 한다
+(`normalize(name).includes(normalize(query))`). 원문끼리 비교하면
+`English Communication` 같은 공백 포함 강의명에서 어긋난다.
+
+정규화 후 1글자인 강의명은 2-gram이 0개라 **영영 검색되지 않는다**. dry-run이 건수를 경고한다.
 
 > ⚠️ **서비스 계정 JSON 키는 절대 커밋 금지** (유출 시 DB 전체 권한 탈취).
 > `.gitignore`에 `serviceAccount*.json`, `scripts/keys/` 등록됨. 키는 로컬 `scripts/keys/`에만 둘 것.

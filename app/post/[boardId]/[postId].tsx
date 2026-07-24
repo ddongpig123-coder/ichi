@@ -19,7 +19,11 @@ import {
   createComment,
   toggleLike,
   checkLiked,
+  softDeletePost,
+  softDeleteComment,
 } from "../../../src/services/boardService";
+import { findBannedWords } from "../../../src/utils/contentFilter";
+import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
@@ -40,8 +44,14 @@ export default function PostDetailScreen() {
   const router = useRouter();
 
   // 通報・ブロックメニューの対象
+  // commentId を持つときはコメント対象（削除の分岐に使う）
   const [modTarget, setModTarget] = useState<
-    | { targetType: ReportTargetType; targetPath: string; targetAuthorUid: string }
+    | {
+        targetType: ReportTargetType;
+        targetPath: string;
+        targetAuthorUid: string;
+        commentId?: string;
+      }
     | null
   >(null);
 
@@ -53,6 +63,7 @@ export default function PostDetailScreen() {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [liking, setLiking] = useState(false);
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -85,10 +96,31 @@ export default function PostDetailScreen() {
     setLiking(false);
   }
 
+  // 自分の投稿・コメントの削除（ソフトデリート）。
+  // 投稿を消したら一覧に戻る。コメントは残りのスレッドを読み直す。
+  async function handleDelete() {
+    if (!schoolDomain || !modTarget) return;
+    if (modTarget.commentId) {
+      await softDeleteComment(schoolDomain, boardId as BoardId, postId, modTarget.commentId);
+      setComments(await fetchComments(schoolDomain, boardId as BoardId, postId));
+    } else {
+      await softDeletePost(schoolDomain, boardId as BoardId, postId);
+      router.back();
+    }
+  }
+
   async function handleComment() {
     if (!commentText.trim()) return;
     if (!user || !schoolDomain) { Alert.alert(t("post.loginRequired")); return; }
 
+    const hits = findBannedWords(commentText);
+    if (hits.length) { setBannedWords(hits); return; }
+    await submitComment();
+  }
+
+  async function submitComment() {
+    if (!user || !schoolDomain) return;
+    setBannedWords([]);
     setSubmitting(true);
     try {
       await createComment(schoolDomain, boardId as BoardId, postId, user.uid, commentText.trim());
@@ -109,6 +141,16 @@ export default function PostDetailScreen() {
 
   if (!post) {
     return <View style={styles.center}><Text style={{ color: theme.textSecondary }}>{t("post.notFound")}</Text></View>;
+  }
+
+  // 削除済みの投稿は一覧から消えるが、直リンクや古い一覧から到達しうる。
+  // ドキュメント自体は残っている（6ヶ月保存）ので、本文は出さず墓標だけ見せる。
+  if (post.deleted) {
+    return (
+      <View style={styles.center}>
+        <Text style={{ color: theme.textSecondary }}>{t("moderation.deletedPost")}</Text>
+      </View>
+    );
   }
 
   const board = BOARDS.find((b) => b.id === boardId);
@@ -172,7 +214,12 @@ export default function PostDetailScreen() {
         {/* Comments */}
         <Text style={styles.commentHeader}>{t("post.commentsHeader")} {comments.length}</Text>
         {comments.map((c) =>
-          isBlocked(c.authorUid) ? (
+          c.deleted ? (
+            // 削除済みコメントもスレッドの流れが分かるよう枠だけ残す
+            <View key={c.id} style={styles.commentCard}>
+              <Text style={styles.blockedText}>{t("moderation.deletedComment")}</Text>
+            </View>
+          ) : isBlocked(c.authorUid) ? (
             <View key={c.id} style={styles.commentCard}>
               <Text style={styles.blockedText}>{t("post.blockedComment")}</Text>
             </View>
@@ -198,6 +245,7 @@ export default function PostDetailScreen() {
                       targetType: "comment",
                       targetPath: `schools/${schoolDomain}/boards/${boardId}/posts/${postId}/comments/${c.id}`,
                       targetAuthorUid: c.authorUid,
+                      commentId: c.id,
                     })
                   }
                 >
@@ -238,8 +286,16 @@ export default function PostDetailScreen() {
           targetType={modTarget.targetType}
           targetPath={modTarget.targetPath}
           targetAuthorUid={modTarget.targetAuthorUid}
+          onDelete={handleDelete}
         />
       )}
+
+      <BannedWordWarning
+        visible={bannedWords.length > 0}
+        words={bannedWords}
+        onEdit={() => setBannedWords([])}
+        onProceed={submitComment}
+      />
     </KeyboardAvoidingView>
   );
 }

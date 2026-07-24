@@ -69,6 +69,21 @@
 - [x] 신고 UI (글/댓글/쪽지 "…" 메뉴) + `reportService.ts` — 공통 `ModerationMenu`로 통합 (완료 7/14)
 - [x] 차단 UI + `blockService.ts` + 클라이언트 필터링 (`BlockContext.isBlocked`) — 게시글/댓글/쪽지 접기 (완료 7/14)
 - [x] 차단 목록 관리 화면 (프로필 → ブロックリスト) (완료 7/14)
-- [ ] 삭제를 `deleted: true` 플래그 방식으로 변경 (posts/comments) — 잔여
-- [ ] 금칙어 경고 (투고 전 검사) — 잔여
-- [ ] 온보딩 EULA 동의 화면 — 잔여 (9월 1주차 온보딩과 통합)
+- [x] 삭제를 `deleted: true` 플래그 방식으로 (posts/comments) — 완료 7/21.
+      게시판·라운지 양쪽에 `softDelete*` 추가, `ModerationMenu`에 본인 글 한정 「삭제하기」,
+      목록에서 제외 + 상세/댓글은 묘비 표시. **규칙 변경 불필요**(`canUpdatePost()`가
+      본인 업데이트를 이미 허용). 웹 E2E: 삭제 후 같은 URL 재접근 시 문서 잔존 확인
+- [x] 금칙어 경고 (투고 전 검사) — 완료 7/21. `bannedWords.ts`(ja/ko 시드) +
+      `contentFilter.ts`(NFKC·소문자·공백제거 후 부분일치) + `BannedWordWarning` 모달.
+      글·댓글 4개 경로(게시판/라운지 × 작성/댓글)에 연결. 경고이며 차단은 아님
+- [x] ~~온보딩 EULA 동의 화면~~ — 이미 9월 1주차에 완료됨 (7/15, `app/onboarding.tsx`
+      1단계). 이 체크리스트가 갱신 안 된 것이었음 (7/21 확인)
+
+### 잔여 (다음 세션)
+
+- [ ] 하드 삭제 경로 차단: `firestore.rules`의 posts/comments에 아직 `allow delete`가
+      남아 있다. 앱은 호출하지 않지만, 6개월 보존 원칙을 규칙으로도 강제하려면
+      제거해야 함 — **태희 창구**(규칙 변경)
+- [ ] 금칙어 리스트 확충: 현재는 시드(ja 12 / ko 10 / 공통 2). 운영하며 통보 내용을
+      보고 키울 것. 리스트는 `src/data/bannedWords.ts` 한 곳
+- [ ] 쪽지(messages)에는 삭제·금칙어 미적용 (1:1이라 우선순위 낮다고 판단)

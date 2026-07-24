@@ -64,11 +64,40 @@ export async function fetchLoungePosts(
 ): Promise<LoungePost[]> {
   const q = query(postsCol(loungeId), orderBy("createdAt", "desc"), limit(pageSize));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({
-    id: d.id,
-    ...(d.data() as Omit<LoungePost, "id">),
-    createdAt: toMs(d.data().createdAt),
-  }));
+  // 削除済みはクライアントで除外（理由は boardService.fetchPosts のコメント参照）
+  return snap.docs
+    .map((d) => ({
+      id: d.id,
+      ...(d.data() as Omit<LoungePost, "id">),
+      createdAt: toMs(d.data().createdAt),
+    }))
+    .filter((p) => !p.deleted);
+}
+
+// ── 削除（ソフトデリート） ──────────────────────────────
+// MODERATION.md §1。学校掲示板と同じ扱い（boardService.softDeletePost 参照）。
+export async function softDeleteLoungePost(
+  loungeId: LoungeId,
+  postId: string
+): Promise<void> {
+  await updateDoc(doc(postsCol(loungeId), postId), {
+    deleted: true,
+    deletedAt: Date.now(),
+  });
+}
+
+export async function softDeleteLoungeComment(
+  loungeId: LoungeId,
+  postId: string,
+  commentId: string
+): Promise<void> {
+  await updateDoc(doc(commentsCol(loungeId, postId), commentId), {
+    deleted: true,
+    deletedAt: Date.now(),
+  });
+  await updateDoc(doc(postsCol(loungeId), postId), {
+    commentCount: increment(-1),
+  });
 }
 
 export async function fetchLoungePost(

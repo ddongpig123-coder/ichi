@@ -21,7 +21,11 @@ import {
   createLoungeComment,
   toggleLoungeLike,
   checkLoungeLiked,
+  softDeleteLoungePost,
+  softDeleteLoungeComment,
 } from "../../../src/services/loungeService";
+import { findBannedWords } from "../../../src/utils/contentFilter";
+import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import { useI18n } from "../../../src/contexts/I18nContext";
@@ -47,10 +51,17 @@ export default function LoungePostDetailScreen() {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [liking, setLiking] = useState(false);
+  // commentId を持つときはコメント対象（削除の分岐に使う）
   const [modTarget, setModTarget] = useState<
-    | { targetType: ReportTargetType; targetPath: string; targetAuthorUid: string }
+    | {
+        targetType: ReportTargetType;
+        targetPath: string;
+        targetAuthorUid: string;
+        commentId?: string;
+      }
     | null
   >(null);
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -83,10 +94,30 @@ export default function LoungePostDetailScreen() {
     setLiking(false);
   }
 
+  // 自分の投稿・コメントの削除（ソフトデリート）。学校掲示板と同じ扱い。
+  async function handleDelete() {
+    if (!modTarget) return;
+    if (modTarget.commentId) {
+      await softDeleteLoungeComment(loungeId as LoungeId, postId, modTarget.commentId);
+      setComments(await fetchLoungeComments(loungeId as LoungeId, postId));
+    } else {
+      await softDeleteLoungePost(loungeId as LoungeId, postId);
+      router.back();
+    }
+  }
+
   async function handleComment() {
     if (!commentText.trim()) return;
     if (!user) { Alert.alert(t("post.loginRequired")); return; }
 
+    const hits = findBannedWords(commentText);
+    if (hits.length) { setBannedWords(hits); return; }
+    await submitComment();
+  }
+
+  async function submitComment() {
+    if (!user) return;
+    setBannedWords([]);
     setSubmitting(true);
     try {
       await createLoungeComment(loungeId as LoungeId, postId, user.uid, commentText.trim());
@@ -107,6 +138,15 @@ export default function LoungePostDetailScreen() {
 
   if (!post) {
     return <View style={styles.center}><Text style={{ color: theme.textSecondary }}>{t("post.notFound")}</Text></View>;
+  }
+
+  // 削除済みは本文を出さず墓標だけ（ドキュメントは6ヶ月保存）
+  if (post.deleted) {
+    return (
+      <View style={styles.center}>
+        <Text style={{ color: theme.textSecondary }}>{t("moderation.deletedPost")}</Text>
+      </View>
+    );
   }
 
   const lounge = LOUNGES.find((l) => l.id === loungeId);
@@ -166,7 +206,11 @@ export default function LoungePostDetailScreen() {
 
         <Text style={styles.commentHeader}>{t("post.commentsHeader")} {comments.length}</Text>
         {comments.map((c) =>
-          isBlocked(c.authorUid) ? (
+          c.deleted ? (
+            <View key={c.id} style={styles.commentCard}>
+              <Text style={styles.blockedText}>{t("moderation.deletedComment")}</Text>
+            </View>
+          ) : isBlocked(c.authorUid) ? (
             <View key={c.id} style={styles.commentCard}>
               <Text style={styles.blockedText}>{t("post.blockedComment")}</Text>
             </View>
@@ -192,6 +236,7 @@ export default function LoungePostDetailScreen() {
                       targetType: "comment",
                       targetPath: `lounges/${loungeId}/posts/${postId}/comments/${c.id}`,
                       targetAuthorUid: c.authorUid,
+                      commentId: c.id,
                     })
                   }
                 >
@@ -231,8 +276,16 @@ export default function LoungePostDetailScreen() {
           targetType={modTarget.targetType}
           targetPath={modTarget.targetPath}
           targetAuthorUid={modTarget.targetAuthorUid}
+          onDelete={handleDelete}
         />
       )}
+
+      <BannedWordWarning
+        visible={bannedWords.length > 0}
+        words={bannedWords}
+        onEdit={() => setBannedWords([])}
+        onProceed={submitComment}
+      />
     </KeyboardAvoidingView>
   );
 }

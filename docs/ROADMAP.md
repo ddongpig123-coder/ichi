@@ -140,9 +140,53 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
   - [x] 通年 과목은 春·秋 양쪽 등록(B안), id는 `{courseNumber}-{semester}-{day}{period}`
   - 의도적 제외: 요일·교시 없는 과목(집중강의·실습·대학원〔Ｍ〕), 일요일 과목 — scripts/README 참조
   - [ ] **Firestore 적재는 검색 UX 착수 직전에 실행** (서비스계정 키만 있으면 즉시 가능)
+  - [x] `load-firestore.mjs`에 `nameGrams`(2-gram) 추가 + `confirmCount` 제거 (7/21).
+        합성 픽스처로 dry-run 검증 완료 (실크롤 JSON은 데스크톱 PC에만 있음)
+  - [x] ✅ **Firestore 적재 완료 (7/22, 준희)** — 상학부(12) 秋 1,354건 선행 적재 →
+        Firestore에서 `nameGrams` array-contains 검색 동작 확인(マーケ50/会計20/企業5) →
+        전 학부 20,022건 일괄 적재. 경로 `schools/meiji.ac.jp/departments/{dept}/courses`
+        - 버그 수정: firebase-admin **v14 ESM은 `admin.credential.cert`가 undefined** →
+          modular API(`firebase-admin/app`)로 교체 (커밋 14953e7). 태희도 적재 시 동일 코드 사용
+        - 서비스 계정 키는 각자 발급·로컬 보관 (전송 금지, 7/18 원칙) — `scripts/keys/`는 gitignore
+        - 재적재는 문서ID 동일하므로 멱등(덮어쓰기) — 안전하게 반복 가능
 - 3주차: 앱에 "강의 검색 → 탭 추가" UX — 학부 선택, 검색, 시간표에 원탭 등록
   (수동 입력은 폴백으로 유지, 입력 데이터는 `verified:false`로 courses에 승격 대기)
+  - [x] ✅ **화면 구현 완료 (7/21)** — `app/course-search.tsx`(학부 칩 10개·검색·결과·원탭 등록),
+        `courseService`(Firestore 전방일치 + 목업 폴백), `departments.ts`, i18n ja/ko 18키.
+        홈(시간표)에 진입 버튼 + 복귀 시 해당 학기 재로드. 웹 E2E: 강의명/교수명 검색,
+        시간표 반영(月2), 중복 시간대 차단까지 확인
+  - [ ] **적재 후 `courseService.COURSE_DATA_LOADED = true`로 전환** (현재 목업 표시 중.
+        전환하면 `src/data/mockCourses.ts` 삭제 가능)
+  - [x] ~~전방일치 한계~~ → **2-gram 방식으로 해결 확정 (7/21 통화)**. 적재 측은 반영 완료.
+        앱 측 `courseService`는 아직 전방일치 구현 상태 — 아래 인계 항목 참조
+
+#### 7/21 통화 합의 · 담당 재조정
+
+**강의검색·시간표에 붙는 것은 전부 태희 축으로 통합.** 강의검색과 학점관리가 둘 다
+시간표 + courses에 붙으므로 한 사람이 쥐는 게 맞다는 판단. 준희는 Phase 1b 잔여로 이동.
+
+태희 인계 대상 (준희가 7/21까지 만든 것, junhee 브랜치에 푸시됨):
+- `app/course-search.tsx` — 화면 완성, 웹 E2E 검증 완료
+- `src/services/courseService.ts` — **전방일치 구현 상태.
+  `nameGrams` array-contains + 정규화 재필터로 교체 필요**
+- `src/data/departments.ts`, `src/data/mockCourses.ts`
+- `app/(tabs)/index.tsx` 3곳 (검색 진입 버튼 / 복귀 시 재로드 / 높이 상수)
+- `SessionFormModal`의 수동 입력 → `verified:false` 승격 등록 (미착수)
+
+⚠️ **인계 시 주의**: `mockCourses.ts`의 12건은 `confirmCount`를 갖고 있다.
+태희가 `Course`에서 `confirmCount`를 제거하면 **이 파일에서 타입 에러**가 난다.
+적재 완료 후 `courseService.COURSE_DATA_LOADED = true`로 바꾸고 파일째 삭제하면 같이 해결됨.
+
+준희 담당: Phase 1b 잔여 (soft delete, 금칙어 경고)
+  - [x] ✅ **완료 (7/21)** — soft delete(게시판·라운지, 규칙 변경 불필요) + 금칙어 경고
+        (ja/ko 시드 리스트, 정규화로 「병 신」류 회피 방어). 웹 E2E 검증 완료.
+        상세는 MODERATION.md §6. EULA 항목은 이미 완료돼 있어 체크리스트만 정정
+  - [ ] 잔여: 규칙에서 `allow delete` 제거(태희 창구), 금칙어 리스트 확충, 쪽지 미적용
 - 4주차: 크라우드소싱 승격 로직 (동일 강의 N명 확인 시 verified), 버퍼 주간
+  - [x] **설계 확정 (7/21 통화)** — courses는 `update: false` 유지(자작자연 원천 차단,
+        Blaze 불필요). 대신 `courses/{id}/confirms/{uid}` 서브컬렉션을 create/delete-only로
+        두고 **문서ID = uid로 1인 1회를 구조 강제**. `Course.confirmCount` 필드는 제거하고,
+        승격 판정은 클라이언트가 confirms 개수를 세서 파생 (courses.verified 승격 자체를 안 함)
 
 **예상 세션: 주 3회 × 4주 = 12세션.** 크롤러는 로컬 스크립트라 미리보기 검증 불필요 → 토큰 저렴.
 

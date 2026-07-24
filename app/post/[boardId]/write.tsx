@@ -15,6 +15,8 @@ import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { createPost } from "../../../src/services/boardService";
+import { findBannedWords } from "../../../src/utils/contentFilter";
+import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
 import { BOARDS, type BoardId } from "../../../src/types/board";
 
@@ -30,12 +32,22 @@ export default function WriteScreen() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  // 禁止語が見つかったら警告を挟む。無視して投稿することもできる（警告であって制限ではない）
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
 
   async function handleSubmit() {
     if (!title.trim()) { Alert.alert(t("post.titleRequired")); return; }
     if (!body.trim())  { Alert.alert(t("post.bodyRequired")); return; }
     if (!user || !schoolDomain) { Alert.alert(t("post.loginRequired")); return; }
 
+    const hits = findBannedWords(title, body);
+    if (hits.length) { setBannedWords(hits); return; }
+    await submitPost();
+  }
+
+  async function submitPost() {
+    if (!user || !schoolDomain) return;
+    setBannedWords([]);
     setSubmitting(true);
     try {
       await createPost(schoolDomain, boardId as BoardId, user.uid, title.trim(), body.trim());
@@ -82,6 +94,13 @@ export default function WriteScreen() {
           <Text style={styles.submitText}>{submitting ? t("post.submitting") : t("post.submit")}</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BannedWordWarning
+        visible={bannedWords.length > 0}
+        words={bannedWords}
+        onEdit={() => setBannedWords([])}
+        onProceed={submitPost}
+      />
     </KeyboardAvoidingView>
   );
 }

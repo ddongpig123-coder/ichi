@@ -29,7 +29,7 @@ const REASON_KEYS: Record<ReportReason, TranslationKey> = {
 };
 
 // 投稿・コメント・メッセージ共通の「⋯」メニュー。
-// menu → 通報(理由選択) / ブロック(確認) の2段構成。
+// menu → 通報(理由選択) / ブロック(確認) / 削除(確認) の2段構成。
 // Alert の複数ボタンは Web で不安定なため、確認はモーダル内で完結させる。
 interface Props {
   visible: boolean;
@@ -39,9 +39,13 @@ interface Props {
   targetAuthorUid: string;
   canBlock?: boolean; // 自分の投稿には false を渡す
   onBlocked?: () => void; // ブロック成功時（一覧の再描画などに使用）
+  // 自分の投稿の削除。パスがボード/ラウンジ/コメントで異なるため、
+  // 実際の削除処理は呼び出し側が渡す（このメニューはサービス層を知らない）。
+  // 渡された かつ 自分の投稿 のときだけ「削除」が出る。
+  onDelete?: () => Promise<void>;
 }
 
-type Mode = "menu" | "report" | "confirmBlock";
+type Mode = "menu" | "report" | "confirmBlock" | "confirmDelete";
 
 export default function ModerationMenu({
   visible,
@@ -51,6 +55,7 @@ export default function ModerationMenu({
   targetAuthorUid,
   canBlock = true,
   onBlocked,
+  onDelete,
 }: Props) {
   const { user } = useAuth();
   const { block } = useBlock();
@@ -65,6 +70,7 @@ export default function ModerationMenu({
 
   const isSelf = !!user && user.uid === targetAuthorUid;
   const showBlock = canBlock && !isSelf;
+  const showDelete = isSelf && !!onDelete;
 
   function reset() {
     setMode("menu");
@@ -97,6 +103,18 @@ export default function ModerationMenu({
     }
   }
 
+  async function handleConfirmDelete() {
+    if (!onDelete) return;
+    setSubmitting(true);
+    try {
+      await onDelete();
+      handleClose();
+    } catch (e: any) {
+      setSubmitting(false);
+      Alert.alert(t("moderation.deleteFailed"), e?.message ?? "");
+    }
+  }
+
   async function handleConfirmBlock() {
     if (!user) return;
     setSubmitting(true);
@@ -123,6 +141,11 @@ export default function ModerationMenu({
               {showBlock && (
                 <TouchableOpacity style={styles.menuItem} onPress={() => setMode("confirmBlock")}>
                   <Text style={styles.menuTextDanger}>{t("report.menuBlock")}</Text>
+                </TouchableOpacity>
+              )}
+              {showDelete && (
+                <TouchableOpacity style={styles.menuItem} onPress={() => setMode("confirmDelete")}>
+                  <Text style={styles.menuTextDanger}>{t("moderation.menuDelete")}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={[styles.menuItem, styles.cancelItem]} onPress={handleClose}>
@@ -174,6 +197,29 @@ export default function ModerationMenu({
             </>
           )}
 
+          {mode === "confirmDelete" && (
+            <>
+              <Text style={styles.title}>{t("moderation.deleteTitle")}</Text>
+              <Text style={styles.confirmDesc}>{t("moderation.deleteDesc")}</Text>
+              <View style={styles.actionRow}>
+                <TouchableOpacity style={styles.secondaryBtn} onPress={() => setMode("menu")}>
+                  <Text style={styles.secondaryText}>{t("common.back")}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.dangerBtn, submitting && styles.disabled]}
+                  onPress={handleConfirmDelete}
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <ActivityIndicator color="#fff" size="small" />
+                  ) : (
+                    <Text style={styles.primaryText}>{t("common.delete")}</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
           {mode === "confirmBlock" && (
             <>
               <Text style={styles.title}>{t("report.blockTitle")}</Text>
@@ -208,6 +254,9 @@ function makeStyles(theme: Theme) {
       flex: 1,
       backgroundColor: "rgba(0,0,0,0.4)",
       justifyContent: "flex-end",
+      // BannedWordWarning と同じ理由（Web でのスタック順）
+      zIndex: 1000,
+      elevation: 1000,
     },
     sheet: {
       backgroundColor: theme.card,

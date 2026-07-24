@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
 import { useAuth } from "../../src/contexts/AuthContext";
 import SemesterSelector from "../../src/components/common/SemesterSelector";
@@ -23,11 +25,14 @@ const PERIODS_COUNT = 7;
 const NAV_HEADER_BASE = 44;
 const TAB_BAR_BASE = 49;
 const FRIENDS_SECTION_H = 185;
+const COURSE_SEARCH_ROW_H = 44; // 講義検索への導線ぶんの高さ
 
 export default function HomeScreen() {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useI18n();
+  const router = useRouter();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -56,6 +61,26 @@ export default function HomeScreen() {
       });
   }, [user, semesterKey]);
 
+  // 講義検索画面は Firestore を直接更新するため、戻ってきたら該当学期を読み直す。
+  // 初回フォーカスは上の useEffect が読むのでスキップする（二重読み取り防止）。
+  const firstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (firstFocus.current) {
+        firstFocus.current = false;
+        return;
+      }
+      if (!user) return;
+      getTimetable(user.uid, semesterKey)
+        .then((docData) => {
+          if (!docData) return;
+          missingDocKeys.current.delete(semesterKey);
+          setSessionsMap((prev) => ({ ...prev, [semesterKey]: docData.sessions }));
+        })
+        .catch((e) => console.warn("timetable refresh failed:", e));
+    }, [user, semesterKey])
+  );
+
   const sessions = sessionsMap[semesterKey] ?? [];
   // 同じ講義を取っている友達（実データ: 友達の公開時間割と突き合わせ）
   const friendOverlaps = useFriendOverlaps(semesterKey, sessions);
@@ -73,7 +98,7 @@ export default function HomeScreen() {
   }
 
   const headerH = NAV_HEADER_BASE + insets.top;
-  const chromeH = headerH + TAB_BAR_BASE + insets.bottom;
+  const chromeH = headerH + TAB_BAR_BASE + insets.bottom + COURSE_SEARCH_ROW_H;
   const timetableH = height - chromeH - FRIENDS_SECTION_H;
   const cellHeight = Math.max(48, (timetableH - TIMETABLE_HEADER_H) / PERIODS_COUNT);
 
@@ -113,6 +138,15 @@ export default function HomeScreen() {
         friendOverlaps={friendOverlaps}
       />
 
+      <TouchableOpacity
+        style={styles.courseSearchBtn}
+        onPress={() =>
+          router.push(`/course-search?year=${selectedYear}&semester=${selectedSemester}`)
+        }
+      >
+        <Text style={styles.courseSearchText}>{t("courseSearch.entry")}</Text>
+      </TouchableOpacity>
+
       <FriendsList />
 
       <SessionFormModal
@@ -131,5 +165,17 @@ export default function HomeScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
+    courseSearchBtn: {
+      height: COURSE_SEARCH_ROW_H,
+      marginHorizontal: 12,
+      marginVertical: 4,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 8,
+      borderWidth: 1,
+      borderStyle: "dashed",
+      borderColor: theme.primary,
+    },
+    courseSearchText: { color: theme.primary, fontSize: 14, fontWeight: "600" },
   });
 }
