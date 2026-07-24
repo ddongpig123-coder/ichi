@@ -1,20 +1,25 @@
-import { collection, getDocs, limit, orderBy, query, startAt, endAt } from "firebase/firestore";
+import { collection, getDocs, limit, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import type { Course, Semester } from "../types/course";
-import { MOCK_COURSES } from "../data/mockCourses";
+import { queryGram, matchesQuery, normalizeForSearch } from "../utils/ngram";
 
 // ============================================================
 // 講義マスターの検索層
 // Firestore パス: schools/{schoolDomain}/departments/{deptId}/courses/{courseId}
 // firestore.rules: read は isSignedIn() のみ。update/delete は禁止（クロール投入は Admin SDK）。
+//
+// 検索方式: nameGrams(講義名2-gram) の array-contains で候補を引き、クライアントで
+// 「講義名/教員名にキーワードを含むか」+ 年度・学期で最終フィルタする（中間一致対応）。
+// ※ 純粋な教員名だけの検索は候補(講義名gram)に乗らないため実データでは弱い。
+//   教員名検索を強化するなら適載時に teacherGrams を足す（今は講義名中心のUX）。
 // ============================================================
 
-// クロール済みデータ（20学部・20,022件）の Firestore 適載が済んだら true にする。
-// false の間は src/data/mockCourses.ts を返す（UI開発用）。
-// 適載手順は scripts/README.md「2. Firestore 적재」参照。
-export const COURSE_DATA_LOADED = false;
+// 20学部・20,022件を Firestore に適載済み（2026-07-22）。実データ検索を使う。
+export const COURSE_DATA_LOADED = true;
 
 export const COURSE_SEARCH_LIMIT = 50;
+// array-contains の候補上限。よく出る2-gramでも年度・学期フィルタ前に十分拾えるよう広め。
+const CANDIDATE_LIMIT = 300;
 
 export interface CourseSearchParams {
   schoolDomain: string;
@@ -28,40 +33,31 @@ function coursesRef(schoolDomain: string, deptId: string) {
   return collection(db, "schools", schoolDomain, "departments", deptId, "courses");
 }
 
-// 講義名・教員名のどちらかにキーワードを含む講義を返す。
-//
-// 注意（既知の制約）: Firestore は部分一致検索を持たないため、実データ経路は
-// 講義名の【前方一致】のみ（startAt/endAt）。「マーケティング」は当たるが
-// 「企画」では当たらない。モック経路は件数が少ないので includes() で部分一致する。
-// → 中間一致が必要になったら n-gram フィールドを適載時に持たせるか、外部検索
-//    （Algolia等）が要る。11月の講義一覧UXまでに判断すること。
+// 講義名・教員名のどちらかにキーワードを含む講義を返す（部分一致）。
 export async function searchCourses(params: CourseSearchParams): Promise<Course[]> {
   const keyword = params.keyword.trim();
   if (!keyword) return [];
 
-  if (!COURSE_DATA_LOADED) return searchMock(params, keyword);
+  const gram = queryGram(keyword);
+  if (!gram) return []; // 正規化後に空
 
+  // 講義名gramで候補を絞り込み、年度・学期・全文含有はクライアントで判定する
+  // （array-contains + 等価フィルタの複合インデックスを増やさないため）。
   const q = query(
     coursesRef(params.schoolDomain, params.deptId),
-    orderBy("name"),
-    startAt(keyword),
-    endAt(keyword + ""),
-    limit(COURSE_SEARCH_LIMIT)
+    where("nameGrams", "array-contains", gram),
+    limit(CANDIDATE_LIMIT)
   );
   const snap = await getDocs(q);
-  const courses = snap.docs.map((d) => ({ ...(d.data() as Course), id: d.id }));
-  // 年度・学期の絞り込みはクライアント側で行う（複合インデックスを増やさないため。
-  // 1学部1学期あたり高々1,400件で、前方一致後の母数はさらに小さい）。
-  return courses.filter((c) => c.year === params.year && c.semester === params.semester);
-}
+  const normKeyword = normalizeForSearch(keyword);
 
-function searchMock(params: CourseSearchParams, keyword: string): Course[] {
-  const all = MOCK_COURSES[params.deptId] ?? [];
-  const lower = keyword.toLowerCase();
-  return all
+  return snap.docs
+    .map((d) => ({ ...(d.data() as Course), id: d.id }))
     .filter((c) => c.year === params.year && c.semester === params.semester)
     .filter(
-      (c) => c.name.toLowerCase().includes(lower) || c.teacher.toLowerCase().includes(lower)
+      (c) =>
+        matchesQuery(c.name, keyword) ||
+        normalizeForSearch(c.teacher).includes(normKeyword)
     )
     .slice(0, COURSE_SEARCH_LIMIT);
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import { useI18n } from "../src/contexts/I18nContext";
 import { DEPARTMENTS, departmentName } from "../src/data/departments";
 import { searchCourses, COURSE_DATA_LOADED } from "../src/services/courseService";
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
+import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
 import type { ClassSession } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
@@ -50,8 +51,21 @@ function courseToSession(course: Course, palette: string[]): ClassSession {
 
 export default function CourseSearchScreen() {
   const router = useRouter();
-  const { user, schoolDomain } = useAuth();
+  const { user } = useAuth();
   const { theme } = useTheme();
+
+  // 講義データは学校別スコープ(schools/{schoolDomain}/...)で適載されている。
+  // AuthContext.schoolDomain は暫定で "global" 固定のため、ここではユーザーの
+  // 実際の所属校(users.schoolDomain、オンボーディングで保存)を使う。
+  // 未設定(「その他」選択)なら現状の対応校 meiji.ac.jp にフォールバック。
+  // TODO(app全体): schoolDomain の "global" 固定を解消し、掲示板含め実校スコープへ統一。
+  const [schoolDomain, setSchoolDomain] = useState("meiji.ac.jp");
+  useEffect(() => {
+    if (!user) return;
+    getUserProfile(user.uid)
+      .then((p) => { if (p?.schoolDomain) setSchoolDomain(p.schoolDomain); })
+      .catch(() => {});
+  }, [user]);
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
