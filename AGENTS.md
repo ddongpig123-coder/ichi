@@ -41,7 +41,34 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - **크롤러(scripts/) 작업 시**: 적재 데이터는 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.
   서비스 계정 키는 절대 커밋 금지 (.gitignore에 패턴 등록됨)
 
-## 현재 상태 요약 (2026-07 기준)
-- 실데이터: 게시판/쪽지/프로필 학업정보 (Firestore 연동 완료)
-- 목업: 친구 목록, 시간표, 친구 시간표 (8월 실데이터 전환 예정 — ROADMAP 참조)
-- `src/services/friendRequestService.ts`는 stub — Phase 1에서 실구현
+## 현재 상태 요약 (2026-07-22 기준) — 다음 세션은 여기부터 읽을 것
+
+**진행도: 로드맵 10월(Phase 1c)까지 전부 완료.** 다음은 11월 Phase 2(선배 시간표·강의평).
+상세·완료 이력은 [docs/ROADMAP.md](docs/ROADMAP.md). 목업은 전부 제거됨(실데이터화 완료).
+
+- **실데이터 연동 완료(전부 Firestore)**: 게시판·쪽지·라운지·신고/차단·프로필·테마,
+  시간표(`users/{uid}/timetables/{학기키}`)·친구(`friendships`/`friendRequests`)·
+  친구 겹침·강의검색(`schools/{sd}/departments/{dept}/courses`, nameGrams 중간일치)·
+  크라우드소싱(courses `verified:false` 기여 + `confirms` 서브컬렉션).
+- `friendRequestService`는 **실구현 완료**(더 이상 stub 아님). 강의 데이터 20,022건 적재됨.
+- 인증: 게스트(익명)→이메일/Microsoft 계정연결(uid 유지). Microsoft 네이티브는 12월 EAS로 이관.
+
+### 다음 세션 시작점 — 11월 Phase 2 (킬러 기능)
+1주차 **시간표 공개범위 UI**(private/friends/department/public — 규칙·`timetables.visibility`
+이미 배포됨) → 2주차 **선배 시간표 열람**(같은 학부 공개 시간표) → 3주차 강의 한줄평
+(`reviews` 규칙·타입 이미 있음, 별점·태그 구조화) → 4주차 강의 상세.
+
+### 반드시 알아야 할 함정 (안 그러면 헤맴)
+- **schoolDomain "global" 고정 부채**: `AuthContext.schoolDomain`이 `"global"` 하드코딩.
+  게시판은 global 스코프인데 강의는 `meiji.ac.jp` 적재 → 강의검색만 `users.schoolDomain`
+  직접조회로 우회 중. 게시판까지 실교 스코프 통일은 미완(ROADMAP 기술부채). 준희 복귀 후 조율.
+- **미래 학기 차단**: `isSemesterAvailable`이 현재보다 미래 학기를 막음. 7월(春학기)엔
+  "2026 秋"가 선택 불가 → 秋에 저장한 데이터는 홈에서 안 보임. **검증은 현재 유효 학기(春)로**.
+- **verified 승격 방식**: `courses.verified`는 클라가 못 바꿈(규칙). 크라우드소싱은
+  `confirms` 개수로 클라가 파생 판정. 서버 자동승격 필요 시 Cloud Functions(Blaze) 필요.
+- **웹 검증 시 Metro 재연결**: preview 재시작 후 코드 반영 안 되면 `location.reload()`.
+  Alert는 웹에서 no-op이라 화면마다 `notify`/`window.alert` 폴백 씀.
+
+### 협업 상태
+- **준희 이달 말까지 휴가** → 준희 축(게시판/쪽지/라운지/테마) 손대지 말 것. 태희 축만 진행.
+- 사용자 직접 처리 대기(§6): 실계정 메일 인증 테스트, 폰 통합 테스트, 약관 자리표시자 3종.
