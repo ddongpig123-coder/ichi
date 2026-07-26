@@ -9,17 +9,26 @@ import {
   StyleSheet,
   ActivityIndicator,
   Keyboard,
+  Modal,
+  Pressable,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import { DEPARTMENTS, departmentName } from "../src/data/departments";
-import { searchCourses, COURSE_DATA_LOADED } from "../src/services/courseService";
+import {
+  searchCourses,
+  contributeCourse,
+  confirmCourse,
+  fetchConfirmState,
+  CROWD_CONFIRM_THRESHOLD,
+  type ConfirmState,
+} from "../src/services/courseService";
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
-import type { ClassSession } from "../src/types/timetable";
+import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
 
 // ============================================================
@@ -84,25 +93,91 @@ export default function CourseSearchScreen() {
   const [addingId, setAddingId] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  async function handleSearch() {
+  // クラウドソーシング: 未確認(verified:false)講義の確認状態と、講義登録モーダル
+  const [confirmMap, setConfirmMap] = useState<Record<string, ConfirmState>>({});
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [registerOpen, setRegisterOpen] = useState(false);
+  const [regTeacher, setRegTeacher] = useState("");
+  const [regDay, setRegDay] = useState<Day>("月");
+  const [regPeriod, setRegPeriod] = useState<Period>(1);
+  const [registering, setRegistering] = useState(false);
+
+  // keyword state を使わず引数で検索できる版（登録直後の即時再検索に使う）
+  async function runSearch(kw: string) {
     if (!deptId) {
       setNotice(t("courseSearch.selectDepartmentFirst"));
       return;
     }
-    if (!keyword.trim()) return;
+    if (!kw.trim()) return;
     Keyboard.dismiss();
     setNotice(null);
     setLoading(true);
     setSearched(true);
     try {
-      const found = await searchCourses({ schoolDomain, deptId, keyword, year, semester });
+      const found = await searchCourses({ schoolDomain, deptId, keyword: kw, year, semester });
       setResults(found);
+      // 未確認講義の確認状態をまとめてロード（公式=verified:true はスキップ）
+      const unverified = found.filter((c) => !c.verified);
+      if (unverified.length && user) {
+        const entries = await Promise.all(
+          unverified.map(async (c) => {
+            const st = await fetchConfirmState(schoolDomain, deptId, c.id, user.uid).catch(() => null);
+            return [c.id, st] as const;
+          })
+        );
+        setConfirmMap((prev) => {
+          const next = { ...prev };
+          entries.forEach(([id, st]) => { if (st) next[id] = st; });
+          return next;
+        });
+      }
     } catch (e) {
       console.warn("course search failed:", e);
       setResults([]);
       setNotice(t("common.error"));
     } finally {
       setLoading(false);
+    }
+  }
+
+  const handleSearch = () => runSearch(keyword);
+
+  // 実在確認（1人1回。confirms サブコレクションに create）
+  async function handleConfirm(course: Course) {
+    if (!user || confirmingId) return;
+    setConfirmingId(course.id);
+    try {
+      await confirmCourse(schoolDomain, deptId!, course.id, user.uid);
+      const st = await fetchConfirmState(schoolDomain, deptId!, course.id, user.uid);
+      setConfirmMap((prev) => ({ ...prev, [course.id]: st }));
+    } catch (e) {
+      console.warn("confirm failed:", e);
+      setNotice(t("courseSearch.confirmFailed"));
+    } finally {
+      setConfirmingId(null);
+    }
+  }
+
+  // 講義登録（公式クロールに無い講義を verified:false で追加）
+  async function handleRegister() {
+    if (!deptId || !user) return;
+    const name = keyword.trim();
+    if (!name) { setNotice(t("courseSearch.registerNameRequired")); return; }
+    setRegistering(true);
+    try {
+      await contributeCourse(
+        { schoolDomain, deptId, year, semester, uid: user.uid },
+        { name, teacher: regTeacher.trim(), day: regDay, period: regPeriod }
+      );
+      setRegisterOpen(false);
+      setRegTeacher("");
+      setNotice(t("courseSearch.registerDone"));
+      await runSearch(name); // 登録した講義が結果に出るよう再検索
+    } catch (e) {
+      console.warn("contribute failed:", e);
+      setNotice(t("courseSearch.registerFailed"));
+    } finally {
+      setRegistering(false);
     }
   }
 
@@ -143,12 +218,6 @@ export default function CourseSearchScreen() {
         <Text style={styles.headerTitle}>{t("courseSearch.title")}</Text>
         <Text style={styles.semesterBadge}>{`${year} ${semester}`}</Text>
       </View>
-
-      {!COURSE_DATA_LOADED && (
-        <View style={styles.mockBanner}>
-          <Text style={styles.mockBannerText}>{t("courseSearch.mockNotice")}</Text>
-        </View>
-      )}
 
       <Text style={styles.sectionLabel}>{t("courseSearch.departmentLabel")}</Text>
       <ScrollView
@@ -204,23 +273,60 @@ export default function CourseSearchScreen() {
             searched ? (
               <View style={styles.center}>
                 <Text style={styles.empty}>{t("courseSearch.noResults")}</Text>
-                <Text style={styles.hint}>{t("courseSearch.prefixHint")}</Text>
                 <Text style={styles.hint}>{t("courseSearch.manualHint")}</Text>
+                {deptId && keyword.trim() ? (
+                  <TouchableOpacity style={styles.registerCta} onPress={() => setRegisterOpen(true)}>
+                    <Text style={styles.registerCtaText}>{t("courseSearch.registerCta")}</Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
             ) : null
           }
           renderItem={({ item }) => {
             const added = addedIds.has(item.id);
+            const cs = item.verified ? null : confirmMap[item.id];
             return (
               <View style={styles.row}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.courseName}>{item.name}</Text>
+                  <View style={styles.nameRow}>
+                    <Text style={styles.courseName}>{item.name}</Text>
+                    {item.verified ? (
+                      <Text style={styles.badgeOfficial}>{t("courseSearch.official")}</Text>
+                    ) : cs?.verifiedByCrowd ? (
+                      <Text style={styles.badgeCrowd}>{t("courseSearch.crowdVerified")}</Text>
+                    ) : (
+                      <Text style={styles.badgeUnverified}>{t("courseSearch.unverified")}</Text>
+                    )}
+                  </View>
                   <Text style={styles.courseMeta}>
                     {item.teacher} · {item.day}
                     {item.period}
                     {item.campus ? ` · ${item.campus}` : ""}
                     {item.credits !== null ? ` · ${item.credits}${t("courseSearch.credits")}` : ""}
                   </Text>
+                  {/* 未確認講義: 確認数 + 確認ボタン（自分が未確認のときだけ押せる） */}
+                  {!item.verified && (
+                    <View style={styles.confirmRow}>
+                      <Text style={styles.confirmCount}>
+                        {(cs?.count ?? 0)}{t("courseSearch.confirmSuffix")}
+                      </Text>
+                      {cs?.mine ? (
+                        <Text style={styles.confirmedMine}>✓ {t("courseSearch.confirmedMine")}</Text>
+                      ) : (
+                        <TouchableOpacity
+                          style={styles.confirmBtn}
+                          disabled={confirmingId !== null}
+                          onPress={() => handleConfirm(item)}
+                        >
+                          {confirmingId === item.id ? (
+                            <ActivityIndicator size="small" color={theme.primary} />
+                          ) : (
+                            <Text style={styles.confirmBtnText}>{t("courseSearch.confirmButton")}</Text>
+                          )}
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
                 </View>
                 <TouchableOpacity
                   style={[styles.addBtn, added && styles.addBtnDone]}
@@ -240,6 +346,58 @@ export default function CourseSearchScreen() {
           }}
         />
       )}
+
+      {/* 講義登録モーダル（公式に無い講義を verified:false で登録） */}
+      <Modal visible={registerOpen} transparent animationType="fade" onRequestClose={() => setRegisterOpen(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setRegisterOpen(false)}>
+          <Pressable style={styles.modalBox} onPress={(e) => e.stopPropagation()}>
+            <Text style={styles.modalTitle}>{t("courseSearch.registerTitle")}</Text>
+            <Text style={styles.modalName}>{keyword.trim()}</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder={t("courseSearch.registerTeacherPlaceholder")}
+              placeholderTextColor={theme.textSecondary}
+              value={regTeacher}
+              onChangeText={setRegTeacher}
+            />
+            <Text style={styles.modalLabel}>{t("courseSearch.registerDayLabel")}</Text>
+            <View style={styles.chipWrap}>
+              {DAYS.map((d) => (
+                <TouchableOpacity
+                  key={d}
+                  style={[styles.pickChip, regDay === d && styles.pickChipOn]}
+                  onPress={() => setRegDay(d)}
+                >
+                  <Text style={[styles.pickChipText, regDay === d && styles.pickChipTextOn]}>{d}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.modalLabel}>{t("courseSearch.registerPeriodLabel")}</Text>
+            <View style={styles.chipWrap}>
+              {PERIODS.map((p) => (
+                <TouchableOpacity
+                  key={p}
+                  style={[styles.pickChip, regPeriod === p && styles.pickChipOn]}
+                  onPress={() => setRegPeriod(p)}
+                >
+                  <Text style={[styles.pickChipText, regPeriod === p && styles.pickChipTextOn]}>{p}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity
+              style={[styles.modalSubmit, registering && styles.addBtnDone]}
+              disabled={registering}
+              onPress={handleRegister}
+            >
+              {registering ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <Text style={styles.modalSubmitText}>{t("courseSearch.registerSubmit")}</Text>
+              )}
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -344,5 +502,62 @@ function makeStyles(theme: Theme) {
     center: { alignItems: "center", paddingTop: 40, paddingHorizontal: 24, gap: 8 },
     empty: { color: theme.textSecondary, fontSize: 14 },
     hint: { color: theme.textSecondary, fontSize: 12, textAlign: "center" },
+
+    // 배지 + 확인
+    nameRow: { flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" },
+    badgeOfficial: {
+      fontSize: 10, fontWeight: "700", color: theme.primary,
+      backgroundColor: theme.primary + "1A", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
+    },
+    badgeUnverified: {
+      fontSize: 10, fontWeight: "700", color: theme.textSecondary,
+      backgroundColor: theme.border, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
+    },
+    badgeCrowd: {
+      fontSize: 10, fontWeight: "700", color: "#2FA84F",
+      backgroundColor: "#2FA84F1A", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
+    },
+    confirmRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 6 },
+    confirmCount: { fontSize: 12, color: theme.textSecondary },
+    confirmedMine: { fontSize: 12, color: "#2FA84F", fontWeight: "600" },
+    confirmBtn: {
+      paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
+      borderWidth: 1, borderColor: theme.primary,
+    },
+    confirmBtnText: { fontSize: 12, color: theme.primary, fontWeight: "600" },
+
+    // 등록 CTA + 모달
+    registerCta: {
+      marginTop: 12, paddingHorizontal: 16, paddingVertical: 10,
+      borderRadius: 8, backgroundColor: theme.primary,
+    },
+    registerCtaText: { color: "#FFFFFF", fontSize: 13, fontWeight: "700" },
+    modalOverlay: {
+      flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center",
+    },
+    modalBox: {
+      width: "86%", maxWidth: 360, backgroundColor: theme.card, borderRadius: 14,
+      padding: 20,
+    },
+    modalTitle: { fontSize: 16, fontWeight: "700", color: theme.textPrimary, marginBottom: 4 },
+    modalName: { fontSize: 15, fontWeight: "600", color: theme.primary, marginBottom: 14 },
+    modalInput: {
+      height: 40, borderRadius: 8, paddingHorizontal: 12, color: theme.textPrimary,
+      backgroundColor: theme.background, borderWidth: 1, borderColor: theme.border,
+    },
+    modalLabel: { fontSize: 12, color: theme.textSecondary, marginTop: 14, marginBottom: 6 },
+    chipWrap: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+    pickChip: {
+      minWidth: 34, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8,
+      alignItems: "center", backgroundColor: theme.background, borderWidth: 1, borderColor: theme.border,
+    },
+    pickChipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
+    pickChipText: { fontSize: 13, color: theme.textPrimary },
+    pickChipTextOn: { color: "#FFFFFF", fontWeight: "700" },
+    modalSubmit: {
+      marginTop: 20, height: 44, borderRadius: 8, backgroundColor: theme.primary,
+      alignItems: "center", justifyContent: "center",
+    },
+    modalSubmitText: { color: "#FFFFFF", fontSize: 15, fontWeight: "700" },
   });
 }

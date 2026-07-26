@@ -1,7 +1,10 @@
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import {
+  addDoc, collection, doc, getDoc, getDocs, limit, query, setDoc, where,
+} from "firebase/firestore";
 import { db } from "../config/firebase";
 import type { Course, Semester } from "../types/course";
-import { queryGram, matchesQuery, normalizeForSearch } from "../utils/ngram";
+import type { Day, Period } from "../types/timetable";
+import { makeBigrams, queryGram, matchesQuery, normalizeForSearch } from "../utils/ngram";
 
 // ============================================================
 // 講義マスターの検索層
@@ -60,4 +63,72 @@ export async function searchCourses(params: CourseSearchParams): Promise<Course[
         normalizeForSearch(c.teacher).includes(normKeyword)
     )
     .slice(0, COURSE_SEARCH_LIMIT);
+}
+
+// ── クラウドソーシング（ユーザー登録講義 + 実在確認） ────────────
+// 公式クロールに無い講義をユーザーが登録(verified:false)し、他ユーザーの
+// 「確認」がしきい値に達したら verified 相当としてクライアントが扱う。
+// courses は update 禁止なので、確認は confirms サブコレクション(create)で行う。
+export const CROWD_CONFIRM_THRESHOLD = 3;
+
+export interface CourseContribution {
+  name: string;
+  teacher: string;
+  day: Day;
+  period: Period;
+}
+
+// ユーザー登録講義を courses に追加する（verified:false 固定・rules強制）。
+// nameGrams は検索の要なので必ず付与（クローラーと同じ makeBigrams）。
+export async function contributeCourse(
+  params: { schoolDomain: string; deptId: string; year: number; semester: Semester; uid: string },
+  data: CourseContribution
+): Promise<string> {
+  const ref = await addDoc(coursesRef(params.schoolDomain, params.deptId), {
+    name: data.name,
+    teacher: data.teacher,
+    day: data.day,
+    period: data.period,
+    semester: params.semester,
+    year: params.year,
+    campus: null,
+    courseNumber: null,
+    credits: null,
+    sourceUrl: null,
+    addedBy: params.uid,
+    verified: false,
+    nameGrams: makeBigrams(data.name),
+    createdAt: Date.now(),
+  });
+  return ref.id;
+}
+
+function confirmDoc(schoolDomain: string, deptId: string, courseId: string, uid: string) {
+  return doc(db, "schools", schoolDomain, "departments", deptId, "courses", courseId, "confirms", uid);
+}
+
+export interface ConfirmState {
+  count: number;
+  mine: boolean;
+  verifiedByCrowd: boolean; // count >= しきい値
+}
+
+export async function fetchConfirmState(
+  schoolDomain: string, deptId: string, courseId: string, myUid: string
+): Promise<ConfirmState> {
+  const col = collection(db, "schools", schoolDomain, "departments", deptId, "courses", courseId, "confirms");
+  const snap = await getDocs(col);
+  const count = snap.size;
+  const mine = snap.docs.some((d) => d.id === myUid);
+  return { count, mine, verifiedByCrowd: count >= CROWD_CONFIRM_THRESHOLD };
+}
+
+// 「1人1回」はドキュメントID=uidで構造強制。既に確認済みなら何もしない。
+export async function confirmCourse(
+  schoolDomain: string, deptId: string, courseId: string, uid: string
+): Promise<void> {
+  const ref = confirmDoc(schoolDomain, deptId, courseId, uid);
+  const existing = await getDoc(ref);
+  if (existing.exists()) return;
+  await setDoc(ref, { uid, createdAt: Date.now() });
 }
