@@ -184,6 +184,16 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         상세는 MODERATION.md §6. EULA 항목은 이미 완료돼 있어 체크리스트만 정정
   - [ ] 잔여: 규칙에서 `allow delete` 제거(태희 창구), 금칙어 리스트 확충, 쪽지 미적용
 - 4주차: 크라우드소싱 승격 로직 (동일 강의 N명 확인 시 verified), 버퍼 주간
+  - [x] ✅ **완료 (7/22)** — `contributeCourse`(사용자 기여 강의 verified:false 등록,
+        nameGrams 부여), `confirmCourse`/`fetchConfirmState`, `CROWD_CONFIRM_THRESHOLD=3`.
+        course-search: 검색 0건 시 '이 이름으로 등록' 모달(교수·요일·교시), 결과에
+        공식/미확인/모두확인 배지 + '실재 확인' 버튼(N명·1인1회, confirms 서브컬렉션).
+        규칙은 confirms create-only 선행배포됨(7/22). 실서버 E2E: 등록→未確認 등장→확인→
+        0→1人 전환, courses(verified:false)+confirms 문서 생성 확인
+  - 설계 메모: verified 승격은 courses.verified 필드를 바꾸지 않고 **confirms 개수로
+    클라이언트가 파생 판정**(courses update 금지 유지, Blaze 불필요). 임계 도달 시
+    "모두 확인함" 배지로 표시. 서버측 자동 승격이 필요해지면 Cloud Functions로 이관
+  - **→ Phase 1c(10월) 전 주차 완료.** 다음은 11월 Phase 2(선배 시간표·강의평)
   - [x] **설계 확정 (7/21 통화)** — courses는 `update: false` 유지(자작자연 원천 차단,
         Blaze 불필요). 대신 `courses/{id}/confirms/{uid}` 서브컬렉션을 create/delete-only로
         두고 **문서ID = uid로 1인 1회를 구조 강제**. `Course.confirmCount` 필드는 제거하고,
