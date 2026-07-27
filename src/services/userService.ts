@@ -15,6 +15,7 @@ export interface PublicProfile {
   photoURL: string | null;
   schoolDomain: string | null;
   department: string | null;
+  admissionYear?: number | null; // 学年フィルタ用（先輩時間割）
 }
 
 function publicDoc(uid: string) {
@@ -65,6 +66,7 @@ export async function createUserProfile(
     language: "ja",
     schoolDomain: null,
     department: null,
+    admissionYear: null,
   });
 }
 
@@ -163,6 +165,13 @@ export async function updateAcademicInfo(uid: string, academic: AcademicInfo): P
     await setDoc(userDoc(uid), { department: academic.department }, { merge: true });
     await writePublicMirror(uid, { department: academic.department });
   }
+}
+
+// 入学年度の保存。学年フィルタ(先輩時間割)・学点管理(Phase 3)が使う単一ソース。
+// 他ユーザーに公開してよい値なので usersPublic にもミラーする（GPA等とは別扱い）。
+export async function updateAdmissionYear(uid: string, admissionYear: number | null): Promise<void> {
+  await setDoc(userDoc(uid), { uid, admissionYear }, { merge: true });
+  await writePublicMirror(uid, { admissionYear });
 }
 
 // オンボーディング完了時の一括保存（規約同意日時・言語・学校）。

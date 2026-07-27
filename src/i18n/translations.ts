@@ -185,6 +185,16 @@ const ja = {
   "timetable.visPublic": "全体公開",
   "timetable.visPublicDesc": "誰でも見られます",
 
+  // 先輩の時間割（Phase 2 2週目）
+  "senior.entry": "🎓 先輩の時間割を見る",
+  "senior.title": "先輩の時間割",
+  "senior.gradeAll": "全学年",
+  "senior.gradeUnknown": "学年不明",
+  "senior.courseCountSuffix": "科目",
+  "senior.empty": "公開されている先輩の時間割がありません",
+  "senior.noDepartment": "先輩の時間割を見るには、プロフィールで学部を設定してください",
+  "senior.goProfile": "プロフィールへ",
+
   // 相対時刻
   "time.justNow": "たった今",
   "time.minutesAgo": "分前",
@@ -295,6 +305,8 @@ const ja = {
   "profile.departmentPlaceholder": "例: 経済学部",
   "profile.grade": "学年",
   "profile.gradePlaceholder": "例: 2",
+  "profile.admissionYear": "入学年度",
+  "profile.admissionYearPlaceholder": "例: 2024",
   "profile.gpaPlaceholder": "例: 3.42",
   "profile.creditsLabel": "取得単位 / 卒業必要単位",
   "profile.earnedPlaceholder": "例: 68",
@@ -534,6 +546,15 @@ const ko: Record<TranslationKey, string> = {
   "timetable.visPublic": "전체 공개",
   "timetable.visPublicDesc": "누구나 볼 수 있어요",
 
+  "senior.entry": "🎓 선배 시간표 보기",
+  "senior.title": "선배 시간표",
+  "senior.gradeAll": "전체 학년",
+  "senior.gradeUnknown": "학년 미상",
+  "senior.courseCountSuffix": "과목",
+  "senior.empty": "공개된 선배 시간표가 없습니다",
+  "senior.noDepartment": "선배 시간표를 보려면 프로필에서 학부를 설정하세요",
+  "senior.goProfile": "프로필로",
+
   "time.justNow": "방금 전",
   "time.minutesAgo": "분 전",
   "time.hoursAgo": "시간 전",
@@ -636,6 +657,8 @@ const ko: Record<TranslationKey, string> = {
   "profile.departmentPlaceholder": "예: 経済学部",
   "profile.grade": "학년",
   "profile.gradePlaceholder": "예: 2",
+  "profile.admissionYear": "입학년도",
+  "profile.admissionYearPlaceholder": "예: 2024",
   "profile.gpaPlaceholder": "예: 3.42",
   "profile.creditsLabel": "취득 학점 / 졸업 필요 학점",
   "profile.earnedPlaceholder": "예: 68",

@@ -15,7 +15,7 @@ import { auth } from "../../src/config/firebase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { signOut, isSchoolVerified } from "../../src/services/authService";
-import { getUserProfile, updateAcademicInfo } from "../../src/services/userService";
+import { getUserProfile, updateAcademicInfo, updateAdmissionYear } from "../../src/services/userService";
 import { THEME_IDS, THEMES, themeLabel, type Theme } from "../../src/theme/themes";
 import type { AcademicInfo, UserProfile } from "../../src/types/user";
 
@@ -55,7 +55,7 @@ function SecretValue({
 function stubProfile(uid: string): UserProfile {
   return {
     uid, email: "", nickname: "", photoURL: null, friendIds: [], createdAt: Date.now(),
-    verificationLevel: 0, language: "ja", schoolDomain: null, department: null,
+    verificationLevel: 0, language: "ja", schoolDomain: null, department: null, admissionYear: null,
   };
 }
 
@@ -69,6 +69,7 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isGuest, setIsGuest] = useState(true);
   const [academicInput, setAcademicInput] = useState<AcademicInfo>(EMPTY_ACADEMIC);
+  const [admissionYearInput, setAdmissionYearInput] = useState(""); // 入学年度（学年フィルタ・学点管理の単一ソース）
   const [editingAcademic, setEditingAcademic] = useState(false);
   const [showGpa, setShowGpa] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
@@ -89,15 +90,20 @@ export default function ProfileScreen() {
       getUserProfile(current.uid).then((p) => {
         setProfile(p);
         setAcademicInput(p?.academic ?? EMPTY_ACADEMIC);
+        setAdmissionYearInput(p?.admissionYear ? String(p.admissionYear) : "");
       });
     }, [user])
   );
 
   async function handleSaveAcademic() {
     if (!user) return;
+    // 入学年度は妥当な西暦のみ採用（それ以外は null 扱い）
+    const parsed = parseInt(admissionYearInput.trim(), 10);
+    const admissionYear = parsed >= 1990 && parsed <= 2100 ? parsed : null;
     try {
       await updateAcademicInfo(user.uid, academicInput);
-      setProfile((p) => ({ ...(p ?? stubProfile(user.uid)), academic: academicInput }));
+      await updateAdmissionYear(user.uid, admissionYear);
+      setProfile((p) => ({ ...(p ?? stubProfile(user.uid)), academic: academicInput, admissionYear }));
       setEditingAcademic(false);
     } catch (e: any) {
       Alert.alert(t("common.saveFailed"), e.message);
@@ -163,6 +169,15 @@ export default function ProfileScreen() {
             value={academicInput.grade}
             onChangeText={(v) => setAcademicInput((a) => ({ ...a, grade: v }))}
           />
+          <Text style={styles.label}>{t("profile.admissionYear")}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={t("profile.admissionYearPlaceholder")}
+            placeholderTextColor={theme.textSecondary}
+            keyboardType="number-pad"
+            value={admissionYearInput}
+            onChangeText={setAdmissionYearInput}
+          />
           <Text style={styles.label}>GPA</Text>
           <TextInput
             style={styles.input}
@@ -208,6 +223,10 @@ export default function ProfileScreen() {
             {profile?.academic?.department || profile?.academic?.grade
               ? `${profile?.academic?.department ?? ""}${profile?.academic?.grade ? ` ${profile.academic.grade}${t("profile.gradeSuffix")}` : ""}`.trim()
               : t("common.notSet")}
+          </Text>
+          <Text style={styles.label}>{t("profile.admissionYear")}</Text>
+          <Text style={styles.value}>
+            {profile?.admissionYear ? String(profile.admissionYear) : t("common.notSet")}
           </Text>
           <Text style={styles.label}>GPA</Text>
           <SecretValue

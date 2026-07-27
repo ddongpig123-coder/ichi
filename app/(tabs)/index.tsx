@@ -163,14 +163,24 @@ export default function HomeScreen() {
         friendOverlaps={friendOverlaps}
       />
 
-      <TouchableOpacity
-        style={styles.courseSearchBtn}
-        onPress={() =>
-          router.push(`/course-search?year=${selectedYear}&semester=${selectedSemester}`)
-        }
-      >
-        <Text style={styles.courseSearchText}>{t("courseSearch.entry")}</Text>
-      </TouchableOpacity>
+      <View style={styles.actionRow}>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() =>
+            router.push(`/course-search?year=${selectedYear}&semester=${selectedSemester}`)
+          }
+        >
+          <Text style={styles.actionText} numberOfLines={1}>{t("courseSearch.entry")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() =>
+            router.push(`/senior-timetables?year=${selectedYear}&semester=${selectedSemester}`)
+          }
+        >
+          <Text style={styles.actionText} numberOfLines={1}>{t("senior.entry")}</Text>
+        </TouchableOpacity>
+      </View>
 
       <FriendsList />
 
@@ -190,10 +200,15 @@ export default function HomeScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    courseSearchBtn: {
+    actionRow: {
       height: COURSE_SEARCH_ROW_H,
+      flexDirection: "row",
       marginHorizontal: 12,
       marginVertical: 4,
+      gap: 8,
+    },
+    actionBtn: {
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 8,
@@ -201,6 +216,6 @@ function makeStyles(theme: Theme) {
       borderStyle: "dashed",
       borderColor: theme.primary,
     },
-    courseSearchText: { color: theme.primary, fontSize: 14, fontWeight: "600" },
+    actionText: { color: theme.primary, fontSize: 13, fontWeight: "600" },
   });
 }

@@ -36,6 +36,10 @@ export interface UserProfile {
   // 所属学部（先輩時間割の「学部公開」判定・講義検索の既定学部に使用）
   // ※ AcademicInfo.department は表示用の自由記述、こちらは判定用の正規値
   department: string | null;
+  // 入学年度（例: 2024）。学年は「現在の年度 − 入学年度 + 1」で派生する単一ソース。
+  // 先輩時間割の学年フィルタに使用。usersPublic にミラーする（他ユーザーに公開）。
+  // 学点管理(Phase 3)もこの値を再利用する — 可変の「学年」フィールドは作らない（gardrail §6-3）。
+  admissionYear: number | null;
 
   // 友達リストの表示順（本人のみが読む設定値。friendships が関係の実体）
   frequentFriendIds?: string[]; // よく会う友達（最大6人・ホーム画面表示）
