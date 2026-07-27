@@ -9,8 +9,14 @@ import { useAuth } from "../../src/contexts/AuthContext";
 import SemesterSelector from "../../src/components/common/SemesterSelector";
 import TimeTable from "../../src/components/timetable/TimeTable";
 import SessionFormModal, { type SessionFormValue } from "../../src/components/timetable/SessionFormModal";
+import VisibilitySelector from "../../src/components/timetable/VisibilitySelector";
 import FriendsList from "../../src/components/friends/FriendsList";
-import { getTimetable, saveTimetableSessions } from "../../src/services/timetableService";
+import {
+  getTimetable,
+  saveTimetableSessions,
+  setTimetableVisibility,
+  type TimetableVisibility,
+} from "../../src/services/timetableService";
 import { useFriendOverlaps } from "../../src/hooks/useFriendOverlaps";
 import type { ClassSession, Day, Period } from "../../src/types/timetable";
 import {
@@ -43,6 +49,8 @@ export default function HomeScreen() {
 
   // 学期別セッションのローカルキャッシュ。Firestoreからは学期ごとに1回だけロードする。
   const [sessionsMap, setSessionsMap] = useState<Record<string, ClassSession[]>>({});
+  // 学期別の公開範囲（未ロード/未作成の学期は既定 "friends"）
+  const [visibilityMap, setVisibilityMap] = useState<Record<string, TimetableVisibility>>({});
   // Firestoreにまだドキュメントがない学期（初回保存時に visibility を初期化するため記録）
   const missingDocKeys = useRef<Set<string>>(new Set());
   const loadedKeys = useRef<Set<string>>(new Set());
@@ -54,6 +62,7 @@ export default function HomeScreen() {
       .then((docData) => {
         if (!docData) missingDocKeys.current.add(semesterKey);
         setSessionsMap((prev) => ({ ...prev, [semesterKey]: docData?.sessions ?? [] }));
+        setVisibilityMap((prev) => ({ ...prev, [semesterKey]: docData?.visibility ?? "friends" }));
       })
       .catch((e) => {
         console.warn("timetable load failed:", e);
@@ -76,14 +85,29 @@ export default function HomeScreen() {
           if (!docData) return;
           missingDocKeys.current.delete(semesterKey);
           setSessionsMap((prev) => ({ ...prev, [semesterKey]: docData.sessions }));
+          setVisibilityMap((prev) => ({ ...prev, [semesterKey]: docData.visibility ?? "friends" }));
         })
         .catch((e) => console.warn("timetable refresh failed:", e));
     }, [user, semesterKey])
   );
 
   const sessions = sessionsMap[semesterKey] ?? [];
+  const visibility = visibilityMap[semesterKey] ?? "friends";
   // 同じ講義を取っている友達（実データ: 友達の公開時間割と突き合わせ）
   const friendOverlaps = useFriendOverlaps(semesterKey, sessions);
+
+  // 公開範囲の変更（楽観更新 + Firestore保存、失敗時は元に戻す）
+  function handleChangeVisibility(next: TimetableVisibility) {
+    if (!user || next === visibility) return;
+    const prev = visibility;
+    setVisibilityMap((m) => ({ ...m, [semesterKey]: next }));
+    setTimetableVisibility(user.uid, semesterKey, next)
+      .then(() => missingDocKeys.current.delete(semesterKey)) // ドキュメントが確定 → 以後の保存で visibility を初期化しない
+      .catch((e) => {
+        console.warn("visibility save failed:", e);
+        setVisibilityMap((m) => ({ ...m, [semesterKey]: prev }));
+      });
+  }
 
   const [target, setTarget] = useState<{ day: Day; period: Period; session?: ClassSession } | null>(null);
 
@@ -128,6 +152,7 @@ export default function HomeScreen() {
           if (!isSemesterAvailable(year, selectedSemester)) setSelectedSemester("春");
         }}
         onChangeSemester={setSelectedSemester}
+        rightSlot={<VisibilitySelector value={visibility} onChange={handleChangeVisibility} />}
       />
 
       <TimeTable

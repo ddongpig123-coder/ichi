@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ElementRef } from "react";
+import { useMemo, useRef, useState, type ElementRef, type ReactNode } from "react";
 import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from "react-native";
 import { type Semester, getAvailableYears, isSemesterAvailable } from "../../data/semesterTimetables";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -10,9 +10,10 @@ interface Props {
   selectedSemester: Semester;
   onChangeYear: (year: number) => void;
   onChangeSemester: (sem: Semester) => void;
+  rightSlot?: ReactNode; // バー右端に置く要素（時間割の公開範囲ピルなど）
 }
 
-export default function SemesterSelector({ selectedYear, selectedSemester, onChangeYear, onChangeSemester }: Props) {
+export default function SemesterSelector({ selectedYear, selectedSemester, onChangeYear, onChangeSemester, rightSlot }: Props) {
   const { theme } = useTheme();
   const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -61,6 +62,8 @@ export default function SemesterSelector({ selectedYear, selectedSemester, onCha
           );
         })}
       </View>
+
+      {rightSlot ? <View style={styles.rightSlot}>{rightSlot}</View> : null}
 
       <Modal visible={pickerVisible} transparent animationType="none" onRequestClose={() => setPickerVisible(false)}>
         <Pressable style={styles.overlay} onPress={() => setPickerVisible(false)}>
@@ -118,6 +121,7 @@ function makeStyles(theme: Theme) {
     semBtnDisabled: { opacity: 0.3 },
     semBtnText: { fontSize: 13, fontWeight: "600", color: theme.textSecondary },
     semBtnTextActive: { color: "#fff" },
+    rightSlot: { marginLeft: "auto" },
     overlay: { flex: 1, backgroundColor: "transparent" },
     pickerBox: {
       backgroundColor: theme.card,

@@ -206,6 +206,11 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
 목표: **선배 시간표 공개 + 강의 한줄평.** 차별화 기능 완성.
 
 - 1주차: 시간표 공개 범위 설정 UI (비공개/친구/학부/전체) — 규칙은 이미 배포되어 있음
+  - [x] ✅ **완료 (7/27)** — `VisibilitySelector`(학기바 우측 pill + 4옵션 모달, 아이콘·설명),
+        홈에 `visibilityMap` 학기별 상태·로드·포커스 동기화·낙관적 저장(실패 시 롤백),
+        `setTimetableVisibility` 연결, i18n ja/ko 12키. 학기별 저장(`timetables.visibility`).
+        웹 E2E: 4값 선택→pill 갱신→리로드 지속(public/private/department 확인), 콘솔 에러 0.
+        버그 수정: RN Web Modal `animationType="fade"`가 close 시 안 닫힘 → `"none"`으로 교체.
 - 2주차: 선배 시간표 열람 화면 — 같은 학부 공개 시간표 리스트, 학년 필터
 - 3주차: 강의 한줄평 v1 — 구조화 평가(별점 + 태그: 単位 난이도/출석 확인/유학생 친화) 필수,
   자유텍스트(언어 필드 포함) 선택
