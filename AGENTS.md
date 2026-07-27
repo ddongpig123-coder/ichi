@@ -46,6 +46,17 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 **진행도: 로드맵 10월(Phase 1c)까지 전부 완료.** 다음은 11월 Phase 2(선배 시간표·강의평).
 상세·완료 이력은 [docs/ROADMAP.md](docs/ROADMAP.md). 목업은 전부 제거됨(실데이터화 완료).
 
+> **📍 ROADMAP 미리보기 안내 (2026-07-26 추가) — pull 후 꼭 읽을 것**
+> `docs/ROADMAP.md`가 **항상 source of truth**. 완료=가로줄+초록 체크 배지, 미완료=빈 체크박스로
+> 보기 좋게 렌더한 뷰는 `node scripts/roadmap-view.mjs` 실행 → OS 임시폴더에 생성된 HTML을
+> **Artifact로 발행**하면 옆 패널에 뜬다(체크박스 `[ ]`→`[x]` 바꾸면 자동으로 완료 스타일).
+> ⚠️ **렌더된 미리보기(Artifact)는 발행한 사용자 계정에만 private이라 `git pull`로는 공유 안 됨.**
+> 준희 쪽에서 미리보기가 필요하면 pull 후 위 스크립트를 직접 돌려 각자 발행할 것.
+> 미리보기가 안 떠도 원본 `docs/ROADMAP.md`를 읽으면 내용은 완전히 동일하니 작업엔 지장 없음.
+>
+> (이번 세션 추가: 학점관리 아키텍처 가드레일 확정 — [docs/CREDIT-TRACKING.md](docs/CREDIT-TRACKING.md) §6.
+> 독립 서브시스템·E2E 저장·입학년도 단일화·global 부채 선행. Phase 3 유지.)
+
 - **실데이터 연동 완료(전부 Firestore)**: 게시판·쪽지·라운지·신고/차단·프로필·테마,
   시간표(`users/{uid}/timetables/{학기키}`)·친구(`friendships`/`friendRequests`)·
   친구 겹침·강의검색(`schools/{sd}/departments/{dept}/courses`, nameGrams 중간일치)·
