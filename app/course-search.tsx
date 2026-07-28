@@ -30,6 +30,7 @@ import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
 import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
+import ReviewModal from "../src/components/course/ReviewModal";
 
 // ============================================================
 // 講義検索 → 時間割にワンタップ追加（Phase 1c / 10月3週）
@@ -101,6 +102,7 @@ export default function CourseSearchScreen() {
   const [regDay, setRegDay] = useState<Day>("月");
   const [regPeriod, setRegPeriod] = useState<Period>(1);
   const [registering, setRegistering] = useState(false);
+  const [reviewCourse, setReviewCourse] = useState<Course | null>(null); // レビューモーダル対象
 
   // keyword state を使わず引数で検索できる版（登録直後の即時再検索に使う）
   async function runSearch(kw: string) {
@@ -328,19 +330,24 @@ export default function CourseSearchScreen() {
                     </View>
                   )}
                 </View>
-                <TouchableOpacity
-                  style={[styles.addBtn, added && styles.addBtnDone]}
-                  disabled={added || addingId !== null}
-                  onPress={() => handleAdd(item)}
-                >
-                  {addingId === item.id ? (
-                    <ActivityIndicator size="small" color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.addBtnText}>
-                      {added ? "✓" : t("courseSearch.add")}
-                    </Text>
-                  )}
-                </TouchableOpacity>
+                <View style={styles.rowActions}>
+                  <TouchableOpacity style={styles.reviewBtn} onPress={() => setReviewCourse(item)}>
+                    <Text style={styles.reviewBtnText}>★ {t("review.short")}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.addBtn, added && styles.addBtnDone]}
+                    disabled={added || addingId !== null}
+                    onPress={() => handleAdd(item)}
+                  >
+                    {addingId === item.id ? (
+                      <ActivityIndicator size="small" color="#FFFFFF" />
+                    ) : (
+                      <Text style={styles.addBtnText}>
+                        {added ? "✓" : t("courseSearch.add")}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </View>
             );
           }}
@@ -398,6 +405,17 @@ export default function CourseSearchScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      {/* 講義レビュー モーダル（Phase 2 3週目） */}
+      <ReviewModal
+        visible={reviewCourse !== null}
+        loc={reviewCourse ? { schoolDomain, deptId: deptId ?? "", courseId: reviewCourse.id } : null}
+        courseName={reviewCourse?.name ?? ""}
+        year={year}
+        semester={semester}
+        uid={user?.uid ?? null}
+        onClose={() => setReviewCourse(null)}
+      />
     </View>
   );
 }
@@ -499,6 +517,17 @@ function makeStyles(theme: Theme) {
     },
     addBtnDone: { backgroundColor: theme.textSecondary },
     addBtnText: { color: "#FFFFFF", fontSize: 13, fontWeight: "600" },
+    rowActions: { gap: 6, alignItems: "stretch" },
+    reviewBtn: {
+      minWidth: 88,
+      height: 30,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.primary,
+    },
+    reviewBtnText: { color: theme.primary, fontSize: 12.5, fontWeight: "600" },
     center: { alignItems: "center", paddingTop: 40, paddingHorizontal: 24, gap: 8 },
     empty: { color: theme.textSecondary, fontSize: 14 },
     hint: { color: theme.textSecondary, fontSize: 12, textAlign: "center" },

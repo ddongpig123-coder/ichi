@@ -221,6 +221,13 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         ⚠️ **리스트 실제 population + 뷰어 렌더는 2계정 E2E 필요**(같은 학부 공개 시간표 2번째 유저) → §6.
 - 3주차: 강의 한줄평 v1 — 구조화 평가(별점 + 태그: 単位 난이도/출석 확인/유학생 친화) 필수,
   자유텍스트(언어 필드 포함) 선택
+  - [x] ✅ **완료 (7/27)** — `CourseReview` 타입·`REVIEW_TAGS`(8종)는 기존, `reviews` 규칙 배포됨(규칙 작업 없음).
+        `courseService`에 `setCourseReview`(docID=uid, create/update, createdAt 유지)/`fetchCourseReviews`/
+        `aggregateReviews`(평균·태그집계·mine) 추가. `StarRating`(표시+입력) + `ReviewModal`(집계 상단 +
+        내 리뷰 편집 하단, 4주차 강의상세서 재사용) 신규. 강의검색 결과 행에 ★리뷰 버튼 연결. i18n ja/ko 14키.
+        웹 E2E(단일 계정): 商学部 マーケ 검색→★리뷰→별점4·태그2·텍스트 저장→집계 4.0/1件/태그카운트→
+        리로드 재오픈 시 prefill·최근리뷰·집계 지속 확인, 모달 close(animationType none), 콘솔 에러 0.
+        버그수정: 저장 후 `applyReviews`로 집계+최근리뷰 동시 갱신(이전엔 최근리뷰 미갱신).
 - 4주차: 강의 상세 화면(시라버스 정보 + 평점 집계 + 리뷰 목록), 신고 연동
 
 **예상 세션: 주 3~4회 × 4주 = 14세션.**

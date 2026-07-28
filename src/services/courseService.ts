@@ -2,8 +2,9 @@ import {
   addDoc, collection, doc, getDoc, getDocs, limit, query, setDoc, where,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import type { Course, Semester } from "../types/course";
+import type { Course, CourseReview, ReviewTag, Semester } from "../types/course";
 import type { Day, Period } from "../types/timetable";
+import type { UserLanguage } from "../types/user";
 import { makeBigrams, queryGram, matchesQuery, normalizeForSearch } from "../utils/ngram";
 
 // ============================================================
@@ -131,4 +132,75 @@ export async function confirmCourse(
   const existing = await getDoc(ref);
   if (existing.exists()) return;
   await setDoc(ref, { uid, createdAt: Date.now() });
+}
+
+// ── 講義レビュー（Phase 2 3週目） ──────────────────────────────
+// パス: schools/{schoolDomain}/departments/{deptId}/courses/{courseId}/reviews/{uid}
+// ドキュメントID = uid で「1人1講義1レビュー」を構造強制（rulesで rating 1〜5 検証済み）。
+// 構造化評価（rating + tags、言語中立）と自由テキスト（language付き）を分離保存。
+export interface CourseLoc {
+  schoolDomain: string;
+  deptId: string;
+  courseId: string;
+}
+
+export interface ReviewInput {
+  rating: 1 | 2 | 3 | 4 | 5;
+  tags: ReviewTag[];
+  text: string | null;
+  language: UserLanguage;
+  year: number;
+  semester: Semester;
+}
+
+export interface CourseReviewWithUid extends CourseReview {
+  uid: string;
+}
+
+function reviewsRef(loc: CourseLoc) {
+  return collection(db, "schools", loc.schoolDomain, "departments", loc.deptId, "courses", loc.courseId, "reviews");
+}
+function reviewDoc(loc: CourseLoc, uid: string) {
+  return doc(db, "schools", loc.schoolDomain, "departments", loc.deptId, "courses", loc.courseId, "reviews", uid);
+}
+
+// 自分のレビューを作成/更新（docID=uidなので上書き=更新）。createdAtは既存を維持。
+export async function setCourseReview(loc: CourseLoc, uid: string, input: ReviewInput): Promise<void> {
+  const ref = reviewDoc(loc, uid);
+  const existing = await getDoc(ref);
+  const now = Date.now();
+  await setDoc(ref, {
+    rating: input.rating,
+    tags: input.tags,
+    text: input.text,
+    language: input.language,
+    year: input.year,
+    semester: input.semester,
+    createdAt: existing.exists() ? (existing.data().createdAt ?? now) : now,
+    updatedAt: existing.exists() ? now : null,
+  });
+}
+
+export async function fetchCourseReviews(loc: CourseLoc): Promise<CourseReviewWithUid[]> {
+  const snap = await getDocs(reviewsRef(loc));
+  return snap.docs.map((d) => ({ ...(d.data() as CourseReview), uid: d.id }));
+}
+
+export interface ReviewAggregate {
+  count: number;
+  average: number; // レビューなしは 0
+  tagCounts: Partial<Record<ReviewTag, number>>;
+  mine: CourseReviewWithUid | null;
+}
+
+// 集計はクライアントで（レビュー件数は多くないため全件取得→平均・タグ集計）。
+export function aggregateReviews(reviews: CourseReviewWithUid[], myUid: string): ReviewAggregate {
+  const count = reviews.length;
+  const average = count ? reviews.reduce((s, r) => s + r.rating, 0) / count : 0;
+  const tagCounts: Partial<Record<ReviewTag, number>> = {};
+  for (const r of reviews) {
+    for (const tag of r.tags ?? []) tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
+  }
+  const mine = reviews.find((r) => r.uid === myUid) ?? null;
+  return { count, average, tagCounts, mine };
 }

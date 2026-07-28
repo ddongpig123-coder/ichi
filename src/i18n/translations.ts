@@ -195,6 +195,21 @@ const ja = {
   "senior.noDepartment": "先輩の時間割を見るには、プロフィールで学部を設定してください",
   "senior.goProfile": "プロフィールへ",
 
+  // 講義レビュー（Phase 2 3週目）
+  "review.title": "講義レビュー",
+  "review.aggregate": "みんなの評価",
+  "review.countSuffix": "件",
+  "review.noReviews": "まだレビューがありません。最初のレビューを書いてみよう！",
+  "review.yourReview": "あなたのレビュー",
+  "review.ratingLabel": "総合評価",
+  "review.tagsLabel": "タグ（複数選択可）",
+  "review.textPlaceholder": "自由コメント（任意）",
+  "review.ratingRequired": "星で評価を選んでください",
+  "review.saved": "レビューを保存しました",
+  "review.recentReviews": "最近のレビュー",
+  "review.anon": "匿名",
+  "review.short": "レビュー",
+
   // 相対時刻
   "time.justNow": "たった今",
   "time.minutesAgo": "分前",
@@ -554,6 +569,20 @@ const ko: Record<TranslationKey, string> = {
   "senior.empty": "공개된 선배 시간표가 없습니다",
   "senior.noDepartment": "선배 시간표를 보려면 프로필에서 학부를 설정하세요",
   "senior.goProfile": "프로필로",
+
+  "review.title": "강의 리뷰",
+  "review.aggregate": "모두의 평가",
+  "review.countSuffix": "개",
+  "review.noReviews": "아직 리뷰가 없습니다. 첫 리뷰를 남겨보세요!",
+  "review.yourReview": "내 리뷰",
+  "review.ratingLabel": "총합 평가",
+  "review.tagsLabel": "태그 (복수 선택 가능)",
+  "review.textPlaceholder": "자유 코멘트 (선택)",
+  "review.ratingRequired": "별점을 선택하세요",
+  "review.saved": "리뷰를 저장했습니다",
+  "review.recentReviews": "최근 리뷰",
+  "review.anon": "익명",
+  "review.short": "리뷰",
 
   "time.justNow": "방금 전",
   "time.minutesAgo": "분 전",
