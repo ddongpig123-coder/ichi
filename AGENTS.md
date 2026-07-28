@@ -41,10 +41,23 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - **크롤러(scripts/) 작업 시**: 적재 데이터는 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.
   서비스 계정 키는 절대 커밋 금지 (.gitignore에 패턴 등록됨)
 
-## 현재 상태 요약 (2026-07-22 기준) — 다음 세션은 여기부터 읽을 것
+## 현재 상태 요약 (2026-07-27 기준) — 다음 세션은 여기부터 읽을 것
 
-**진행도: 로드맵 10월(Phase 1c)까지 전부 완료.** 다음은 11월 Phase 2(선배 시간표·강의평).
+**진행도: 11월 Phase 2 1·2주차까지 완료.** 다음은 3주차(강의 한줄평).
 상세·완료 이력은 [docs/ROADMAP.md](docs/ROADMAP.md). 목업은 전부 제거됨(실데이터화 완료).
+
+> **📌 준희 복귀 인계 (2026-07-27) — 준희 세션은 이 블록부터 읽을 것**
+> 준희 휴가 동안 태희 축만 진행(Phase 2 1·2주차 = 공개범위 UI·선배 시간표). 준희 축은 안 건드림.
+> **복귀 후 태희와 조율할 것 (우선순위 순):**
+> 1. **schoolDomain "global" 부채 해소 (최우선)** — 게시판이 아직 `schools/global/boards`에 쌓임
+>    (§5 "학교별 분리" 원칙 위반). 선배 시간표/강의검색은 `users.schoolDomain` 직접조회로 **우회만** 해둠.
+>    `AuthContext`가 실제 학교/학부/입학년도를 제공하도록 고치고 게시판·라운지를 실교 스코프로 통일.
+>    → 규칙·타입 변경은 **태희 창구**, 준희는 게시판 코드 정합. **이게 풀려야 학점관리(Phase 3)도 언락**
+>    (CREDIT-TRACKING §6-4 선행조건). 상세: 아래 함정 + ROADMAP §6 기술부채.
+> 2. **Phase 1b 잔여 (준희 축)** — MODERATION §6: posts/comments 하드삭제(`allow delete`) 규칙 제거,
+>    금칙어 리스트 확충, 쪽지(messages) 삭제·금칙어 미적용.
+> 3. 태희가 이번에 추가한 것(참고): `timetables.visibility` UI, 선배 시간표(`usersPublic` 학부 쿼리 방식,
+>    규칙 배포 없음), `admissionYear` 필드(usersPublic 미러), 학점관리 가드레일(CREDIT-TRACKING §6).
 
 > **📍 ROADMAP 미리보기 안내 (2026-07-26 추가) — pull 후 꼭 읽을 것**
 > `docs/ROADMAP.md`가 **항상 source of truth**. 완료=가로줄+초록 체크 배지, 미완료=빈 체크박스로
@@ -64,15 +77,18 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - `friendRequestService`는 **실구현 완료**(더 이상 stub 아님). 강의 데이터 20,022건 적재됨.
 - 인증: 게스트(익명)→이메일/Microsoft 계정연결(uid 유지). Microsoft 네이티브는 12월 EAS로 이관.
 
-### 다음 세션 시작점 — 11월 Phase 2 (킬러 기능)
-1주차 **시간표 공개범위 UI**(private/friends/department/public — 규칙·`timetables.visibility`
-이미 배포됨) → 2주차 **선배 시간표 열람**(같은 학부 공개 시간표) → 3주차 강의 한줄평
-(`reviews` 규칙·타입 이미 있음, 별점·태그 구조화) → 4주차 강의 상세.
+### 다음 세션 시작점 — 11월 Phase 2 3주차
+- [완료] 1주차 시간표 공개범위 UI(`VisibilitySelector`) / 2주차 선배 시간표 열람(`app/senior-timetables.tsx`)
+- **다음: 3주차 강의 한줄평 v1** — `reviews` 규칙·경로 이미 배포됨
+  (`schools/{sd}/departments/{dept}/courses/{courseId}/reviews/{reviewerUid}`, 문서ID=uid로 1인1강의1리뷰,
+  rating 1~5 int 검증). **타입만 없으니 규칙 배포 없이** 타입+서비스+UI(별점·태그 구조화 + 자유텍스트)로 진행.
+- → 4주차 강의 상세(시라버스+평점 집계+리뷰 목록).
 
 ### 반드시 알아야 할 함정 (안 그러면 헤맴)
 - **schoolDomain "global" 고정 부채**: `AuthContext.schoolDomain`이 `"global"` 하드코딩.
-  게시판은 global 스코프인데 강의는 `meiji.ac.jp` 적재 → 강의검색만 `users.schoolDomain`
-  직접조회로 우회 중. 게시판까지 실교 스코프 통일은 미완(ROADMAP 기술부채). 준희 복귀 후 조율.
+  게시판은 global 스코프인데 강의는 `meiji.ac.jp` 적재 → 강의검색·**선배 시간표**만 `users.schoolDomain`
+  직접조회로 우회 중. 게시판까지 실교 스코프 통일은 미완(ROADMAP 기술부채). **준희 복귀 → 지금 조율 대상**
+  (위 📌 인계 블록 1번). 학점관리 Phase 3 착수 선행조건이기도 함(CREDIT-TRACKING §6-4).
 - **미래 학기 차단**: `isSemesterAvailable`이 현재보다 미래 학기를 막음. 7월(春학기)엔
   "2026 秋"가 선택 불가 → 秋에 저장한 데이터는 홈에서 안 보임. **검증은 현재 유효 학기(春)로**.
 - **verified 승격 방식**: `courses.verified`는 클라가 못 바꿈(규칙). 크라우드소싱은
@@ -81,5 +97,7 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
   Alert는 웹에서 no-op이라 화면마다 `notify`/`window.alert` 폴백 씀.
 
 ### 협업 상태
-- **준희 이달 말까지 휴가** → 준희 축(게시판/쪽지/라운지/테마) 손대지 말 것. 태희 축만 진행.
-- 사용자 직접 처리 대기(§6): 실계정 메일 인증 테스트, 폰 통합 테스트, 약관 자리표시자 3종.
+- **준희 복귀함(2026-07-27).** 위 📌 준희 복귀 인계 블록 참조 — schoolDomain 부채 해소가 최우선 조율감.
+  규칙·`src/types/` 변경·배포는 여전히 **태희 창구 일원화**(준희는 게시판 코드 정합).
+- 사용자 직접 처리 대기(§6): 실계정 메일 인증 테스트, 폰 통합 테스트, 약관 자리표시자 3종,
+  **선배 시간표 2계정 E2E**(ROADMAP §6, 리스트 population·뷰어 렌더 미검증).
