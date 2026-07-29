@@ -37,6 +37,14 @@ function coursesRef(schoolDomain: string, deptId: string) {
   return collection(db, "schools", schoolDomain, "departments", deptId, "courses");
 }
 
+// 講義詳細画面用: 単一講義ドキュメントを取得（Phase 2 4週目）。
+export async function fetchCourse(
+  schoolDomain: string, deptId: string, courseId: string
+): Promise<Course | null> {
+  const snap = await getDoc(doc(db, "schools", schoolDomain, "departments", deptId, "courses", courseId));
+  return snap.exists() ? ({ ...(snap.data() as Course), id: snap.id }) : null;
+}
+
 // 講義名・教員名のどちらかにキーワードを含む講義を返す（部分一致）。
 export async function searchCourses(params: CourseSearchParams): Promise<Course[]> {
   const keyword = params.keyword.trim();

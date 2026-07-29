@@ -229,6 +229,16 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         리로드 재오픈 시 prefill·최근리뷰·집계 지속 확인, 모달 close(animationType none), 콘솔 에러 0.
         버그수정: 저장 후 `applyReviews`로 집계+최근리뷰 동시 갱신(이전엔 최근리뷰 미갱신).
 - 4주차: 강의 상세 화면(시라버스 정보 + 평점 집계 + 리뷰 목록), 신고 연동
+  - [x] ✅ **완료 (7/27)** — `app/course-detail.tsx`(시라버스 카드+평점 집계+리뷰 목록+내 리뷰 쓰기/편집).
+        `courseService.fetchCourse` 추가, 3주차 `ReviewModal`/`StarRating`/`aggregateReviews` 재사용,
+        강의검색 결과의 강의명 탭→상세 진입(파라미터로 sd/dept/courseId/year/semester 전달).
+        **신고 연동**: `ReportTargetType`에 `"review"` 추가(태희 창구, 규칙 변경 없음 — reports 규칙은 reporterUid만 검증),
+        공통 `ModerationMenu` 재사용(리뷰별 ⋯). 차단 유저 리뷰는 `isBlocked`로 목록에서 숨김. i18n ja/ko 8키.
+        웹 E2E: 강의명 탭→상세(시라버스·科目ナンバー·シラバスリン크·집계 4.0/1件·리뷰목록·⋯)→리뷰 신고 송신 성공→
+        쓰기 별점5 저장→상세 집계 4.5/2件 갱신·버튼 '편집' 전환, 콘솔 에러 0.
+        ⚠️ **알려진 이슈(준희 축)**: 공통 `ModerationMenu`가 `animationType="fade"`라 **웹에서 메뉴가 안 닫힘**
+        (신고 송신 자체는 성공). 네이티브(Expo)에선 정상. 게시판/댓글/쪽지 통보·차단도 동일 → 준희가 `"none"`으로
+        교체 권장(VisibilitySelector/ReviewModal/선배뷰어는 이미 none으로 수정함).
 
 **예상 세션: 주 3~4회 × 4주 = 14세션.**
 

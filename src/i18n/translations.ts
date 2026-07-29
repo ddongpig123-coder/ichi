@@ -210,6 +210,16 @@ const ja = {
   "review.anon": "匿名",
   "review.short": "レビュー",
 
+  // 講義詳細（Phase 2 4週目）
+  "courseDetail.title": "講義詳細",
+  "courseDetail.syllabus": "シラバス情報",
+  "courseDetail.openSyllabus": "シラバスを開く ↗",
+  "courseDetail.courseNumber": "科目ナンバー",
+  "courseDetail.writeReview": "レビューを書く",
+  "courseDetail.editReview": "自分のレビューを編集",
+  "courseDetail.reviewsHeader": "レビュー",
+  "courseDetail.notFound": "講義が見つかりません",
+
   // 相対時刻
   "time.justNow": "たった今",
   "time.minutesAgo": "分前",
@@ -583,6 +593,15 @@ const ko: Record<TranslationKey, string> = {
   "review.recentReviews": "최근 리뷰",
   "review.anon": "익명",
   "review.short": "리뷰",
+
+  "courseDetail.title": "강의 상세",
+  "courseDetail.syllabus": "시라버스 정보",
+  "courseDetail.openSyllabus": "시라버스 열기 ↗",
+  "courseDetail.courseNumber": "과목 번호",
+  "courseDetail.writeReview": "리뷰 쓰기",
+  "courseDetail.editReview": "내 리뷰 편집",
+  "courseDetail.reviewsHeader": "리뷰",
+  "courseDetail.notFound": "강의를 찾을 수 없습니다",
 
   "time.justNow": "방금 전",
   "time.minutesAgo": "분 전",

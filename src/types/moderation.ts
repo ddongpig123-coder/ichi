@@ -2,7 +2,7 @@
 // firestore.rules の reports / users/{uid}/blocks と 1:1 で対応させること。
 // 詳細な運用設計は docs/MODERATION.md を参照。
 
-export type ReportTargetType = "post" | "comment" | "message" | "user";
+export type ReportTargetType = "post" | "comment" | "message" | "user" | "review";
 
 export type ReportReason =
   | "spam"

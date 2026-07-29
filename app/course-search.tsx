@@ -185,6 +185,15 @@ export default function CourseSearchScreen() {
 
   // 時間割ドキュメントを読み → 重複チェック → 追記保存。
   // ホーム画面の state は触らず Firestore を正とする（ホームは復帰時に読み直す）。
+  // 講義名タップで詳細画面へ（Phase 2 4週目）。学期は検索対象と同じものを渡す。
+  function openDetail(course: Course) {
+    if (!deptId) return;
+    router.push(
+      `/course-detail?schoolDomain=${encodeURIComponent(schoolDomain)}&deptId=${encodeURIComponent(deptId)}` +
+      `&courseId=${encodeURIComponent(course.id)}&year=${year}&semester=${semester}`
+    );
+  }
+
   async function handleAdd(course: Course) {
     if (!user || addingId) return;
     setAddingId(course.id);
@@ -290,6 +299,7 @@ export default function CourseSearchScreen() {
             return (
               <View style={styles.row}>
                 <View style={{ flex: 1 }}>
+                  <TouchableOpacity activeOpacity={0.6} onPress={() => openDetail(item)}>
                   <View style={styles.nameRow}>
                     <Text style={styles.courseName}>{item.name}</Text>
                     {item.verified ? (
@@ -306,6 +316,7 @@ export default function CourseSearchScreen() {
                     {item.campus ? ` · ${item.campus}` : ""}
                     {item.credits !== null ? ` · ${item.credits}${t("courseSearch.credits")}` : ""}
                   </Text>
+                  </TouchableOpacity>
                   {/* 未確認講義: 確認数 + 確認ボタン（自分が未確認のときだけ押せる） */}
                   {!item.verified && (
                     <View style={styles.confirmRow}>
