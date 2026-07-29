@@ -414,6 +414,10 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         게시판/라운지/강의 전부 실교 스코프로 통일. 학교 미선택("기타") 폴백 정책 정의.
       - **주의**: 전환 시 기존 global 테스트 게시글은 scope 이동으로 안 보이게 됨(무방,
         테스트 데이터). 준희 축(게시판) 포함이라 준희 복귀 후 조율 권장.
+      - ✅ **태희 축 완료 (2026-07-27)**: `AuthContext`가 `schoolDomain: string|null` + `schoolReady` +
+        `refreshSchoolDomain()` 제공(온보딩 저장 후 반영 연결). 게시판 화면 전부 `if(!schoolDomain)return` 가드라
+        null 안전(tsc·런타임 확인), 메이지=실교 스코프(빈 목록·크래시 0). 규칙 변경 없음. 정책 확정: 기타(null)=라운지.
+        **잔여(준희)**: schoolReady 후 null이면 학교 게시판 자리에 "학교 선택" 유도 UI(라운지는 사용 가능).
 
 - [ ] **홈 화면 고정 높이 레이아웃 산수 → flex 리팩터** (2026-07-27 발견) — `app/(tabs)/index.tsx`가
       `TIMETABLE_HEADER_H`·`FRIENDS_SECTION_H`·`COURSE_SEARCH_ROW_H`·`NAV_HEADER_BASE`·`TAB_BAR_BASE`

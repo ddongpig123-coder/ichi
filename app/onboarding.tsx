@@ -21,7 +21,7 @@ export default function OnboardingScreen() {
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { t, language, setLanguage } = useI18n();
-  const { user } = useAuth();
+  const { user, refreshSchoolDomain } = useAuth();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [schoolDomain, setSchoolDomain] = useState<string | null | undefined>(undefined);
@@ -37,6 +37,8 @@ export default function OnboardingScreen() {
         await completeOnboarding(user.uid, language, schoolDomain).catch((e) =>
           console.warn("onboarding save failed:", e)
         );
+        // 保存した学校を AuthContext に即反映（掲示板などが reload なしで実校スコープを使えるように）
+        await refreshSchoolDomain().catch(() => {});
       }
       await AsyncStorage.setItem(ONBOARDED_KEY, "1");
       router.replace("/(tabs)");

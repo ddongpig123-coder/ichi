@@ -49,11 +49,14 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 > **📌 준희 복귀 인계 (2026-07-27) — 준희 세션은 이 블록부터 읽을 것**
 > 준희 휴가 동안 태희 축만 진행(Phase 2 1·2주차 = 공개범위 UI·선배 시간표). 준희 축은 안 건드림.
 > **복귀 후 태희와 조율할 것 (우선순위 순):**
-> 1. **schoolDomain "global" 부채 해소 (최우선)** — 게시판이 아직 `schools/global/boards`에 쌓임
->    (§5 "학교별 분리" 원칙 위반). 선배 시간표/강의검색은 `users.schoolDomain` 직접조회로 **우회만** 해둠.
->    `AuthContext`가 실제 학교/학부/입학년도를 제공하도록 고치고 게시판·라운지를 실교 스코프로 통일.
->    → 규칙·타입 변경은 **태희 창구**, 준희는 게시판 코드 정합. **이게 풀려야 학점관리(Phase 3)도 언락**
->    (CREDIT-TRACKING §6-4 선행조건). 상세: 아래 함정 + ROADMAP §6 기술부채.
+> 1. **schoolDomain "global" 부채 — 태희 축(AuthContext) 완료(2026-07-27), 준희 잔여만 남음.**
+>    `AuthContext`가 이제 실제 `users.schoolDomain`을 제공: **`schoolDomain: string | null`**(null=「기타」미선택)
+>    **+ `schoolReady: boolean`**(프로필 로드 완료) **+ `refreshSchoolDomain()`**(온보딩 저장 후 호출, 이미 연결됨).
+>    게시판 화면들은 전부 `if (!schoolDomain) return` 가드가 있어 **null이어도 안 깨짐**(tsc·런타임 확인). 메이지
+>    유저는 `schools/meiji.ac.jp/...` 실교 스코프로 동작(기존 global 테스트 데이터는 폐기). **규칙 변경 없음**
+>    (경로 와일드카드 그대로). **결정된 정책**: 기타(schoolDomain=null) 유저는 학교 게시판 대신 **유학생 라운지**로.
+>    → **준희 잔여**: schoolReady까지 로딩 후, `null`이면 학교 게시판 자리에 "학교 선택" 유도 UI(라운지는 사용 가능)
+>    표시. 지금은 가드로 빈 화면만 나옴(크래시 없음). **이걸로 학점관리(Phase 3)도 언락**(CREDIT-TRACKING §6-4).
 > 2. **Phase 1b 잔여 (준희 축)** — MODERATION §6: posts/comments 하드삭제(`allow delete`) 규칙 제거,
 >    금칙어 리스트 확충, 쪽지(messages) 삭제·금칙어 미적용.
 > 3. 태희가 이번에 추가한 것(참고): `timetables.visibility` UI, 선배 시간표(`usersPublic` 학부 쿼리 방식,
