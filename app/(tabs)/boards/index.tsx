@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet, SectionList, ActivityIndicato
 import { useRouter } from "expo-router";
 import { usePinnedBoards } from "../../../src/hooks/usePinnedBoards";
 import { useBoards } from "../../../src/hooks/useBoards";
+import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
+import SchoolPrompt from "../../../src/components/common/SchoolPrompt";
 import type { Theme } from "../../../src/theme/themes";
 import { boardLabel, boardDescription, type BoardMeta } from "../../../src/types/board";
 
@@ -12,9 +14,14 @@ export default function BoardsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
   const { t, language } = useI18n();
+  const { schoolDomain, schoolReady } = useAuth();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
   const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
+
+  // 学校掲示板は学校スコープ。学校未選択(schoolDomain=null)ユーザーには
+  // 掲示板の代わりに「学校を選択」導線を出す（ラウンジは全国なので使える）。§5
+  const noSchool = schoolReady && !schoolDomain;
 
   const pinnedBoards = [...officialBoards, ...departmentBoards, ...userBoards].filter((b) =>
     isPinned(b.id)
@@ -52,8 +59,24 @@ export default function BoardsScreen() {
     );
   }
 
-  if (!pinReady || loading) {
+  if (!pinReady || loading || !schoolReady) {
     return <View style={styles.container}><ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} /></View>;
+  }
+
+  // 学校未選択: ラウンジ導線だけ残し、学校掲示板は「学校を選択」プロンプトに置き換える
+  if (noSchool) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.loungeBanner} onPress={() => router.push("/lounge")}>
+          <View>
+            <Text style={styles.loungeTitle}>{t("boards.loungeTitle")}</Text>
+            <Text style={styles.loungeSub}>{t("boards.loungeSub")}</Text>
+          </View>
+          <Text style={styles.bestArrow}>›</Text>
+        </TouchableOpacity>
+        <SchoolPrompt />
+      </View>
+    );
   }
 
   return (

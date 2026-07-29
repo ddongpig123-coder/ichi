@@ -14,11 +14,12 @@ import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchMyChats } from "../../../src/services/chatService";
+import SchoolPrompt from "../../../src/components/common/SchoolPrompt";
 import type { Theme } from "../../../src/theme/themes";
 import type { ChatRoom } from "../../../src/types/chat";
 
 export default function MessagesInboxScreen() {
-  const { user, schoolDomain } = useAuth();
+  const { user, schoolDomain, schoolReady } = useAuth();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -46,8 +47,13 @@ export default function MessagesInboxScreen() {
     setRefreshing(false);
   }
 
-  if (loading) {
+  if (!schoolReady || loading) {
     return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
+  }
+
+  // メッセージ(チャット)は学校スコープ。学校未選択なら「学校を選択」導線を出す。
+  if (!schoolDomain) {
+    return <View style={styles.container}><SchoolPrompt /></View>;
   }
 
   return (

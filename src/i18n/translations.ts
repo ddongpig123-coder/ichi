@@ -395,6 +395,12 @@ const ja = {
     "次の表現が含まれています。誹謗中傷は利用規約で禁止されており、通報の対象になります。",
   "moderation.bannedEdit": "修正する",
   "moderation.bannedPostAnyway": "このまま投稿する",
+
+  // 学校未選択（schoolDomain=null）時の掲示板・メッセージ導線
+  "school.promptTitle": "学校を選択してください",
+  "school.promptBody":
+    "学校を選ぶと、あなたの大学の掲示板やメッセージが使えます。\n全国の留学生ラウンジは今すぐ利用できます。",
+  "school.promptButton": "学校を選択する",
 } as const;
 
 const ko: Record<TranslationKey, string> = {
@@ -770,6 +776,12 @@ const ko: Record<TranslationKey, string> = {
     "다음 표현이 포함되어 있습니다. 비방·욕설은 이용약관에서 금지되며 신고 대상이 됩니다.",
   "moderation.bannedEdit": "수정하기",
   "moderation.bannedPostAnyway": "이대로 등록하기",
+
+  // 학교 미선택(schoolDomain=null) 시 게시판·메시지 유도
+  "school.promptTitle": "학교를 선택해주세요",
+  "school.promptBody":
+    "학교를 선택하면 우리 대학 게시판과 메시지를 쓸 수 있어요.\n전국 유학생 라운지는 지금 바로 이용 가능해요.",
+  "school.promptButton": "학교 선택하기",
 };
 
 export type TranslationKey = keyof typeof ja;
