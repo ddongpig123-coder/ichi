@@ -70,10 +70,16 @@ export default function CourseSearchScreen() {
   // 未設定(「その他」選択)なら現状の対応校 meiji.ac.jp にフォールバック。
   // TODO(app全体): schoolDomain の "global" 固定を解消し、掲示板含め実校スコープへ統一。
   const [schoolDomain, setSchoolDomain] = useState("meiji.ac.jp");
+  // ユーザーの所属学部（プロフィールの department）。学部チップの既定選択＆先頭並びに使う。
+  // ※ department はプロフィールの自由入力なので、DEPARTMENTS とは id か名称(ja/ko)で照合する。
+  const [myDeptRaw, setMyDeptRaw] = useState<string | null>(null);
   useEffect(() => {
     if (!user) return;
     getUserProfile(user.uid)
-      .then((p) => { if (p?.schoolDomain) setSchoolDomain(p.schoolDomain); })
+      .then((p) => {
+        if (p?.schoolDomain) setSchoolDomain(p.schoolDomain);
+        if (p?.department) setMyDeptRaw(p.department);
+      })
       .catch(() => {});
   }, [user]);
   const { t, language } = useI18n();
@@ -85,6 +91,22 @@ export default function CourseSearchScreen() {
   const semesterKey = `${year}-${semester}`;
 
   const [deptId, setDeptId] = useState<string | null>(null);
+  // プロフィールの学部を DEPARTMENTS に照合（id か名称で）。見つからなければ null。
+  const myDept = useMemo(() => {
+    if (!myDeptRaw) return null;
+    return DEPARTMENTS.find(
+      (d) => d.id === myDeptRaw || d.nameJa === myDeptRaw || d.nameKo === myDeptRaw
+    ) ?? null;
+  }, [myDeptRaw]);
+  // 本人の学部を先頭に、残りは元の並び（学部コード順）で表示する。
+  const orderedDepartments = useMemo(() => {
+    if (!myDept) return DEPARTMENTS;
+    return [myDept, ...DEPARTMENTS.filter((d) => d.id !== myDept.id)];
+  }, [myDept]);
+  // 既定選択は本人の学部（ユーザーが未選択のときのみ）。
+  useEffect(() => {
+    if (myDept) setDeptId((cur) => cur ?? myDept.id);
+  }, [myDept]);
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
@@ -237,7 +259,7 @@ export default function CourseSearchScreen() {
         style={styles.deptScroll}
         contentContainerStyle={styles.deptRow}
       >
-        {DEPARTMENTS.map((dept) => {
+        {orderedDepartments.map((dept) => {
           const selected = dept.id === deptId;
           return (
             <TouchableOpacity

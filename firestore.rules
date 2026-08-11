@@ -213,6 +213,15 @@ service cloud.firestore {
       );
     }
 
+    // コメント更新権限：本人（ソフトデリート＝deleted等）または
+    // likeCount のカウンター更新のみ（他ユーザーのいいねで発生）。
+    function canUpdateComment() {
+      return isSignedIn() && (
+        resource.data.authorUid == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount'])
+      );
+    }
+
     match /schools/{schoolDomain} {
 
       // 学校掲示板（学校ごとに分離）
@@ -226,9 +235,16 @@ service cloud.firestore {
 
         match /comments/{commentId} {
           allow read: if isSignedIn();
+          // 대댓글도同じcomments配下（parentIdフィールドで区別、1階層）。
           allow create: if canWriteContent() && isAuthor();
-          allow update: if isSignedIn() && resource.data.authorUid == request.auth.uid;
+          allow update: if canUpdateComment();
           allow delete: if false; // 物理削除禁止（上と同じ理由）
+
+          // コメント/返信のいいね（ドキュメントID=uid、本人のみ）
+          match /likes/{likeUid} {
+            allow read: if isSignedIn();
+            allow write: if isSignedIn() && request.auth.uid == likeUid;
+          }
         }
 
         // いいね（ドキュメントIDはユーザーのuid）。本人のみ作成・削除可能。
@@ -276,9 +292,16 @@ service cloud.firestore {
 
       match /comments/{commentId} {
         allow read: if isSignedIn();
+        // 대댓글도同じcomments配下（parentIdフィールドで区別、1階層）。
         allow create: if canWriteContent() && isAuthor();
-        allow update: if isSignedIn() && resource.data.authorUid == request.auth.uid;
+        allow update: if canUpdateComment();
         allow delete: if false; // 物理削除禁止
+
+        // コメント/返信のいいね（ドキュメントID=uid、本人のみ）
+        match /likes/{likeUid} {
+          allow read: if isSignedIn();
+          allow write: if isSignedIn() && request.auth.uid == likeUid;
+        }
       }
 
       match /likes/{likeUid} {
