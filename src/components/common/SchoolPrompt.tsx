@@ -19,7 +19,8 @@ export default function SchoolPrompt() {
       <Text style={styles.icon}>🏫</Text>
       <Text style={styles.title}>{t("school.promptTitle")}</Text>
       <Text style={styles.body}>{t("school.promptBody")}</Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/onboarding")}>
+      {/* 規約同意済みなので学校選択のみ（mode=school で規約・言語ステップをスキップ） */}
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/onboarding?mode=school")}>
         <Text style={styles.buttonText}>{t("school.promptButton")}</Text>
       </TouchableOpacity>
     </View>
