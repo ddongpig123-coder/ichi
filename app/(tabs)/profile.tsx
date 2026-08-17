@@ -296,6 +296,10 @@ export default function ProfileScreen() {
         <Text style={styles.settingText}>{t("profile.blockList")}</Text>
         <Text style={styles.settingArrow}>›</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/contact")}>
+        <Text style={styles.settingText}>{t("profile.contactRow")}</Text>
+        <Text style={styles.settingArrow}>›</Text>
+      </TouchableOpacity>
       {/* 표시 언어 토글 — 온보딩 이후에도 한/일 전환 가능하게 (AsyncStorage 저장) */}
       <TouchableOpacity
         style={styles.settingRow}

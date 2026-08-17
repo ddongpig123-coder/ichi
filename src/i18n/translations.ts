@@ -401,6 +401,15 @@ const ja = {
   "school.promptBody":
     "学校を選ぶと、あなたの大学の掲示板やメッセージが使えます。\n全国の留学生ラウンジは今すぐ利用できます。",
   "school.promptButton": "学校を選択する",
+
+  // お問い合わせ
+  "profile.contactRow": "お問い合わせ",
+  "contact.title": "お問い合わせ",
+  "contact.lead": "ichi へのご要望・不具合の報告・投稿削除のご依頼などは、下記メールまでお気軽にご連絡ください。",
+  "contact.emailLabel": "お問い合わせ先",
+  "contact.sendButton": "メールで問い合わせる",
+  "contact.mailSubject": "【ichi】お問い合わせ",
+  "contact.note": "※ 返信には数日いただく場合があります。緊急の権利侵害等は利用規約記載の窓口もご確認ください。",
 } as const;
 
 const ko: Record<TranslationKey, string> = {
@@ -782,6 +791,15 @@ const ko: Record<TranslationKey, string> = {
   "school.promptBody":
     "학교를 선택하면 우리 대학 게시판과 메시지를 쓸 수 있어요.\n전국 유학생 라운지는 지금 바로 이용 가능해요.",
   "school.promptButton": "학교 선택하기",
+
+  // 문의하기
+  "profile.contactRow": "문의하기",
+  "contact.title": "문의하기",
+  "contact.lead": "ichi에 대한 요청·버그 신고·게시글 삭제 요청 등은 아래 이메일로 편하게 연락 주세요.",
+  "contact.emailLabel": "문의 이메일",
+  "contact.sendButton": "이메일로 문의하기",
+  "contact.mailSubject": "【ichi】문의",
+  "contact.note": "※ 답변에는 며칠이 걸릴 수 있어요. 긴급한 권리침해 등은 이용약관에 기재된 창구도 확인해주세요.",
 };
 
 export type TranslationKey = keyof typeof ja;
