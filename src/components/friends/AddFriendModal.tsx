@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert, Platform, Linking } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
@@ -93,6 +93,23 @@ export default function AddFriendModal({ visible, onClose }: Props) {
 
   const addEnabled = lookupState === "found" && !busy;
 
+  // LINE で友達を招待する。相手はメッセージ内のメールアドレスでこちらを検索して追加する。
+  // （딥링크(앱스킴)로 원탭 추가는 스토어 배포 후 대응 — 그 전까지는 메일 검색 방식）
+  async function handleLineInvite() {
+    const myEmail = user?.email;
+    if (!myEmail) {
+      notify(t("friends.lineNeedAccountTitle"), t("friends.lineNeedAccountBody"));
+      return;
+    }
+    const msg = t("friends.lineInviteMessage").replace("{email}", myEmail);
+    const url = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
+    try {
+      await Linking.openURL(url);
+    } catch {
+      notify(t("friends.lineInvite"), msg);
+    }
+  }
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable
@@ -138,6 +155,16 @@ export default function AddFriendModal({ visible, onClose }: Props) {
               <Text style={styles.addText}>{t("common.add")}</Text>
             </TouchableOpacity>
           </View>
+
+          {/* LINE 초대 — 이메일을 모르는 친구를 라인 링크로 초대 */}
+          <View style={styles.dividerRow}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>{t("friends.orInvite")}</Text>
+            <View style={styles.divider} />
+          </View>
+          <TouchableOpacity style={styles.lineButton} onPress={handleLineInvite}>
+            <Text style={styles.lineButtonText}>{t("friends.lineInvite")}</Text>
+          </TouchableOpacity>
         </Pressable>
       </Pressable>
     </Modal>
@@ -206,5 +233,16 @@ function makeStyles(theme: Theme) {
     addButtonActive: { backgroundColor: theme.primary },
     addButtonDisabled: { backgroundColor: theme.textSecondary },
     addText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+
+    dividerRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 18, marginBottom: 12 },
+    divider: { flex: 1, height: 1, backgroundColor: theme.border },
+    dividerText: { fontSize: 11, color: theme.textSecondary },
+    lineButton: {
+      backgroundColor: "#06C755", // LINE 브랜드 그린
+      borderRadius: 8,
+      paddingVertical: 12,
+      alignItems: "center",
+    },
+    lineButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
   });
 }
