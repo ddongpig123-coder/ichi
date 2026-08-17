@@ -19,7 +19,7 @@ export default function SchoolPrompt() {
       <Text style={styles.icon}>🏫</Text>
       <Text style={styles.title}>{t("school.promptTitle")}</Text>
       <Text style={styles.body}>{t("school.promptBody")}</Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/onboarding")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/onboarding?step=3")}>
         <Text style={styles.buttonText}>{t("school.promptButton")}</Text>
       </TouchableOpacity>
     </View>

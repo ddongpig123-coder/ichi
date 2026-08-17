@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../src/contexts/ThemeContext";
@@ -23,7 +23,12 @@ export default function OnboardingScreen() {
   const { t, language, setLanguage } = useI18n();
   const { user, refreshSchoolDomain } = useAuth();
 
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  // SchoolPrompt 등에서 ?step=3 으로 진입하면 학교 선택 단계부터 시작(재선택 시 약관·언어 스킵).
+  // 이 경우 강제 온보딩이 아니라 재진입이므로 뒤로가기를 보여준다.
+  const { step: stepParam } = useLocalSearchParams<{ step?: string }>();
+  const isReentry = stepParam === "3";
+
+  const [step, setStep] = useState<1 | 2 | 3>(isReentry ? 3 : 1);
   const [schoolDomain, setSchoolDomain] = useState<string | null | undefined>(undefined);
   const [busy, setBusy] = useState(false);
 
@@ -54,6 +59,16 @@ export default function OnboardingScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 24 }]}>
+      {/* 재진입(학교 재선택) 시에만 뒤로가기 — 최초 강제 온보딩에는 보이지 않음 */}
+      {isReentry && (
+        <TouchableOpacity
+          style={[styles.backButton, { top: insets.top + 8 }]}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text style={styles.backIcon}>‹</Text>
+        </TouchableOpacity>
+      )}
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.appName}>ichi</Text>
 
@@ -144,6 +159,8 @@ function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
     content: { paddingHorizontal: 28, paddingBottom: 40 },
+    backButton: { position: "absolute", left: 12, zIndex: 1, padding: 8 },
+    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32 },
     appName: {
       fontSize: 34,
       fontWeight: "800",
