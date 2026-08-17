@@ -155,10 +155,15 @@ export default function PostDetailScreen() {
 
   const board = BOARDS.find((b) => b.id === boardId);
 
+  // 삭제된 댓글은 목록에서 제외한다("삭제된 댓글입니다" 묘비를 띄우지 않음).
+  // ※ 대댓글(답글) 구조가 생기면, 답글이 달린 삭제 댓글은 스레드 흐름 유지를 위해
+  //    묘비를 남길 것 — 그때는 여기서 "답글 없는 삭제 댓글"만 필터링하도록 바꾼다.
+  const visibleComments = comments.filter((c) => !c.deleted);
+
   // 같은 사람이 여러 번 댓글을 달아도 같은 번호(匿名1, 匿名2...)가 유지되도록
-  // authorUid의 첫 등장 순서로 번호를 부여
+  // authorUid의 첫 등장 순서로 번호를 부여 (표시되는 댓글 기준)
   const anonNumbers = new Map<string, number>();
-  for (const c of comments) {
+  for (const c of visibleComments) {
     if (!anonNumbers.has(c.authorUid)) anonNumbers.set(c.authorUid, anonNumbers.size + 1);
   }
 
@@ -212,14 +217,9 @@ export default function PostDetailScreen() {
         </View>
 
         {/* Comments */}
-        <Text style={styles.commentHeader}>{t("post.commentsHeader")} {comments.length}</Text>
-        {comments.map((c) =>
-          c.deleted ? (
-            // 削除済みコメントもスレッドの流れが分かるよう枠だけ残す
-            <View key={c.id} style={styles.commentCard}>
-              <Text style={styles.blockedText}>{t("moderation.deletedComment")}</Text>
-            </View>
-          ) : isBlocked(c.authorUid) ? (
+        <Text style={styles.commentHeader}>{t("post.commentsHeader")} {visibleComments.length}</Text>
+        {visibleComments.map((c) =>
+          isBlocked(c.authorUid) ? (
             <View key={c.id} style={styles.commentCard}>
               <Text style={styles.blockedText}>{t("post.blockedComment")}</Text>
             </View>
