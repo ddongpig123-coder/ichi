@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
+import { Text, type ColorValue } from "react-native";
 import { Tabs, Redirect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { ONBOARDED_KEY } from "../onboarding";
+
+// タブアイコン（絵文字）。ベクターアイコン依存を増やさず、色はタブの active/inactive に追従。
+function TabIcon({ emoji, color }: { emoji: string; color: ColorValue }) {
+  return <Text style={{ fontSize: 22, color }}>{emoji}</Text>;
+}
 
 export default function TabsLayout() {
   const { theme } = useTheme();
@@ -30,11 +36,11 @@ export default function TabsLayout() {
         headerTintColor: theme.textPrimary,
       }}
     >
-      <Tabs.Screen name="index" options={{ title: t("tabs.home"), headerShown: false }} />
-      <Tabs.Screen name="boards" options={{ title: t("tabs.boards"), headerShown: false }} />
-      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false }} />
-      <Tabs.Screen name="messages" options={{ title: t("tabs.messages"), headerShown: false }} />
-      <Tabs.Screen name="profile" options={{ title: t("tabs.profile") }} />
+      <Tabs.Screen name="index" options={{ title: t("tabs.home"), headerShown: false, tabBarIcon: ({ color }) => <TabIcon emoji="🏠" color={color} /> }} />
+      <Tabs.Screen name="boards" options={{ title: t("tabs.boards"), headerShown: false, tabBarIcon: ({ color }) => <TabIcon emoji="📋" color={color} /> }} />
+      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false, tabBarIcon: ({ color }) => <TabIcon emoji="👥" color={color} /> }} />
+      <Tabs.Screen name="messages" options={{ title: t("tabs.messages"), headerShown: false, tabBarIcon: ({ color }) => <TabIcon emoji="💬" color={color} /> }} />
+      <Tabs.Screen name="profile" options={{ title: t("tabs.profile"), tabBarIcon: ({ color }) => <TabIcon emoji="👤" color={color} /> }} />
     </Tabs>
   );
 }
