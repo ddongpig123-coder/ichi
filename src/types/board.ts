@@ -56,6 +56,12 @@ export interface Comment {
   body: string;
   authorUid: string;
   createdAt: number;
+  likeCount: number;
+  // 返信（대댓글）: スレッドの親コメント（トップレベル）の id。未設定/なし = トップレベル。
+  // 返信への返信も同じ親（スレッド root）にぶら下げる = 1階層フラット。
+  parentId?: string | null;
+  // メンション対象の uid（返信先の人）。表示は「@匿名N」。null = メンションなし。
+  mentionUid?: string | null;
   deleted?: boolean;
   deletedAt?: number;
 }

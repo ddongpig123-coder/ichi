@@ -2,11 +2,13 @@ import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
+  TextInput,
   FlatList,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
   RefreshControl,
+  Keyboard,
 } from "react-native";
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
@@ -14,7 +16,7 @@ import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
-import { fetchPosts } from "../../../src/services/boardService";
+import { fetchPosts, fetchBoardSearchCandidates } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import { OFFICIAL_BOARDS, boardLabel, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
@@ -32,12 +34,57 @@ export default function PostListScreen() {
 
   const board = allBoards.find((b) => b.id === boardId);
 
-  React.useEffect(() => {
-    if (board) navigation.setOptions({ title: boardLabel(board, language) });
-  }, [board, language]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // 掲示板内検索（ヘッダーの🔍でトグル）。
+  // 🔍を開いた時に候補（最近N件）を1回だけ取得し、以降は入力ごとにクライアント側で
+  // 即時フィルタ（検索ボタン不要・ゼロ遅延）。
+  const [searchMode, setSearchMode] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [candidates, setCandidates] = useState<Post[]>([]);
+  const [candidatesLoading, setCandidatesLoading] = useState(false);
+
+  const results = useMemo(() => {
+    const kw = keyword.trim().toLowerCase();
+    if (!kw) return [];
+    return candidates.filter(
+      (p) => p.title?.toLowerCase().includes(kw) || p.body?.toLowerCase().includes(kw)
+    );
+  }, [candidates, keyword]);
+
+  async function openSearch() {
+    setSearchMode(true);
+    if (!schoolDomain || !boardId) return;
+    setCandidatesLoading(true);
+    const c = await fetchBoardSearchCandidates(schoolDomain, boardId as BoardId).catch(() => []);
+    setCandidates(c);
+    setCandidatesLoading(false);
+  }
+
+  function closeSearch() {
+    setSearchMode(false);
+    setKeyword("");
+    setCandidates([]);
+    Keyboard.dismiss();
+  }
+
+  // タイトル + ヘッダー右の検索アイコン
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: board ? boardLabel(board, language) : undefined,
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => (searchMode ? closeSearch() : openSearch())}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          style={{ paddingHorizontal: 8 }}
+        >
+          <Text style={{ fontSize: 18, color: theme.primary }}>{searchMode ? "✕" : "🔍"}</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [board, language, searchMode, theme]);
 
   const load = useCallback(async () => {
     if (!schoolDomain || !boardId) return;
@@ -69,14 +116,39 @@ export default function PostListScreen() {
 
   return (
     <View style={styles.container}>
+      {searchMode && (
+        <View style={styles.searchBar}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder={t("boards.searchPlaceholder")}
+            placeholderTextColor={theme.textSecondary}
+            value={keyword}
+            onChangeText={setKeyword}
+            onSubmitEditing={() => Keyboard.dismiss()}
+            returnKeyType="search"
+            autoFocus
+          />
+        </View>
+      )}
       <FlatList
-        data={posts}
+        data={searchMode ? results : posts}
         keyExtractor={(item) => item.id}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        keyboardShouldPersistTaps="handled"
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         ListEmptyComponent={
           <View style={styles.center}>
-            <Text style={styles.empty}>{t("boards.noPosts")}</Text>
+            {searchMode && candidatesLoading ? (
+              <ActivityIndicator size="large" color={theme.primary} />
+            ) : (
+              <Text style={styles.empty}>
+                {searchMode
+                  ? keyword.trim()
+                    ? `「${keyword}」${t("boards.noResultsSuffix")}`
+                    : t("boards.searchPlaceholder")
+                  : t("boards.noPosts")}
+              </Text>
+            )}
           </View>
         }
         renderItem={({ item }) =>
@@ -101,12 +173,14 @@ export default function PostListScreen() {
           )
         }
       />
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => router.push(`/post/${boardId}/write`)}
-      >
-        <Text style={styles.fabText}>＋</Text>
-      </TouchableOpacity>
+      {!searchMode && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => router.push(`/post/${boardId}/write`)}
+        >
+          <Text style={styles.fabText}>＋</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -116,6 +190,23 @@ function makeStyles(theme: Theme) {
     container: { flex: 1, backgroundColor: theme.background },
     center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
     sep: { height: 1, backgroundColor: theme.border },
+    searchBar: {
+      flexDirection: "row",
+      padding: 12,
+      gap: 8,
+      backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    searchInput: {
+      flex: 1,
+      height: 40,
+      borderRadius: 8,
+      backgroundColor: theme.background,
+      paddingHorizontal: 12,
+      fontSize: 15,
+      color: theme.textPrimary,
+    },
     row: { backgroundColor: theme.card, padding: 16 },
     title: { fontSize: 15, fontWeight: "600", color: theme.textPrimary, marginBottom: 6 },
     meta: { flexDirection: "row", gap: 6 },

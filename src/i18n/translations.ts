@@ -274,6 +274,10 @@ const ja = {
   "post.blockedComment": "ブロックしたユーザーのコメントです",
   "post.authorTag": "投稿者",
   "post.commentPlaceholder": "コメントを入力...",
+  "post.reply": "返信",
+  "post.replyPlaceholder": "返信を入力...",
+  "post.replyingTo": "への返信",
+  "post.viewReplies": "件の返信",
   "post.anonNotice": "匿名で投稿されます",
   "post.titleRequired": "タイトルを入力してください",
   "post.bodyRequired": "本文を入力してください",
@@ -351,7 +355,19 @@ const ja = {
   "profile.settingsSection": "⚙️ 設定",
   "profile.blockList": "🚫 ブロックリスト",
   "profile.languageRow": "🌐 言語",
+  "profile.contact": "✉️ お問い合わせ",
   "profile.settingsPreparing": "プロフィール設定（準備中）",
+  "contact.title": "お問い合わせ",
+  "contact.desc": "ご意見・ご要望・不具合の報告などをお送りください。運営が内容を確認します。",
+  "contact.messageLabel": "内容",
+  "contact.messagePlaceholder": "お問い合わせ内容を入力...",
+  "contact.contactLabel": "返信先（任意）",
+  "contact.contactPlaceholder": "メールアドレスなど（任意）",
+  "contact.submit": "送信する",
+  "contact.sent": "送信しました。ありがとうございます。",
+  "contact.empty": "内容を入力してください。",
+  "contact.failed": "送信に失敗しました。",
+  "contact.note": "匿名でも送信できます。返信をご希望の場合は返信先をご記入ください。",
 
   // 講義検索（Phase 1c）
   "courseSearch.title": "講義を検索",
@@ -406,15 +422,6 @@ const ja = {
   "school.promptBody":
     "学校を選ぶと、あなたの大学の掲示板やメッセージが使えます。\n全国の留学生ラウンジは今すぐ利用できます。",
   "school.promptButton": "学校を選択する",
-
-  // お問い合わせ
-  "profile.contactRow": "お問い合わせ",
-  "contact.title": "お問い合わせ",
-  "contact.lead": "ichi へのご要望・不具合の報告・投稿削除のご依頼などは、下記メールまでお気軽にご連絡ください。",
-  "contact.emailLabel": "お問い合わせ先",
-  "contact.sendButton": "メールで問い合わせる",
-  "contact.mailSubject": "【ichi】お問い合わせ",
-  "contact.note": "※ 返信には数日いただく場合があります。緊急の権利侵害等は利用規約記載の窓口もご確認ください。",
 } as const;
 
 const ko: Record<TranslationKey, string> = {
@@ -674,6 +681,10 @@ const ko: Record<TranslationKey, string> = {
   "post.blockedComment": "차단한 사용자의 댓글입니다",
   "post.authorTag": "글쓴이",
   "post.commentPlaceholder": "댓글 입력...",
+  "post.reply": "답글",
+  "post.replyPlaceholder": "답글 입력...",
+  "post.replyingTo": "님에게 답글",
+  "post.viewReplies": "개의 답글",
   "post.anonNotice": "익명으로 게시됩니다",
   "post.titleRequired": "제목을 입력해 주세요",
   "post.bodyRequired": "본문을 입력해 주세요",
@@ -746,6 +757,18 @@ const ko: Record<TranslationKey, string> = {
   "profile.settingsSection": "⚙️ 설정",
   "profile.blockList": "🚫 차단 목록",
   "profile.languageRow": "🌐 언어",
+  "profile.contact": "✉️ 문의하기",
+  "contact.title": "문의하기",
+  "contact.desc": "의견·요청·버그 제보 등을 보내주세요. 운영자가 내용을 확인합니다.",
+  "contact.messageLabel": "내용",
+  "contact.messagePlaceholder": "문의 내용을 입력...",
+  "contact.contactLabel": "회신 연락처 (선택)",
+  "contact.contactPlaceholder": "이메일 주소 등 (선택)",
+  "contact.submit": "보내기",
+  "contact.sent": "보냈습니다. 감사합니다.",
+  "contact.empty": "내용을 입력해 주세요.",
+  "contact.failed": "전송에 실패했습니다.",
+  "contact.note": "익명으로도 보낼 수 있어요. 답변을 원하면 회신 연락처를 적어주세요.",
   "profile.settingsPreparing": "프로필 설정 (준비 중)",
 
   // 강의 검색 (Phase 1c)
@@ -801,15 +824,6 @@ const ko: Record<TranslationKey, string> = {
   "school.promptBody":
     "학교를 선택하면 우리 대학 게시판과 메시지를 쓸 수 있어요.\n전국 유학생 라운지는 지금 바로 이용 가능해요.",
   "school.promptButton": "학교 선택하기",
-
-  // 문의하기
-  "profile.contactRow": "문의하기",
-  "contact.title": "문의하기",
-  "contact.lead": "ichi에 대한 요청·버그 신고·게시글 삭제 요청 등은 아래 이메일로 편하게 연락 주세요.",
-  "contact.emailLabel": "문의 이메일",
-  "contact.sendButton": "이메일로 문의하기",
-  "contact.mailSubject": "【ichi】문의",
-  "contact.note": "※ 답변에는 며칠이 걸릴 수 있어요. 긴급한 권리침해 등은 이용약관에 기재된 창구도 확인해주세요.",
 };
 
 export type TranslationKey = keyof typeof ja;

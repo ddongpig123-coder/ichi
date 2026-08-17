@@ -296,10 +296,6 @@ export default function ProfileScreen() {
         <Text style={styles.settingText}>{t("profile.blockList")}</Text>
         <Text style={styles.settingArrow}>›</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/contact")}>
-        <Text style={styles.settingText}>{t("profile.contactRow")}</Text>
-        <Text style={styles.settingArrow}>›</Text>
-      </TouchableOpacity>
       {/* 표시 언어 토글 — 온보딩 이후에도 한/일 전환 가능하게 (AsyncStorage 저장) */}
       <TouchableOpacity
         style={styles.settingRow}
@@ -307,6 +303,11 @@ export default function ProfileScreen() {
       >
         <Text style={styles.settingText}>{t("profile.languageRow")}</Text>
         <Text style={styles.settingText}>{language === "ja" ? "日本語" : "한국어"}</Text>
+      </TouchableOpacity>
+      {/* お問い合わせ — アプリ内フォーム（inquiries に保存） */}
+      <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/contact")}>
+        <Text style={styles.settingText}>{t("profile.contact")}</Text>
+        <Text style={styles.settingArrow}>›</Text>
       </TouchableOpacity>
 
       {/* 로그인 기능은 나중에 다시 붙일 예정 — 이메일 계정일 때만 로그아웃 노출 */}

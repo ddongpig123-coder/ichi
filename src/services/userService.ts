@@ -189,6 +189,16 @@ export async function completeOnboarding(
   await writePublicMirror(uid, { schoolDomain });
 }
 
+// 学校選択のみ更新（規約同意済みユーザーの後からの学校選択）。
+// agreedTermsAt は最初の同意日時を保持するため触らない。
+export async function updateSchoolSelection(
+  uid: string,
+  schoolDomain: string | null
+): Promise<void> {
+  await setDoc(userDoc(uid), { uid, schoolDomain }, { merge: true });
+  await writePublicMirror(uid, { schoolDomain });
+}
+
 // 自分の友達リスト表示順（よく会う友達など）の保存。users本体のみでよい。
 export async function saveFriendOrders(
   uid: string,

@@ -1,67 +1,116 @@
-import { useMemo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Linking, Platform, Alert } from "react-native";
-import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+  Platform,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
+import { submitInquiry } from "../src/services/inquiryService";
 import type { Theme } from "../src/theme/themes";
 
-// お問い合わせ画面。バグ報告・要望・削除依頼などをメールで受ける導線。
-// ※ 문의 이메일 주소는 아직 미확정(약관 자리표시자와 동일 사안).
-//   확정되면 CONTACT_EMAIL만 교체하면 됨. (12월 스토어 준비 때 확정)
-const CONTACT_EMAIL = "support@ichi.example"; // TODO: 정식 문의 이메일로 교체
-
+// お問い合わせフォーム。内容（必須）+ 返信先（任意）を inquiries に保存。
 export default function ContactScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { t } = useI18n();
+  const { user, schoolDomain } = useAuth();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
-  async function openMail() {
-    const subject = encodeURIComponent(t("contact.mailSubject"));
-    const url = `mailto:${CONTACT_EMAIL}?subject=${subject}`;
+  const [message, setMessage] = useState("");
+  const [contact, setContact] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  function notify(msg: string) {
+    if (Platform.OS === "web") window.alert(msg);
+    else Alert.alert(msg);
+  }
+
+  async function handleSubmit() {
+    if (!message.trim()) {
+      notify(t("contact.empty"));
+      return;
+    }
+    if (!user) {
+      notify(t("post.loginRequired"));
+      return;
+    }
+    setBusy(true);
     try {
-      const ok = await Linking.canOpenURL(url);
-      if (ok) await Linking.openURL(url);
-      else notify();
-    } catch {
-      notify();
+      await submitInquiry(user.uid, message, { contact, schoolDomain });
+      setMessage("");
+      setContact("");
+      notify(t("contact.sent"));
+      if (router.canGoBack()) router.back();
+    } catch (e: any) {
+      notify(`${t("contact.failed")}${e?.message ? `\n${e.message}` : ""}`);
+    } finally {
+      setBusy(false);
     }
   }
 
-  function notify() {
-    const msg = `${t("contact.emailLabel")}: ${CONTACT_EMAIL}`;
-    if (Platform.OS === "web") window.alert(msg);
-    else Alert.alert(t("contact.title"), msg);
-  }
-
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/profile"))}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Text style={styles.backIcon}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t("contact.title")}</Text>
+        <View style={{ width: 30 }} />
       </View>
 
-      <View style={styles.body}>
-        <Text style={styles.lead}>{t("contact.lead")}</Text>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Text style={styles.desc}>{t("contact.desc")}</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>{t("contact.emailLabel")}</Text>
-          <Text style={styles.cardEmail} selectable>{CONTACT_EMAIL}</Text>
-        </View>
+        <Text style={styles.label}>{t("contact.messageLabel")}</Text>
+        <TextInput
+          style={styles.messageInput}
+          placeholder={t("contact.messagePlaceholder")}
+          placeholderTextColor={theme.textSecondary}
+          value={message}
+          onChangeText={setMessage}
+          multiline
+          textAlignVertical="top"
+        />
 
-        <TouchableOpacity style={styles.button} onPress={openMail}>
-          <Text style={styles.buttonText}>{t("contact.sendButton")}</Text>
+        <Text style={styles.label}>{t("contact.contactLabel")}</Text>
+        <TextInput
+          style={styles.input}
+          placeholder={t("contact.contactPlaceholder")}
+          placeholderTextColor={theme.textSecondary}
+          value={contact}
+          onChangeText={setContact}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+
+        <TouchableOpacity
+          style={[styles.submitBtn, (!message.trim() || busy) && styles.disabled]}
+          onPress={handleSubmit}
+          disabled={!message.trim() || busy}
+        >
+          {busy ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.submitText}>{t("contact.submit")}</Text>
+          )}
         </TouchableOpacity>
 
         <Text style={styles.note}>{t("contact.note")}</Text>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -72,31 +121,48 @@ function makeStyles(theme: Theme) {
     header: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      justifyContent: "space-between",
       paddingHorizontal: 12,
-      paddingBottom: 12,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
-    body: { paddingHorizontal: 20, paddingTop: 8 },
-    lead: { fontSize: 14, color: theme.textPrimary, lineHeight: 21, marginBottom: 20 },
-    card: {
+      height: 48,
       backgroundColor: theme.card,
+      borderBottomWidth: 1,
+      borderColor: theme.border,
+    },
+    backIcon: { fontSize: 32, color: theme.primary, lineHeight: 34, width: 30 },
+    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
+    content: { padding: 20, gap: 8 },
+    desc: { fontSize: 13, color: theme.textSecondary, lineHeight: 20, marginBottom: 8 },
+    label: { fontSize: 12, color: theme.textSecondary, marginTop: 8 },
+    input: {
       borderWidth: 1,
       borderColor: theme.border,
-      borderRadius: 10,
-      padding: 16,
-      marginBottom: 16,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+      backgroundColor: theme.card,
     },
-    cardLabel: { fontSize: 12, color: theme.textSecondary, marginBottom: 4 },
-    cardEmail: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
-    button: {
+    messageInput: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+      backgroundColor: theme.card,
+      minHeight: 140,
+    },
+    submitBtn: {
       backgroundColor: theme.primary,
       borderRadius: 10,
       paddingVertical: 14,
       alignItems: "center",
+      marginTop: 20,
     },
-    buttonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
-    note: { fontSize: 12, color: theme.textSecondary, marginTop: 16, lineHeight: 18 },
+    submitText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+    disabled: { opacity: 0.4 },
+    note: { fontSize: 12, color: theme.textSecondary, lineHeight: 18, marginTop: 16 },
   });
 }

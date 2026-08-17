@@ -20,11 +20,9 @@ export function getAvailableYears(): number[] {
   );
 }
 
-export function isSemesterAvailable(year: number, semester: Semester): boolean {
-  // 履修登録は3月に1年分（春・秋まとめて）行うため、当年度は春・秋を常に両方開く。
-  // （以前は「現在の学期より先」を塞いでいたが、秋学期を春のうちに準備できないのは不便）
-  // 未来の年度だけは塞ぐ（データが存在しないため）。
-  void semester; // 当年度は学期を問わず可
+export function isSemesterAvailable(year: number, _semester: Semester): boolean {
+  // 3月に1年分（春・秋）まとめて履修登録するため、当年度・過去年度は
+  // 春・秋の両方を開放する。未来年度のみ選択不可。
   const currentYear = new Date().getFullYear();
   return year <= currentYear;
 }

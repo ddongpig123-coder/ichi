@@ -7,7 +7,7 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
 import { useI18n } from "../src/contexts/I18nContext";
 import { useAuth } from "../src/contexts/AuthContext";
-import { completeOnboarding } from "../src/services/userService";
+import { completeOnboarding, updateSchoolSelection } from "../src/services/userService";
 import { SCHOOLS } from "../src/data/schools";
 import type { UserLanguage } from "../src/types/user";
 
@@ -15,6 +15,8 @@ export const ONBOARDED_KEY = "ichi:onboarded";
 
 // オンボーディング: 規約同意 → 言語選択 → 学校選択 → 利用開始（ゲストのまま）
 // Penmark式の低い参入障壁: アカウント登録は要求しない。
+// mode="school" で開くと「学校選択のみ」モード（規約同意済みユーザーが後から学校を選ぶ。
+// 規約・言語ステップをスキップし、agreedTermsAt も再記録しない）。
 export default function OnboardingScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -23,12 +25,10 @@ export default function OnboardingScreen() {
   const { t, language, setLanguage } = useI18n();
   const { user, refreshSchoolDomain } = useAuth();
 
-  // SchoolPrompt 등에서 ?step=3 으로 진입하면 학교 선택 단계부터 시작(재선택 시 약관·언어 스킵).
-  // 이 경우 강제 온보딩이 아니라 재진입이므로 뒤로가기를 보여준다.
-  const { step: stepParam } = useLocalSearchParams<{ step?: string }>();
-  const isReentry = stepParam === "3";
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const schoolOnly = mode === "school";
 
-  const [step, setStep] = useState<1 | 2 | 3>(isReentry ? 3 : 1);
+  const [step, setStep] = useState<1 | 2 | 3>(schoolOnly ? 3 : 1);
   const [schoolDomain, setSchoolDomain] = useState<string | null | undefined>(undefined);
   const [busy, setBusy] = useState(false);
 
@@ -36,17 +36,30 @@ export default function OnboardingScreen() {
     if (schoolDomain === undefined) return;
     setBusy(true);
     try {
-      // 同意日時・言語・学校をusersに記録（ゲストuidでも可）。
-      // 失敗してもローカルフラグで先へ進める（次回起動時の自己修復に任せる）。
       if (user) {
-        await completeOnboarding(user.uid, language, schoolDomain).catch((e) =>
-          console.warn("onboarding save failed:", e)
-        );
+        if (schoolOnly) {
+          // 規約同意済み。学校のみ更新（agreedTermsAt は最初の同意日時を保持）。
+          await updateSchoolSelection(user.uid, schoolDomain).catch((e) =>
+            console.warn("school update failed:", e)
+          );
+        } else {
+          // 初回: 同意日時・言語・学校をusersに記録（ゲストuidでも可）。
+          // 失敗してもローカルフラグで先へ進める（次回起動時の自己修復に任せる）。
+          await completeOnboarding(user.uid, language, schoolDomain).catch((e) =>
+            console.warn("onboarding save failed:", e)
+          );
+        }
         // 保存した学校を AuthContext に即反映（掲示板などが reload なしで実校スコープを使えるように）
         await refreshSchoolDomain().catch(() => {});
       }
-      await AsyncStorage.setItem(ONBOARDED_KEY, "1");
-      router.replace("/(tabs)");
+      if (schoolOnly) {
+        // 元の画面（掲示板等）へ戻る。学校が入ったので導線UIが実校スコープに切り替わる。
+        if (router.canGoBack()) router.back();
+        else router.replace("/(tabs)");
+      } else {
+        await AsyncStorage.setItem(ONBOARDED_KEY, "1");
+        router.replace("/(tabs)");
+      }
     } finally {
       setBusy(false);
     }
@@ -57,18 +70,31 @@ export default function OnboardingScreen() {
     setStep(3);
   }
 
+  // 左上の戻る。ステップ間は前のステップへ、学校のみモードは呼び出し元へ戻る。
+  function handleBack() {
+    if (schoolOnly) {
+      if (router.canGoBack()) router.back();
+      else router.replace("/(tabs)");
+      return;
+    }
+    if (step === 3) { setStep(2); return; }
+    if (step === 2) { setStep(1); return; }
+    // step 1（初回起動の規約ステップ）は前がないので、戻れる場合のみ戻る。
+    if (router.canGoBack()) router.back();
+  }
+
+  // 初回起動の規約ステップ（前がない）以外は戻るを表示。
+  const showBack = schoolOnly || step > 1 || router.canGoBack();
+
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 24 }]}>
-      {/* 재진입(학교 재선택) 시에만 뒤로가기 — 최초 강제 온보딩에는 보이지 않음 */}
-      {isReentry && (
-        <TouchableOpacity
-          style={[styles.backButton, { top: insets.top + 8 }]}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-      )}
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.topBar}>
+        {showBack && (
+          <TouchableOpacity onPress={handleBack} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
+            <Text style={styles.backIcon}>‹</Text>
+          </TouchableOpacity>
+        )}
+      </View>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.appName}>ichi</Text>
 
@@ -144,12 +170,14 @@ export default function OnboardingScreen() {
           </>
         )}
 
-        {/* ステップインジケーター */}
-        <View style={styles.dots}>
-          {[1, 2, 3].map((s) => (
-            <View key={s} style={[styles.dot, step === s && styles.dotActive]} />
-          ))}
-        </View>
+        {/* ステップインジケーター（学校のみモードは単一ステップなので非表示） */}
+        {!schoolOnly && (
+          <View style={styles.dots}>
+            {[1, 2, 3].map((s) => (
+              <View key={s} style={[styles.dot, step === s && styles.dotActive]} />
+            ))}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -158,9 +186,9 @@ export default function OnboardingScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
+    topBar: { height: 44, justifyContent: "center", paddingHorizontal: 12 },
+    backIcon: { fontSize: 32, color: theme.primary, lineHeight: 34, width: 30 },
     content: { paddingHorizontal: 28, paddingBottom: 40 },
-    backButton: { position: "absolute", left: 12, zIndex: 1, padding: 8 },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32 },
     appName: {
       fontSize: 34,
       fontWeight: "800",

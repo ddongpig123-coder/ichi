@@ -106,20 +106,27 @@ export async function fetchPost(
 
 // ── Comments ───────────────────────────────────────────
 
+// parentId を渡すと返信（대댓글）。parentId はスレッド root（トップレベル）の id。
+// mentionUid は返信先の人の uid（表示は @匿名N、通知にも使える）。
 export async function createComment(
   schoolDomain: string,
   boardId: BoardId,
   postId: string,
   authorUid: string,
-  body: string
+  body: string,
+  parentId: string | null = null,
+  mentionUid: string | null = null
 ): Promise<void> {
   await addDoc(commentsCol(schoolDomain, boardId, postId), {
     postId,
     body,
     authorUid,
+    parentId,
+    mentionUid,
+    likeCount: 0,
     createdAt: serverTimestamp(),
   });
-  // increment counter on the post
+  // increment counter on the post（返信もコメント数に含める）
   await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
     commentCount: increment(1),
   });
@@ -301,6 +308,22 @@ export async function searchPosts(
   return results.sort((a, b) => b.createdAt - a.createdAt);
 }
 
+// 単一掲示板内検索の「候補」を取得（各掲示板ヘッダーの🔍から）。
+// 最近の投稿を最大 max 件取得するだけ。キーワード絞り込みは画面側でクライアント実行する
+// （入力ごとに即時フィルタするため、キー入力毎の Firestore 再読み込みを避ける）。
+// Firestore は全文検索が無いため、この「最近N件を1回取得 + クライアント絞り込み」が定番。
+export async function fetchBoardSearchCandidates(
+  schoolDomain: string,
+  boardId: BoardId,
+  max = 200
+): Promise<Post[]> {
+  const q = query(postsCol(schoolDomain, boardId), orderBy("createdAt", "desc"), limit(max));
+  const snap = await getDocs(q);
+  return snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Omit<Post, "id">), createdAt: toMs(d.data().createdAt) }))
+    .filter((p) => !p.deleted);
+}
+
 export async function fetchComments(
   schoolDomain: string,
   boardId: BoardId,
@@ -315,5 +338,55 @@ export async function fetchComments(
     id: d.id,
     ...(d.data() as Omit<Comment, "id">),
     createdAt: toMs(d.data().createdAt),
+    likeCount: (d.data().likeCount ?? 0) as number, // 旧データにフィールドが無い場合の既定
+    parentId: (d.data().parentId ?? null) as string | null,
+    mentionUid: (d.data().mentionUid ?? null) as string | null,
   }));
+}
+
+// ── コメント/返信のいいね（posts の likes と同じ構造） ──────
+function commentLikesCol(schoolDomain: string, boardId: BoardId, postId: string, commentId: string) {
+  return collection(db, "schools", schoolDomain, "boards", boardId, "posts", postId, "comments", commentId, "likes");
+}
+
+// 1コメントのいいねトグル。likeCount は他ユーザーも更新できる（rules: canUpdateComment）。
+export async function toggleCommentLike(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string,
+  commentId: string,
+  uid: string
+): Promise<{ liked: boolean; likeCount: number }> {
+  const likeRef = doc(commentLikesCol(schoolDomain, boardId, postId, commentId), uid);
+  const commentRef = doc(commentsCol(schoolDomain, boardId, postId), commentId);
+  const likeSnap = await getDoc(likeRef);
+  if (likeSnap.exists()) {
+    await deleteDoc(likeRef);
+    await updateDoc(commentRef, { likeCount: increment(-1) });
+    const updated = await getDoc(commentRef);
+    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
+  } else {
+    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
+    await updateDoc(commentRef, { likeCount: increment(1) });
+    const updated = await getDoc(commentRef);
+    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
+  }
+}
+
+// この投稿で自分がいいね済みのコメントID集合（コメント表示時に一括取得）。
+export async function fetchLikedCommentIds(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string,
+  commentIds: string[],
+  uid: string
+): Promise<Set<string>> {
+  const liked = new Set<string>();
+  await Promise.all(
+    commentIds.map(async (cid) => {
+      const snap = await getDoc(doc(commentLikesCol(schoolDomain, boardId, postId, cid), uid));
+      if (snap.exists()) liked.add(cid);
+    })
+  );
+  return liked;
 }
