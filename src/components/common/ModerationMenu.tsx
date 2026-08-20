@@ -130,7 +130,10 @@ export default function ModerationMenu({
   }
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+    // RN Web の Modal は animationType 付きだと visible=false で閉じないことがあるため
+    // "none" 固定（VisibilitySelector / ReviewModal / senior-timetables と同じ対応）。
+    // この共通メニューを直せば 掲示板/コメント/メッセージ/講義詳細 の通報・ブロックが一括で直る。
+    <Modal visible={visible} transparent animationType="none" onRequestClose={handleClose}>
       <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={handleClose}>
         <TouchableOpacity style={styles.sheet} activeOpacity={1}>
           {mode === "menu" && (

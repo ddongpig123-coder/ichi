@@ -236,9 +236,10 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         공통 `ModerationMenu` 재사용(리뷰별 ⋯). 차단 유저 리뷰는 `isBlocked`로 목록에서 숨김. i18n ja/ko 8키.
         웹 E2E: 강의명 탭→상세(시라버스·科目ナンバー·シラバスリン크·집계 4.0/1件·리뷰목록·⋯)→리뷰 신고 송신 성공→
         쓰기 별점5 저장→상세 집계 4.5/2件 갱신·버튼 '편집' 전환, 콘솔 에러 0.
-        ⚠️ **알려진 이슈(준희 축)**: 공통 `ModerationMenu`가 `animationType="fade"`라 **웹에서 메뉴가 안 닫힘**
-        (신고 송신 자체는 성공). 네이티브(Expo)에선 정상. 게시판/댓글/쪽지 통보·차단도 동일 → 준희가 `"none"`으로
-        교체 권장(VisibilitySelector/ReviewModal/선배뷰어는 이미 none으로 수정함).
+        ✅ **해결 (8/20)**: 공통 `ModerationMenu`의 `animationType="fade"` → `"none"` 교체.
+        공통 컴포넌트라 게시판/댓글/쪽지/강의상세 통보·차단이 일괄 해소(VisibilitySelector/ReviewModal/선배뷰어와 동일 대응).
+        잔여(별건): 같은 fade 패턴이 `AddFriendModal`/`FriendDetailModal`/`SessionFormModal`/`BannedWordWarning`/
+        `course-search` 등록 모달/`TimeTable`에도 남아 있음 — 필요 시 동일 방식으로 일괄 교체.
 
 **예상 세션: 주 3~4회 × 4주 = 14세션.**
 
