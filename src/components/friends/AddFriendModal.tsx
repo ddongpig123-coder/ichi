@@ -94,7 +94,7 @@ export default function AddFriendModal({ visible, onClose }: Props) {
   const addEnabled = lookupState === "found" && !busy;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Pressable
         style={styles.overlay}
         onPressIn={() => { pressStartedInsideRef.current = false; }}

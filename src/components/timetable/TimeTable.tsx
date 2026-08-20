@@ -118,7 +118,7 @@ export default function TimeTable({
       <Modal
         visible={friendListModal !== null}
         transparent
-        animationType="fade"
+        animationType="none"
         onRequestClose={() => setFriendListModal(null)}
       >
         <Pressable style={styles.modalOverlay} onPress={() => setFriendListModal(null)}>

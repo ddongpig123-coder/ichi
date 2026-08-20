@@ -20,7 +20,7 @@ export default function BannedWordWarning({ visible, words, onEdit, onProceed }:
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onEdit}>
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onEdit}>
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
           <Text style={styles.title}>{t("moderation.bannedTitle")}</Text>

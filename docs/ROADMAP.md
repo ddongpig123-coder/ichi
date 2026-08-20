@@ -238,8 +238,9 @@ UI는 이미 완성되어 있으므로 데이터 레이어만 갈아끼우는 �
         쓰기 별점5 저장→상세 집계 4.5/2件 갱신·버튼 '편집' 전환, 콘솔 에러 0.
         ✅ **해결 (8/20)**: 공통 `ModerationMenu`의 `animationType="fade"` → `"none"` 교체.
         공통 컴포넌트라 게시판/댓글/쪽지/강의상세 통보·차단이 일괄 해소(VisibilitySelector/ReviewModal/선배뷰어와 동일 대응).
-        잔여(별건): 같은 fade 패턴이 `AddFriendModal`/`FriendDetailModal`/`SessionFormModal`/`BannedWordWarning`/
-        `course-search` 등록 모달/`TimeTable`에도 남아 있음 — 필요 시 동일 방식으로 일괄 교체.
+        ✅ 후속 일괄 정리 (8/20): 같은 fade 패턴이 남아 있던 `AddFriendModal`/`FriendDetailModal`(3곳)/
+        `SessionFormModal`/`BannedWordWarning`/`course-search` 등록 모달/`TimeTable`(친구 겹침 팝업)도 전부 `"none"`으로 교체.
+        앱 전역 `transparent` 모달의 웹 미닫힘 이슈 해소 완료.
 
 **예상 세션: 주 3~4회 × 4주 = 14세션.**
 

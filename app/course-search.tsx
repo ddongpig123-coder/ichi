@@ -388,7 +388,7 @@ export default function CourseSearchScreen() {
       )}
 
       {/* 講義登録モーダル（公式に無い講義を verified:false で登録） */}
-      <Modal visible={registerOpen} transparent animationType="fade" onRequestClose={() => setRegisterOpen(false)}>
+      <Modal visible={registerOpen} transparent animationType="none" onRequestClose={() => setRegisterOpen(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setRegisterOpen(false)}>
           <Pressable style={styles.modalBox} onPress={(e) => e.stopPropagation()}>
             <Text style={styles.modalTitle}>{t("courseSearch.registerTitle")}</Text>

@@ -23,7 +23,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
 
   return (
     <>
-      <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
         <Pressable style={styles.overlay} onPress={onClose}>
           <Pressable style={styles.card} onPress={() => {}}>
             <TouchableOpacity
@@ -50,7 +50,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
         </Pressable>
       </Modal>
 
-      <Modal visible={imagePreviewVisible} transparent animationType="fade" onRequestClose={() => setImagePreviewVisible(false)}>
+      <Modal visible={imagePreviewVisible} transparent animationType="none" onRequestClose={() => setImagePreviewVisible(false)}>
         <Pressable style={styles.previewOverlay} onPress={() => setImagePreviewVisible(false)}>
           {friend.photoURL ? (
             <Image source={{ uri: friend.photoURL }} style={styles.avatarLarge} />
@@ -60,7 +60,7 @@ export default function FriendDetailModal({ visible, friend, onClose, onDelete }
         </Pressable>
       </Modal>
 
-      <Modal visible={confirmVisible} transparent animationType="fade" onRequestClose={() => setConfirmVisible(false)}>
+      <Modal visible={confirmVisible} transparent animationType="none" onRequestClose={() => setConfirmVisible(false)}>
         <Pressable style={styles.overlay} onPress={() => setConfirmVisible(false)}>
           <Pressable style={styles.confirmCard} onPress={() => {}}>
             <Text style={styles.confirmText}>{friend.nickname}{t("friends.removeConfirm")}</Text>
