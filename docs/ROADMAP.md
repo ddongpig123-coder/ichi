@@ -428,6 +428,17 @@ schoolDomain "global" 부채는 해소 완료(착수 선행조건 충족). 便�
       `app/privacy.tsx`의 `[■운영자명]`/`[■연락처메일]`/`[■관할법원]`. 스토어 제출 전 필수.
 - [ ] **서비스 계정 키** — 크롤러 Firestore 적재용. 각자 Firebase 콘솔에서 발급·로컬 보관
       (`scripts/keys/`, gitignore됨). 전송 금지.
+- [ ] **소셜 로그인 프로바이더 활성화 (2026-08-23 추가)** — 코드는 붙었으나(구글/X/라인) 각 프로바이더의
+      외부 설정이 없으면 `auth/operation-not-allowed`로 실패. **각자 처리 필요**:
+      (1) Firebase Console → Authentication → Google 활성화(추가 등록 거의 없음),
+      (2) X(Twitter) Developer 앱 생성 → API Key/Secret을 Firebase에 등록,
+      (3) LINE Developers에서 LINE Login 채널 생성 → Firebase OIDC 프로바이더(ID `line` → `oidc.line`) 추가,
+      콜백 `https://ichi-6b8f7.firebaseapp.com/__/auth/handler` 등록. 모두 **웹 전용**(네이티브는 12월 EAS).
+- [ ] **개인정보처리방침 공개 URL (12월 스토어 준비)** — 초안 Artifact 발행됨(자리표시자 `[■운영자명]`/
+      `[■연락처메일]`/최종갱신일 확정 후 게시). 스토어 제출 시 공개 URL 필수. 호스팅 수단 결정 필요(GitHub Pages 등).
+- [ ] **친구 초대 링크(LINE) — 유니버설/앱 링크 + 랜딩 호스팅 선행** — "메인=링크 초대" 방식은 LINE에서 링크를 열어
+      앱으로 진입시키는 유니버설 링크(iOS)/앱 링크(Android) 설정 + 웹 폴백 랜딩이 필요. 12월 EAS 빌드·호스팅 단계에서
+      착수(Microsoft 네이티브와 동일 성격). 인앱 초대코드/공유 로직은 그 위에 구현.
 
 ### 기술 부채 (구조 수정 필요 — 개발 과제)
 
