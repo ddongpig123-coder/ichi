@@ -8,14 +8,18 @@ import { useI18n } from "../src/contexts/I18nContext";
 import {
   linkAnonymousWithEmail,
   linkAnonymousWithMicrosoft,
+  linkAnonymousWithSocial,
   signInWithEmail,
   signInWithMicrosoft,
+  signInWithSocial,
   signOut,
   isUniversityEmail,
   isSchoolVerified,
   sendSchoolVerificationEmail,
   reloadAndCheckEmailVerified,
   MICROSOFT_WEB_ONLY_ERROR,
+  SOCIAL_WEB_ONLY_ERROR,
+  type SocialProviderId,
 } from "../src/services/authService";
 import { auth } from "../src/config/firebase";
 import { updateMicrosoftAccountInfo } from "../src/services/userService";
@@ -150,6 +154,78 @@ export default function AccountScreen() {
     } finally {
       setBusy(false);
     }
+  }
+
+  // Google / X(Twitter) / LINE 連携 — Web専用（Microsoftと同じ）。
+  // 各プロバイダの Firebase コンソール有効化 + 外部アプリ登録が前提（authService 参照）。
+  async function handleSocial(id: SocialProviderId) {
+    setBusy(true);
+    try {
+      if (mode === "register") {
+        const u = await linkAnonymousWithSocial(id);
+        const em = u.email ?? "";
+        const isUni = isUniversityEmail(em);
+        await updateMicrosoftAccountInfo(
+          u.uid,
+          em,
+          u.displayName?.trim() || t("common.guest"),
+          isUni ? em.split("@")[1] : null
+        );
+        notify(t("account.registerDone"), t("account.registerDoneMessage"));
+      } else {
+        await signInWithSocial(id);
+        notify(t("account.loginDone"), t("account.welcomeBack"));
+      }
+      goBack();
+    } catch (e: any) {
+      if (e.message === SOCIAL_WEB_ONLY_ERROR) {
+        notify(t("account.msPreparingTitle"), t("account.msWebOnly"));
+      } else if (e.code === "auth/credential-already-in-use" || e.code === "auth/email-already-in-use") {
+        notify(t("account.errCannotRegister"), t("account.errMsInUse"));
+      } else if (e.code === "auth/account-exists-with-different-credential") {
+        notify(t("account.errCannotRegister"), t("account.errSocialDiffCred"));
+      } else if (e.code === "auth/operation-not-allowed" || e.code === "auth/configuration-not-found") {
+        notify(t("account.errFailed"), t("account.errProviderNotEnabled"));
+      } else if (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request") {
+        // ユーザーが自分で閉じた場合は何も表示しない
+      } else if (e.code === "auth/popup-blocked") {
+        notify(t("account.errPopupBlocked"), t("account.errPopupBlockedMessage"));
+      } else {
+        notify(t("account.errFailed"), e.message ?? String(e));
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // 登録/ログイン両モードで使う ソーシャルボタン群（Google / X / LINE）。
+  function renderSocialButtons() {
+    const suffix = mode === "register" ? "Register" : "Login";
+    return (
+      <>
+        <TouchableOpacity
+          style={[styles.socialButton, styles.googleButton, busy && styles.buttonDisabled]}
+          onPress={() => handleSocial("google.com")}
+          disabled={busy}
+        >
+          <Text style={styles.socialButtonText}>{t(`account.google${suffix}` as any)}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.socialButton, styles.xButton, busy && styles.buttonDisabled]}
+          onPress={() => handleSocial("twitter.com")}
+          disabled={busy}
+        >
+          <Text style={styles.xButtonText}>{t(`account.x${suffix}` as any)}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.socialButton, styles.lineButton, busy && styles.buttonDisabled]}
+          onPress={() => handleSocial("oidc.line")}
+          disabled={busy}
+        >
+          <Text style={styles.lineButtonText}>{t(`account.line${suffix}` as any)}</Text>
+        </TouchableOpacity>
+      </>
+    );
   }
 
   async function handleSendVerification() {
@@ -299,6 +375,7 @@ export default function AccountScreen() {
             >
               <Text style={styles.microsoftButtonText}>{t("account.microsoftRegister")}</Text>
             </TouchableOpacity>
+            {renderSocialButtons()}
 
             <TouchableOpacity onPress={() => setMode("login")}>
               <Text style={styles.switchText}>{t("account.toLogin")}</Text>
@@ -348,6 +425,7 @@ export default function AccountScreen() {
             >
               <Text style={styles.microsoftButtonText}>{t("account.microsoftLogin")}</Text>
             </TouchableOpacity>
+            {renderSocialButtons()}
 
             <TouchableOpacity onPress={() => setMode("register")}>
               <Text style={styles.switchText}>{t("account.toRegister")}</Text>
@@ -461,4 +539,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   microsoftButtonText: { color: "#2F2F2F", fontSize: 14, fontWeight: "700" },
+
+  socialButton: {
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  socialButtonText: { color: "#2F2F2F", fontSize: 14, fontWeight: "700" },
+  googleButton: { backgroundColor: "#fff", borderWidth: 1, borderColor: "#DADCE0" },
+  xButton: { backgroundColor: "#000" },
+  xButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+  lineButton: { backgroundColor: "#06C755" },
+  lineButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
 });

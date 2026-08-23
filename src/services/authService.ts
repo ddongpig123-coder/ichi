@@ -2,9 +2,12 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   EmailAuthProvider,
+  GoogleAuthProvider,
+  TwitterAuthProvider,
   linkWithCredential,
   linkWithPopup,
   signInWithPopup,
+  AuthProvider,
   OAuthProvider,
   sendEmailVerification,
   signOut as firebaseSignOut,
@@ -43,6 +46,51 @@ export async function linkAnonymousWithMicrosoft(): Promise<User> {
 export async function signInWithMicrosoft(): Promise<User> {
   if (Platform.OS !== "web") throw new Error(MICROSOFT_WEB_ONLY_ERROR);
   const result = await signInWithPopup(auth, microsoftProvider());
+  return result.user;
+}
+
+// ── ソーシャルログイン（Google / X(Twitter) / LINE） ──────────
+// いずれも popup フローのため **Web 専用**（Microsoft と同じ。ネイティブは EAS dev-client 段階で）。
+// 前提（各プロバイダごとに Firebase コンソール側の有効化 + 外部アプリ登録が必要）:
+//   - google.com : Firebase Console → Authentication → Google を有効化（追加登録ほぼ不要）
+//   - twitter.com: X(Twitter) Developer でアプリ作成 → API Key/Secret を Firebase に登録
+//   - oidc.line  : LINE Developers で LINE Login チャネル作成 → Firebase で OIDC プロバイダ
+//                  （プロバイダID "line" → Firebase 上は "oidc.line"）を追加。callback に
+//                  https://ichi-6b8f7.firebaseapp.com/__/auth/handler を登録
+// どのプロバイダも上記の外部設定が未完だと auth/operation-not-allowed 等で失敗する。
+export type SocialProviderId = "microsoft.com" | "google.com" | "twitter.com" | "oidc.line";
+export const SOCIAL_WEB_ONLY_ERROR = "SOCIAL_WEB_ONLY";
+
+function makeSocialProvider(id: SocialProviderId): AuthProvider {
+  if (id === "google.com") {
+    const p = new GoogleAuthProvider();
+    p.setCustomParameters({ prompt: "select_account" });
+    return p;
+  }
+  if (id === "twitter.com") {
+    return new TwitterAuthProvider();
+  }
+  // microsoft.com / oidc.line は汎用 OAuthProvider（OIDC 含む）で扱う
+  const p = new OAuthProvider(id);
+  if (id === "microsoft.com") p.setCustomParameters({ prompt: "select_account" });
+  if (id === "oidc.line") p.addScope("openid"), p.addScope("profile"), p.addScope("email");
+  return p;
+}
+
+// ゲスト(匿名)の uid を維持したままソーシャルアカウントを連結する
+export async function linkAnonymousWithSocial(id: SocialProviderId): Promise<User> {
+  if (Platform.OS !== "web") throw new Error(SOCIAL_WEB_ONLY_ERROR);
+  const current = auth.currentUser;
+  if (!current) throw new Error("ログイン状態が確認できません");
+  if (!current.isAnonymous) throw new Error("既にアカウント登録済みです");
+  const result = await linkWithPopup(current, makeSocialProvider(id));
+  return result.user;
+}
+
+// 既にソーシャル登録済みのユーザーのログイン
+export async function signInWithSocial(id: SocialProviderId): Promise<User> {
+  if (Platform.OS !== "web") throw new Error(SOCIAL_WEB_ONLY_ERROR);
+  const result = await signInWithPopup(auth, makeSocialProvider(id));
   return result.user;
 }
 
@@ -92,12 +140,17 @@ export async function linkAnonymousWithEmail(
 // Returns true only if the email domain is a known university domain.
 // Extend this list or replace with a Firestore allowlist.
 export function isUniversityEmail(email: string): boolean {
-  const allowed = [
+  const lower = email.toLowerCase();
+  const suffixes = [
     ".ac.jp",
     ".edu",
     ".university",
   ];
-  return allowed.some((suffix) => email.endsWith(suffix));
+  if (suffixes.some((suffix) => lower.endsWith(suffix))) return true;
+  // .ac.jp を使わない大学の例外ドメイン（@付きで厳密一致）。
+  // 例: 早稲田(waseda.jp)・慶應(keio.jp)。学校を追加したらここも更新する。
+  const exactDomains = ["waseda.jp", "keio.jp"];
+  return exactDomains.some((d) => lower.endsWith("@" + d));
 }
 
 // ── 学校メール認証（sendEmailVerification） ──────────────────
