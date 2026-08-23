@@ -172,14 +172,6 @@ export default function HomeScreen() {
         >
           <Text style={styles.actionText} numberOfLines={1}>{t("courseSearch.entry")}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionBtn}
-          onPress={() =>
-            router.push(`/senior-timetables?year=${selectedYear}&semester=${selectedSemester}`)
-          }
-        >
-          <Text style={styles.actionText} numberOfLines={1}>{t("senior.entry")}</Text>
-        </TouchableOpacity>
       </View>
 
       <FriendsList />

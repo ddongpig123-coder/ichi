@@ -22,8 +22,6 @@ const OPTIONS: {
 }[] = [
   { key: "private", icon: "🔒", label: "timetable.visPrivate", desc: "timetable.visPrivateDesc" },
   { key: "friends", icon: "👥", label: "timetable.visFriends", desc: "timetable.visFriendsDesc" },
-  { key: "department", icon: "🏫", label: "timetable.visDepartment", desc: "timetable.visDepartmentDesc" },
-  { key: "public", icon: "🌐", label: "timetable.visPublic", desc: "timetable.visPublicDesc" },
 ];
 
 export default function VisibilitySelector({ value, onChange }: Props) {
