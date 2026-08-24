@@ -188,20 +188,7 @@ const ja = {
   "timetable.visPrivateDesc": "自分だけが見られます",
   "timetable.visFriends": "友達",
   "timetable.visFriendsDesc": "友達だけが見られます",
-  "timetable.visDepartment": "同じ学部",
-  "timetable.visDepartmentDesc": "同じ学部の先輩・同級生が見られます",
-  "timetable.visPublic": "全体公開",
-  "timetable.visPublicDesc": "誰でも見られます",
 
-  // 先輩の時間割（Phase 2 2週目）
-  "senior.entry": "🎓 先輩の時間割を見る",
-  "senior.title": "先輩の時間割",
-  "senior.gradeAll": "全学年",
-  "senior.gradeUnknown": "学年不明",
-  "senior.courseCountSuffix": "科目",
-  "senior.empty": "公開されている先輩の時間割がありません",
-  "senior.noDepartment": "先輩の時間割を見るには、プロフィールで学部を設定してください",
-  "senior.goProfile": "プロフィールへ",
 
   // 講義レビュー（Phase 2 3週目）
   "review.title": "講義レビュー",
@@ -604,19 +591,7 @@ const ko: Record<TranslationKey, string> = {
   "timetable.visPrivateDesc": "나만 볼 수 있어요",
   "timetable.visFriends": "친구",
   "timetable.visFriendsDesc": "친구만 볼 수 있어요",
-  "timetable.visDepartment": "같은 학부",
-  "timetable.visDepartmentDesc": "같은 학부 선배·동기가 볼 수 있어요",
-  "timetable.visPublic": "전체 공개",
-  "timetable.visPublicDesc": "누구나 볼 수 있어요",
 
-  "senior.entry": "🎓 선배 시간표 보기",
-  "senior.title": "선배 시간표",
-  "senior.gradeAll": "전체 학년",
-  "senior.gradeUnknown": "학년 미상",
-  "senior.courseCountSuffix": "과목",
-  "senior.empty": "공개된 선배 시간표가 없습니다",
-  "senior.noDepartment": "선배 시간표를 보려면 프로필에서 학부를 설정하세요",
-  "senior.goProfile": "프로필로",
 
   "review.title": "강의 리뷰",
   "review.aggregate": "모두의 평가",

@@ -41,10 +41,26 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - **크롤러(scripts/) 작업 시**: 적재 데이터는 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.
   서비스 계정 키는 절대 커밋 금지 (.gitignore에 패턴 등록됨)
 
-## 현재 상태 요약 (2026-07-27 기준) — 다음 세션은 여기부터 읽을 것
+## 현재 상태 요약 (2026-08-24 기준) — 다음 세션은 여기부터 읽을 것
 
-**진행도: 11월 Phase 2 1·2주차까지 완료.** 다음은 3주차(강의 한줄평).
+**진행도: 11월 Phase 2 전 주차 완료.** 다음 관문은 12월 스토어 준비(TestFlight/EAS·자산).
 상세·완료 이력은 [docs/ROADMAP.md](docs/ROADMAP.md). 목업은 전부 제거됨(실데이터화 완료).
+
+> **🆕 2026-08-24 세션 변경분 (다음 세션은 이것부터 반영)**
+> - **선배 시간표 폐기 + 강의평 집중** 확정(ROADMAP §5). `app/senior-timetables.tsx`·홈 버튼·
+>   `listDepartmentTimetables`/`SeniorTimetable`/`gradeFromAdmissionYear` 삭제. **시간표 공개범위=`private`/`friends` 2택**
+>   (`department`/`public` 삭제). 친구 겹침 표시는 존치. 관련 죽은 i18n 키 정리됨.
+> - **소셜 로그인(구글/X/라인) 코드 추가** — `authService.linkAnonymousWithSocial`/`signInWithSocial`(웹 전용 popup,
+>   Microsoft와 동일). **각 프로바이더 Firebase 콘솔 설정 필요**(미설정 시 `auth/operation-not-allowed`) →
+>   [docs/SOCIAL-LOGIN-SETUP.md](docs/SOCIAL-LOGIN-SETUP.md). 라인은 OIDC(`oidc.line`).
+> - **학교 목록 10개교로 확장**(`src/data/schools.ts`, 한국인 유학생 많은 순 근사). 와세다·게이오는 `.ac.jp` 미사용이라
+>   `authService.isUniversityEmail` 예외 도메인 등록.
+> - **거래게시판 → 「教科書ゆずり」(교과서 물려받기)** 라벨 확정(boardId `trade` 유지).
+> - **약관·방침 자리표시자 전부 확정**: 운영자=Lee Junhee / 관할=東京地方裁判所 / 문의=ddongpig123@gmail.com /
+>   최종갱신일=2026年8月24日. `app/terms.tsx`·`app/privacy.tsx`·`docs/legal/*.md`. 스토어 제출용 웹페이지는 Artifact로 발행됨.
+> - **verificationLevel 게이팅은 1.0에서 열어둠**(§5 정책, 성장기에 조임) — 코드 변경 없음.
+> - **미착수(외부/결정 대기)**: 소셜로그인 콘솔 설정(사용자), 친구 초대 링크(유니버설링크+호스팅→12월 EAS),
+>   아이콘 이모지 깨짐(실기기 스크린샷 필요).
 
 > **📌 준희 복귀 인계 (2026-07-27) — 준희 세션은 이 블록부터 읽을 것**
 > 준희 휴가 동안 태희 축만 진행(Phase 2 1·2주차 = 공개범위 UI·선배 시간표). 준희 축은 안 건드림.
@@ -80,12 +96,12 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - `friendRequestService`는 **실구현 완료**(더 이상 stub 아님). 강의 데이터 20,022건 적재됨.
 - 인증: 게스트(익명)→이메일/Microsoft 계정연결(uid 유지). Microsoft 네이티브는 12월 EAS로 이관.
 
-### 다음 세션 시작점 — 11월 Phase 2 3주차
-- [완료] 1주차 시간표 공개범위 UI(`VisibilitySelector`) / 2주차 선배 시간표 열람(`app/senior-timetables.tsx`)
-- **다음: 3주차 강의 한줄평 v1** — `reviews` 규칙·경로 이미 배포됨
-  (`schools/{sd}/departments/{dept}/courses/{courseId}/reviews/{reviewerUid}`, 문서ID=uid로 1인1강의1리뷰,
-  rating 1~5 int 검증). **타입만 없으니 규칙 배포 없이** 타입+서비스+UI(별점·태그 구조화 + 자유텍스트)로 진행.
-- → 4주차 강의 상세(시라버스+평점 집계+리뷰 목록).
+### 다음 세션 시작점 — 12월 스토어 준비 (Phase 2 완료됨)
+- [완료] Phase 2 전 주차: 공개범위 UI / (선배 시간표는 폐기) / 강의 한줄평 / 강의 상세.
+- **다음: 12월 스토어 준비** — ① TestFlight 베타(EAS Build, 이때 Microsoft·소셜 네이티브 대응) →
+  ② 베타 피드백 → ③ 스토어 자산(스크린샷 일/한·앱 설명·방침 공개 URL·심사용 데모 계정) → ④ 12/31 기능 동결.
+- 병행 가능(결정 없이): 스토어 문안(앱 설명/키워드) 초안, 소셜로그인 콘솔 설정 가이드는 이미 작성됨.
+- 이후: **Phase 2.5 시간표 작성 도우미(2~3월 신입생 시즌)** → **Phase 3 학점관리(5월~, CREDIT-TRACKING)**.
 
 ### 반드시 알아야 할 함정 (안 그러면 헤맴)
 - **schoolDomain "global" 고정 부채**: `AuthContext.schoolDomain`이 `"global"` 하드코딩.
