@@ -6,10 +6,10 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
 
 // 利用規約（全文・日本語正本）。docs/legal/TERMS.md と同期して管理すること。
-// 確定: 運営者=Lee Junhee / 管轄=東京地方裁判所 / 連絡先=ddongpig123@gmail.com。残りは最終更新日([■]月[■]日)のみ。
+// 全項目確定(2026-08-24): 運営者=Lee Junhee / 管轄=東京地方裁判所 / 連絡先=ddongpig123@gmail.com / 最終更新日=2026年8月24日。
 const TERMS_TEXT = `利用規約
 
-最終更新日: 2026年[■]月[■]日
+最終更新日: 2026年8月24日
 
 本利用規約(以下「本規約」)は、Lee Junhee(以下「運営者」)が提供するアプリケーション「ichi」(以下「本サービス」)の利用条件を定めるものです。利用者は、本サービスを利用することにより、本規約に同意したものとみなされます。
 
