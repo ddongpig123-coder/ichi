@@ -70,7 +70,7 @@ const PRIVACY_TEXT = `プライバシーポリシー
 
 10. お問い合わせ窓口
 個人情報の取扱いに関するお問い合わせ、開示等の請求、投稿の削除依頼:
-[■連絡先メール]`;
+ddongpig123@gmail.com`;
 
 export default function PrivacyScreen() {
   const router = useRouter();

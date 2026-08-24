@@ -6,7 +6,7 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
 
 // 利用規約（全文・日本語正本）。docs/legal/TERMS.md と同期して管理すること。
-// 運営者名 = 이준희（確定）。[■] は残りのプレースホルダー（連絡先・管轄裁判所 — 12月に確定）。
+// 確定: 運営者=이준희 / 管轄=東京地方裁判所 / 連絡先=ddongpig123@gmail.com。残りは最終更新日([■]月[■]日)のみ。
 const TERMS_TEXT = `利用規約
 
 最終更新日: 2026年[■]月[■]日
@@ -72,9 +72,9 @@ const TERMS_TEXT = `利用規約
 運営者は、必要と判断した場合、本規約を変更できます。変更後の規約は本サービス上に掲示した時点で効力を生じ、掲示後の利用をもって同意とみなします。重要な変更はアプリ内通知等で周知します。
 
 第12条（準拠法・管轄）
-本規約は日本法に準拠し、本サービスに関する紛争は[■管轄裁判所]を第一審の専属的合意管轄裁判所とします。
+本規約は日本法に準拠し、本サービスに関する紛争は東京地方裁判所を第一審の専属的合意管轄裁判所とします。
 
-お問い合わせ: [■連絡先メール]`;
+お問い合わせ: ddongpig123@gmail.com`;
 
 export default function TermsScreen() {
   const router = useRouter();
