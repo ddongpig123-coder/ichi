@@ -5,6 +5,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
 import { findUserByEmail, sendFriendRequest } from "../../services/friendRequestService";
+import { shareInvite } from "../../services/friendInvite";
 import type { PublicProfile } from "../../services/userService";
 
 // Alert.alert は react-native-web では no-op のため Web では window.alert へ
@@ -91,6 +92,14 @@ export default function AddFriendModal({ visible, onClose }: Props) {
     }
   }
 
+  async function handleShareInvite() {
+    if (!user) return;
+    const result = await shareInvite(user.uid, t("friends.inviteMessage"));
+    if (result === "copied") notify(t("friends.inviteCopied"));
+    else if (result === "failed") notify(t("friends.inviteFailed"));
+    // "shared" は OS の共有シートが処理済みなので通知不要
+  }
+
   const addEnabled = lookupState === "found" && !busy;
 
   return (
@@ -138,6 +147,11 @@ export default function AddFriendModal({ visible, onClose }: Props) {
               <Text style={styles.addText}>{t("common.add")}</Text>
             </TouchableOpacity>
           </View>
+
+          <View style={styles.divider} />
+          <TouchableOpacity style={styles.inviteButton} onPress={handleShareInvite}>
+            <Text style={styles.inviteText}>🔗 {t("friends.inviteShare")}</Text>
+          </TouchableOpacity>
         </Pressable>
       </Pressable>
     </Modal>
@@ -206,5 +220,13 @@ function makeStyles(theme: Theme) {
     addButtonActive: { backgroundColor: theme.primary },
     addButtonDisabled: { backgroundColor: theme.textSecondary },
     addText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+    divider: { height: 1, backgroundColor: theme.border, marginTop: 18, marginBottom: 12 },
+    inviteButton: {
+      backgroundColor: theme.background,
+      borderRadius: 8,
+      paddingVertical: 11,
+      alignItems: "center",
+    },
+    inviteText: { color: theme.primary, fontSize: 14, fontWeight: "700" },
   });
 }

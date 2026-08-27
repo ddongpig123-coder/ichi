@@ -438,9 +438,11 @@ schoolDomain "global" 부채는 해소 완료(착수 선행조건 충족). 便�
       콜백 `https://ichi-6b8f7.firebaseapp.com/__/auth/handler` 등록. 모두 **웹 전용**(네이티브는 12월 EAS).
 - [ ] **개인정보처리방침 공개 URL (12월 스토어 준비)** — 초안 Artifact 발행됨(자리표시자 `[■운영자명]`/
       `[■연락처메일]`/최종갱신일 확정 후 게시). 스토어 제출 시 공개 URL 필수. 호스팅 수단 결정 필요(GitHub Pages 등).
-- [ ] **친구 초대 링크(LINE) — 유니버설/앱 링크 + 랜딩 호스팅 선행** — "메인=링크 초대" 방식은 LINE에서 링크를 열어
-      앱으로 진입시키는 유니버설 링크(iOS)/앱 링크(Android) 설정 + 웹 폴백 랜딩이 필요. 12월 EAS 빌드·호스팅 단계에서
-      착수(Microsoft 네이티브와 동일 성격). 인앱 초대코드/공유 로직은 그 위에 구현.
+- [~] **친구 초대 링크(LINE)** — **인앱 부분 완료 (2026-08-24)**: `src/services/friendInvite.ts`
+      (`buildInviteUrl`=`Linking.createURL("/add-friend",{u:uid})` / `shareInvite`=네이티브 Share·웹 navigator.share→클립보드),
+      `app/add-friend.tsx`(초대자 프로필 표시+친구 신청, `?u=<uid>`), AddFriendModal에 「초대 링크로 추가」 버튼.
+      **잔여(외부/12월 EAS)**: LINE에서 링크를 눌러 앱으로 진입시키려면 유니버설 링크(iOS)/앱 링크(Android) + 웹 폴백
+      랜딩(호스팅)이 필요. 지금은 웹 URL/커스텀스킴 링크만 생성(웹 배포 시 즉시 동작, 네이티브 딥링크는 앱 설치 시 동작).
 
 ### 기술 부채 (구조 수정 필요 — 개발 과제)
 
