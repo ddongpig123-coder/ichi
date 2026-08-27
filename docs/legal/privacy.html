@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ichi プライバシーポリシー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --ground: #FBFCFE;
+    --surface: #FFFFFF;
+    --surface-sunken: #F3F6FC;
+    --ink: #1A1F2E;
+    --muted: #5B6472;
+    --faint: #8A93A3;
+    --accent: #2F6AD9;
+    --accent-soft: #E8F0FD;
+    --hairline: #E4E9F2;
+    --flag-bg: #FFF6E5;
+    --flag-border: #F0C868;
+    --flag-ink: #7A5B10;
+    --font-ja: "Noto Sans JP", system-ui, -apple-system, sans-serif;
+    --font-ko: "Noto Sans KR", "Noto Sans JP", system-ui, sans-serif;
+    --font-display: "Zen Kaku Gothic New", "Noto Sans JP", system-ui, sans-serif;
+    --measure: 68ch;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0F131A;
+      --surface: #161C26;
+      --surface-sunken: #1B222E;
+      --ink: #E7EBF3;
+      --muted: #9AA4B4;
+      --faint: #6C7686;
+      --accent: #7BA6F2;
+      --accent-soft: #1B2740;
+      --hairline: #28303D;
+      --flag-bg: #2A2410;
+      --flag-border: #6E5A22;
+      --flag-ink: #E7C976;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0F131A;
+    --surface: #161C26;
+    --surface-sunken: #1B222E;
+    --ink: #E7EBF3;
+    --muted: #9AA4B4;
+    --faint: #6C7686;
+    --accent: #7BA6F2;
+    --accent-soft: #1B2740;
+    --hairline: #28303D;
+    --flag-bg: #2A2410;
+    --flag-border: #6E5A22;
+    --flag-ink: #E7C976;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ja);
+    font-size: 16px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.01em;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Header ── */
+  header.site {
+    border-bottom: 1px solid var(--hairline);
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .site-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 14px 24px; max-width: 760px; margin: 0 auto;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .brand .mark {
+    font-family: var(--font-display); font-weight: 700; font-size: 22px;
+    color: var(--accent); letter-spacing: 0.02em;
+  }
+  .brand .doc {
+    font-size: 13px; color: var(--muted); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .langtabs { display: flex; gap: 2px; background: var(--surface-sunken);
+    border: 1px solid var(--hairline); border-radius: 999px; padding: 3px; flex-shrink: 0; }
+  .langtabs button {
+    font-family: var(--font-ja); font-size: 12px; font-weight: 700;
+    border: 0; background: transparent; color: var(--muted);
+    padding: 5px 14px; border-radius: 999px; cursor: pointer; letter-spacing: 0.04em;
+  }
+  .langtabs button[aria-selected="true"] { background: var(--surface); color: var(--accent);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .langtabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── Title block ── */
+  .titleblock { padding: 52px 0 28px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 6vw, 44px);
+    line-height: 1.2; margin: 0 0 16px; text-wrap: balance; letter-spacing: 0.01em;
+  }
+  .meta { font-size: 13px; color: var(--faint); margin: 0; }
+
+  /* ── Draft banner (editorial note — remove before hosting) ── */
+  .draftnote {
+    background: var(--flag-bg); border: 1px solid var(--flag-border);
+    border-radius: 14px; padding: 18px 20px; margin: 8px 0 40px;
+    font-family: var(--font-ko);
+  }
+  .draftnote h2 { font-size: 14px; font-weight: 700; margin: 0 0 8px; color: var(--flag-ink);
+    letter-spacing: 0.02em; }
+  .draftnote p { font-size: 13.5px; line-height: 1.7; margin: 0 0 10px; color: var(--flag-ink); }
+  .draftnote ul { margin: 0; padding-left: 18px; }
+  .draftnote li { font-size: 13.5px; line-height: 1.7; color: var(--flag-ink); }
+  .draftnote code {
+    font-family: var(--font-ja); background: color-mix(in srgb, var(--flag-ink) 12%, transparent);
+    padding: 1px 6px; border-radius: 5px; font-size: 12.5px; font-weight: 700;
+  }
+
+  /* ── Sections ── */
+  main { padding-bottom: 40px; }
+  section.clause { padding: 22px 0; border-top: 1px solid var(--hairline); }
+  section.clause:first-of-type { border-top: 0; }
+  .clause h3 {
+    display: flex; align-items: baseline; gap: 12px;
+    font-family: var(--font-display); font-weight: 700; font-size: 19px;
+    margin: 0 0 12px; letter-spacing: 0.01em; text-wrap: balance;
+  }
+  .clause .num {
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    color: var(--accent); background: var(--accent-soft);
+    min-width: 30px; height: 24px; padding: 0 8px; border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-variant-numeric: tabular-nums; transform: translateY(-1px);
+  }
+  .clause p, .clause li { max-width: var(--measure); }
+  .clause p { margin: 0 0 12px; color: var(--ink); }
+  .clause .lead { color: var(--muted); }
+  .subhead {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--accent); margin: 16px 0 8px;
+  }
+  ul.tick { list-style: none; margin: 0 0 12px; padding: 0; }
+  ul.tick li { position: relative; padding-left: 22px; margin-bottom: 7px; color: var(--ink); }
+  ul.tick li::before {
+    content: ""; position: absolute; left: 4px; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  ol.legal { margin: 0 0 12px; padding-left: 22px; }
+  ol.legal li { margin-bottom: 7px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+
+  .fill {
+    font-family: var(--font-ja); font-weight: 700; color: var(--flag-ink);
+    background: var(--flag-bg); border: 1px dashed var(--flag-border);
+    padding: 0 7px; border-radius: 6px; font-size: 0.92em; white-space: nowrap;
+  }
+
+  .callout {
+    background: var(--surface-sunken); border: 1px solid var(--hairline);
+    border-radius: 12px; padding: 16px 18px; margin: 4px 0 12px;
+  }
+  .callout p { margin: 0; font-size: 14.5px; color: var(--muted); }
+  .callout .contact { font-family: var(--font-display); font-size: 16px; color: var(--ink); font-weight: 500; }
+
+  /* ── KO reference ── */
+  .ko { font-family: var(--font-ko); }
+  .ko .clause h3 { font-family: var(--font-ko); }
+
+  footer.site {
+    border-top: 1px solid var(--hairline); padding: 32px 0 56px; margin-top: 8px;
+    color: var(--faint); font-size: 12.5px;
+  }
+  footer.site .wrap { display: flex; flex-direction: column; gap: 6px; }
+  footer .mark { font-family: var(--font-display); color: var(--accent); font-weight: 700; }
+
+  /* language visibility */
+  body[data-lang="ja"] .lang-ko { display: none; }
+  body[data-lang="ko"] .lang-ja { display: none; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="site-inner">
+    <div class="brand">
+      <span class="mark">ichi</span>
+      <span class="doc lang-ja">プライバシーポリシー</span>
+      <span class="doc lang-ko">개인정보처리방침</span>
+    </div>
+    <div class="langtabs" role="tablist" aria-label="言語 / 언어">
+      <button role="tab" id="tab-ja" aria-selected="true" onclick="setLang('ja')">日本語</button>
+      <button role="tab" id="tab-ko" aria-selected="false" onclick="setLang('ko')">한국어</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="titleblock">
+    <p class="eyebrow lang-ja">Privacy Policy · 個人情報保護法（APPI）準拠</p>
+    <p class="eyebrow lang-ko">Privacy Policy · 개인정보보호법(APPI) 기준</p>
+    <h1 class="lang-ja">プライバシーポリシー</h1>
+    <h1 class="lang-ko">개인정보처리방침</h1>
+    <p class="meta lang-ja">最終更新日: 2026年8月24日 ／ 対象アプリ「ichi」</p>
+    <p class="meta lang-ko">최종 갱신일: 2026年8月24日 ／ 대상 앱 「ichi」 · 본 한국어본은 참고 번역이며 일본어 정본이 우선합니다.</p>
+  </div>
+</div>
+
+<main class="wrap">
+  <!-- ───────────── JA (정본) ───────────── -->
+  <div class="lang-ja">
+    <section class="clause">
+      <p class="lead">Lee Junhee（以下「運営者」）は、アプリケーション「ichi」（以下「本サービス」）における利用者の個人情報の取扱いについて、個人情報の保護に関する法律（以下「個人情報保護法」）その他関連法令を遵守し、以下のとおりプライバシーポリシーを定めます。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">1</span>取得する情報</h3>
+      <p class="subhead">利用者が提供する情報</p>
+      <ul class="tick">
+        <li>メールアドレス（アカウント登録時。学校アカウント認証時は大学発行メールアドレス）</li>
+        <li>ニックネーム、プロフィール画像</li>
+        <li>所属学校・学部（ゲスト利用時は学校選択のみ）</li>
+        <li>時間割・履修情報、学業情報（GPA・取得単位等。本人が任意入力するもの）</li>
+        <li>投稿コンテンツ（掲示板投稿、コメント、講義レビュー、メッセージ）</li>
+        <li>通報・お問い合わせの内容</li>
+      </ul>
+      <p class="subhead">自動的に取得される情報</p>
+      <ul class="tick">
+        <li>アカウント識別子（Firebase Authentication が発行する UID）</li>
+        <li>投稿・操作の日時記録</li>
+        <li>端末情報・アクセスログ（利用基盤である Google Firebase が標準的に収集するもの。IP アドレス等を含む場合があります）</li>
+      </ul>
+      <p>運営者は、氏名・住所・電話番号・学籍番号の提供を求めません。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">2</span>利用目的</h3>
+      <ol class="legal">
+        <li>本サービスの提供・維持・改善（時間割管理、掲示板、友達機能等）</li>
+        <li>本人確認（学校アカウント認証）および認証バッジの表示</li>
+        <li>利用規約違反への対応（通報の処理、不正利用の防止、アカウント措置）</li>
+        <li>法令に基づく対応（プロバイダ責任制限法上の発信者情報開示請求への対応を含む）</li>
+        <li>お問い合わせへの対応</li>
+        <li>利用状況の統計分析（個人を識別できない形式に加工した上で実施）</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">3</span>第三者提供</h3>
+      <p>運営者は、以下の場合を除き、個人情報を第三者に提供しません。</p>
+      <ol class="legal">
+        <li>本人の同意がある場合</li>
+        <li>法令に基づく場合（裁判所の命令、プロバイダ責任制限法に基づく開示請求等）</li>
+        <li>人の生命・身体・財産の保護のために必要で、本人の同意を得ることが困難な場合</li>
+      </ol>
+      <p>匿名掲示板における投稿は、他の利用者に対してニックネームまたは匿名で表示され、メールアドレス・所属等が他の利用者に公開されることはありません（本人が公開設定を選択した時間割・プロフィール情報を除く）。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">4</span>外国にある第三者への提供（委託）</h3>
+      <p>本サービスは、データの保存・認証基盤として Google LLC が提供する Firebase（サーバー所在地: 米国等）を利用しています。取得した情報は Firebase のサーバーに保存されます。Google LLC における個人情報の保護措置については、同社のプライバシーポリシー（<a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a>）をご確認ください。米国は日本と同等の個人情報保護制度を有すると認められた国ではありませんが、Google LLC は APEC CBPR システムの認証を取得する等、相当措置を講じています。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">5</span>安全管理措置</h3>
+      <ul class="tick">
+        <li>通信の暗号化（TLS）</li>
+        <li>アクセス制御（Firestore セキュリティルールによる、本人以外のデータへのアクセス制限）</li>
+        <li>パスワードの非保持（認証基盤 Firebase Authentication が管理し、運営者は保持・閲覧しない）</li>
+        <li>運営者アカウントの認証管理</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">6</span>保存期間</h3>
+      <ul class="tick">
+        <li>アカウント情報: アカウント削除まで</li>
+        <li>投稿コンテンツ: 利用者による削除後も、法令遵守・紛争対応のため最長 6 ヶ月間、非公開の状態で記録を保存することがあります</li>
+        <li>通報記録: 処理完了後 1 年間</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">7</span>開示・訂正・削除の請求</h3>
+      <p>利用者は、運営者に対し、個人情報保護法の定めに従い、自己の個人情報の開示・訂正・利用停止・削除を請求できます。請求は下記の連絡先までお願いします。本人確認の上、法令の定める期間内に対応します。</p>
+      <p>アカウントの削除はアプリ内の設定から行えます。削除後、第 6 項の保存期間を経過した情報は復元できません。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">8</span>未成年者の利用</h3>
+      <p>本サービスは大学生・大学院生等を対象としています。18 歳未満の方は、保護者の同意を得た上でご利用ください。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">9</span>ポリシーの変更</h3>
+      <p>本ポリシーの内容は、法令の変更またはサービスの変更に応じて改定されることがあります。重要な変更はアプリ内通知等で周知します。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">10</span>お問い合わせ窓口</h3>
+      <p>個人情報の取扱いに関するお問い合わせ、開示等の請求、投稿の削除依頼:</p>
+      <div class="callout">
+        <p class="contact">ddongpig123@gmail.com</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────────── KO (참고 번역) ───────────── -->
+  <div class="lang-ko ko">
+    <section class="clause">
+      <p class="lead">Lee Junhee(이하 「운영자」)은 앱 「ichi」(이하 「본 서비스」)에서 이용자의 개인정보 취급에 관하여 개인정보보호법(일본 APPI) 및 관련 법령을 준수하며, 아래와 같이 개인정보처리방침을 정합니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">1</span>수집하는 정보</h3>
+      <p class="subhead">이용자가 제공하는 정보</p>
+      <ul class="tick">
+        <li>이메일 주소(계정 등록 시. 학교 계정 인증 시 대학 발행 이메일)</li>
+        <li>닉네임, 프로필 이미지</li>
+        <li>소속 학교·학부(게스트 이용 시 학교 선택만)</li>
+        <li>시간표·이수 정보, 학업 정보(GPA·취득 학점 등. 본인이 임의 입력)</li>
+        <li>투고 콘텐츠(게시판 글, 댓글, 강의 리뷰, 메시지)</li>
+        <li>신고·문의 내용</li>
+      </ul>
+      <p class="subhead">자동으로 수집되는 정보</p>
+      <ul class="tick">
+        <li>계정 식별자(Firebase Authentication이 발행하는 UID)</li>
+        <li>투고·조작의 일시 기록</li>
+        <li>단말 정보·접속 로그(기반인 Google Firebase가 표준 수집. IP 주소 등 포함 가능)</li>
+      </ul>
+      <p>운영자는 이름·주소·전화번호·학번의 제공을 요구하지 않습니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">2</span>이용 목적</h3>
+      <ol class="legal">
+        <li>서비스의 제공·유지·개선(시간표 관리, 게시판, 친구 기능 등)</li>
+        <li>본인 확인(학교 계정 인증) 및 인증 배지 표시</li>
+        <li>이용약관 위반 대응(신고 처리, 부정 이용 방지, 계정 조치)</li>
+        <li>법령에 근거한 대응(프로바이더책임제한법상 발신자 정보 개시 청구 대응 포함)</li>
+        <li>문의 대응</li>
+        <li>이용 현황 통계 분석(개인을 식별할 수 없는 형식으로 가공 후 실시)</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">3</span>제3자 제공</h3>
+      <p>운영자는 다음의 경우를 제외하고 개인정보를 제3자에게 제공하지 않습니다.</p>
+      <ol class="legal">
+        <li>본인의 동의가 있는 경우</li>
+        <li>법령에 근거한 경우(법원 명령, 프로바이더책임제한법에 따른 개시 청구 등)</li>
+        <li>사람의 생명·신체·재산 보호를 위해 필요하고 본인 동의를 얻기 곤란한 경우</li>
+      </ol>
+      <p>익명 게시판 투고는 다른 이용자에게 닉네임 또는 익명으로 표시되며, 이메일·소속 등이 다른 이용자에게 공개되지 않습니다(본인이 공개 설정을 선택한 시간표·프로필 정보 제외).</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">4</span>해외 위탁(제3자 제공)</h3>
+      <p>본 서비스는 데이터 저장·인증 기반으로 Google LLC의 Firebase(서버 소재지: 미국 등)를 이용하며, 수집한 정보는 Firebase 서버에 저장됩니다. Google LLC의 개인정보 보호 조치는 동사 개인정보처리방침(<a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a>)을 확인해 주세요.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">5</span>안전관리조치</h3>
+      <ul class="tick">
+        <li>통신 암호화(TLS)</li>
+        <li>접근 제어(Firestore 보안 규칙에 의한 본인 외 데이터 접근 제한)</li>
+        <li>비밀번호 비보유(Firebase Authentication이 관리, 운영자는 보유·열람하지 않음)</li>
+        <li>운영자 계정의 인증 관리</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">6</span>보존 기간</h3>
+      <ul class="tick">
+        <li>계정 정보: 계정 삭제 시까지</li>
+        <li>투고 콘텐츠: 이용자 삭제 후에도 법령 준수·분쟁 대응을 위해 최장 6개월간 비공개 상태로 보존할 수 있음</li>
+        <li>신고 기록: 처리 완료 후 1년간</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">7</span>열람·정정·삭제 청구</h3>
+      <p>이용자는 개인정보보호법이 정하는 바에 따라 자기 개인정보의 열람·정정·이용정지·삭제를 청구할 수 있습니다. 아래 연락처로 청구해 주세요. 본인 확인 후 법정 기간 내에 대응합니다.</p>
+      <p>계정 삭제는 앱 내 설정에서 가능합니다. 삭제 후 제6항의 보존 기간이 경과한 정보는 복원할 수 없습니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">8</span>미성년자의 이용</h3>
+      <p>본 서비스는 대학(원)생 등을 대상으로 합니다. 18세 미만은 보호자 동의를 얻은 후 이용해 주세요.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">9</span>방침의 변경</h3>
+      <p>본 방침은 법령 변경 또는 서비스 변경에 따라 개정될 수 있습니다. 중요한 변경은 앱 내 통지 등으로 안내합니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">10</span>문의 창구</h3>
+      <p>개인정보 취급에 관한 문의, 개시 등의 청구, 투고 삭제 요청:</p>
+      <div class="callout">
+        <p class="contact">ddongpig123@gmail.com</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div><span class="mark">ichi</span> — 日本の大学生・留学生コミュニティ</div>
+    <div class="lang-ja">日本語を正本とし、韓国語は参考訳です。</div>
+    <div class="lang-ko">일본어를 정본으로 하며 한국어는 참고 번역입니다.</div>
+  </div>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.body.setAttribute("data-lang", lang);
+    document.getElementById("tab-ja").setAttribute("aria-selected", String(lang === "ja"));
+    document.getElementById("tab-ko").setAttribute("aria-selected", String(lang === "ko"));
+    try { localStorage.setItem("ichi-privacy-lang", lang); } catch (e) {}
+  }
+  (function () {
+    var saved = "ja";
+    try { saved = localStorage.getItem("ichi-privacy-lang") || "ja"; } catch (e) {}
+    setLang(saved === "ko" ? "ko" : "ja");
+  })();
+</script>
+
+</body>
+</html>
