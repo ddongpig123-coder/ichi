@@ -172,6 +172,12 @@ export default function HomeScreen() {
         >
           <Text style={styles.actionText} numberOfLines={1}>{t("courseSearch.entry")}</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => router.push("/graduation")}
+        >
+          <Text style={styles.actionText} numberOfLines={1}>{t("grad.entry")}</Text>
+        </TouchableOpacity>
       </View>
 
       <FriendsList />
