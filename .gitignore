@@ -51,3 +51,9 @@ scripts/node_modules/
 # generated native folders
 /ios
 /android
+
+# Firebase CLI 배포 캐시
+.firebase/
+
+# 로컬 전용 Claude 설정
+.claude/settings.local.json
