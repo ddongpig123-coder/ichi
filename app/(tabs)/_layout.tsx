@@ -1,21 +1,25 @@
-import { useEffect, useState } from "react";
-import { Text, type ColorValue } from "react-native";
+import { useEffect, useState, type ReactElement } from "react";
+import type { ColorValue } from "react-native";
 import { Tabs, Redirect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { ONBOARDED_KEY } from "../onboarding";
+import {
+  HomeIcon,
+  BoardIcon,
+  FriendsIcon,
+  MessageIcon,
+  ProfileIcon,
+} from "../../src/components/common/TabBarIcons";
 
-// アイコンは使わず文字ラベルのみ。ラベルを tabBarIcon としてアイコンスロット
-// （上下・左右中央）に描画し、既定ラベルは非表示にする。
-// → 端末でのアイコン豆腐(□)化を回避しつつ、文字が常に中央に来る。
-function labelIcon(label: string) {
-  return ({ color }: { color: ColorValue }) => (
-    <Text numberOfLines={1} style={{ color, fontSize: 11, fontWeight: "600", textAlign: "center" }}>
-      {label}
-    </Text>
-  );
+// アイコン＋ラベル（エブリタイム風）。アイコンは単色SVG（react-native-svg）で
+// 描画するためフォント依存なし＝実機で豆腐(□)化しない。色はタブのtintを継承し、
+// active/inactiveの「明るさ」だけで選択を表す無彩色運用（ブランド色は使わない）。
+type TabIcon = (p: { color: ColorValue }) => ReactElement;
+function icon(Cmp: (p: { color: ColorValue; size?: number }) => ReactElement): TabIcon {
+  return ({ color }) => <Cmp color={color} size={22} />;
 }
 
 export default function TabsLayout() {
@@ -37,26 +41,29 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarShowLabel: false, // 既定ラベルは使わず、ラベルは tabBarIcon 側で中央描画
+        tabBarShowLabel: true,
+        tabBarLabelStyle: { fontSize: 10, fontWeight: "600", marginTop: 1 },
+        tabBarIconStyle: { marginTop: 2 },
         tabBarStyle: {
           backgroundColor: theme.tabBarBackground,
           borderTopColor: theme.border,
           // iPhone のホームインジケータ分(inset)を足しつつ、コンテンツ高は控えめに
-          height: 46 + insets.bottom,
-          paddingTop: 0,
+          height: 54 + insets.bottom,
+          paddingTop: 4,
           paddingBottom: insets.bottom,
         },
-        tabBarActiveTintColor: theme.tabBarActive,
+        // 無彩色運用: ブランド色(tabBarActive)は使わず、明るさで選択を表す。
+        tabBarActiveTintColor: theme.textPrimary,
         tabBarInactiveTintColor: theme.tabBarInactive,
         headerStyle: { backgroundColor: theme.card },
         headerTintColor: theme.textPrimary,
       }}
     >
-      <Tabs.Screen name="index" options={{ title: t("tabs.home"), headerShown: false, tabBarIcon: labelIcon(t("tabs.home")) }} />
-      <Tabs.Screen name="boards" options={{ title: t("tabs.boards"), headerShown: false, tabBarIcon: labelIcon(t("tabs.boards")) }} />
-      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false, tabBarIcon: labelIcon(t("tabs.friends")) }} />
-      <Tabs.Screen name="messages" options={{ title: t("tabs.messages"), headerShown: false, tabBarIcon: labelIcon(t("tabs.messages")) }} />
-      <Tabs.Screen name="profile" options={{ title: t("tabs.profile"), tabBarIcon: labelIcon(t("tabs.profile")) }} />
+      <Tabs.Screen name="index" options={{ title: t("tabs.home"), headerShown: false, tabBarIcon: icon(HomeIcon) }} />
+      <Tabs.Screen name="boards" options={{ title: t("tabs.boards"), headerShown: false, tabBarIcon: icon(BoardIcon) }} />
+      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false, tabBarIcon: icon(FriendsIcon) }} />
+      <Tabs.Screen name="messages" options={{ title: t("tabs.messages"), headerShown: false, tabBarIcon: icon(MessageIcon) }} />
+      <Tabs.Screen name="profile" options={{ title: t("tabs.profile"), tabBarIcon: icon(ProfileIcon) }} />
     </Tabs>
   );
 }
