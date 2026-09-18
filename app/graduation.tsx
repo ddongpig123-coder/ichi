@@ -1,15 +1,32 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
+import { useAuth } from "../src/contexts/AuthContext";
+import { getUserProfile } from "../src/services/userService";
 import type { Theme } from "../src/theme/themes";
 import { GRAD_MASTERS, type GradMaster } from "../src/data/graduationMaster";
 import { COURSES_2021, YEAR3_ONLY } from "../src/data/graduationCourses2021";
 
 const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
+const MEIJI_DOMAIN = "meiji.ac.jp";
+
+// 対応状況の判定。マスターは (学部×入学年度) 単位で、現状は明治 商学部のみ整備済み。
+// 学部は自由記述のため「商/商学/commerce」を含むか＋空(未設定)は許容でファジー判定。
+// 通信失敗など不明時は fail-open（=対応扱い）で唯一動く画面を誤ってロックしない。
+type Coverage = "supported" | "school" | "faculty" | "noschool";
+function looksCommerce(dept: string | null): boolean {
+  if (!dept || !dept.trim()) return true; // 未設定は許容（scopeラベルで明示済み）
+  return /商学|商學|상학|commerce/i.test(dept);
+}
+function coverageOf(schoolDomain: string | null, dept: string | null): Coverage {
+  if (schoolDomain == null) return "noschool";
+  if (schoolDomain !== MEIJI_DOMAIN) return "school";
+  return looksCommerce(dept) ? "supported" : "faculty";
+}
 
 // 卒業要件マジシャン（お試し版）。
 // 便覧の区分別最低単位マスターを読み、各区分の取得単位を＋/−で入力。
@@ -33,6 +50,35 @@ export default function GraduationScreen() {
   const [courseId, setCourseId] = useState<string | null>(null);
   const selectedCourse = COURSES_2021.find((c) => c.id === courseId) ?? null;
   const gradeLocked = grade < 3; // 基幹科目は3・4年配当
+
+  // 対応状況ゲーティング（明治 商学部のみ整備済み）。
+  const { user, schoolDomain, schoolReady } = useAuth();
+  const [dept, setDept] = useState<string | null>(null);
+  const [profileReady, setProfileReady] = useState(false);
+  const [override, setOverride] = useState(false); // 「参考として見る」で解除
+
+  useEffect(() => {
+    if (!user) { setProfileReady(true); return; }
+    let alive = true;
+    getUserProfile(user.uid)
+      .then((p) => {
+        if (!alive) return;
+        setDept(p?.department ?? null);
+        // 入学年度が分かればマスターと学年を自動プリセット（利便性）。
+        if (p?.admissionYear != null) {
+          setMasterIdx(p.admissionYear <= 2022 ? 0 : 1);
+          const g = new Date().getFullYear() - p.admissionYear + 1;
+          setGrade(Math.min(4, Math.max(1, g)));
+        }
+      })
+      .catch(() => {}) // 通信失敗は fail-open
+      .finally(() => { if (alive) setProfileReady(true); });
+    return () => { alive = false; };
+  }, [user]);
+
+  const coverage = coverageOf(schoolDomain, dept);
+  // profileReady/schoolReady 前や通信不明時は fail-open（=ブロックしない）。
+  const blocked = profileReady && schoolReady && coverage !== "supported" && !override;
 
   function step(zoneId: string, delta: number) {
     setAcquired((prev) => {
@@ -71,6 +117,28 @@ export default function GraduationScreen() {
         <View style={styles.expBadge}><Text style={styles.expBadgeText}>{t("grad.experiment")}</Text></View>
       </View>
 
+      {blocked ? (
+        <View style={styles.content}>
+          <View style={styles.soonCard}>
+            <Text style={styles.soonIcon}>🛠️</Text>
+            <Text style={styles.soonTitle}>{t("grad.soonTitle")}</Text>
+            <Text style={styles.soonBody}>
+              {coverage === "noschool"
+                ? t("grad.soonNoSchool")
+                : coverage === "school"
+                ? t("grad.soonSchool")
+                : t("grad.soonFaculty")}
+            </Text>
+            <View style={styles.soonSupported}>
+              <Text style={styles.soonSupportedText}>{t("grad.soonSupported")}</Text>
+            </View>
+            <Text style={styles.soonNote}>{t("grad.soonNote")}</Text>
+            <TouchableOpacity style={styles.soonBrowse} onPress={() => setOverride(true)}>
+              <Text style={styles.soonBrowseText}>{t("grad.soonBrowse")}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
       <ScrollView contentContainerStyle={styles.content}>
         {/* 入学年度（マスター選択） */}
         <Text style={styles.sectionLabel}>{t("grad.masterLabel")}</Text>
@@ -253,6 +321,7 @@ export default function GraduationScreen() {
           <Text style={styles.disclaimerText}>{t("grad.disclaimer")}</Text>
         </View>
       </ScrollView>
+      )}
     </View>
   );
 }
@@ -405,6 +474,25 @@ function makeStyles(theme: Theme) {
     },
     ruleDot: { fontSize: 13, color: theme.primary, fontWeight: "800", lineHeight: 18 },
     ruleText: { flex: 1, fontSize: 11.5, color: theme.textSecondary, lineHeight: 17 },
+
+    // 準備中(ゲート)
+    soonCard: {
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border, borderRadius: 16,
+      padding: 22, marginTop: 20, alignItems: "center",
+    },
+    soonIcon: { fontSize: 34, marginBottom: 10 },
+    soonTitle: { fontSize: 16, fontWeight: "800", color: theme.textPrimary },
+    soonBody: { fontSize: 13, color: theme.textSecondary, marginTop: 8, textAlign: "center", lineHeight: 19 },
+    soonSupported: {
+      backgroundColor: theme.primary + "1A", borderRadius: 10, paddingHorizontal: 12, paddingVertical: 9, marginTop: 16,
+    },
+    soonSupportedText: { fontSize: 12, fontWeight: "700", color: theme.primary, textAlign: "center" },
+    soonNote: { fontSize: 11, color: theme.textSecondary, marginTop: 12, textAlign: "center" },
+    soonBrowse: {
+      marginTop: 18, borderRadius: 10, borderWidth: 1, borderColor: theme.border,
+      paddingHorizontal: 16, paddingVertical: 11,
+    },
+    soonBrowseText: { fontSize: 12.5, fontWeight: "700", color: theme.textSecondary },
 
     disclaimer: {
       backgroundColor: theme.accent + "14", borderRadius: 10, padding: 12, marginTop: 18,
