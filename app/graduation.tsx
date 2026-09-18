@@ -6,8 +6,10 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
 import { GRAD_MASTERS, type GradMaster } from "../src/data/graduationMaster";
+import { COURSES_2021, YEAR3_ONLY } from "../src/data/graduationCourses2021";
 
 const MET_COLOR = "#1F9D6B";
+const GRADES = [1, 2, 3, 4];
 
 // 卒業要件マジシャン（お試し版）。
 // 便覧の区分別最低単位マスターを読み、各区分の取得単位を＋/−で入力。
@@ -25,6 +27,12 @@ export default function GraduationScreen() {
 
   // 区分ごとの取得単位（お試し入力）。マスター切替時も同じidは引き継ぐ。
   const [acquired, setAcquired] = useState<Record<string, number>>({});
+
+  // CAN(履修できる科目) 用: 現在学年 + 選択コース。
+  const [grade, setGrade] = useState(3);
+  const [courseId, setCourseId] = useState<string | null>(null);
+  const selectedCourse = COURSES_2021.find((c) => c.id === courseId) ?? null;
+  const gradeLocked = grade < 3; // 基幹科目は3・4年配当
 
   function step(zoneId: string, delta: number) {
     setAcquired((prev) => {
@@ -58,7 +66,7 @@ export default function GraduationScreen() {
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{t("grad.title")}</Text>
-          <Text style={styles.subtitle}>{t("grad.subtitle")}</Text>
+          <Text style={styles.subtitle}>{t("grad.scope")}</Text>
         </View>
         <View style={styles.expBadge}><Text style={styles.expBadgeText}>{t("grad.experiment")}</Text></View>
       </View>
@@ -165,6 +173,82 @@ export default function GraduationScreen() {
           );
         })}
 
+        {/* CAN — これから履修できる科目（参考） */}
+        <Text style={styles.canHeading}>{t("grad.canHeading")}</Text>
+        <Text style={styles.canIntro}>{t("grad.canIntro")}</Text>
+
+        {/* 現在の学年 */}
+        <Text style={styles.miniLabel}>{t("grad.gradeLabel")}</Text>
+        <View style={styles.seg}>
+          {GRADES.map((g) => (
+            <TouchableOpacity
+              key={g}
+              style={[styles.segBtn, grade === g && styles.segBtnOn]}
+              onPress={() => setGrade(g)}
+            >
+              <Text style={[styles.segText, grade === g && styles.segTextOn]}>{g}年</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* コース選択 */}
+        <Text style={styles.miniLabel}>{t("grad.courseLabel")}</Text>
+        <View style={styles.chipWrap}>
+          {COURSES_2021.map((c) => {
+            const on = c.id === courseId;
+            return (
+              <TouchableOpacity
+                key={c.id}
+                style={[styles.courseChip, on && styles.courseChipOn]}
+                onPress={() => setCourseId(on ? null : c.id)}
+              >
+                <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{c.nameJa}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {selectedCourse ? (
+          <View style={styles.canCard}>
+            <View style={styles.canCardTop}>
+              <Text style={styles.canCardTitle}>{selectedCourse.nameJa}</Text>
+              <View style={styles.canCountBadge}>
+                <Text style={styles.canCountText}>{t("grad.canCount")} {selectedCourse.subjects.length}</Text>
+              </View>
+            </View>
+            <Text style={styles.canYearNote}>{t("grad.canYearNote")}</Text>
+            {gradeLocked ? (
+              <View style={styles.lockRow}>
+                <Text style={styles.lockText}>{t("grad.canGradeLock")}</Text>
+              </View>
+            ) : null}
+            <View style={styles.subjWrap}>
+              {selectedCourse.subjects.map((s) => {
+                const y3 = YEAR3_ONLY.includes(s);
+                return (
+                  <View key={s} style={[styles.subjChip, gradeLocked && styles.subjChipDim]}>
+                    <Text style={[styles.subjText, gradeLocked && styles.subjTextDim]}>{s}</Text>
+                    {y3 ? <Text style={styles.subjYear}>3年</Text> : null}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        ) : (
+          <View style={styles.canPrompt}>
+            <Text style={styles.canPromptText}>{t("grad.coursePrompt")}</Text>
+          </View>
+        )}
+
+        {/* 履修のルール */}
+        <Text style={styles.rulesHeading}>{t("grad.rulesHeading")}</Text>
+        {[t("grad.ruleCap"), t("grad.ruleMedia"), t("grad.ruleFree")].map((r, i) => (
+          <View key={i} style={styles.ruleCard}>
+            <Text style={styles.ruleDot}>•</Text>
+            <Text style={styles.ruleText}>{r}</Text>
+          </View>
+        ))}
+
         <View style={styles.disclaimer}>
           <Text style={styles.disclaimerText}>{t("grad.disclaimer")}</Text>
         </View>
@@ -270,6 +354,57 @@ function makeStyles(theme: Theme) {
       borderWidth: 1, borderColor: theme.border, justifyContent: "center", alignItems: "center",
     },
     stepBtnText: { fontSize: 16, fontWeight: "700", color: theme.primary },
+
+    // CAN セクション
+    canHeading: { fontSize: 13, color: theme.textPrimary, fontWeight: "800", marginTop: 26 },
+    canIntro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 4, lineHeight: 16 },
+    miniLabel: { fontSize: 12, color: theme.textSecondary, fontWeight: "700", marginTop: 14, marginBottom: 6 },
+
+    chipWrap: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+    courseChip: {
+      paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999,
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border,
+    },
+    courseChipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
+    courseChipText: { fontSize: 12, fontWeight: "700", color: theme.textSecondary },
+    courseChipTextOn: { color: "#fff" },
+
+    canPrompt: {
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border, borderStyle: "dashed",
+      borderRadius: 12, padding: 16, marginTop: 12, alignItems: "center",
+    },
+    canPromptText: { fontSize: 12, color: theme.textSecondary, textAlign: "center" },
+
+    canCard: {
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border, borderRadius: 14,
+      padding: 14, marginTop: 12,
+    },
+    canCardTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+    canCardTitle: { fontSize: 14, fontWeight: "800", color: theme.textPrimary, flex: 1, paddingRight: 8 },
+    canCountBadge: { backgroundColor: theme.primary + "1E", borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3 },
+    canCountText: { fontSize: 11, fontWeight: "800", color: theme.primary },
+    canYearNote: { fontSize: 11, color: theme.textSecondary, marginTop: 6, lineHeight: 16 },
+    lockRow: { backgroundColor: theme.accent + "16", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 7, marginTop: 8 },
+    lockText: { fontSize: 11.5, fontWeight: "700", color: theme.accent },
+
+    subjWrap: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 12 },
+    subjChip: {
+      flexDirection: "row", alignItems: "center", gap: 4,
+      backgroundColor: theme.background, borderWidth: 1, borderColor: theme.border,
+      borderRadius: 8, paddingHorizontal: 9, paddingVertical: 6,
+    },
+    subjChipDim: { opacity: 0.5 },
+    subjText: { fontSize: 11.5, color: theme.textPrimary, fontWeight: "600" },
+    subjTextDim: { color: theme.textSecondary },
+    subjYear: { fontSize: 9.5, color: theme.primary, fontWeight: "800" },
+
+    rulesHeading: { fontSize: 12.5, color: theme.textPrimary, fontWeight: "800", marginTop: 22, marginBottom: 6 },
+    ruleCard: {
+      flexDirection: "row", gap: 8, backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border,
+      borderRadius: 10, padding: 11, marginTop: 7,
+    },
+    ruleDot: { fontSize: 13, color: theme.primary, fontWeight: "800", lineHeight: 18 },
+    ruleText: { flex: 1, fontSize: 11.5, color: theme.textSecondary, lineHeight: 17 },
 
     disclaimer: {
       backgroundColor: theme.accent + "14", borderRadius: 10, padding: 12, marginTop: 18,
