@@ -188,6 +188,12 @@ const ja = {
   "grad.stepHint": "※ 各区分の取得単位を ＋/− で入力（お試し）。成績は保存されません。",
   "grad.met": "達成",
   "grad.short": "不足",
+  "grad.shortHeading": "不足している区分",
+  "grad.shortIntro": "まだ足りない区分と、あと何単位必要かの目安です。",
+  "grad.shortByPrefix": "あと",
+  "grad.allMet": "全区分の最低要件を達成しました 🎉",
+  "grad.metHeading": "達成済みの区分",
+  "grad.inputHeading": "区分別の取得単位を入力",
   "grad.disclaimer": "表示は目安です。単位数・卒業／進級の可否は、必ず大学の公式情報（Oh-o! Meiji・履修要項）でご確認ください。",
 
   // ホーム・時間割
@@ -615,6 +621,12 @@ const ko: Record<TranslationKey, string> = {
   "grad.stepHint": "※ 각 영역의 취득 단위를 ＋/− 로 입력(맛보기). 성적은 저장되지 않습니다.",
   "grad.met": "충족",
   "grad.short": "부족",
+  "grad.shortHeading": "부족한 영역",
+  "grad.shortIntro": "아직 부족한 영역과 앞으로 필요한 단위 수의 목안입니다.",
+  "grad.shortByPrefix": "앞으로",
+  "grad.allMet": "모든 영역의 최소 요건을 달성했습니다 🎉",
+  "grad.metHeading": "달성한 영역",
+  "grad.inputHeading": "영역별 취득 단위 입력",
   "grad.disclaimer": "표시값은 참고용 추정입니다. 실제 단위 수와 졸업·진급 가능 여부는 반드시 대학 공식 정보(Oh-o! Meiji·履修要項)에서 직접 확인하세요.",
 
   "home.friendsSection": "친구",

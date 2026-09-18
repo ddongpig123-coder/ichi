@@ -7,6 +7,7 @@ export interface GradZone {
   id: string;
   nameJa: string;
   minUnits: number;
+  hintJa?: string; // この区分を満たす科目の目安（便覧より）
 }
 
 export interface GradMaster {
@@ -24,13 +25,13 @@ const PRE_2023: GradMaster = {
   admissionYearMax: 2022,
   totalRequired: 134,
   zones: [
-    { id: "kiso", nameJa: "①基礎教育科目", minUnits: 8 },
-    { id: "gaikokugo", nameJa: "②外国語(必修)", minUnits: 16 },
-    { id: "sogo", nameJa: "③④総合教育+総合学際", minUnits: 24 },
-    { id: "hoken", nameJa: "⑤保健体育(必修)", minUnits: 2 },
-    { id: "kihon", nameJa: "⑥基本科目", minUnits: 16 },
-    { id: "kikan", nameJa: "⑦⑧基幹+商学専門演習", minUnits: 48 },
-    { id: "freezone", nameJa: "⑨フリーゾーン", minUnits: 20 },
+    { id: "kiso", nameJa: "①基礎教育科目", minUnits: 8, hintJa: "基礎演習・文章表現・経済学A/B（全必修）" },
+    { id: "gaikokugo", nameJa: "②外国語(必修)", minUnits: 16, hintJa: "既習(英語)8 + 初習1言語8" },
+    { id: "sogo", nameJa: "③④総合教育+総合学際", minUnits: 24, hintJa: "文化と芸術／地域と社会／人間と自然 各4以上" },
+    { id: "hoken", nameJa: "⑤保健体育(必修)", minUnits: 2, hintJa: "体育・スポーツ実習A・B（必修）" },
+    { id: "kihon", nameJa: "⑥基本科目", minUnits: 16, hintJa: "商学専門演習(2年)・簿記・会計・経営など" },
+    { id: "kikan", nameJa: "⑦⑧基幹+商学専門演習", minUnits: 48, hintJa: "自コース28以上(基幹英語4含む) + 他コース・演習で計48" },
+    { id: "freezone", nameJa: "⑨フリーゾーン", minUnits: 20, hintJa: "②〜⑧の超過分＋応用・資格科目など" },
   ],
 };
 
@@ -41,13 +42,13 @@ const FROM_2023: GradMaster = {
   admissionYearMax: null,
   totalRequired: 126,
   zones: [
-    { id: "kiso", nameJa: "①基礎教育科目", minUnits: 8 },
-    { id: "gaikokugo", nameJa: "②外国語(必修)", minUnits: 16 },
-    { id: "sogo", nameJa: "③④総合教育+総合学際", minUnits: 24 },
-    { id: "hoken", nameJa: "⑤保健体育(必修)", minUnits: 2 },
-    { id: "kihon", nameJa: "⑥基本科目", minUnits: 16 },
-    { id: "kikan", nameJa: "⑦⑧基幹+商学専門演習", minUnits: 48 },
-    { id: "freezone", nameJa: "⑨フリーゾーン", minUnits: 12 },
+    { id: "kiso", nameJa: "①基礎教育科目", minUnits: 8, hintJa: "基礎演習・文章表現・経済学A/B（全必修）" },
+    { id: "gaikokugo", nameJa: "②外国語(必修)", minUnits: 16, hintJa: "既習(英語)8 + 初習1言語8" },
+    { id: "sogo", nameJa: "③④総合教育+総合学際", minUnits: 24, hintJa: "文化と芸術／地域と社会／人間と自然 各4以上" },
+    { id: "hoken", nameJa: "⑤保健体育(必修)", minUnits: 2, hintJa: "体育・スポーツ実習A・B（必修）" },
+    { id: "kihon", nameJa: "⑥基本科目", minUnits: 16, hintJa: "商学専門演習(2年)・簿記・会計・経営など" },
+    { id: "kikan", nameJa: "⑦⑧基幹+商学専門演習", minUnits: 48, hintJa: "自コース28以上(基幹英語4含む) + 他コース・演習で計48" },
+    { id: "freezone", nameJa: "⑨フリーゾーン", minUnits: 12, hintJa: "②〜⑧の超過分＋応用・資格科目など" },
   ],
 };
 
