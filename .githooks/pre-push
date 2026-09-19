@@ -1,0 +1,20 @@
+#!/bin/sh
+# git push 時に Web 배포본(https://ichi-6b8f7.web.app)을 자동 갱신한다.
+# 유효화(1회): git config core.hooksPath .githooks
+# 건너뛰기: SKIP_DEPLOY=1 git push
+# 전제: 이 PC에 firebase 로그인 돼 있을 것(npx firebase-tools login)
+
+if [ -n "$SKIP_DEPLOY" ]; then
+  echo "[pre-push] SKIP_DEPLOY 설정됨 → 배포 생략"
+  exit 0
+fi
+
+echo "[pre-push] 배포본 갱신 중 (npm run deploy:web)…"
+npm run deploy:web
+status=$?
+if [ $status -ne 0 ]; then
+  echo "[pre-push] ✖ 배포 실패 → 푸시 중단 (배포 없이 푸시하려면 SKIP_DEPLOY=1 git push)"
+  exit $status
+fi
+echo "[pre-push] ✔ 배포 완료 → 푸시 진행"
+exit 0
