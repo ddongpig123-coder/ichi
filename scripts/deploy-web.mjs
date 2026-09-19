@@ -16,13 +16,15 @@ import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
-const npx = process.platform === "win32" ? "npx.cmd" : "npx";
+// Windows では .cmd を shell なしで spawn できない(Node 18.20+/20.12+ は EINVAL) → shell 経由
+const isWin = process.platform === "win32";
+const npx = isWin ? "npx.cmd" : "npx";
 
 function run(label, args) {
   console.log(`\n▶ ${label}`);
-  const r = spawnSync(npx, args, { cwd: root, stdio: "inherit", shell: false });
+  const r = spawnSync(npx, args, { cwd: root, stdio: "inherit", shell: isWin });
   if (r.status !== 0) {
-    console.error(`✖ 失敗: ${label}`);
+    console.error(`✖ 失敗: ${label}`, r.error ? `(${r.error.code ?? r.error.message})` : `(exit ${r.status})`);
     process.exit(r.status ?? 1);
   }
 }
