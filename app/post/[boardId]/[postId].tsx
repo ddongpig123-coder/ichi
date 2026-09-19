@@ -189,7 +189,9 @@ export default function PostDetailScreen() {
       await loadComments();
     } else {
       await softDeletePost(schoolDomain, boardId as BoardId, postId);
-      router.back();
+      // 直リンクで開いた場合は戻り先がないので一覧へ差し替え
+      if (router.canGoBack()) router.back();
+      else router.replace(`/(tabs)/boards/${boardId}`);
     }
   }
 

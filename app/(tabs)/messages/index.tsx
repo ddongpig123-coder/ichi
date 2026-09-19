@@ -83,7 +83,9 @@ export default function MessagesInboxScreen() {
               <Text style={styles.name}>{t("messages.anonUser")}</Text>
               <Text style={styles.time}>{timeAgo(language, item.lastMessageAt)}</Text>
             </View>
-            <Text style={styles.postRef} numberOfLines={1}>📌 {item.relatedPostTitle}</Text>
+            {!!item.relatedPostTitle && (
+              <Text style={styles.postRef} numberOfLines={1}>📌 {item.relatedPostTitle}</Text>
+            )}
             <Text style={styles.lastMsg} numberOfLines={1}>
               {item.lastMessage || t("messages.started")}
             </Text>

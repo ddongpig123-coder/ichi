@@ -185,7 +185,9 @@ export default function LoungePostDetailScreen() {
       await loadComments();
     } else {
       await softDeleteLoungePost(loungeId as LoungeId, postId);
-      router.back();
+      // 直リンクで開いた場合は戻り先がないので一覧へ差し替え
+      if (router.canGoBack()) router.back();
+      else router.replace(`/lounge/${loungeId}`);
     }
   }
 

@@ -1,5 +1,5 @@
 import {
-  addDoc, collection, doc, getDoc, getDocs, limit, query, setDoc, where,
+  addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, query, setDoc, where,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import type { Course, CourseReview, ReviewTag, Semester } from "../types/course";
@@ -187,6 +187,11 @@ export async function setCourseReview(loc: CourseLoc, uid: string, input: Review
     createdAt: existing.exists() ? (existing.data().createdAt ?? now) : now,
     updatedAt: existing.exists() ? now : null,
   });
+}
+
+// 自分のレビューを削除（ルール: isOwner(reviewerUid) のみ許可）
+export async function deleteCourseReview(loc: CourseLoc, uid: string): Promise<void> {
+  await deleteDoc(reviewDoc(loc, uid));
 }
 
 export async function fetchCourseReviews(loc: CourseLoc): Promise<CourseReviewWithUid[]> {

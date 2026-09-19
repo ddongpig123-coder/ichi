@@ -55,8 +55,18 @@ export default function HomeScreen() {
   const missingDocKeys = useRef<Set<string>>(new Set());
   const loadedKeys = useRef<Set<string>>(new Set());
 
+  // ログイン等で uid が変わったら学期キャッシュは別人のものなので破棄する
+  const cachedUid = useRef<string | null>(null);
   useEffect(() => {
-    if (!user || loadedKeys.current.has(semesterKey)) return;
+    if (!user) return;
+    if (cachedUid.current !== user.uid) {
+      cachedUid.current = user.uid;
+      loadedKeys.current.clear();
+      missingDocKeys.current.clear();
+      setSessionsMap({});
+      setVisibilityMap({});
+    }
+    if (loadedKeys.current.has(semesterKey)) return;
     loadedKeys.current.add(semesterKey);
     getTimetable(user.uid, semesterKey)
       .then((docData) => {

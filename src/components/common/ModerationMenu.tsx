@@ -69,8 +69,17 @@ export default function ModerationMenu({
   const [submitting, setSubmitting] = useState(false);
 
   const isSelf = !!user && user.uid === targetAuthorUid;
+  const showReport = !isSelf; // 自分自身の通報は無意味
   const showBlock = canBlock && !isSelf;
   const showDelete = isSelf && !!onDelete;
+
+  // 削除確認の文言は対象種別ごと（投稿/コメント/レビュー）
+  const deleteTitleKey: TranslationKey =
+    targetType === "comment" ? "moderation.deleteTitleComment"
+    : targetType === "review" ? "moderation.deleteTitleReview"
+    : "moderation.deleteTitle";
+  const deleteDescKey: TranslationKey =
+    targetType === "review" ? "moderation.deleteDescReview" : "moderation.deleteDesc";
 
   function reset() {
     setMode("menu");
@@ -138,9 +147,11 @@ export default function ModerationMenu({
         <TouchableOpacity style={styles.sheet} activeOpacity={1}>
           {mode === "menu" && (
             <>
-              <TouchableOpacity style={styles.menuItem} onPress={() => setMode("report")}>
-                <Text style={styles.menuText}>{t("report.menuReport")}</Text>
-              </TouchableOpacity>
+              {showReport && (
+                <TouchableOpacity style={styles.menuItem} onPress={() => setMode("report")}>
+                  <Text style={styles.menuText}>{t("report.menuReport")}</Text>
+                </TouchableOpacity>
+              )}
               {showBlock && (
                 <TouchableOpacity style={styles.menuItem} onPress={() => setMode("confirmBlock")}>
                   <Text style={styles.menuTextDanger}>{t("report.menuBlock")}</Text>
@@ -202,8 +213,8 @@ export default function ModerationMenu({
 
           {mode === "confirmDelete" && (
             <>
-              <Text style={styles.title}>{t("moderation.deleteTitle")}</Text>
-              <Text style={styles.confirmDesc}>{t("moderation.deleteDesc")}</Text>
+              <Text style={styles.title}>{t(deleteTitleKey)}</Text>
+              <Text style={styles.confirmDesc}>{t(deleteDescKey)}</Text>
               <View style={styles.actionRow}>
                 <TouchableOpacity style={styles.secondaryBtn} onPress={() => setMode("menu")}>
                   <Text style={styles.secondaryText}>{t("common.back")}</Text>

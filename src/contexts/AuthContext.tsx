@@ -53,14 +53,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       if (u) {
+        // 先に user を差し替える。ensureUserProfile(通信)を待つ間に古い uid のまま
+        // 画面が Firestore を読むと、トークンは新 uid なので permission-denied になるため。
+        setUser(u);
+        setLoading(false);
         // 匿名ユーザー含め、初回進入時にusersドキュメントを保証する
         try {
           await ensureUserProfile(u.uid, u.email);
         } catch (e) {
           console.warn("ensureUserProfile failed:", e);
         }
-        setUser(u);
-        setLoading(false);
         // 実校スコープ判定のため users.schoolDomain をロードする
         setSchoolReady(false);
         await loadSchoolDomain(u.uid);

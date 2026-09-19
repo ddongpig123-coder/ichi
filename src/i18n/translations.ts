@@ -227,6 +227,8 @@ const ja = {
   "timetable.springSemester": "春学期",
   "timetable.fallSemester": "秋学期",
   "timetable.editTitle": "講義を編集",
+  "timetable.deleteConfirmTitle": "この講義を削除しますか？",
+  "timetable.deleteConfirmMessage": "時間割から削除されます。",
   "timetable.daySuffix": "曜日",
   "timetable.periodSuffix": "限",
   "timetable.yearSuffix": "年",
@@ -445,6 +447,9 @@ const ja = {
   // 削除・禁止語（Phase 1b 残り）
   "moderation.menuDelete": "削除する",
   "moderation.deleteTitle": "この投稿を削除しますか？",
+  "moderation.deleteTitleComment": "このコメントを削除しますか？",
+  "moderation.deleteTitleReview": "このレビューを削除しますか？",
+  "moderation.deleteDescReview": "レビューは完全に削除され、集計からも除外されます。",
   "moderation.deleteDesc":
     "投稿は一覧から見えなくなります。ただし法令対応のため、運営者は記録を一定期間（原則6ヶ月）保存します。",
   "moderation.deleteFailed": "削除に失敗しました",
@@ -679,6 +684,8 @@ const ko: Record<TranslationKey, string> = {
   "timetable.springSemester": "봄학기",
   "timetable.fallSemester": "가을학기",
   "timetable.editTitle": "강의 편집",
+  "timetable.deleteConfirmTitle": "이 강의를 삭제할까요?",
+  "timetable.deleteConfirmMessage": "시간표에서 삭제됩니다.",
   "timetable.daySuffix": "요일",
   "timetable.periodSuffix": "교시",
   "timetable.yearSuffix": "년",
@@ -887,6 +894,9 @@ const ko: Record<TranslationKey, string> = {
   // 삭제·금칙어 (Phase 1b 잔여)
   "moderation.menuDelete": "삭제하기",
   "moderation.deleteTitle": "이 글을 삭제할까요?",
+  "moderation.deleteTitleComment": "이 댓글을 삭제할까요?",
+  "moderation.deleteTitleReview": "이 리뷰를 삭제할까요?",
+  "moderation.deleteDescReview": "리뷰는 완전히 삭제되며 집계에서도 제외됩니다.",
   "moderation.deleteDesc":
     "목록에서 보이지 않게 됩니다. 다만 법령 대응을 위해 운영자는 기록을 일정 기간(원칙 6개월) 보관합니다.",
   "moderation.deleteFailed": "삭제에 실패했습니다",

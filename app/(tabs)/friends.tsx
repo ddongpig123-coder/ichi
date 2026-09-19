@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import type { Theme } from "../../src/theme/themes";
 import TimeTable from "../../src/components/timetable/TimeTable";
@@ -18,6 +18,7 @@ import {
   type FriendRequestWithSender,
 } from "../../src/services/friendRequestService";
 import { getTimetable } from "../../src/services/timetableService";
+import { getOrCreateChat } from "../../src/services/chatService";
 import type { ClassSession } from "../../src/types/timetable";
 import {
   type Semester,
@@ -56,8 +57,9 @@ export default function FriendsScreen() {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const { user } = useAuth();
+  const { user, schoolDomain } = useAuth();
   const { t } = useI18n();
+  const router = useRouter();
   const { allFriends, frequent, nonFrequent, loading, removeFriend, refresh } = useFriends();
   const orderedAll = [...frequent, ...nonFrequent];
 
@@ -81,6 +83,16 @@ export default function FriendsScreen() {
 
   useFocusEffect(loadRequests);
 
+  // 相手が申請を承認した場合は自分側で何も起きないため、タブを開くたびに友達一覧も読み直す。
+  // 初回フォーカスは FriendsContext がログイン時に読んでいるのでスキップ（二重読み取り防止）。
+  const firstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (firstFocus.current) { firstFocus.current = false; return; }
+      refresh();
+    }, [refresh])
+  );
+
   async function handleAccept(req: FriendRequestWithSender) {
     try {
       await acceptFriendRequest(req);
@@ -99,6 +111,19 @@ export default function FriendsScreen() {
     try {
       await rejectFriendRequest(req.id);
       setRequests((prev) => prev.filter((r) => r.id !== req.id));
+    } catch (e: any) {
+      notify(t("friends.actionFailed"), e.message ?? String(e));
+    }
+  }
+
+  // 友達へのDM: 投稿経由と同じ chats/{uid1_uid2} を使う（既存なら再利用）。
+  // チャットは学校スコープなので学校未選択(schoolDomain=null)の場合は案内のみ。
+  async function handleMessage(friendId: string) {
+    if (!user) return;
+    if (!schoolDomain) { notify(t("school.promptTitle")); return; }
+    try {
+      const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, friendId, "");
+      router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
       notify(t("friends.actionFailed"), e.message ?? String(e));
     }
@@ -221,7 +246,7 @@ export default function FriendsScreen() {
               {friend.nickname}
             </Text>
             <View style={styles.actions}>
-              <TouchableOpacity style={styles.messageButton} onPress={() => {}}>
+              <TouchableOpacity style={styles.messageButton} onPress={() => handleMessage(friend.id)}>
                 <Text style={styles.messageButtonText}>{t("friends.message")}</Text>
               </TouchableOpacity>
               <TouchableOpacity

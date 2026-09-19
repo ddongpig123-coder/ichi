@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Pressable,
+  Alert,
+  Platform,
 } from "react-native";
 import { PRESET_COLORS, EXTRA_COLORS, type Day, type Period } from "../../types/timetable";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -66,6 +68,23 @@ export default function SessionFormModal({
     onSubmit({ name: name.trim(), teacher: teacher.trim(), room: room.trim(), color });
   }
 
+  // 誤タップ防止: 削除は確認してから。Alert の複数ボタンは Web で動かないため window.confirm へ
+  function confirmDelete() {
+    if (!onDelete) return;
+    const title = t("timetable.deleteConfirmTitle");
+    const message = t("timetable.deleteConfirmMessage");
+    if (Platform.OS === "web") {
+      if (window.confirm(`${title}
+
+${message}`)) onDelete();
+    } else {
+      Alert.alert(title, message, [
+        { text: t("common.cancel"), style: "cancel" },
+        { text: t("common.delete"), style: "destructive", onPress: onDelete },
+      ]);
+    }
+  }
+
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
@@ -82,7 +101,7 @@ export default function SessionFormModal({
               )}
             </View>
             {isEditing && (
-              <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
+              <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
                 <Text style={styles.deleteButtonText}>{t("common.delete")}</Text>
               </TouchableOpacity>
             )}

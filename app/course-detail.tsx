@@ -8,7 +8,7 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import { useBlock } from "../src/contexts/BlockContext";
 import {
-  fetchCourse, fetchCourseReviews, aggregateReviews,
+  fetchCourse, fetchCourseReviews, aggregateReviews, deleteCourseReview,
   type CourseLoc, type CourseReviewWithUid, type ReviewAggregate,
 } from "../src/services/courseService";
 import { REVIEW_TAGS, type Course, type ReviewTag, type Semester } from "../src/types/course";
@@ -214,6 +214,12 @@ export default function CourseDetailScreen() {
         targetPath={menuReview ? `schools/${schoolDomain}/departments/${deptId}/courses/${courseId}/reviews/${menuReview.uid}` : ""}
         targetAuthorUid={menuReview?.uid ?? ""}
         onBlocked={() => setMenuReview(null)}
+        onDelete={async () => {
+          if (!user || !menuReview || menuReview.uid !== user.uid) return;
+          await deleteCourseReview(loc, user.uid);
+          setMenuReview(null);
+          loadReviews();
+        }}
       />
     </View>
   );
