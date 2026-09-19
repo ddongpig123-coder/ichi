@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "uni-community",
+    "name": "japan time",
     "slug": "uni-community",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "scheme": "uni-community",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.unicommunity.app"
+      "bundleIdentifier": "com.japantime.app",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,8 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.unicommunity.app"
+      "package": "com.japantime.app",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png",
