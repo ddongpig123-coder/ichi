@@ -8,12 +8,38 @@
 
 ## 0. 개발자 계정 가입 (사용자 — 지금 없음, 제일 먼저)
 
-- [ ] **Apple Developer Program** 가입 ($99/년) — https://developer.apple.com/programs/
-  - 개인(Individual) or 법인(Organization). 개인이 빠름(D-U-N-S 불필요). 승인 수 시간~1일.
-  - 가입 후 **Apple Team ID**(10자리) 확보 → `eas.json`의 `appleTeamId`에 기입.
-- [ ] **Google Play Console** 가입 ($25 1회) — https://play.google.com/console/signup
-  - 개인 계정도 2024년부터 신원확인 필요(수일 소요 가능) → **여유 있게 미리**.
-- [ ] Apple: **App Store Connect**에서 앱 레코드 생성 → `ascAppId`(숫자) 확보 → `eas.json`에 기입.
+> 비용: Apple **$99/년**(매년 갱신) + Google **$25/1회**(평생) = 최초 ~$124 ≈ **17만원 / 1.9만엔**.
+> Google 신원확인·폐쇄테스트 요건 때문에 **오늘 바로 시작** 권장.
+
+### 0-A. Apple Developer Program ($99/년)
+1. [ ] **Apple ID**에 2단계 인증(2FA) 켜기 (없으면 가입 진행 안 됨).
+2. [ ] https://developer.apple.com/programs/enroll/ 접속 → "Start Your Enrollment".
+   (아이폰 **Apple Developer** 앱으로도 가능 — Face ID 신원확인이 더 빠를 때가 있음)
+3. [ ] 계정 유형: **Individual(개인)** 선택. → D-U-N-S 번호 불필요, 승인 빠름.
+   - ⚠️ 개인 계정은 **개발자 표시명 = 본인 실명(로마자)**이 스토어에 공개됨.
+     사업자명으로 감추려면 Organization(법인·D-U-N-S 필요) — 지금은 개인으로 충분.
+4. [ ] 법적 이름(재류카드 로마자 = Lee Junhee)·일본 주소(나카노 OK)·전화 입력.
+5. [ ] $99 결제(카드). 결제 카드 명의 = 가입 이름과 일치 권장.
+6. [ ] 승인 대기 **보통 24~48시간**(가끔 더). 승인 메일 오면 완료.
+7. [ ] 승인 후 https://appstoreconnect.apple.com → **Users and Access > 좌하단**에서
+   **Apple Team ID(10자리)** 확인 → `eas.json`의 `appleTeamId`에 기입.
+8. [ ] App Store Connect에서 **새 앱(App) 생성**(이름 japan time, 번들ID com.japantime.app)
+   → 생성되면 URL/화면의 **ascAppId(숫자)** 확인 → `eas.json`의 `ascAppId`에 기입.
+   `appleId`에는 로그인 이메일 기입.
+
+### 0-B. Google Play Console ($25/1회)
+1. [ ] https://play.google.com/console/signup → Google 계정으로 로그인(만든 그 계정 가능).
+2. [ ] 계정 유형: **Personal(개인)** 선택. $25 결제.
+3. [ ] **신원 확인(D-U-N-S 아님)** — 여권/재류카드 등으로 본인·주소 확인. **수일 소요 가능**.
+4. [ ] ⚠️ **신규 개인 개발자 폐쇄 테스트 요건**(2023.11~ 정책):
+   프로덕션 출시 전 **테스터 12명 이상이 20일 연속** 폐쇄(Closed) 테스트에 참여해야
+   출시 신청 가능. → **베타 협력자 10~20명이 이 요건을 겸함**. 일정에 반드시 반영.
+5. [ ] 결제 프로필(판매자 정보) 등록.
+
+### 0-C. 가입 후 eas.json 채우기 (계정 발급되면)
+- [ ] `appleId`(로그인 이메일) / `ascAppId`(숫자) / `appleTeamId`(10자리) 3개.
+- [ ] Android: Play Console에서 **서비스 계정 JSON** 발급 → 로컬 경로를 `serviceAccountKeyPath`에.
+  (이 JSON은 **절대 커밋 금지** — .gitignore의 serviceAccount*.json 패턴에 해당)
 
 ## 1. EAS 준비 (사용자 로컬 — 클라우드 환경에선 불가)
 
