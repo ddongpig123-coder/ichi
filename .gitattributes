@@ -6,3 +6,5 @@
 package-lock.json linguist-generated=true
 node_modules/ linguist-vendored=true
 assets/ linguist-documentation=true
+# 훅 스크립트는 CRLF가 되면 shebang이 깨지므로 항상 LF
+.githooks/* text eol=lf
