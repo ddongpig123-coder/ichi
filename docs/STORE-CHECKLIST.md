@@ -108,8 +108,10 @@ Apple "App Privacy" / Google "Data safety"에 아래대로 신고:
   - 이용약관(EULA): `https://ddongpig123-coder.github.io/ichi/terms.html`
   - 지원(Support): `https://ddongpig123-coder.github.io/ichi/support.html`
   - 랜딩: `https://ddongpig123-coder.github.io/ichi/`
-- [ ] ⚠️ **비공개 저장소 + 무료 플랜이면 Pages 게시 불가** → 저장소를 Public으로 바꾸거나 GitHub Pro 필요.
-      (Public 전환해도 gh-pages엔 방침 페이지만 있어 코드/내부문서는 default 브랜치 권한 그대로)
+- [ ] ⚠️ **비공개 저장소 + 무료 플랜이면 Pages 게시 불가.** 두 선택지:
+      ① 저장소를 **Public**으로 전환(주의: **소스코드 전체가 공개**됨. `.env`는 gitignore라 안 올라가지만
+      코드·docs는 공개) / ② **GitHub Pro**로 비공개 저장소 Pages 사용.
+      코드 비공개 유지가 중요하면 ②, 아니면 ①. (판단 필요 시 알려주세요)
 - [ ] 시크릿창(로그아웃)으로 위 URL 열어 **공개 확인**.
 - [ ] 문의 이메일: ddongpig123@gmail.com / 운영자: Lee Junhee / 관할: 東京地方裁判所 (약관과 일치 확인).
 
