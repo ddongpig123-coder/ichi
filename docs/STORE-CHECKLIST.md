@@ -6,7 +6,31 @@
 
 ---
 
-## 0. 개발자 계정 가입 (사용자 — 지금 없음, 제일 먼저)
+## ▶ 내일 이어서 할 일 (2026-09-20 기준)
+
+**이미 완료:** Apple 개발자 결제(주문 W1876013199) · Google Play 개발자 계정 생성 · 방침 페이지 gh-pages 배포.
+
+**바로 할 것 — GitHub 방침 URL 살리기 (계정 활성화와 무관, 지금 가능):**
+1. **저장소 Public 전환** → `https://github.com/ddongpig123-coder/ichi/settings`
+   맨 아래 **Danger Zone → Change repository visibility → Make public** → 저장소명 입력해 확인.
+   (보안 스캔 완료: 비밀키·서비스계정 히스토리에 없음 → 공개 안전. Firebase 공개키는 원래 공개값.)
+2. **Pages 켜기** → `https://github.com/ddongpig123-coder/ichi/settings/pages`
+   Source: `Deploy from a branch` / Branch: **`gh-pages`** / 폴더 **`/(root)`** → Save.
+3. 2~5분 뒤 **시크릿창(로그아웃)**으로 열어 공개 확인:
+   - `https://ddongpig123-coder.github.io/ichi/privacy.html`
+   - `https://ddongpig123-coder.github.io/ichi/terms.html`
+   - `https://ddongpig123-coder.github.io/ichi/support.html`
+
+**대기 중 (외부 승인) — 뜨면 진행:**
+- Apple 멤버십 활성화 확인 → `https://developer.apple.com/account` 에서 **Active** 뜨는지.
+  Active면 → App Store Connect 앱 생성(이름 japan time, 번들ID com.japantime.app) → Team ID/ascAppId를 `eas.json`에.
+- Google 신원확인 완료 대기(며칠). 완료되면 내부 테스트 트랙 가능.
+
+**그다음 (본인 맥에서):** `npm i -g eas-cli` → `eas login` → `eas init` → `eas build`.
+
+---
+
+## 0. 개발자 계정 가입 (✅ 둘 다 완료 — 참고용)
 
 > 비용: Apple **$99/년**(매년 갱신) + Google **$25/1회**(평생) = 최초 ~$124 ≈ **17만원 / 1.9만엔**.
 > Google 신원확인·폐쇄테스트 요건 때문에 **오늘 바로 시작** 권장.
