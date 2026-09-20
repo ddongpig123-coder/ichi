@@ -98,8 +98,19 @@ Apple "App Privacy" / Google "Data safety"에 아래대로 신고:
 
 ## 6. 방침 웹페이지 공개 (URL 필수)
 
-- [ ] `docs/legal/TERMS.md` / `PRIVACY.md` → **공개 URL**로 게시(GitHub Pages 등).
-- [ ] App Store/Play의 Privacy Policy URL 칸에 기입.
+> ✅ **gh-pages 브랜치 배포 완료** (방침 페이지만 포함, 내부 문서 노출 없음).
+> index/privacy/terms/support.html + .nojekyll. **남은 건 저장소에서 Pages 켜기 1회.**
+
+- [ ] GitHub 저장소 → **Settings → Pages** → Source: **Deploy from a branch** →
+      Branch: **`gh-pages`** / 폴더 **`/ (root)`** → Save.
+- [ ] 몇 분 뒤 공개 URL (스토어에 그대로 입력):
+  - 개인정보처리방침: `https://ddongpig123-coder.github.io/ichi/privacy.html`
+  - 이용약관(EULA): `https://ddongpig123-coder.github.io/ichi/terms.html`
+  - 지원(Support): `https://ddongpig123-coder.github.io/ichi/support.html`
+  - 랜딩: `https://ddongpig123-coder.github.io/ichi/`
+- [ ] ⚠️ **비공개 저장소 + 무료 플랜이면 Pages 게시 불가** → 저장소를 Public으로 바꾸거나 GitHub Pro 필요.
+      (Public 전환해도 gh-pages엔 방침 페이지만 있어 코드/내부문서는 default 브랜치 권한 그대로)
+- [ ] 시크릿창(로그아웃)으로 위 URL 열어 **공개 확인**.
 - [ ] 문의 이메일: ddongpig123@gmail.com / 운영자: Lee Junhee / 관할: 東京地方裁判所 (약관과 일치 확인).
 
 ## 7. 스크린샷 (사용자 — 실기기/시뮬레이터 캡처)

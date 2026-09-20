@@ -18,9 +18,10 @@
 | Additional language | 한국어 (ko) |
 | Age rating | **17+ (Apple) / Teen〜Mature (Google)** ※ユーザー生成コンテンツ有 |
 | Price | 無料 (Free) |
-| Support URL | `https://ddongpig123-coder.github.io/ichi/support`（GitHub Pages・要公開） |
-| Marketing URL | 同上 or 省略可 |
-| Privacy Policy URL | `https://ddongpig123-coder.github.io/ichi/privacy`（要公開） |
+| Support URL | `https://ddongpig123-coder.github.io/ichi/support.html` |
+| Marketing URL | `https://ddongpig123-coder.github.io/ichi/` or 省略可 |
+| Privacy Policy URL | `https://ddongpig123-coder.github.io/ichi/privacy.html` |
+| Terms URL (EULA) | `https://ddongpig123-coder.github.io/ichi/terms.html` |
 
 ---
 
