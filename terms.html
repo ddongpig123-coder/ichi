@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ichi 利用規約</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --ground: #FBFCFE;
+    --surface: #FFFFFF;
+    --surface-sunken: #F3F6FC;
+    --ink: #1A1F2E;
+    --muted: #5B6472;
+    --faint: #8A93A3;
+    --accent: #2F6AD9;
+    --accent-soft: #E8F0FD;
+    --hairline: #E4E9F2;
+    --flag-bg: #FFF6E5;
+    --flag-border: #F0C868;
+    --flag-ink: #7A5B10;
+    --font-ja: "Noto Sans JP", system-ui, -apple-system, sans-serif;
+    --font-ko: "Noto Sans KR", "Noto Sans JP", system-ui, sans-serif;
+    --font-display: "Zen Kaku Gothic New", "Noto Sans JP", system-ui, sans-serif;
+    --measure: 68ch;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0F131A;
+      --surface: #161C26;
+      --surface-sunken: #1B222E;
+      --ink: #E7EBF3;
+      --muted: #9AA4B4;
+      --faint: #6C7686;
+      --accent: #7BA6F2;
+      --accent-soft: #1B2740;
+      --hairline: #28303D;
+      --flag-bg: #2A2410;
+      --flag-border: #6E5A22;
+      --flag-ink: #E7C976;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0F131A;
+    --surface: #161C26;
+    --surface-sunken: #1B222E;
+    --ink: #E7EBF3;
+    --muted: #9AA4B4;
+    --faint: #6C7686;
+    --accent: #7BA6F2;
+    --accent-soft: #1B2740;
+    --hairline: #28303D;
+    --flag-bg: #2A2410;
+    --flag-border: #6E5A22;
+    --flag-ink: #E7C976;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ja);
+    font-size: 16px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.01em;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  header.site {
+    border-bottom: 1px solid var(--hairline);
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .site-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 14px 24px; max-width: 760px; margin: 0 auto;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .brand .mark {
+    font-family: var(--font-display); font-weight: 700; font-size: 22px;
+    color: var(--accent); letter-spacing: 0.02em;
+  }
+  .brand .doc {
+    font-size: 13px; color: var(--muted); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .langtabs { display: flex; gap: 2px; background: var(--surface-sunken);
+    border: 1px solid var(--hairline); border-radius: 999px; padding: 3px; flex-shrink: 0; }
+  .langtabs button {
+    font-family: var(--font-ja); font-size: 12px; font-weight: 700;
+    border: 0; background: transparent; color: var(--muted);
+    padding: 5px 14px; border-radius: 999px; cursor: pointer; letter-spacing: 0.04em;
+  }
+  .langtabs button[aria-selected="true"] { background: var(--surface); color: var(--accent);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .langtabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .titleblock { padding: 52px 0 28px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 6vw, 44px);
+    line-height: 1.2; margin: 0 0 16px; text-wrap: balance; letter-spacing: 0.01em;
+  }
+  .meta { font-size: 13px; color: var(--faint); margin: 0; }
+
+  .draftnote {
+    background: var(--flag-bg); border: 1px solid var(--flag-border);
+    border-radius: 14px; padding: 18px 20px; margin: 8px 0 40px;
+    font-family: var(--font-ko);
+  }
+  .draftnote h2 { font-size: 14px; font-weight: 700; margin: 0 0 8px; color: var(--flag-ink);
+    letter-spacing: 0.02em; }
+  .draftnote p { font-size: 13.5px; line-height: 1.7; margin: 0 0 10px; color: var(--flag-ink); }
+  .draftnote ul { margin: 0; padding-left: 18px; }
+  .draftnote li { font-size: 13.5px; line-height: 1.7; color: var(--flag-ink); }
+  .draftnote code {
+    font-family: var(--font-ja); background: color-mix(in srgb, var(--flag-ink) 12%, transparent);
+    padding: 1px 6px; border-radius: 5px; font-size: 12.5px; font-weight: 700;
+  }
+
+  main { padding-bottom: 40px; }
+  section.clause { padding: 22px 0; border-top: 1px solid var(--hairline); }
+  section.clause:first-of-type { border-top: 0; }
+  .clause h3 {
+    display: flex; align-items: baseline; gap: 12px;
+    font-family: var(--font-display); font-weight: 700; font-size: 19px;
+    margin: 0 0 12px; letter-spacing: 0.01em; text-wrap: balance;
+  }
+  .clause .num {
+    font-family: var(--font-display); font-size: 12px; font-weight: 700;
+    color: var(--accent); background: var(--accent-soft);
+    min-width: 30px; height: 24px; padding: 0 9px; border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transform: translateY(-1px); white-space: nowrap;
+  }
+  .clause p, .clause li { max-width: var(--measure); }
+  .clause p { margin: 0 0 12px; color: var(--ink); }
+  .clause .lead { color: var(--muted); }
+  ol.legal { margin: 0 0 12px; padding-left: 22px; }
+  ol.legal li { margin-bottom: 7px; }
+  ul.tick { list-style: none; margin: 0 0 12px; padding: 0; }
+  ul.tick li { position: relative; padding-left: 22px; margin-bottom: 7px; color: var(--ink); }
+  ul.tick li::before {
+    content: ""; position: absolute; left: 4px; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+
+  .fill {
+    font-family: var(--font-ja); font-weight: 700; color: var(--flag-ink);
+    background: var(--flag-bg); border: 1px dashed var(--flag-border);
+    padding: 0 7px; border-radius: 6px; font-size: 0.92em; white-space: nowrap;
+  }
+  .callout {
+    background: var(--surface-sunken); border: 1px solid var(--hairline);
+    border-radius: 12px; padding: 16px 18px; margin: 4px 0 12px;
+  }
+  .callout .contact { font-family: var(--font-display); font-size: 16px; color: var(--ink);
+    font-weight: 500; margin: 0; }
+
+  .ko { font-family: var(--font-ko); }
+  .ko .clause h3 { font-family: var(--font-ko); }
+
+  footer.site {
+    border-top: 1px solid var(--hairline); padding: 32px 0 56px; margin-top: 8px;
+    color: var(--faint); font-size: 12.5px;
+  }
+  footer.site .wrap { display: flex; flex-direction: column; gap: 6px; }
+  footer .mark { font-family: var(--font-display); color: var(--accent); font-weight: 700; }
+
+  body[data-lang="ja"] .lang-ko { display: none; }
+  body[data-lang="ko"] .lang-ja { display: none; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="site-inner">
+    <div class="brand">
+      <span class="mark">ichi</span>
+      <span class="doc lang-ja">利用規約</span>
+      <span class="doc lang-ko">이용약관</span>
+    </div>
+    <div class="langtabs" role="tablist" aria-label="言語 / 언어">
+      <button role="tab" id="tab-ja" aria-selected="true" onclick="setLang('ja')">日本語</button>
+      <button role="tab" id="tab-ko" aria-selected="false" onclick="setLang('ko')">한국어</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="titleblock">
+    <p class="eyebrow lang-ja">Terms of Service · 日本法準拠</p>
+    <p class="eyebrow lang-ko">Terms of Service · 일본법 준거</p>
+    <h1 class="lang-ja">利用規約</h1>
+    <h1 class="lang-ko">이용약관</h1>
+    <p class="meta lang-ja">最終更新日: 2026年8月24日 ／ 対象アプリ「ichi」</p>
+    <p class="meta lang-ko">최종 갱신일: 2026年8月24日 ／ 대상 앱 「ichi」 · 본 한국어본은 참고 번역이며 일본어 정본이 우선합니다.</p>
+  </div>
+</div>
+
+<main class="wrap">
+  <!-- ───────────── JA (정본) ───────────── -->
+  <div class="lang-ja">
+    <section class="clause">
+      <p class="lead">本利用規約（以下「本規約」）は、Lee Junhee（以下「運営者」）が提供するアプリケーション「ichi」（以下「本サービス」）の利用条件を定めるものです。利用者は、本サービスを利用することにより、本規約に同意したものとみなされます。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第1条</span>適用</h3>
+      <ol class="legal">
+        <li>本規約は、利用者と運営者との間の本サービスの利用に関わる一切の関係に適用されます。</li>
+        <li>運営者が本サービス上で掲示する個別のルール・ガイドラインは、本規約の一部を構成します。</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第2条</span>定義</h3>
+      <ol class="legal">
+        <li>「利用者」とは、本サービスを利用するすべての者をいいます（ゲスト利用を含む）。</li>
+        <li>「投稿コンテンツ」とは、利用者が本サービスに投稿・送信した文章、画像その他の情報をいいます。</li>
+        <li>「学校アカウント認証」とは、大学発行のアカウント（~.ac.jp 等）による本人確認をいいます。</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第3条</span>アカウント・ゲスト利用</h3>
+      <ol class="legal">
+        <li>本サービスは、アカウント登録なしのゲスト利用が可能です。ゲスト利用者にも本規約が適用されます。</li>
+        <li>利用者は、登録情報（メールアドレス、ニックネーム等）を正確に提供するものとします。</li>
+        <li>アカウントの管理責任は利用者本人にあります。第三者への譲渡・貸与はできません。</li>
+        <li>学校アカウント認証は任意です。認証済み利用者には認証バッジが表示されます。</li>
+        <li>運営者は、コミュニティの健全性維持のため、将来的に一部機能（投稿等）の利用に認証を必須とする変更を行うことがあります。</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第4条</span>禁止事項</h3>
+      <p>利用者は、本サービスの利用にあたり、以下の行為をしてはなりません。</p>
+      <ol class="legal">
+        <li>法令または公序良俗に違反する行為</li>
+        <li>他者への誹謗中傷、名誉毀損、侮辱、脅迫、差別的表現</li>
+        <li>他者の個人情報（氏名、住所、連絡先、写真等）を本人の同意なく公開する行為</li>
+        <li>他者になりすます行為、虚偽の情報を流布する行為</li>
+        <li>試験問題・答案等、第三者の著作権・知的財産権を侵害するコンテンツの投稿</li>
+        <li>営利目的の宣伝・勧誘・スパム行為（運営者が許可した場合を除く）</li>
+        <li>出会い・交際の斡旋を目的とする行為</li>
+        <li>本サービスの運営を妨害する行為（不正アクセス、自動化ツールによる大量操作等）</li>
+        <li>複数アカウントの不正利用、ブロック・通報機能の悪用</li>
+        <li>その他、運営者が不適切と判断する行為</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第5条</span>投稿コンテンツの取扱い</h3>
+      <ol class="legal">
+        <li>投稿コンテンツの著作権は投稿した利用者に帰属します。</li>
+        <li>利用者は運営者に対し、本サービスの提供・改善・広報に必要な範囲で、投稿コンテンツを無償で利用（複製、表示、翻訳を含む）する権利を許諾するものとします。</li>
+        <li>利用者が投稿を削除した場合でも、運営者は法令遵守・紛争対応のため、投稿記録を一定期間（原則 6 ヶ月）保存することがあります。</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第6条</span>匿名性と発信者情報</h3>
+      <ol class="legal">
+        <li>本サービスの掲示板等では、利用者間においてニックネームまたは匿名で表示されます。</li>
+        <li>前項にかかわらず、運営者はシステム上、投稿と投稿者（アカウント識別子）の対応関係を保持しています。</li>
+        <li>特定電気通信役務提供者の損害賠償責任の制限及び発信者情報の開示に関する法律（プロバイダ責任制限法）に基づく開示請求、裁判所の命令、その他法令に基づく要請があった場合、運営者は発信者情報を開示することがあります。</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第7条</span>通報・ブロック・運営措置</h3>
+      <ol class="legal">
+        <li>利用者は、本規約に違反する投稿等を通報機能により運営者に通報できます。</li>
+        <li>運営者は通報を受けた場合、速やかに（原則 24 時間以内に）内容を確認し、必要な措置（投稿の非表示・削除、警告、機能制限、アカウント停止等）を講じます。</li>
+        <li>運営者は、本規約違反またはそのおそれがあると判断した場合、事前通知なく前項の措置を行うことができます。措置の理由について、運営者は開示義務を負いません。</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第8条</span>知的財産権</h3>
+      <p>本サービスに関する知的財産権（投稿コンテンツを除く）は、運営者または正当な権利者に帰属します。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第9条</span>免責事項</h3>
+      <ol class="legal">
+        <li>運営者は、本サービスの内容の正確性・完全性・有用性について保証しません。講義情報・時間割・レビュー等は利用者の参考に供するものであり、履修判断等は利用者自身の責任で行うものとします。</li>
+        <li>利用者間または利用者と第三者との間で生じた紛争について、運営者は責任を負いません。</li>
+        <li>運営者は、本サービスの中断・停止・終了、データの消失等により利用者に生じた損害について、運営者に故意または重過失がある場合を除き、責任を負いません。</li>
+      </ol>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第10条</span>サービスの変更・中断・終了</h3>
+      <p>運営者は、利用者への事前通知なく、本サービスの内容の変更、提供の中断または終了を行うことができます。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第11条</span>規約の変更</h3>
+      <p>運営者は、必要と判断した場合、本規約を変更できます。変更後の規約は本サービス上に掲示した時点で効力を生じ、掲示後の利用をもって同意とみなします。重要な変更はアプリ内通知等で周知します。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">第12条</span>準拠法・管轄</h3>
+      <p>本規約は日本法に準拠し、本サービスに関する紛争は<strong>東京地方裁判所</strong>を第一審の専属的合意管轄裁判所とします。</p>
+      <div class="callout">
+        <p class="contact">お問い合わせ: ddongpig123@gmail.com</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────────── KO (참고 번역) ───────────── -->
+  <div class="lang-ko ko">
+    <section class="clause">
+      <p class="lead">본 이용약관(이하 「본 약관」)은 Lee Junhee(이하 「운영자」)가 제공하는 앱 「ichi」(이하 「본 서비스」)의 이용 조건을 정합니다. 이용자는 본 서비스를 이용함으로써 본 약관에 동의한 것으로 간주됩니다. 본 한국어본은 참고 번역이며, 해석에 차이가 있는 경우 일본어 정본이 우선합니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제1조</span>적용</h3>
+      <p>본 약관은 이용자와 운영자 간의 본 서비스 이용에 관한 일체의 관계에 적용되며, 운영자가 서비스에 게시하는 개별 규칙·가이드라인은 본 약관의 일부를 구성합니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제2조</span>정의</h3>
+      <p>「이용자」는 게스트를 포함한 모든 서비스 이용자, 「투고 콘텐츠」는 이용자가 투고·전송한 글·이미지 등, 「학교 계정 인증」은 대학 발행 계정(~.ac.jp 등)에 의한 본인 확인을 말합니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제3조</span>계정·게스트 이용</h3>
+      <p>계정 등록 없이 게스트 이용이 가능하며 게스트에게도 본 약관이 적용됩니다. 이용자는 등록 정보를 정확히 제공하고, 계정 관리 책임은 본인에게 있으며 제3자 양도·대여는 불가합니다. 학교 계정 인증은 선택이며 인증 배지가 표시됩니다. 운영자는 커뮤니티 건전성을 위해 장래 일부 기능(투고 등)에 인증을 필수화할 수 있습니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제4조</span>금지행위</h3>
+      <p>법령·공서양속 위반, 비방·명예훼손·모욕·협박·차별적 표현, 타인 개인정보 무단 공개, 사칭·허위 정보 유포, 시험문제·답안 등 저작권 침해물 투고, 영리 목적 광고·권유·스팸, 만남·교제 알선, 운영 방해(부정 접근·자동화 도구 대량 조작), 다중 계정 악용·차단/신고 기능 악용, 기타 운영자가 부적절하다고 판단하는 행위를 금지합니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제5조</span>투고 콘텐츠</h3>
+      <p>저작권은 투고자에게 귀속되며, 운영자는 서비스 제공·개선·홍보에 필요한 범위에서 무상 이용(복제·표시·번역 포함) 허락을 받습니다. 삭제된 투고도 법령 준수·분쟁 대응을 위해 원칙 6개월간 기록이 보존될 수 있습니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제6조</span>익명성과 발신자 정보</h3>
+      <p>이용자 간에는 닉네임/익명으로 표시되지만, 운영자는 시스템상 투고와 투고자(계정 식별자)의 대응 관계를 보유합니다. 프로바이더책임제한법에 근거한 개시 청구, 법원 명령 등 법령에 근거한 요청이 있는 경우 발신자 정보를 개시할 수 있습니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제7조</span>신고·차단·운영조치</h3>
+      <p>이용자는 위반 투고를 신고할 수 있고, 운영자는 원칙 24시간 이내에 확인 후 비표시·삭제·경고·기능 제한·계정 정지 등의 조치를 취합니다. 위반 또는 그 우려가 있다고 판단하면 사전 통지 없이 조치할 수 있으며, 조치 사유에 대한 개시 의무를 지지 않습니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제8~11조</span>지재권·면책·서비스 변경·약관 변경</h3>
+      <p>지적재산권(투고 콘텐츠 제외)은 운영자 또는 정당한 권리자에게 귀속됩니다. 강의 정보·시간표·리뷰는 참고용이며 수강 판단은 본인 책임이고, 이용자 간·제3자 간 분쟁에 대해 운영자는 책임을 지지 않습니다(고의·중과실 제외). 운영자는 사전 통지 없이 서비스를 변경·중단·종료할 수 있으며, 약관 변경은 게시 시점에 효력이 발생하고 중요한 변경은 앱 내 통지로 안내합니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">제12조</span>준거법·관할</h3>
+      <p>본 약관은 일본법에 준거하며, 본 서비스에 관한 분쟁은 <strong>東京地方裁判所</strong>(도쿄지방재판소)를 제1심 전속적 합의관할 법원으로 합니다.</p>
+      <div class="callout">
+        <p class="contact">문의: ddongpig123@gmail.com</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div><span class="mark">ichi</span> — 日本の大学生・留学生コミュニティ</div>
+    <div class="lang-ja">日本語を正本とし、韓国語は参考訳です。</div>
+    <div class="lang-ko">일본어를 정본으로 하며 한국어는 참고 번역입니다.</div>
+  </div>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.body.setAttribute("data-lang", lang);
+    document.getElementById("tab-ja").setAttribute("aria-selected", String(lang === "ja"));
+    document.getElementById("tab-ko").setAttribute("aria-selected", String(lang === "ko"));
+    try { localStorage.setItem("ichi-terms-lang", lang); } catch (e) {}
+  }
+  (function () {
+    var saved = "ja";
+    try { saved = localStorage.getItem("ichi-terms-lang") || "ja"; } catch (e) {}
+    setLang(saved === "ko" ? "ko" : "ja");
+  })();
+</script>
+
+</body>
+</html>

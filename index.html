@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>japan time — 法的情報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --ground:#FBFCFE; --surface:#FFFFFF; --surface-sunken:#F3F6FC;
+    --ink:#1A1F2E; --muted:#5B6472; --faint:#8A93A3;
+    --accent:#2F6AD9; --accent-soft:#E8F0FD; --hairline:#E4E9F2;
+    --font-ja:"Noto Sans JP",system-ui,-apple-system,sans-serif;
+    --font-ko:"Noto Sans KR","Noto Sans JP",system-ui,sans-serif;
+    --font-display:"Zen Kaku Gothic New","Noto Sans JP",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#0F131A; --surface:#161C26; --surface-sunken:#1B222E;
+      --ink:#E7EBF3; --muted:#9AA4B4; --faint:#6C7686;
+      --accent:#7BA6F2; --accent-soft:#1B2740; --hairline:#28303D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#0F131A; --surface:#161C26; --surface-sunken:#1B222E;
+    --ink:#E7EBF3; --muted:#9AA4B4; --faint:#6C7686;
+    --accent:#7BA6F2; --accent-soft:#1B2740; --hairline:#28303D;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--font-ja); font-size:16px; line-height:1.8;
+    -webkit-font-smoothing:antialiased; letter-spacing:0.01em; }
+  .wrap { max-width:640px; margin:0 auto; padding:0 24px; }
+  .hero { padding:72px 0 24px; text-align:center; }
+  .mark { font-family:var(--font-display); font-weight:700; font-size:40px;
+    color:var(--accent); letter-spacing:0.02em; }
+  .tag { color:var(--muted); font-size:14px; margin-top:8px; }
+  .tag .ko { font-family:var(--font-ko); }
+  .cards { display:flex; flex-direction:column; gap:14px; padding:20px 0 8px; }
+  a.card { display:block; text-decoration:none; color:inherit;
+    background:var(--surface); border:1px solid var(--hairline); border-radius:16px;
+    padding:20px 22px; transition:border-color .15s, transform .15s; }
+  a.card:hover { border-color:var(--accent); transform:translateY(-1px); }
+  a.card:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .card h2 { font-family:var(--font-display); font-size:18px; font-weight:700; margin:0 0 4px; }
+  .card p { margin:0; color:var(--muted); font-size:13.5px; }
+  .card .ko { font-family:var(--font-ko); }
+  .contact { background:var(--surface-sunken); border:1px solid var(--hairline);
+    border-radius:16px; padding:20px 22px; margin:6px 0 8px; }
+  .contact h2 { font-family:var(--font-display); font-size:15px; font-weight:700; margin:0 0 6px; }
+  .contact a { font-family:var(--font-display); font-size:16px; color:var(--accent);
+    text-underline-offset:3px; }
+  footer { border-top:1px solid var(--hairline); margin-top:20px;
+    padding:28px 0 56px; color:var(--faint); font-size:12.5px; }
+  footer .ko { font-family:var(--font-ko); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="mark">japan time</div>
+      <p class="tag lang-ja">日本の大学生のための時間割・コミュニティアプリ</p>
+      <p class="tag"><span class="ko">일본 대학생을 위한 시간표·커뮤니티 앱</span></p>
+    </div>
+
+    <div class="cards">
+      <a class="card" href="privacy.html">
+        <h2>プライバシーポリシー <span class="ko">／ 개인정보처리방침</span></h2>
+        <p>取得する情報・利用目的・お問い合わせ窓口。<span class="ko"> 수집 정보·이용 목적·문의.</span></p>
+      </a>
+      <a class="card" href="terms.html">
+        <h2>利用規約 <span class="ko">／ 이용약관</span></h2>
+        <p>利用条件・禁止事項・通報と運営措置。<span class="ko"> 이용 조건·금지행위·신고 및 운영조치.</span></p>
+      </a>
+      <a class="card" href="support.html">
+        <h2>サポート <span class="ko">／ 지원</span></h2>
+        <p>使い方・お問い合わせ・不具合の報告。<span class="ko"> 사용법·문의·버그 신고.</span></p>
+      </a>
+    </div>
+
+    <div class="contact">
+      <h2>お問い合わせ <span class="ko">／ 문의</span></h2>
+      <a href="mailto:ddongpig123@gmail.com">ddongpig123@gmail.com</a>
+    </div>
+
+    <footer>
+      <div>運営者 / 운영자: Lee Junhee</div>
+      <div class="lang-ja">日本語を正本とし、韓国語は参考訳です。</div>
+      <div><span class="ko">일본어를 정본으로 하며 한국어는 참고 번역입니다.</span></div>
+    </footer>
+  </div>
+</body>
+</html>
