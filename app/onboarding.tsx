@@ -96,7 +96,7 @@ export default function OnboardingScreen() {
         )}
       </View>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.appName}>ichi</Text>
+        <Text style={styles.appName}>japan time</Text>
 
         {step === 1 && (
           <>

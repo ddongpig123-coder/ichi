@@ -26,7 +26,7 @@
       "ios": {
         "appleId": "REPLACE_APPLE_ID_EMAIL",
         "ascAppId": "REPLACE_APP_STORE_CONNECT_APP_ID",
-        "appleTeamId": "REPLACE_APPLE_TEAM_ID"
+        "appleTeamId": "3498G5A326"
       },
       "android": {
         "serviceAccountKeyPath": "REPLACE_PATH_TO_GOOGLE_PLAY_SERVICE_ACCOUNT_JSON",
