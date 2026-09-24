@@ -1,6 +1,7 @@
-// 卒業要件マジシャン用「科目→区分」配当表 — 明治大学 商学部・2022年度以前入学者カリキュラム。
+// 卒業要件マジシャン用「科目→区分」配当表 — 明治大学 商学部。
 // 出典: 2026年度 商学部シラバス1（履修の手引）
-//   印刷p57「卒業要件（2022年度以前入学者）」/ p58〜72「授業科目及び担当者一覧表」/ p74「科目名対照表」。
+//   2023年度以降入学者: 印刷p39「卒業要件」/ p40〜55「授業科目及び担当者一覧表」
+//   2022年度以前入学者: 印刷p57「卒業要件」/ p58〜72「授業科目及び担当者一覧表」/ p74「科目名対照表」
 // 2021年度入学者は科目名が一部異なる → aliases に旧名を持たせ、どちらの名前でも引けるようにする。
 // 旧4単位科目（2020年度以前入学者）は別エントリ（legacy）で保持。
 // 用途: 成績表/時間割の科目名から「どの区分に何単位入るか」を判定する（クライアント計算のみ）。
@@ -9,6 +10,9 @@
 import type { GradZone } from "./graduationMaster";
 
 export type ZoneId = GradZone["id"]; // kiso / gaikokugo / sogo / hoken / kihon / kikan / freezone
+
+// どのカリキュラムの配当表か（graduationMaster の key と一致）
+export type AllocKey = "pre2023" | "from2023";
 
 // 総合教育科目の3分野（各4単位以上）
 export type SogoSub = "bunka" | "chiiki" | "ningen" | "ryugakusei" | "gakusai";
@@ -23,13 +27,14 @@ export type CourseId =
   | "creative-business";
 
 export interface AllocEntry {
-  name: string;          // 2022年度以降入学者の科目名（p58〜72の表記）
+  name: string;          // 一覧表の科目名
   aliases?: string[];    // 2021年度以前入学者の旧名（科目名対照表）
   units: number;
   zone: ZoneId | null;   // null = 卒業要件に含まれない（大学院科目など）
   sub?: SogoSub;         // 総合教育の分野
   years: string;         // 配当年次（例 "1-2", "3-4", "1-4"）
   courses?: CourseId[];  // 基幹科目: どのコースの科目か（自コース判定に使う）
+  kikanEigo?: true;      // 基幹英語（2023〜: 別枠4単位 / 〜2022: 外国専門書講読4は自コース28に含む）
   repeatable?: boolean;  // 同名で複数回修得できる（総合学際演習・商学専門演習・外国専門書講読・日本語）
   offered?: false;       // 2026年度「開講せず」（過去の修得判定には影響しない）
   capGroup?: "shikaku";  // 資格課程科目: 8単位まで卒業要件に算入
@@ -53,11 +58,15 @@ function ABs(...bases: string[]): string {
   return bases.map((b) => AB(b)).join("|");
 }
 
-// ── 基礎教育科目（全必修 8） ─────────────────────────────
+// ============================================================
+// 両カリキュラム共通
+// ============================================================
+
+// 基礎教育科目（全必修 8）
 const KISO = E("kiso", "1", 2, "基礎演習|文章表現|経済学A|経済学B");
 
-// ── 総合教育科目 + 総合学際演習（合計24、3分野各4以上） ─────────
-const SOGO: AllocEntry[] = [
+// 総合教育科目 3分野 + 留学生科目（合計24、3分野各4以上）
+const SOGO_COMMON: AllocEntry[] = [
   ...E("sogo", "1-2", 2, [ABs("日本文化史", "西洋文化史", "日本語表現論", "日本近代文学", "日本古典文学"), AB("宗教学", true)].join("|"), { sub: "bunka" }),
   ...E("sogo", "3-4", 2, [AB("外国文学（西洋）", true), AB("外国文学（東洋）", true), ABs("芸術（音楽）", "芸術（美術）")].join("|"), { sub: "bunka" }),
   ...E("sogo", "1-2", 2, ABs("法学", "アジア史", "地理学", "社会学", "社会思想史"), { sub: "chiiki" }),
@@ -72,7 +81,7 @@ const SOGO: AllocEntry[] = [
   ...E("sogo", "2-4", 2, "総合学際演習", { sub: "gakusai", repeatable: true }),
 ];
 
-// ── 外国語科目（必修: 既習8＋初習8） ───────────────────────────
+// 外国語科目（必修: 既習8＋初習8）
 const LANGS = ["ドイツ語", "フランス語", "中国語", "韓国語", "スペイン語", "ロシア語"];
 const roman = ["Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ"];
 const GAIKOKUGO: AllocEntry[] = [
@@ -99,7 +108,7 @@ const GAIKOKUGO_ELECTIVE: AllocEntry[] = [
   ...E("freezone", "3-4", 1, "上級スペイン語|発展スペイン語×"),
 ];
 
-// ── 保健体育科目（必修2、選択はフリーゾーン） ──────────────────
+// 保健体育科目（必修2、選択はフリーゾーン）
 const HOKEN: AllocEntry[] = [
   ...E("hoken", "1", 1, "体育・スポーツ実習A|体育・スポーツ実習B"),
   ...E("freezone", "2", 1, "選択スポーツ実習"),
@@ -107,17 +116,44 @@ const HOKEN: AllocEntry[] = [
   ...E("freezone", "1-2", 2, "スポーツとグローバリゼーション|スポーツと健康"),
 ];
 
-// ── 基本科目（16） ──────────────────────────────────────
-const KIHON: AllocEntry[] = [
-  ...E("kihon", "1-2", 2, "ミクロ経済学|マクロ経済学|" + ABs("理論経済学")),
-  { name: "経済史A", aliases: ["欧米経済史"], units: 2, zone: "kihon", years: "1-2" },
-  { name: "経済史B", aliases: ["アジア経済史"], units: 2, zone: "kihon", years: "1-2" },
-  ...E("kihon", "1-2", 2, ABs("商業総論", "経営学総論", "簿記学", "会計学総論", "統計学", "金融総論", "貿易総論")),
+// 基本科目の共通部分（16）
+const KIHON_CORE = "ミクロ経済学|マクロ経済学|" + ABs("理論経済学");
+const KIHON_REST = ABs("商業総論", "経営学総論", "簿記学", "会計学総論", "統計学", "金融総論", "貿易総論");
+
+// 応用展開科目の共通部分（フリーゾーン）
+const OYO_COMMON: AllocEntry[] = [
+  ...E("freezone", "1-4", 2, "総合講座A|総合講座B|総合講座C|総合講座D"),
+  ...E("freezone", "1-2", 2, "会計特殊講義A|会計特殊講義B"),
+  ...E("freezone", "1-4", 2, "特別テーマ実践科目A|特別テーマ実践科目B|特別テーマ実践科目C|特別テーマ実践科目D"),
+  ...E("freezone", "1-4", 2, "特別テーマ研究科目A|特別テーマ研究科目B|特別テーマ研究科目C|特別テーマ研究科目D|特別テーマ研究科目E×|特別テーマ研究科目F×"),
+  ...E("freezone", "1-4", 2, "特別テーマ海外研修科目A×|特別テーマ海外研修科目B|特別テーマ海外研修科目C|特別テーマ海外研修科目D×"),
+  ...E("freezone", "1-4", 2, ABs("地域活性化システム論")),
+  ...E("freezone", "3-4", 2, AB("外国文化・言語特殊講義", true)),
+  ...E("freezone", "3", 2, "ジョブ・インターンシップ×"),
 ];
 
-// ── 基幹科目（自コース28＋他コース・演習で48） ─────────────────
-// コース別一覧（p64〜70）。複数コースに出てくる科目は courses に全コースを持たせる。
-const COURSE_LISTS: Record<CourseId, string> = {
+// その他（フリーゾーン）
+const ICT_2023_2024 =
+  "ICTエレメンタリー|ICTベーシックⅠ|ICTベーシックⅡ|ICT統計解析Ⅰ|ICT統計解析Ⅱ|ICTデータベースⅠ|ICTデータベースⅡ|" +
+  "ICTメディア編集Ⅰ|ICTメディア編集Ⅱ|ICTアプリ開発Ⅰ|ICTアプリ開発Ⅱ|ICTコンテンツデザインⅠ|ICTコンテンツデザインⅡ|" +
+  "ICT総合実践Ⅰ|ICT総合実践Ⅱ";
+const SONOTA_COMMON: AllocEntry[] = [
+  ...E("freezone", "1-2", 2, ABs("憲法")),
+  ...E("freezone", "3-4", 2, ABs("民法", "商法", "労働法")),
+  ...E("freezone", "1-4", 2, ICT_2023_2024),
+];
+
+// 資格課程科目（8単位まで）
+const SHIKAKU: AllocEntry[] = E("freezone", "1-4", 2,
+  "日本史概論|東洋史概論|西洋史概論|人文地理学概論|自然地理学概論|地誌学概論|法律学概論|政治学概論|哲学概論|倫理学概論|職業指導",
+  { capGroup: "shikaku", noteJa: "資格課程対象者のみ。8単位まで卒業要件に算入" },
+);
+
+// ── 基幹科目: コース別一覧 ──────────────────────────────
+type CourseLists = Record<CourseId, string>;
+
+// 2022年度以前入学者（p64〜70）
+const COURSES_PRE2023: CourseLists = {
   "applied-economics":
     ABs("経済政策論") + "|公共経済学|財政学|" +
     ABs("中小企業論", "産業組織論", "国際経済学") + "|" + AB("日本経済論", true) + "|" +
@@ -159,6 +195,19 @@ const COURSE_LISTS: Record<CourseId, string> = {
       "ビジネス英語", "経営戦略論", "企業評価論"),
 };
 
+// 2023年度以降入学者（p46〜52）: 2022以前との差分のみ上書き
+const COURSES_FROM2023: CourseLists = {
+  ...COURSES_PRE2023,
+  "applied-economics": COURSES_PRE2023["applied-economics"]
+    .replace("|地域経済論A|地域経済論B", "")
+    .replace(ABs("環境経済学", "計量経済学"), ABs("環境経済学", "計量経済学", "ゲーム理論")),
+  marketing: COURSES_PRE2023.marketing.replace(AB("マーケティング企画"), ABs("マーケティング企画", "競争戦略論")),
+  "finance-insurance": COURSES_PRE2023["finance-insurance"]
+    .replace(ABs("社会保障論", "保険リスクマネジメント論"), ABs("社会保障論", "保険リスクマネジメント論", "ゲーム理論")),
+  management: COURSES_PRE2023.management
+    .replace(ABs("国際経営論", "保険リスクマネジメント論"), ABs("国際経営論", "ゲーム理論", "保険リスクマネジメント論")),
+};
+
 // 科目名対照表（p74）: 2022年度以降名 → 2021年度入学者名
 const ALIASES_2021: Record<string, string[]> = {
   経営管理論: ["産業心理学A"],
@@ -172,10 +221,12 @@ const COURSE_NOTES: Record<string, string> = {
   地域経済論B: "2021年度便覧のみ掲載（2026年度一覧には無し）",
 };
 
-function buildKikan(): AllocEntry[] {
+const ALL_COURSES: CourseId[] = Object.keys(COURSES_PRE2023) as CourseId[];
+
+function buildKikan(lists: CourseLists, withAliases: boolean): AllocEntry[] {
   const map = new Map<string, AllocEntry>();
-  (Object.keys(COURSE_LISTS) as CourseId[]).forEach((cid) => {
-    COURSE_LISTS[cid].split("|").forEach((raw) => {
+  (Object.keys(lists) as CourseId[]).forEach((cid) => {
+    lists[cid].split("|").forEach((raw) => {
       const off = raw.endsWith("×");
       const name = off ? raw.slice(0, -1) : raw;
       const cur = map.get(name);
@@ -190,7 +241,7 @@ function buildKikan(): AllocEntry[] {
         years: "3-4",
         courses: [cid],
         ...(off ? { offered: false as const } : {}),
-        ...(ALIASES_2021[name] ? { aliases: ALIASES_2021[name] } : {}),
+        ...(withAliases && ALIASES_2021[name] ? { aliases: ALIASES_2021[name] } : {}),
         ...(COURSE_NOTES[name] ? { noteJa: COURSE_NOTES[name] } : {}),
       });
     });
@@ -198,18 +249,29 @@ function buildKikan(): AllocEntry[] {
   return [...map.values()];
 }
 
-const ALL_COURSES: CourseId[] = Object.keys(COURSE_LISTS) as CourseId[];
+// ============================================================
+// 2022年度以前入学者（合計134・フリーゾーン20）
+// ============================================================
 
-const KIKAN: AllocEntry[] = [
-  ...buildKikan(),
-  // 各コース共通。自コースの外国専門書講読（春・秋 各2）4単位は必修。
-  { name: "外国専門書講読", units: 2, zone: "kikan", years: "3", courses: ALL_COURSES, repeatable: true, noteJa: "自コース分4単位（春・秋）必修" },
+const PRE2023_SOGO = SOGO_COMMON;
+
+const PRE2023_KIHON: AllocEntry[] = [
+  ...E("kihon", "1-2", 2, KIHON_CORE),
+  { name: "経済史A", aliases: ["欧米経済史"], units: 2, zone: "kihon", years: "1-2" },
+  { name: "経済史B", aliases: ["アジア経済史"], units: 2, zone: "kihon", years: "1-2" },
+  ...E("kihon", "1-2", 2, KIHON_REST),
+];
+
+const PRE2023_KIKAN: AllocEntry[] = [
+  ...buildKikan(COURSES_PRE2023, true),
+  // 各コース共通。自コースの外国専門書講読（春・秋 各2）4単位は必修で自コース28に含む。
+  { name: "外国専門書講読", units: 2, zone: "kikan", years: "3", courses: ALL_COURSES, kikanEigo: true, repeatable: true, noteJa: "自コース分4単位（春・秋）必修" },
   // 商学専門演習: 自コース/他コースは担当教員の所属で決まる（ここでは区別しない）
   { name: "商学専門演習", units: 2, zone: "kikan", years: "2-4", repeatable: true, noteJa: "自/他コースは担当教員の所属による" },
 ];
 
 // 2020年度以前入学者の旧4単位科目（対照表 *3〜*10, *17〜*20）と旧名（*11, *12）
-const LEGACY: AllocEntry[] = [
+const PRE2023_LEGACY: AllocEntry[] = [
   { name: "広告論", units: 4, zone: "kikan", years: "3-4", courses: ["marketing"], legacy: true },
   { name: "インダストリアルマーケティング論", units: 4, zone: "kikan", years: "3-4", courses: ["marketing"], legacy: true },
   { name: "流通史", units: 4, zone: "kikan", years: "3-4", courses: ["marketing"], legacy: true },
@@ -220,41 +282,72 @@ const LEGACY: AllocEntry[] = [
   { name: "経営労務論B", units: 2, zone: "kikan", years: "3-4", courses: ["management"], legacy: true, noteJa: "現・経営労務論" },
 ];
 
-// ── 応用展開科目・その他・資格課程（すべてフリーゾーンへ） ─────────
-const OYO: AllocEntry[] = [
+const PRE2023_OYO: AllocEntry[] = [
   ...E("freezone", "1", 2, "総合講座（商学入門）|総合講座A（フューチャースキル講座）"),
-  ...E("freezone", "1-2", 2, "総合講座（商学研究入門）|会計特殊講義A|会計特殊講義B"),
-  ...E("freezone", "1-4", 2, "総合講座A|総合講座B|総合講座C|総合講座D|Essentials of Commerce A|Essentials of Commerce B"),
+  ...E("freezone", "1-2", 2, "総合講座（商学研究入門）"),
+  ...E("freezone", "1-4", 2, "Essentials of Commerce A|Essentials of Commerce B"),
   ...E("freezone", "3-4", 2, "Applied Commerce A|Applied Commerce B", { noteJa: "事前申請で基幹英語として認定される場合あり" }),
-  ...E("freezone", "1-4", 2, "特別テーマ実践科目A|特別テーマ実践科目B|特別テーマ実践科目C|特別テーマ実践科目D"),
-  ...E("freezone", "1-4", 2, "特別テーマ研究科目A|特別テーマ研究科目B|特別テーマ研究科目C|特別テーマ研究科目D|特別テーマ研究科目E×|特別テーマ研究科目F×"),
-  ...E("freezone", "1-4", 2, "特別テーマ海外研修科目A×|特別テーマ海外研修科目B|特別テーマ海外研修科目C|特別テーマ海外研修科目D×"),
-  ...E("freezone", "1-4", 2, ABs("地域活性化システム論")),
-  ...E("freezone", "3-4", 2, AB("外国文化・言語特殊講義", true)),
-  ...E("freezone", "3", 2, "ジョブ・インターンシップ×"),
+  ...OYO_COMMON,
 ];
-
-const SONOTA: AllocEntry[] = [
-  ...E("freezone", "1-2", 2, ABs("憲法")),
-  ...E("freezone", "3-4", 2, ABs("民法", "商法", "労働法")),
-  ...E("freezone", "1-4", 2,
-    "ICTエレメンタリー|ICTベーシックⅠ|ICTベーシックⅡ|ICT統計解析Ⅰ|ICT統計解析Ⅱ|ICTデータベースⅠ|ICTデータベースⅡ|" +
-    "ICTメディア編集Ⅰ|ICTメディア編集Ⅱ|ICTアプリ開発Ⅰ|ICTアプリ開発Ⅱ|ICTコンテンツデザインⅠ|ICTコンテンツデザインⅡ|" +
-    "ICT総合実践Ⅰ|ICT総合実践Ⅱ"),
-];
-
-const SHIKAKU: AllocEntry[] = E("freezone", "1-4", 2,
-  "日本史概論|東洋史概論|西洋史概論|人文地理学概論|自然地理学概論|地誌学概論|法律学概論|政治学概論|哲学概論|倫理学概論|職業指導",
-  { capGroup: "shikaku", noteJa: "資格課程対象者のみ。8単位まで卒業要件に算入" },
-);
 
 export const MEIJI_COMMERCE_PRE2023_ALLOCATION: AllocEntry[] = [
-  ...KISO, ...SOGO, ...GAIKOKUGO, ...GAIKOKUGO_ELECTIVE, ...HOKEN, ...KIHON,
-  ...KIKAN, ...LEGACY, ...OYO, ...SONOTA, ...SHIKAKU,
+  ...KISO, ...PRE2023_SOGO, ...GAIKOKUGO, ...GAIKOKUGO_ELECTIVE, ...HOKEN, ...PRE2023_KIHON,
+  ...PRE2023_KIKAN, ...PRE2023_LEGACY, ...PRE2023_OYO, ...SONOTA_COMMON, ...SHIKAKU,
+];
+
+// ============================================================
+// 2023年度以降入学者（合計126・フリーゾーン12）
+// ============================================================
+
+const FROM2023_SOGO: AllocEntry[] = [
+  ...SOGO_COMMON,
+  ...E("sogo", "2", 2, "特別テーマ演習科目（総合教育科目）A×|特別テーマ演習科目（総合教育科目）B×", { sub: "gakusai" }),
+  ...E("sogo", "3-4", 2, "特別テーマ演習科目（総合教育科目）C×|特別テーマ演習科目（総合教育科目）D×", { sub: "gakusai" }),
+  ...E("sogo", "3", 2, "卒論指導科目（総合教育科目）A|卒論指導科目（総合教育科目）B", { sub: "gakusai" }),
+  ...E("sogo", "1-4", 2, "特別認定科目（総合教育科目）", { sub: "gakusai", repeatable: true }),
+];
+
+// 基本科目: 商学専門演習（2年）も基本科目に算入（p39 注意事項(2)③）
+const FROM2023_KIHON: AllocEntry[] = [
+  ...E("kihon", "1-2", 2, KIHON_CORE + "|経済史A|経済史B|" + KIHON_REST),
+  ...E("kihon", "1", 2, "ビジネス・インサイト|商学入門|商学研究入門"),
+  ...E("kihon", "1-4", 2, "Essentials of Commerce A|Essentials of Commerce B"),
+  ...E("kihon", "2", 2, "特別テーマ演習科目（基本科目）A×|特別テーマ演習科目（基本科目）B×"),
+  ...E("kihon", "1-4", 2, "特別認定科目（基本科目）", { repeatable: true }),
+  ...E("kihon", "2", 2, "商学専門演習（2年）"),
+];
+
+// 基幹科目: 自コース28 + 基幹英語4 を含め 48（p39 注意事項(2)④⑤⑥）
+const FROM2023_KIKAN: AllocEntry[] = [
+  ...buildKikan(COURSES_FROM2023, false),
+  // 基幹英語科目（コース共通の別枠。自コース28には含まない）
+  { name: "外国専門書講読", units: 2, zone: "kikan", years: "3", kikanEigo: true, repeatable: true, noteJa: "基幹英語" },
+  ...E("kikan", "3-4", 2, "Applied Commerce A|Applied Commerce B", { kikanEigo: true, noteJa: "基幹英語" }),
+  ...E("kikan", "1-4", 2, "特別認定科目（基幹英語科目）", { kikanEigo: true, repeatable: true, noteJa: "基幹英語" }),
+  // 商学専門演習（3・4年）: 担当教員が自コース所属なら自コース、他コースなら他コース
+  { name: "商学専門演習", units: 2, zone: "kikan", years: "3-4", repeatable: true, noteJa: "担当教員が自コース所属なら自コースに算入" },
+  ...E("kikan", "3-4", 2, "特別テーマ演習科目（基幹科目）C×|特別テーマ演習科目（基幹科目）D×"),
+  ...E("kikan", "3", 2, "卒論指導科目C×|卒論指導科目D×"),
+  ...E("kikan", "1-4", 2, "特別認定科目（基幹科目）", { repeatable: true }),
+];
+
+const FROM2023_SONOTA: AllocEntry[] = [
+  ...SONOTA_COMMON,
+  // 2025年度入学者向け ICT 科目
+  ...E("freezone", "1-4", 2,
+    "ICTベーシック|ICT統計解析入門|ICT統計解析応用|ICTデータベース入門|ICTデータベース応用|ICT画像編集入門|ICT画像編集応用|" +
+    "ICT動画編集入門|ICT動画編集応用|ICT音楽編集入門|ICT音楽編集応用|ICTプログラミング入門|ICTプログラミング応用|" +
+    "ICTWebページ作成|ICTeラーニングデザイン入門|ICTeラーニングデザイン応用|ICTプレゼンテーション"),
+];
+
+export const MEIJI_COMMERCE_FROM2023_ALLOCATION: AllocEntry[] = [
+  ...KISO, ...FROM2023_SOGO, ...GAIKOKUGO, ...GAIKOKUGO_ELECTIVE, ...HOKEN, ...FROM2023_KIHON,
+  ...FROM2023_KIKAN, ...OYO_COMMON, ...FROM2023_SONOTA, ...SHIKAKU,
 ];
 
 // 一覧に個別科目が載っていない区分（利用者が手動で区分を選ぶ）
-// 他学部履修科目・学部間共通外国語・グローバル人材育成プログラム等 → フリーゾーン
+// 他学部履修科目・グローバル人材育成プログラム等 → フリーゾーン
+// 学部間共通外国語: 〜2022はフリーゾーン / 2023〜は卒業要件に含まれない
 // 大学院科目 → 卒業要件に含まれない
 
 // ── 検索 ─────────────────────────────────────────────
@@ -268,31 +361,41 @@ export function normalizeSubjectName(s: string): string {
     .replace(/\s+/g, "");
 }
 
-const INDEX: Map<string, AllocEntry> = (() => {
+function buildIndex(entries: AllocEntry[]): Map<string, AllocEntry> {
   const m = new Map<string, AllocEntry>();
   const put = (k: string, e: AllocEntry) => {
     const key = normalizeSubjectName(k);
     if (!m.has(key)) m.set(key, e);
   };
-  MEIJI_COMMERCE_PRE2023_ALLOCATION.forEach((e) => {
+  entries.forEach((e) => {
     put(e.name, e);
     e.aliases?.forEach((a) => put(a, e));
   });
   return m;
-})();
+}
+
+const INDEXES: Record<AllocKey, Map<string, AllocEntry>> = {
+  pre2023: buildIndex(MEIJI_COMMERCE_PRE2023_ALLOCATION),
+  from2023: buildIndex(MEIJI_COMMERCE_FROM2023_ALLOCATION),
+};
 
 export interface SubjectClassification {
   entry: AllocEntry;
   zone: ZoneId | null;
   units: number;
-  ownCourse: boolean | null; // 基幹科目のみ: 自コース科目か（コース未選択・演習は null）
+  ownCourse: boolean | null; // 基幹科目のみ: 自コース科目か（コース未選択・演習・基幹英語は null）
 }
 
 // 科目名 → 区分・単位。見つからなければ null（利用者に区分を選んでもらう）。
-// 完全一致がなければ末尾の（…）を外して再検索（時間割のクラス表記「簿記学A（1組）」等）。
-export function classifySubject(name: string, ownCourseId: CourseId | null): SubjectClassification | null {
+// 完全一致がなければ末尾の（…）を外して再検索（時間割のクラス表記「簿記学A（1組）」「商学専門演習（3年）」等）。
+export function classifySubject(
+  name: string,
+  ownCourseId: CourseId | null,
+  allocKey: AllocKey = "pre2023",
+): SubjectClassification | null {
+  const index = INDEXES[allocKey];
   const key = normalizeSubjectName(name);
-  const entry = INDEX.get(key) ?? INDEX.get(key.replace(/\([^()]*\)$/, ""));
+  const entry = index.get(key) ?? index.get(key.replace(/\([^()]*\)$/, ""));
   if (!entry) return null;
   let ownCourse: boolean | null = null;
   if (entry.zone === "kikan" && entry.courses && ownCourseId) {

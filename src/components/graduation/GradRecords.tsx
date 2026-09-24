@@ -25,6 +25,8 @@ interface Props {
   onAdd: (r: Omit<GradRecord, "id" | "createdAt">) => void;
   onStatus: (id: string, status: RecordStatus) => void;
   onDelete: (id: string) => void;
+  canToggleOwn: (r: GradRecord) => boolean; // 「自コースのゼミ」切替を出す記録か
+  onToggleOwn: (id: string) => void;
 }
 
 const STATUS_ORDER: RecordStatus[] = ["passed", "failed", "inProgress"];
@@ -271,6 +273,13 @@ export function GradRecords(p: Props) {
                   <Text style={styles.delText}>{t("grad.rec.delete")}</Text>
                 </TouchableOpacity>
               </View>
+              {p.canToggleOwn(r) ? (
+                <TouchableOpacity style={styles.ownToggle} onPress={() => p.onToggleOwn(r.id)}>
+                  <Text style={[styles.ownToggleText, r.ownCourseManual && { color: theme.primary }]}>
+                    {r.ownCourseManual ? "☑" : "☐"} {t("grad.rec.ownSeminar")}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
               <View style={styles.actions}>
                 {STATUS_ORDER.map((st) => {
                   const on = r.status === st;
@@ -357,6 +366,8 @@ function makeStyles(theme: Theme) {
     },
     openFormText: { fontSize: 12.5, fontWeight: "700", color: theme.primary },
     delBtn: { paddingHorizontal: 8, paddingVertical: 4 },
+    ownToggle: { marginTop: 6, alignSelf: "flex-start" },
+    ownToggleText: { fontSize: 11.5, fontWeight: "700", color: theme.textSecondary },
     delText: { fontSize: 11, color: theme.textSecondary, fontWeight: "700" },
     localNote: { fontSize: 10.5, color: theme.textSecondary, marginTop: 8, lineHeight: 15 },
   });

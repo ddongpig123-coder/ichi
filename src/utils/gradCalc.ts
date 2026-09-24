@@ -3,10 +3,10 @@
 // 便覧 p57 のルールを反映:
 //  - 基礎教育・必修外国語を除く区分で最低単位を超えた分はフリーゾーンへ算入
 //  - 日本事情(留学生)は総合教育に8単位まで / 資格課程科目は8単位まで
-//  - 基幹科目は自コース28以上（外国専門書講読4を含む）
+//  - 基幹科目は自コース28以上。〜2022: 外国専門書講読4を自コース内に含む / 2023〜: 基幹英語4を別枠で含め48
 
 import type { GradMaster } from "../data/graduationMaster";
-import { classifySubject, type CourseId, type SogoSub, type ZoneId } from "../data/gradAllocationMeijiCommerce";
+import { classifySubject, type AllocKey, type CourseId, type ZoneId } from "../data/gradAllocationMeijiCommerce";
 
 export type RecordStatus = "passed" | "failed" | "inProgress";
 
@@ -18,7 +18,7 @@ export interface GradRecord {
   status: RecordStatus;
   source: "timetable" | "manual";
   semesterKey?: string;      // 時間割由来のとき（例 "2025-春"）
-  ownCourseManual?: boolean; // 配当表に無い基幹科目を利用者が「自コース」と指定した場合
+  ownCourseManual?: boolean; // 自コース扱いを利用者が指定（2023〜の商学専門演習3・4年＝担当教員が自コース所属 / 配当表に無い基幹科目）
   createdAt: number;
 }
 
@@ -27,8 +27,8 @@ const OVERFLOW_ZONES: ZoneId[] = ["sogo", "hoken", "kihon", "kikan"];
 const RYUGAKUSEI_CAP = 8;
 const SHIKAKU_CAP = 8;
 const OWN_COURSE_MIN = 28;
-const GAISEN_MIN = 4; // 外国専門書講読
-export const GRAD_SUB_MINS = { ownCourse: OWN_COURSE_MIN, gaisen: GAISEN_MIN, sogoSub: 4 };
+const EIGO_MIN = 4; // 〜2022: 外国専門書講読 / 2023〜: 基幹英語
+export const GRAD_SUB_MINS = { ownCourse: OWN_COURSE_MIN, eigo: EIGO_MIN, sogoSub: 4 };
 
 export interface ZoneCalc {
   raw: number;       // 区分に入った単位（手動入力＋記録）
@@ -44,19 +44,27 @@ export interface GradCalc {
   zones: Record<string, ZoneCalc>;
   total: number;
   ownCourse: number | null;     // 自コース基幹単位（コース未選択なら null）
-  gaisen: number;               // 外国専門書講読
+  eigo: number;                 // 〜2022: 外国専門書講読 / 2023〜: 基幹英語
   sogoSubs: Record<"bunka" | "chiiki" | "ningen", number>;
 }
 
-function subOf(r: GradRecord): SogoSub | undefined {
-  return classifySubject(r.name, null)?.entry.sub;
+function allocKeyOf(master: GradMaster): AllocKey {
+  return master.key === "from2023" ? "from2023" : "pre2023";
 }
 
-export function isOwnCourse(r: GradRecord, courseId: CourseId | null): boolean {
+export function isOwnCourse(r: GradRecord, courseId: CourseId | null, allocKey: AllocKey): boolean {
   if (r.zone !== "kikan" || !courseId) return false;
-  const c = classifySubject(r.name, courseId);
-  if (c && c.zone === "kikan") return c.ownCourse === true;
+  const c = classifySubject(r.name, courseId, allocKey);
+  if (c && c.zone === "kikan" && c.entry.courses) return c.ownCourse === true;
   return r.ownCourseManual === true;
+}
+
+// 自コース扱いを利用者が切り替えられる記録か
+export function canToggleOwnCourse(r: GradRecord, allocKey: AllocKey): boolean {
+  if (r.zone !== "kikan") return false;
+  const c = classifySubject(r.name, null, allocKey);
+  if (!c || c.zone !== "kikan") return true; // 配当表に無い基幹科目
+  return allocKey === "from2023" && c.entry.name === "商学専門演習";
 }
 
 // includeInProgress: true で「履修中が全部取れたら」の見込みを出す
@@ -73,14 +81,15 @@ export function calcGrad(
   let ryugakusei = 0;
   let shikaku = 0;
   let ownCourse = 0;
-  let gaisen = 0;
+  let eigo = 0;
+  const allocKey = allocKeyOf(master);
   const sogoSubs = { bunka: 0, chiiki: 0, ningen: 0 };
 
   records.forEach((r) => {
     if (r.status === "failed") return;
     if (r.status === "inProgress" && !includeInProgress) return;
     let u = r.units;
-    const c = classifySubject(r.name, courseId);
+    const c = classifySubject(r.name, courseId, allocKey);
     if (c?.entry.sub === "ryugakusei") {
       u = Math.max(0, Math.min(u, RYUGAKUSEI_CAP - ryugakusei));
       ryugakusei += u;
@@ -90,9 +99,9 @@ export function calcGrad(
       shikaku += u;
     }
     raw[r.zone] = (raw[r.zone] ?? 0) + u;
-    if (isOwnCourse(r, courseId)) ownCourse += u;
-    if (c?.entry.name === "外国専門書講読" && courseId) gaisen += u;
-    const sub = subOf(r);
+    if (isOwnCourse(r, courseId, allocKey)) ownCourse += u;
+    if (c?.entry.kikanEigo && r.zone === "kikan") eigo += u;
+    const sub = c?.entry.sub;
     if (sub === "bunka" || sub === "chiiki" || sub === "ningen") sogoSubs[sub] += u;
   });
 
@@ -119,7 +128,7 @@ export function calcGrad(
   const kikanZ = zones.kikan;
   if (kikanZ) {
     if (!courseId) kikanZ.subUnverified = true;
-    else if (ownCourse < GRAD_SUB_MINS.ownCourse || gaisen < GRAD_SUB_MINS.gaisen) {
+    else if (ownCourse < GRAD_SUB_MINS.ownCourse || eigo < GRAD_SUB_MINS.eigo) {
       if ((baseline.kikan ?? 0) > 0) kikanZ.subUnverified = true;
       else kikanZ.subShort = true;
     }
@@ -131,7 +140,7 @@ export function calcGrad(
     zones.freezone = { raw: r, counted: r, overflow: 0, min: fz.minUnits, met: r >= fz.minUnits, subShort: false, subUnverified: false };
   }
   const total = Object.values(zones).reduce((s, z) => s + z.counted, 0);
-  return { zones, total, ownCourse: courseId ? ownCourse : null, gaisen, sogoSubs };
+  return { zones, total, ownCourse: courseId ? ownCourse : null, eigo, sogoSubs };
 }
 
 

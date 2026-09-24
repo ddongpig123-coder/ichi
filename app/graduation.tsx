@@ -9,8 +9,8 @@ import { getUserProfile } from "../src/services/userService";
 import type { Theme } from "../src/theme/themes";
 import { GRAD_MASTERS, type GradMaster } from "../src/data/graduationMaster";
 import { COURSES_2021, YEAR3_ONLY } from "../src/data/graduationCourses2021";
-import { classifySubject, type CourseId } from "../src/data/gradAllocationMeijiCommerce";
-import { calcGrad, diffZones, GRAD_SUB_MINS, type GradRecord, type RecordStatus } from "../src/utils/gradCalc";
+import { classifySubject, type AllocKey, type CourseId } from "../src/data/gradAllocationMeijiCommerce";
+import { calcGrad, canToggleOwnCourse, diffZones, GRAD_SUB_MINS, type GradRecord, type RecordStatus } from "../src/utils/gradCalc";
 import {
   loadGradState, saveGradState, loadTimetableSubjects, type TimetableSubject,
 } from "../src/services/gradRecordService";
@@ -137,17 +137,16 @@ export default function GraduationScreen() {
     });
   }
 
-  // 配当表（科目→区分）は 2022年度以前入学者カリキュラムのみ整備済み。
-  // 2023年度以降はまだ無いので、区分は利用者が選ぶ（自動判定しない）。
-  const allocationReady = master.key === "pre2023";
+  // 配当表（科目→区分）: 入学年度のカリキュラム（〜2022 / 2023〜）で切り替え
+  const allocKey: AllocKey = master.key === "from2023" ? "from2023" : "pre2023";
   const classify = useCallback(
     (name: string): Classified | null => {
-      if (!allocationReady) return null;
-      const c = classifySubject(name, courseId);
+      const c = classifySubject(name, courseId, allocKey);
       return c && c.zone ? { zone: c.zone, units: c.units } : null;
     },
-    [allocationReady, courseId],
+    [allocKey, courseId],
   );
+  const eigoLabel = allocKey === "from2023" ? t("grad.rec.kikanEigo") : t("grad.rec.gaisen");
 
   const calc = calcGrad(master, baseline, records, courseId, false);
   const projected = calcGrad(master, baseline, records, courseId, true);
@@ -199,6 +198,9 @@ export default function GraduationScreen() {
     const target = records.find((r) => r.id === id);
     if (!target || target.status === status) return;
     applyRecords(records.map((r) => (r.id === id ? { ...r, status } : r)), target.name, status);
+  }
+  function toggleOwn(id: string) {
+    setRecords(records.map((r) => (r.id === id ? { ...r, ownCourseManual: !r.ownCourseManual } : r)));
   }
   function deleteRecord(id: string) {
     const target = records.find((r) => r.id === id);
@@ -332,7 +334,7 @@ export default function GraduationScreen() {
                   <Text style={styles.shortHint}>
                     {r.zone.id === "sogo"
                       ? `${t("grad.rec.subBunka")} ${calc.sogoSubs.bunka}/4 · ${t("grad.rec.subChiiki")} ${calc.sogoSubs.chiiki}/4 · ${t("grad.rec.subNingen")} ${calc.sogoSubs.ningen}/4`
-                      : `${t("grad.rec.ownCourse")} ${calc.ownCourse ?? 0}/${GRAD_SUB_MINS.ownCourse} · ${t("grad.rec.gaisen")} ${calc.gaisen}/${GRAD_SUB_MINS.gaisen}`}
+                      : `${t("grad.rec.ownCourse")} ${calc.ownCourse ?? 0}/${GRAD_SUB_MINS.ownCourse} · ${eigoLabel} ${calc.eigo}/${GRAD_SUB_MINS.eigo}`}
                   </Text>
                 ) : null}
                 {r.zone.hintJa ? <Text style={styles.shortHint}>{r.zone.hintJa}</Text> : null}
@@ -342,11 +344,6 @@ export default function GraduationScreen() {
         )}
 
         {/* 修得記録（時間割候補・手動追加・一覧） */}
-        {!allocationReady ? (
-          <View style={styles.allocNote}>
-            <Text style={styles.allocNoteText}>{t("grad.rec.noAllocation")}</Text>
-          </View>
-        ) : null}
         <GradRecords
           theme={theme}
           t={t}
@@ -359,6 +356,8 @@ export default function GraduationScreen() {
           onAdd={addRecord}
           onStatus={setRecordStatus}
           onDelete={deleteRecord}
+          canToggleOwn={(r) => canToggleOwnCourse(r, allocKey)}
+          onToggleOwn={toggleOwn}
         />
 
         {/* 区分別ゲージ（記録していない過去分は ＋/− で成績表の合計を入力） */}
@@ -416,7 +415,7 @@ export default function GraduationScreen() {
                 <Text style={styles.zoneSub}>
                   {calc.ownCourse == null
                     ? t("grad.rec.ownCoursePrompt")
-                    : `${t("grad.rec.ownCourse")} ${calc.ownCourse}/${GRAD_SUB_MINS.ownCourse} · ${t("grad.rec.gaisen")} ${calc.gaisen}/${GRAD_SUB_MINS.gaisen}`}
+                    : `${t("grad.rec.ownCourse")} ${calc.ownCourse}/${GRAD_SUB_MINS.ownCourse} · ${eigoLabel} ${calc.eigo}/${GRAD_SUB_MINS.eigo}`}
                 </Text>
               ) : null}
               {r.subUnverified && !(z.id === "kikan" && calc.ownCourse == null) ? (
@@ -547,8 +546,6 @@ function makeStyles(theme: Theme) {
     summaryBarFill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: theme.primary },
     summaryBarPlan: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: theme.primary + "44" },
     summaryPlan: { fontSize: 12, color: theme.primary, marginTop: 4, fontWeight: "700" },
-    allocNote: { backgroundColor: theme.accent + "14", borderRadius: 10, padding: 10, marginTop: 16 },
-    allocNoteText: { fontSize: 11.5, color: theme.textSecondary, lineHeight: 16 },
     summaryHint: { fontSize: 12, color: theme.textSecondary, marginTop: 8 },
 
     // 不足カード（最重要）
