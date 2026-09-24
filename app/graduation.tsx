@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,6 +9,13 @@ import { getUserProfile } from "../src/services/userService";
 import type { Theme } from "../src/theme/themes";
 import { GRAD_MASTERS, type GradMaster } from "../src/data/graduationMaster";
 import { COURSES_2021, YEAR3_ONLY } from "../src/data/graduationCourses2021";
+import { classifySubject, type CourseId } from "../src/data/gradAllocationMeijiCommerce";
+import { calcGrad, diffZones, GRAD_SUB_MINS, type GradRecord, type RecordStatus } from "../src/utils/gradCalc";
+import {
+  loadGradState, saveGradState, loadTimetableSubjects, type TimetableSubject,
+} from "../src/services/gradRecordService";
+import { GradRecords, type Classified } from "../src/components/graduation/GradRecords";
+import { ENROLLMENT_YEAR } from "../src/data/semesterTimetables";
 
 const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
@@ -29,9 +36,10 @@ function coverageOf(schoolDomain: string | null, dept: string | null): Coverage 
 }
 
 // 卒業要件マジシャン（お試し版）。
-// 便覧の区分別最低単位マスターを読み、各区分の取得単位を＋/−で入力。
-// 「どの区分がどれだけ不足しているか」を最上部にまとめて表示する（不足優先ビュー）。
-// Firestore・成績保存なし（クライアント計算のみ）。本格版はPhase 3（docs/CREDIT-TRACKING.md §7）。
+// 便覧の区分別最低単位マスター × 修得記録（科目ごとに 取得/不可/履修中）で区分別の充足を集計。
+// 記録は ①時間割の科目を候補に出して選ぶ ②成績表を見て手動追加 の両方。配当表で区分を自動判定。
+// 記録していない過去分は、区分別の ＋/− で成績表の合計を直接入力できる。
+// 保存は端末ローカルのみ（gradRecordService）。本格版の E2E 金庫は Phase 3（docs/CREDIT-TRACKING.md §6-2）。
 export default function GraduationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -42,12 +50,17 @@ export default function GraduationScreen() {
   const [masterIdx, setMasterIdx] = useState(0);
   const master: GradMaster = GRAD_MASTERS[masterIdx];
 
-  // 区分ごとの取得単位（お試し入力）。マスター切替時も同じidは引き継ぐ。
-  const [acquired, setAcquired] = useState<Record<string, number>>({});
+  // 成績表の区分別合計（記録していない過去分の手動入力）。マスター切替時も同じidは引き継ぐ。
+  const [baseline, setBaseline] = useState<Record<string, number>>({});
+  // 修得記録（科目ごと）
+  const [records, setRecords] = useState<GradRecord[]>([]);
+  // どの保存キー(uid/guest)の読み込みが完了したか。uid切替直後に旧uidの記録を新uidへ保存しないためのガード。
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  const [delta, setDelta] = useState<string | null>(null);
 
-  // CAN(履修できる科目) 用: 現在学年 + 選択コース。
+  // 自コース（基幹科目の自/他判定）+ CAN(履修できる科目) 用の現在学年。
   const [grade, setGrade] = useState(3);
-  const [courseId, setCourseId] = useState<string | null>(null);
+  const [courseId, setCourseId] = useState<CourseId | null>(null);
   const selectedCourse = COURSES_2021.find((c) => c.id === courseId) ?? null;
   const gradeLocked = grade < 3; // 基幹科目は3・4年配当
 
@@ -56,6 +69,7 @@ export default function GraduationScreen() {
   const [dept, setDept] = useState<string | null>(null);
   const [profileReady, setProfileReady] = useState(false);
   const [override, setOverride] = useState(false); // 「参考として見る」で解除
+  const [admissionYear, setAdmissionYear] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user) { setProfileReady(true); return; }
@@ -64,6 +78,7 @@ export default function GraduationScreen() {
       .then((p) => {
         if (!alive) return;
         setDept(p?.department ?? null);
+        setAdmissionYear(p?.admissionYear ?? null);
         // 入学年度が分かればマスターと学年を自動プリセット（利便性）。
         if (p?.admissionYear != null) {
           setMasterIdx(p.admissionYear <= 2022 ? 0 : 1);
@@ -76,29 +91,124 @@ export default function GraduationScreen() {
     return () => { alive = false; };
   }, [user]);
 
+  // 端末に保存した記録の読み込み（uid ごと。未ログインは guest）
+  const uid = user?.uid ?? null;
+  const storeKey = uid ?? "guest";
+  useEffect(() => {
+    let alive = true;
+    loadGradState(uid).then((st) => {
+      if (!alive) return;
+      setRecords(st.records);
+      setBaseline(st.baseline);
+      setCourseId(st.courseId);
+      setDelta(null);
+      setLoadedKey(storeKey);
+    });
+    return () => { alive = false; };
+  }, [uid, storeKey]);
+
+  // 変更のたびに保存。現在のキーの読み込み完了前は保存しない（空や別uidの記録で上書きしない）。
+  useEffect(() => {
+    if (loadedKey !== storeKey) return;
+    saveGradState(uid, { version: 1, records, baseline, courseId });
+  }, [loadedKey, storeKey, uid, records, baseline, courseId]);
+
+  // 時間割の科目を候補として読む（入学年度〜今学期）
+  const [ttSubjects, setTtSubjects] = useState<TimetableSubject[]>([]);
+  const [ttState, setTtState] = useState<"loading" | "ready" | "none">("loading");
+  useEffect(() => {
+    if (!user || !profileReady) { if (profileReady) setTtState("none"); return; }
+    let alive = true;
+    setTtState("loading");
+    loadTimetableSubjects(user.uid, admissionYear ?? ENROLLMENT_YEAR)
+      .then((list) => { if (alive) { setTtSubjects(list); setTtState("ready"); } })
+      .catch(() => { if (alive) setTtState("none"); });
+    return () => { alive = false; };
+  }, [user, profileReady, admissionYear]);
+
   const coverage = coverageOf(schoolDomain, dept);
   // profileReady/schoolReady 前や通信不明時は fail-open（=ブロックしない）。
   const blocked = profileReady && schoolReady && coverage !== "supported" && !override;
 
-  function step(zoneId: string, delta: number) {
-    setAcquired((prev) => {
-      const next = Math.max(0, (prev[zoneId] ?? 0) + delta);
+  function step(zoneId: string, d: number) {
+    setBaseline((prev) => {
+      const next = Math.max(0, (prev[zoneId] ?? 0) + d);
       return { ...prev, [zoneId]: next };
     });
   }
 
-  // 区分ごとの判定（不足分 diff・充足 met）。
+  // 配当表（科目→区分）は 2022年度以前入学者カリキュラムのみ整備済み。
+  // 2023年度以降はまだ無いので、区分は利用者が選ぶ（自動判定しない）。
+  const allocationReady = master.key === "pre2023";
+  const classify = useCallback(
+    (name: string): Classified | null => {
+      if (!allocationReady) return null;
+      const c = classifySubject(name, courseId);
+      return c && c.zone ? { zone: c.zone, units: c.units } : null;
+    },
+    [allocationReady, courseId],
+  );
+
+  const calc = calcGrad(master, baseline, records, courseId, false);
+  const projected = calcGrad(master, baseline, records, courseId, true);
+
+  // 区分ごとの判定（不足分 diff・充足 met）。acq = 区分に算入された単位（超過分はフリーゾーンへ）。
   const zoneRows = master.zones.map((z) => {
-    const acq = acquired[z.id] ?? 0;
+    const zc = calc.zones[z.id];
+    const acq = zc?.counted ?? 0;
     const diff = Math.max(0, z.minUnits - acq);
-    return { zone: z, acq, diff, met: diff === 0 };
+    return {
+      zone: z, acq, diff, met: zc?.met ?? false, overflow: zc?.overflow ?? 0,
+      planned: (projected.zones[z.id]?.counted ?? 0) - acq,
+      subShort: zc?.subShort ?? false, subUnverified: zc?.subUnverified ?? false,
+    };
   });
 
   const shortRows = zoneRows.filter((r) => !r.met).sort((a, b) => b.diff - a.diff);
-  const totalAcquired = zoneRows.reduce((s, r) => s + r.acq, 0);
-  const metCount = zoneRows.length - shortRows.length;
+  const unverifiedCount = zoneRows.filter((r) => r.subUnverified).length;
+  const totalAcquired = calc.total;
   const remaining = Math.max(0, master.totalRequired - totalAcquired);
   const pct = Math.min(100, Math.round((totalAcquired / master.totalRequired) * 100));
+  const projPct = Math.min(100, Math.round((projected.total / master.totalRequired) * 100));
+
+  // 記録の追加・状態変更 → どの区分に何単位入ったかを表示
+  const zoneLabel = (id: string) => master.zones.find((z) => z.id === id)?.nameJa ?? id;
+  function applyRecords(next: GradRecord[], subject: string, status: RecordStatus) {
+    const before = calcGrad(master, baseline, records, courseId, false);
+    const after = calcGrad(master, baseline, next, courseId, false);
+    const ds = diffZones(before, after);
+    setRecords(next);
+    if (status === "inProgress") {
+      setDelta(`⏳ ${subject}：${t("grad.rec.deltaPlanned")}`);
+    } else if (ds.length === 0) {
+      setDelta(status === "failed" ? `❌ ${subject}：${t("grad.rec.deltaNone")}` : `✅ ${subject}：${t("grad.rec.deltaNoChange")}`);
+    } else {
+      const parts = ds.map((d) => {
+        const sign = d.after > d.before ? "+" : "";
+        const met = d.after >= d.min ? ` ${t("grad.met")}✅` : "";
+        return `${zoneLabel(d.zoneId)} ${sign}${d.after - d.before}（${d.before}→${d.after}/${d.min}${met}）`;
+      });
+      setDelta(`${status === "passed" ? "✅" : "❌"} ${subject} → ${parts.join(" / ")}`);
+    }
+  }
+  function addRecord(r: Omit<GradRecord, "id" | "createdAt">) {
+    const rec: GradRecord = { ...r, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, createdAt: Date.now() };
+    applyRecords([...records, rec], r.name, r.status);
+  }
+  function setRecordStatus(id: string, status: RecordStatus) {
+    const target = records.find((r) => r.id === id);
+    if (!target || target.status === status) return;
+    applyRecords(records.map((r) => (r.id === id ? { ...r, status } : r)), target.name, status);
+  }
+  function deleteRecord(id: string) {
+    const target = records.find((r) => r.id === id);
+    setRecords(records.filter((r) => r.id !== id));
+    if (target) setDelta(`🗑 ${target.name}：${t("grad.rec.deltaDeleted")}`);
+  }
+
+  // 時間割の候補のうち、まだ記録していないもの（同じ学期・同じ科目名で判定）
+  const recordedKeys = new Set(records.map((r) => `${r.name}|${r.semesterKey ?? ""}`));
+  const suggestions = ttSubjects.filter((s) => !recordedKeys.has(`${s.name}|${s.semesterKey}`));
 
   function goBack() {
     router.canGoBack() ? router.back() : router.replace("/(tabs)");
@@ -154,6 +264,23 @@ export default function GraduationScreen() {
           ))}
         </View>
 
+        {/* 自コース（基幹科目の自/他判定・CAN候補に使う） */}
+        <Text style={styles.miniLabel}>{t("grad.courseLabel")}</Text>
+        <View style={styles.chipWrap}>
+          {COURSES_2021.map((c) => {
+            const on = c.id === courseId;
+            return (
+              <TouchableOpacity
+                key={c.id}
+                style={[styles.courseChip, on && styles.courseChipOn]}
+                onPress={() => setCourseId(on ? null : (c.id as CourseId))}
+              >
+                <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{c.nameJa}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
         {/* サマリー */}
         <View style={styles.summary}>
           <View style={styles.summaryTop}>
@@ -163,17 +290,24 @@ export default function GraduationScreen() {
             </Text>
           </View>
           <View style={styles.summaryBar}>
+            <View style={[styles.summaryBarPlan, { width: `${projPct}%` }]} />
             <View style={[styles.summaryBarFill, { width: `${pct}%` }]} />
           </View>
           <Text style={styles.summaryHint}>
             {t("grad.remaining")}: {remaining} {t("grad.unit")} · {t("grad.short")}: {shortRows.length}/{master.zones.length}
           </Text>
+          {projected.total > totalAcquired ? (
+            <Text style={styles.summaryPlan}>
+              ⏳ {t("grad.rec.projected")}: {projected.total} / {master.totalRequired} {t("grad.unit")}
+            </Text>
+          ) : null}
         </View>
 
         {/* 不足している区分（最重要ビュー） */}
         {shortRows.length === 0 ? (
           <View style={styles.allMet}>
             <Text style={styles.allMetText}>{t("grad.allMet")}</Text>
+            {unverifiedCount > 0 ? <Text style={styles.allMetNote}>{t("grad.rec.allMetUnverified")}</Text> : null}
           </View>
         ) : (
           <View style={styles.shortCard}>
@@ -187,20 +321,47 @@ export default function GraduationScreen() {
                   <Text style={styles.shortName}>{r.zone.nameJa}</Text>
                   <View style={styles.shortBadge}>
                     <Text style={styles.shortBadgeText}>
-                      {t("grad.shortByPrefix")} {r.diff} {t("grad.unit")}
+                      {r.diff > 0 ? `${t("grad.shortByPrefix")} ${r.diff} ${t("grad.unit")}` : t("grad.rec.subShortBadge")}
                     </Text>
                   </View>
                 </View>
                 <Text style={styles.shortNum}>
                   {r.acq} / {r.zone.minUnits} {t("grad.unit")}
                 </Text>
+                {r.subShort ? (
+                  <Text style={styles.shortHint}>
+                    {r.zone.id === "sogo"
+                      ? `${t("grad.rec.subBunka")} ${calc.sogoSubs.bunka}/4 · ${t("grad.rec.subChiiki")} ${calc.sogoSubs.chiiki}/4 · ${t("grad.rec.subNingen")} ${calc.sogoSubs.ningen}/4`
+                      : `${t("grad.rec.ownCourse")} ${calc.ownCourse ?? 0}/${GRAD_SUB_MINS.ownCourse} · ${t("grad.rec.gaisen")} ${calc.gaisen}/${GRAD_SUB_MINS.gaisen}`}
+                  </Text>
+                ) : null}
                 {r.zone.hintJa ? <Text style={styles.shortHint}>{r.zone.hintJa}</Text> : null}
               </View>
             ))}
           </View>
         )}
 
-        {/* 区分別ゲージ（取得単位の入力） */}
+        {/* 修得記録（時間割候補・手動追加・一覧） */}
+        {!allocationReady ? (
+          <View style={styles.allocNote}>
+            <Text style={styles.allocNoteText}>{t("grad.rec.noAllocation")}</Text>
+          </View>
+        ) : null}
+        <GradRecords
+          theme={theme}
+          t={t}
+          master={master}
+          records={records}
+          suggestions={suggestions}
+          timetableState={ttState}
+          classify={classify}
+          delta={delta}
+          onAdd={addRecord}
+          onStatus={setRecordStatus}
+          onDelete={deleteRecord}
+        />
+
+        {/* 区分別ゲージ（記録していない過去分は ＋/− で成績表の合計を入力） */}
         <Text style={styles.inputHeading}>{t("grad.inputHeading")}</Text>
         <Text style={styles.stepHint}>{t("grad.stepHint")}</Text>
         {zoneRows.map((r) => {
@@ -217,6 +378,14 @@ export default function GraduationScreen() {
                 </View>
               </View>
               <View style={styles.zoneBar}>
+                {r.planned > 0 ? (
+                  <View
+                    style={[
+                      styles.zoneBarPlan,
+                      { width: `${Math.min(100, Math.round(((r.acq + r.planned) / z.minUnits) * 100))}%` },
+                    ]}
+                  />
+                ) : null}
                 <View
                   style={[
                     styles.zoneBarFill,
@@ -237,6 +406,27 @@ export default function GraduationScreen() {
                   </TouchableOpacity>
                 </View>
               </View>
+              {r.planned > 0 ? (
+                <Text style={styles.zoneSub}>⏳ {t("grad.rec.inProgress")} +{r.planned}</Text>
+              ) : null}
+              {r.overflow > 0 ? (
+                <Text style={styles.zoneSub}>{t("grad.rec.overflow")} {r.overflow} {t("grad.unit")}</Text>
+              ) : null}
+              {z.id === "kikan" ? (
+                <Text style={styles.zoneSub}>
+                  {calc.ownCourse == null
+                    ? t("grad.rec.ownCoursePrompt")
+                    : `${t("grad.rec.ownCourse")} ${calc.ownCourse}/${GRAD_SUB_MINS.ownCourse} · ${t("grad.rec.gaisen")} ${calc.gaisen}/${GRAD_SUB_MINS.gaisen}`}
+                </Text>
+              ) : null}
+              {r.subUnverified && !(z.id === "kikan" && calc.ownCourse == null) ? (
+                <Text style={styles.zoneSubWarn}>{t("grad.rec.subUnverified")}</Text>
+              ) : null}
+              {z.id === "sogo" ? (
+                <Text style={styles.zoneSub}>
+                  {t("grad.rec.subBunka")} {calc.sogoSubs.bunka}/4 · {t("grad.rec.subChiiki")} {calc.sogoSubs.chiiki}/4 · {t("grad.rec.subNingen")} {calc.sogoSubs.ningen}/4
+                </Text>
+              ) : null}
             </View>
           );
         })}
@@ -259,22 +449,6 @@ export default function GraduationScreen() {
           ))}
         </View>
 
-        {/* コース選択 */}
-        <Text style={styles.miniLabel}>{t("grad.courseLabel")}</Text>
-        <View style={styles.chipWrap}>
-          {COURSES_2021.map((c) => {
-            const on = c.id === courseId;
-            return (
-              <TouchableOpacity
-                key={c.id}
-                style={[styles.courseChip, on && styles.courseChipOn]}
-                onPress={() => setCourseId(on ? null : c.id)}
-              >
-                <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{c.nameJa}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
 
         {selectedCourse ? (
           <View style={styles.canCard}>
@@ -304,7 +478,7 @@ export default function GraduationScreen() {
           </View>
         ) : (
           <View style={styles.canPrompt}>
-            <Text style={styles.canPromptText}>{t("grad.coursePrompt")}</Text>
+            <Text style={styles.canPromptText}>{t("grad.coursePromptUp")}</Text>
           </View>
         )}
 
@@ -370,7 +544,11 @@ function makeStyles(theme: Theme) {
     summaryNum: { fontSize: 13, color: theme.textSecondary },
     summaryBig: { fontSize: 22, fontWeight: "800", color: theme.textPrimary },
     summaryBar: { height: 10, borderRadius: 6, backgroundColor: theme.border, overflow: "hidden" },
-    summaryBarFill: { height: "100%", backgroundColor: theme.primary },
+    summaryBarFill: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: theme.primary },
+    summaryBarPlan: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: theme.primary + "44" },
+    summaryPlan: { fontSize: 12, color: theme.primary, marginTop: 4, fontWeight: "700" },
+    allocNote: { backgroundColor: theme.accent + "14", borderRadius: 10, padding: 10, marginTop: 16 },
+    allocNoteText: { fontSize: 11.5, color: theme.textSecondary, lineHeight: 16 },
     summaryHint: { fontSize: 12, color: theme.textSecondary, marginTop: 8 },
 
     // 不足カード（最重要）
@@ -414,7 +592,11 @@ function makeStyles(theme: Theme) {
     chipTextOk: { color: MET_COLOR },
     chipTextShort: { color: theme.accent },
     zoneBar: { height: 8, borderRadius: 5, backgroundColor: theme.border, overflow: "hidden" },
-    zoneBarFill: { height: "100%" },
+    zoneBarFill: { position: "absolute", left: 0, top: 0, bottom: 0 },
+    zoneBarPlan: { position: "absolute", left: 0, top: 0, bottom: 0, backgroundColor: theme.primary + "44" },
+    zoneSub: { fontSize: 11, color: theme.textSecondary, marginTop: 5 },
+    zoneSubWarn: { fontSize: 11, color: theme.accent, marginTop: 5, fontWeight: "700" },
+    allMetNote: { fontSize: 11.5, color: theme.textSecondary, marginTop: 6, textAlign: "center" },
     zoneBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 8 },
     zoneNum: { fontSize: 12.5, color: theme.textSecondary, fontWeight: "600" },
     stepper: { flexDirection: "row", gap: 8 },
