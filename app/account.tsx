@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform,
 } from "react-native";
@@ -64,6 +64,8 @@ export default function AccountScreen() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [busy, setBusy] = useState(false);
+  // メール欄で Enter → パスワードへ、パスワード欄で Enter → ログイン実行
+  const passwordRef = useRef<TextInput>(null);
   // 学校認証バッジ表示。auth.currentUser基準（reload後の最新状態を反映するためローカルstate）
   const [verified, setVerified] = useState(() => isSchoolVerified(auth.currentUser));
 
@@ -107,7 +109,6 @@ export default function AccountScreen() {
     setBusy(true);
     try {
       await signInWithEmail(email.trim(), password);
-      notify(t("account.loginDone"), t("account.welcomeBack"));
       goBack();
     } catch (e: any) {
       notify(t("account.errLoginFailed"), t("account.errLoginCheck"));
@@ -136,7 +137,6 @@ export default function AccountScreen() {
         );
       } else {
         await signInWithMicrosoft();
-        notify(t("account.loginDone"), t("account.welcomeBack"));
       }
       goBack();
     } catch (e: any) {
@@ -174,7 +174,6 @@ export default function AccountScreen() {
         notify(t("account.registerDone"), t("account.registerDoneMessage"));
       } else {
         await signInWithSocial(id);
-        notify(t("account.loginDone"), t("account.welcomeBack"));
       }
       goBack();
     } catch (e: any) {
@@ -396,15 +395,20 @@ export default function AccountScreen() {
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
             />
             <Text style={styles.label}>{t("account.passwordLabel")}</Text>
             <TextInput
+              ref={passwordRef}
               style={styles.input}
               placeholder="••••••"
               placeholderTextColor="#aaa"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
+              returnKeyType="go"
+              onSubmitEditing={() => { if (!busy) handleLogin(); }}
             />
 
             <TouchableOpacity

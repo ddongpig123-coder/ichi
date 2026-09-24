@@ -27,6 +27,7 @@ import {
   fetchLikedCommentIds,
 } from "../../../src/services/boardService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
+import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
 import { useTheme } from "../../../src/contexts/ThemeContext";
@@ -91,6 +92,7 @@ export default function PostDetailScreen() {
     | null
   >(null);
 
+  const { markPostSeen } = useNotifications();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,9 +142,14 @@ export default function PostDetailScreen() {
       loadComments(),
       user ? checkLiked(schoolDomain, boardId as BoardId, postId, user.uid) : Promise.resolve(false),
     ]).then(([p, _c, isLiked]) => {
-      setPost(p);
+      const mine = p as Post | null;
+      setPost(mine);
       setLiked(isLiked as boolean);
-      setLikeCount(p?.likeCount ?? 0);
+      setLikeCount(mine?.likeCount ?? 0);
+      // 自分の投稿を開いたら「新着コメント」の赤丸を消す
+      if (mine && user && mine.authorUid === user.uid) {
+        markPostSeen("board", boardId as string, postId, mine.commentCount ?? 0);
+      }
     }).finally(() => setLoading(false));
   }, [schoolDomain, boardId, postId]);
 

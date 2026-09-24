@@ -6,6 +6,7 @@ import { useBoards } from "../../../src/hooks/useBoards";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
+import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import SchoolPrompt from "../../../src/components/common/SchoolPrompt";
 import type { Theme } from "../../../src/theme/themes";
 import { boardLabel, boardDescription, type BoardMeta } from "../../../src/types/board";
@@ -17,6 +18,7 @@ export default function BoardsScreen() {
   const { schoolDomain, schoolReady } = useAuth();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
+  const { newCommentCount } = useNotifications();
   const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
 
   // 学校掲示板は学校スコープ。学校未選択(schoolDomain=null)ユーザーには
@@ -104,6 +106,18 @@ export default function BoardsScreen() {
               <Text style={styles.bestArrow}>›</Text>
             </TouchableOpacity>
             <View style={styles.sectionSep} />
+            <TouchableOpacity style={styles.bestBanner} onPress={() => router.push("/(tabs)/boards/my-posts")}>
+              <View>
+                <View style={styles.myPostsTitleRow}>
+                  <Text style={styles.bestTitle}>{t("myPosts.title")}</Text>
+                  {/* 自分の投稿に新しいコメントが付いたら赤丸 */}
+                  {newCommentCount > 0 && <View style={styles.dot} />}
+                </View>
+                <Text style={styles.bestSub}>{t("myPosts.sub")}</Text>
+              </View>
+              <Text style={styles.bestArrow}>›</Text>
+            </TouchableOpacity>
+            <View style={styles.sectionSep} />
           </>
         }
         ListFooterComponent={
@@ -125,6 +139,8 @@ export default function BoardsScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
+    myPostsTitleRow: { flexDirection: "row", alignItems: "center" },
+    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E2574C", marginLeft: 6 },
     bestBanner: {
       flexDirection: "row",
       alignItems: "center",

@@ -1,10 +1,11 @@
 import { useEffect, useState, type ReactElement } from "react";
-import type { ColorValue } from "react-native";
+import { View, type ColorValue } from "react-native";
 import { Tabs, Redirect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
+import { useNotifications } from "../../src/contexts/NotificationsContext";
 import { ONBOARDED_KEY } from "../onboarding";
 import {
   HomeIcon,
@@ -18,14 +19,35 @@ import {
 // 描画するためフォント依存なし＝実機で豆腐(□)化しない。色はタブのtintを継承し、
 // active/inactiveの「明るさ」だけで選択を表す無彩色運用（ブランド色は使わない）。
 type TabIcon = (p: { color: ColorValue }) => ReactElement;
-function icon(Cmp: (p: { color: ColorValue; size?: number }) => ReactElement): TabIcon {
-  return ({ color }) => <Cmp color={color} size={22} />;
+// dot=true でアイコン右上に赤丸（新着）。react-navigation の tabBarBadge は
+// undefined に戻しても既存バッジが消えない（オプションがマージされる）ため自前で描く。
+function icon(
+  Cmp: (p: { color: ColorValue; size?: number }) => ReactElement,
+  dot = false
+): TabIcon {
+  return ({ color }) => (
+    <View>
+      <Cmp color={color} size={22} />
+      {dot && <View style={NEW_DOT} />}
+    </View>
+  );
 }
+
+const NEW_DOT = {
+  position: "absolute" as const,
+  top: -1,
+  right: -3,
+  width: 9,
+  height: 9,
+  borderRadius: 4.5,
+  backgroundColor: "#E2574C",
+};
 
 export default function TabsLayout() {
   const { theme } = useTheme();
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
+  const { unreadChatCount, newCommentCount } = useNotifications();
 
   // 初回起動判定: 未オンボーディングならオンボーディング画面へ
   const [onboarded, setOnboarded] = useState<boolean | null>(null);
@@ -60,9 +82,23 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: t("tabs.home"), headerShown: false, tabBarIcon: icon(HomeIcon) }} />
-      <Tabs.Screen name="boards" options={{ title: t("tabs.boards"), headerShown: false, tabBarIcon: icon(BoardIcon) }} />
+      <Tabs.Screen
+        name="boards"
+        options={{
+          title: t("tabs.boards"),
+          headerShown: false,
+          tabBarIcon: icon(BoardIcon, newCommentCount > 0),
+        }}
+      />
       <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false, tabBarIcon: icon(FriendsIcon) }} />
-      <Tabs.Screen name="messages" options={{ title: t("tabs.messages"), headerShown: false, tabBarIcon: icon(MessageIcon) }} />
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: t("tabs.messages"),
+          headerShown: false,
+          tabBarIcon: icon(MessageIcon, unreadChatCount > 0),
+        }}
+      />
       <Tabs.Screen name="profile" options={{ title: t("tabs.profile"), tabBarIcon: icon(ProfileIcon) }} />
     </Tabs>
   );

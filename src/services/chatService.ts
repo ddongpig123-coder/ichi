@@ -70,6 +70,7 @@ export async function sendMessage(
   await updateDoc(doc(chatsCol(schoolDomain), chatRoomId), {
     lastMessage: text.length > 40 ? text.slice(0, 40) + "…" : text,
     lastMessageAt: serverTimestamp(),
+    lastSenderUid: senderUid, // 未読バッジ判定（自分が送ったものは未読にしない）
   });
 }
 
@@ -108,4 +109,49 @@ export async function fetchMyChats(
       createdAt: toMs((d.data() as any).createdAt),
     }))
     .sort((a, b) => b.lastMessageAt - a.lastMessageAt);
+}
+
+// ── 未読バッジ ──────────────────────────────────────────
+// 「最後に読んだ時刻」はチャット文書の lastRead マップ（キー=uid）に持つ。
+// firestore.rules の chats update は参加者に許可済みなのでルール変更は不要。
+// 端末をまたいで同期される（ローカル保存にしない理由）。
+
+export function isChatUnread(chat: ChatRoom, uid: string): boolean {
+  if (chat.lastSenderUid === uid) return false; // 自分が最後に送った
+  if (!chat.lastMessage) return false;          // まだ本文なし（作成直後）
+  return chat.lastMessageAt > (chat.lastRead?.[uid] ?? 0);
+}
+
+// 自分が参加するチャットの購読（未読バッジ用。リアルタイムで届く）
+export function subscribeToMyChats(
+  schoolDomain: string,
+  uid: string,
+  callback: (chats: ChatRoom[]) => void
+): () => void {
+  const q = query(chatsCol(schoolDomain), where("participants", "array-contains", uid), limit(50));
+  return onSnapshot(
+    q,
+    (snap) => {
+      callback(
+        snap.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<ChatRoom, "id">),
+          lastMessageAt: toMs((d.data() as any).lastMessageAt),
+          createdAt: toMs((d.data() as any).createdAt),
+        }))
+      );
+    },
+    (e) => console.warn("chats subscribe failed:", e)
+  );
+}
+
+// 既読にする（チャット画面を開いたとき）。失敗しても表示は壊さない。
+export async function markChatRead(
+  schoolDomain: string,
+  chatRoomId: string,
+  uid: string
+): Promise<void> {
+  await updateDoc(doc(chatsCol(schoolDomain), chatRoomId), {
+    [`lastRead.${uid}`]: Date.now(),
+  }).catch((e) => console.warn("markChatRead failed:", e));
 }

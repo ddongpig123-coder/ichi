@@ -29,6 +29,7 @@ import {
   fetchLikedLoungeCommentIds,
 } from "../../../src/services/loungeService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
+import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
@@ -79,6 +80,7 @@ export default function LoungePostDetailScreen() {
     return () => { s.remove(); f.remove(); h.remove(); };
   }, [insets.bottom]);
 
+  const { markPostSeen } = useNotifications();
   const [post, setPost] = useState<LoungePost | null>(null);
   const [comments, setComments] = useState<LoungeComment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,9 +139,14 @@ export default function LoungePostDetailScreen() {
       loadComments(),
       user ? checkLoungeLiked(loungeId as LoungeId, postId, user.uid) : Promise.resolve(false),
     ]).then(([p, _c, isLiked]) => {
-      setPost(p);
+      const mine = p as LoungePost | null;
+      setPost(mine);
       setLiked(isLiked as boolean);
-      setLikeCount(p?.likeCount ?? 0);
+      setLikeCount(mine?.likeCount ?? 0);
+      // 自分の投稿を開いたら「新着コメント」の赤丸を消す
+      if (mine && user && mine.authorUid === user.uid) {
+        markPostSeen("lounge", loungeId as string, postId, mine.commentCount ?? 0);
+      }
     }).finally(() => setLoading(false));
   }, [loungeId, postId]);
 

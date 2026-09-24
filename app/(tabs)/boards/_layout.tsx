@@ -28,6 +28,7 @@ export default function BoardsLayout() {
       <Stack.Screen name="[boardId]" options={{ title: "" }} />
       <Stack.Screen name="search" options={{ title: t("boards.searchTitle") }} />
       <Stack.Screen name="best" options={{ title: t("boards.bestScreenTitle") }} />
+      <Stack.Screen name="my-posts" options={{ title: t("myPosts.title") }} />
       <Stack.Screen name="create" options={{ title: t("boards.createScreenTitle") }} />
     </Stack>
   );

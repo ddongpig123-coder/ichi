@@ -13,6 +13,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import { sendMessage, subscribeToMessages } from "../../../src/services/chatService";
@@ -29,6 +30,7 @@ export default function ChatRoomScreen() {
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
   const { isBlocked } = useBlock();
+  const { markChatAsRead } = useNotifications();
   const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -41,6 +43,7 @@ export default function ChatRoomScreen() {
     if (!schoolDomain || !chatId) return;
     const unsub = subscribeToMessages(schoolDomain, chatId, (msgs) => {
       setMessages(msgs);
+      markChatAsRead(chatId); // 開いている間に届いた分も既読にする
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
     });
     return unsub;

@@ -3,6 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { BlockProvider } from "../src/contexts/BlockContext";
 import { FriendsProvider } from "../src/contexts/FriendsContext";
+import { NotificationsProvider } from "../src/contexts/NotificationsContext";
 import { I18nProvider } from "../src/contexts/I18nContext";
 import { ThemeProvider, useTheme } from "../src/contexts/ThemeContext";
 
@@ -38,7 +39,9 @@ export default function RootLayout() {
           <AuthProvider>
             <BlockProvider>
               <FriendsProvider>
-                <ThemedStack />
+                <NotificationsProvider>
+                  <ThemedStack />
+                </NotificationsProvider>
               </FriendsProvider>
             </BlockProvider>
           </AuthProvider>
