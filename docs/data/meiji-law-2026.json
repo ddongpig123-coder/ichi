@@ -1,0 +1,116 @@
+{
+  "_meta": {
+    "source": "明治大学 2026年度 法学部便覧（法律学科）",
+    "extractedAt": "2026-10-04",
+    "faculty": "law",
+    "facultyNameJa": "法学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2026,
+    "appliesTo": "2026年度入学者（法律学科）",
+    "note": "졸업요건표(便覧 印刷p20)·留意事項/履修条件(p21)에서 추출·검증(이미지 렌더 확인). 자유선택=16, 코스群=5코스 합44. 配当表(과목→科目群 사전)은 미추출(便覧 p24-25 코스상세 + 授業科目配当表 필요) → courseMasters/배당표 TODO.",
+    "printedPageMap": {
+      "requirement": 20,
+      "notes": 21,
+      "courseDetail": "24-25"
+    },
+    "verifiedBy": "requirement table rendered as image and read (law_p9/p10)"
+  },
+  "requirementMaster": {
+    "totalRequired": 128,
+    "zones": [
+      {
+        "id": "kiso",
+        "nameJa": "基礎科目群",
+        "minUnits": 6,
+        "rule": "all-required",
+        "noteJa": "「法律リテラシー」および「法学部生のための日本語Ⅰ・Ⅱ」を必修とする。"
+      },
+      {
+        "id": "kyoyo",
+        "nameJa": "教養科目群",
+        "minUnits": 12,
+        "rule": "min-units",
+        "noteJa": "12単位以上。超過分は自由選択へ。国際関係法コース選択者は12単位とは別にコース専門文化科目として「地域と文化」8単位以上。",
+        "subZones": [
+          { "id": "ningen", "nameJa": "人間と科学" },
+          { "id": "shakai", "nameJa": "社会と思想" },
+          { "id": "chiiki", "nameJa": "地域と文化" },
+          { "id": "kyotsu", "nameJa": "共通" }
+        ]
+      },
+      {
+        "id": "gaikokugo",
+        "nameJa": "外国語科目群",
+        "minUnits": 16,
+        "rule": "min-units",
+        "noteJa": "英独仏中西露・日本語から2か国語選択、各8単位（外国語Ⅰ4 + 外国語Ⅱ・Ⅲから4）、計16。外国語Ⅲのみで4単位充足は不可。選択2か国語以外の外国語は卒業要件に不算入。超過分は自由選択へ。"
+      },
+      {
+        "id": "hoken",
+        "nameJa": "保健体育科目群",
+        "minUnits": 2,
+        "rule": "all-required",
+        "noteJa": "「基礎運動実習Ⅰ・Ⅱ」を必修とする。"
+      },
+      {
+        "id": "horitsu",
+        "nameJa": "法律必修科目群",
+        "minUnits": 24,
+        "rule": "all-required",
+        "noteJa": "全科目24単位を修得。"
+      },
+      {
+        "id": "enshu",
+        "nameJa": "演習科目群",
+        "minUnits": 8,
+        "rule": "all-required",
+        "noteJa": "「専門演習AⅠ・Ⅱ」および「専門演習BⅠ・Ⅱ」を必修とする。"
+      },
+      {
+        "id": "course",
+        "nameJa": "コース科目群（5コース）",
+        "minUnits": 44,
+        "rule": "composite",
+        "noteJa": "各コースに定められた必修・選択必修条件を満たし44単位以上。必要単位を超えた分・他コース配当科目は自由選択へ。詳細は便覧p24-25。",
+        "courses": ["法曹", "公共法務", "ビジネスロー", "国際関係法", "法と情報"]
+      },
+      {
+        "id": "freezone",
+        "nameJa": "自由選択科目群",
+        "minUnits": 16,
+        "rule": "min-units",
+        "noteJa": "各群の超過分・留学関係・資格課程科目などで充当。"
+      }
+    ]
+  },
+  "milestones": {
+    "expectedGraduation": {
+      "byYear3End": 88,
+      "noteJa": "3年次終了時までに88単位以上で「卒業見込証明書」発行。"
+    },
+    "year4Min": {
+      "minUnits": 12,
+      "noteJa": "4年次に卒業要件科目から12単位以上を修得。"
+    },
+    "earlyGraduation": { "noteJa": "成績優秀で所定要件を満たす者は3年次早期卒業可（便覧p52）。" },
+    "maxEnrollmentYears": 8
+  },
+  "mediaCap": {
+    "maxUnits": 60,
+    "noteJa": "メディア授業科目は卒業要件に60単位まで算入可。"
+  },
+  "specialRules": {
+    "kyoyoOverflow": "教養12超過分は自由選択へ算入。",
+    "gaikokugoOverflow": "外国語16超過分は自由選択へ算入。選択2か国語以外は不算入。",
+    "courseOverflow": "コース必要44超過分・他コース配当科目は自由選択へ算入。",
+    "kokusaiCulture": "国際関係法コース選択者は教養12とは別に「地域と文化」8単位以上。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 便覧 p24-25（各コース必修/選択必修）+ 授業科目配当表（科目→科目群）を抽出して充填。CAN/自動分類に必要。",
+    "law-practitioner": { "nameJa": "法曹コース", "subjects": [] },
+    "public-law": { "nameJa": "公共法務コース", "subjects": [] },
+    "business-law": { "nameJa": "ビジネスローコース", "subjects": [] },
+    "international-law": { "nameJa": "国際関係法コース", "subjects": [] },
+    "law-and-information": { "nameJa": "法と情報コース", "subjects": [] }
+  }
+}
