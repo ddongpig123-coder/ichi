@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "source": "明治大学 2026年度 政治経済学部便覧（政治学科・経済学科・政策学科）",
+    "extractedAt": "2026-10-04",
+    "faculty": "political-economics",
+    "facultyNameJa": "政治経済学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2026,
+    "appliesTo": "2026年度以降入学者（政治学科／経済学科／政策学科 共通）",
+    "note": "カリキュラム表【2026年度以降入学者】(便覧 印刷 §5, PDF p38)を画像レンダーで読み取り検証。合計124。上位の必要単位は3学科共通（基礎28/外国語16/健康運動4/基本・応用42）。学科差は『基本・応用42』内の内訳(政治:1年必修10+2年必修4 / 経済:1年必修14+2年選択必修6 / 政策:1年必修12+2年選択必修4、政治学科のみ3・4年基本科目12)で、上位数値は同一。配当表(科目→科目群)は未抽出 → courseMasters TODO。",
+    "printedPageMap": {
+      "requirementSummary": "§5 カリキュラム表 (PDF p38)",
+      "requirementDetail": "PDF p25,p37",
+      "creditCaps": "PDF p8(履修制限) ※未精読",
+      "promotion": "PDF p10(進級条件) ※未精読"
+    },
+    "verifiedBy": "curriculum table rendered as image and read (pol_p38)"
+  },
+  "requirementMaster": {
+    "totalRequired": 124,
+    "zones": [
+      {
+        "id": "kiso",
+        "nameJa": "基礎科目",
+        "minUnits": 28,
+        "rule": "min-units-with-subzones",
+        "noteJa": "人文科学／社会科学／自然科学／総合の4科目群から各4単位以上。留学認定科目は各群8単位まで算入。超過分は卒業必要単位に含める。",
+        "subZones": [
+          { "id": "jinbun", "nameJa": "人文科学科目群", "minUnits": 4 },
+          { "id": "shakai", "nameJa": "社会科学科目群", "minUnits": 4 },
+          { "id": "shizen", "nameJa": "自然科学科目群", "minUnits": 4 },
+          { "id": "sogo", "nameJa": "総合科目群", "minUnits": 4 }
+        ]
+      },
+      {
+        "id": "gaikokugo",
+        "nameJa": "外国語科目",
+        "minUnits": 16,
+        "rule": "min-units",
+        "noteJa": "2言語を選択必修（英語は6単位以上、独・仏・中・西・日本語は8単位以上）、計16。超過分は卒業必要単位に含める。"
+      },
+      {
+        "id": "kenko",
+        "nameJa": "健康・運動科学科目",
+        "minUnits": 4,
+        "rule": "min-units",
+        "noteJa": "1年次必修2単位（運動学演習Ⅰ-1・Ⅰ-2）+ 選択必修2単位。"
+      },
+      {
+        "id": "kihonouyou",
+        "nameJa": "基本・応用科目（所属学科関係科目）",
+        "minUnits": 42,
+        "rule": "composite",
+        "noteJa": "所属学科の関係科目で42単位以上。学科別内訳: 政治学科=1年必修10+2年必修4（+3・4年基本科目12）/ 経済学科=1年必修14+2年選択必修6（3・4年選択必修なし）/ 政策学科=1年必修12+2年選択必修4（3・4年選択必修なし）。3学科共通関係科目は12単位まで各学科関係科目に算入。留学認定は各8まで。",
+        "departments": ["政治学科", "経済学科", "政策学科"]
+      },
+      {
+        "id": "freezone",
+        "nameJa": "専門研究・自由選択ほか",
+        "minUnits": 34,
+        "rule": "min-units",
+        "noteJa": "合計124に達するための残り（上記4区分の超過分＋専門研究4＋総合講座(4まで)・資格課程(8まで)・グローバル人材(20まで)等）。※専門演習未履修者はコース指定科目20単位以上。"
+      }
+    ]
+  },
+  "milestones": {
+    "year4Rule": {
+      "noteJa": "専門演習履修者は4年次に通年で最低4単位以上。未履修者は在学最終学期に最低4単位以上（§表 注記①②）。"
+    },
+    "promotion": { "noteJa": "2年次終了時に進級条件あり（PDF p10, 未精読）。" },
+    "earlyGraduation": { "noteJa": "別途規定（未精読）。" }
+  },
+  "mediaCap": {
+    "maxUnits": null,
+    "noteJa": "メディア授業の算入上限は本カリキュラム表に明記なし（別途確認）。"
+  },
+  "creditCaps": {
+    "_note": "履修制限単位数は PDF p8（概ね 1年春21/秋24・2年22・3年24・4年24 と読めるが要精読）。TODO精読。",
+    "perYear": {}
+  },
+  "specialRules": {
+    "overflow": "基礎28・外国語16・健康運動4・基本応用42を超えた分は卒業必要単位に含める。",
+    "commonCourse3dept": "3学科共通関係科目は12単位まで各学科の関係科目に含める。",
+    "ryugakuNinei": "留学認定科目: 基礎は各群8まで、基本科目は8まで、応用科目は14まで、3学科共通は4まで等。",
+    "zenmonKenkyu": "専門演習(卒業論文)未履修者は専門研究Ⅰ・Ⅱ等。4年通年で最低4単位。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 授業科目配当表（科目→科目群/学科）を抽出して充填。学科別(政治/経済/政策)の関係科目リストが必要。CAN/自動分類用。"
+  }
+}
