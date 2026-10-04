@@ -2,7 +2,7 @@
 
 > 목표: 2027-01-15 App Store 제출(ROADMAP). 이 문서는 **순서대로 따라가는 실행 체크리스트**.
 > 문안은 [STORE-LISTING.md](STORE-LISTING.md), 방침은 [legal/](legal/), 신고 대응은 [MODERATION.md](MODERATION.md) 참조.
-> 표시명 `japan time - 時間割` / 번들ID `com.japantime.app` (제출 전까지 변경 가능, 제출 후 영구 고정).
+> 표시명 `japan time - 時間割` / 번들ID `jp.timetable.app` (제출 전까지 변경 가능, 제출 후 영구 고정).
 
 ---
 
@@ -23,7 +23,7 @@
 
 **대기 중 (외부 승인) — 뜨면 진행:**
 - Apple 멤버십 활성화 확인 → `https://developer.apple.com/account` 에서 **Active** 뜨는지.
-  Active면 → App Store Connect 앱 생성(이름 japan time, 번들ID com.japantime.app) → Team ID/ascAppId를 `eas.json`에.
+  Active면 → App Store Connect 앱 생성(이름 japan time, 번들ID jp.timetable.app) → Team ID/ascAppId를 `eas.json`에.
 - Google 신원확인 완료 대기(며칠). 완료되면 내부 테스트 트랙 가능.
 
 **그다음 (본인 맥에서):** `npm i -g eas-cli` → `eas login` → `eas init` → `eas build`.
@@ -54,7 +54,7 @@
 6. [ ] 승인 대기 **보통 24~48시간**(가끔 더). 승인 메일 오면 완료.
 7. [ ] 승인 후 https://appstoreconnect.apple.com → **Users and Access > 좌하단**에서
    **Apple Team ID(10자리)** 확인 → `eas.json`의 `appleTeamId`에 기입.
-8. [ ] App Store Connect에서 **새 앱(App) 생성**(이름 japan time, 번들ID com.japantime.app)
+8. [ ] App Store Connect에서 **새 앱(App) 생성**(이름 japan time, 번들ID jp.timetable.app)
    → 생성되면 URL/화면의 **ascAppId(숫자)** 확인 → `eas.json`의 `ascAppId`에 기입.
    `appleId`에는 로그인 이메일 기입.
 

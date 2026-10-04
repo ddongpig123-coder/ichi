@@ -11,7 +11,7 @@
 | 項目 | 値 |
 |---|---|
 | App name (표시명) | **japan time - 時間割** |
-| Bundle ID / Package | `com.japantime.app` |
+| Bundle ID / Package | `jp.timetable.app` |
 | Primary category | Education（教育） |
 | Secondary category | Social Networking（ソーシャル） |
 | Primary language | 日本語 (ja) |
