@@ -1,0 +1,79 @@
+{
+  "_meta": {
+    "source": "明治大学 2026年度 農学部便覧（農学科・農芸化学科・生命科学科・食料環境政策学科）",
+    "extractedAt": "2026-10-05",
+    "faculty": "agriculture",
+    "facultyNameJa": "農学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2026,
+    "appliesTo": "2026年度便覧（入学年度の適用範囲は便覧表紙で要確認）",
+    "note": "卒業に必要な単位数表(便覧 印刷p19)を画像レンダー検証。合計124は全4学科共通。学科ごとに基礎/専攻/教養の内訳が異なる。食料環境政策学科は専攻がⅠ18+Ⅱ20に分割。配当表(科目→科目群)はTODO。",
+    "verifiedBy": "requirement table rendered as image and read (agr_p6)"
+  },
+  "requirementMaster": {
+    "totalRequired": 124,
+    "byDepartment": true,
+    "departments": [
+      {
+        "id": "nogaku", "nameJa": "農学科",
+        "zones": [
+          { "id": "kiso", "nameJa": "基礎科目群", "minUnits": 24 },
+          { "id": "senko", "nameJa": "専攻科目群", "minUnits": 50 },
+          { "id": "kyoyo", "nameJa": "教養科目群", "minUnits": 6, "noteJa": "第一分野(人文)4 + 第二分野(社会)2" },
+          { "id": "kyotsu-senmon", "nameJa": "共通専門科目群", "minUnits": 3 },
+          { "id": "gaikokugo", "nameJa": "外国語科目群", "minUnits": 12, "noteJa": "第一外国語8 + 第二外国語4" },
+          { "id": "hoken", "nameJa": "保健・体育科目群", "minUnits": 3 },
+          { "id": "freezone", "nameJa": "自由選択ほか", "minUnits": 26, "noteJa": "124に達する残り(卒論関係科目群・卒業要件外科目含む)" }
+        ]
+      },
+      {
+        "id": "nogei-kagaku", "nameJa": "農芸化学科",
+        "zones": [
+          { "id": "kiso", "nameJa": "基礎科目群", "minUnits": 32 },
+          { "id": "senko", "nameJa": "専攻科目群", "minUnits": 50, "noteJa": "卒論関係科目群の修得単位も加算(※1)" },
+          { "id": "kyoyo", "nameJa": "教養科目群", "minUnits": 6, "noteJa": "人文4 + 社会2" },
+          { "id": "kyotsu-senmon", "nameJa": "共通専門科目群", "minUnits": 3 },
+          { "id": "gaikokugo", "nameJa": "外国語科目群", "minUnits": 12 },
+          { "id": "hoken", "nameJa": "保健・体育科目群", "minUnits": 3 },
+          { "id": "freezone", "nameJa": "自由選択ほか", "minUnits": 18 }
+        ]
+      },
+      {
+        "id": "seimei-kagaku", "nameJa": "生命科学科",
+        "zones": [
+          { "id": "kiso", "nameJa": "基礎科目群", "minUnits": 24 },
+          { "id": "senko", "nameJa": "専攻科目群", "minUnits": 50 },
+          { "id": "kyoyo", "nameJa": "教養科目群", "minUnits": 6, "noteJa": "人文4 + 社会2" },
+          { "id": "kyotsu-senmon", "nameJa": "共通専門科目群", "minUnits": 3 },
+          { "id": "gaikokugo", "nameJa": "外国語科目群", "minUnits": 12 },
+          { "id": "hoken", "nameJa": "保健・体育科目群", "minUnits": 3 },
+          { "id": "freezone", "nameJa": "自由選択ほか", "minUnits": 26 }
+        ]
+      },
+      {
+        "id": "shokuryo-kankyo", "nameJa": "食料環境政策学科",
+        "zones": [
+          { "id": "kiso", "nameJa": "基礎科目群", "minUnits": 24 },
+          { "id": "senko1", "nameJa": "専攻科目Ⅰ", "minUnits": 18 },
+          { "id": "senko2", "nameJa": "専攻科目Ⅱ", "minUnits": 20 },
+          { "id": "kyoyo", "nameJa": "教養科目群", "minUnits": 6, "noteJa": "人文4 + 自然2" },
+          { "id": "kyotsu-senmon", "nameJa": "共通専門科目群", "minUnits": 3 },
+          { "id": "gaikokugo", "nameJa": "外国語科目群", "minUnits": 12 },
+          { "id": "hoken", "nameJa": "保健・体育科目群", "minUnits": 3 },
+          { "id": "freezone", "nameJa": "自由選択ほか", "minUnits": 38 }
+        ]
+      }
+    ]
+  },
+  "milestones": {
+    "year4Min": { "minUnits": 4, "noteJa": "4年次に修得すべき最低単位4（卒論関係・卒業要件外・認定科目も対象, ※3）。" }
+  },
+  "specialRules": {
+    "gakubukan-gaikokugo": "学部間共通外国語の所定科目は選択必修英語の代わりに4単位まで卒業要件に算入可。",
+    "nogeiOverflow": "農芸化学科の専攻科目群合計には卒論関係科目群の修得単位も加算(※1)。",
+    "ryugakusei": "外国人留学生の必修科目は便覧P.27参照（日本語Ⅰa/Ⅰb/Ⅱ…）。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 各学科の専攻科目・基礎科目の配当表(科目→科目群)。必修/選択必修一覧は便覧p19下に一部あり(農芸化学/生命科学/食料環境政策)。"
+  }
+}
