@@ -1,0 +1,63 @@
+{
+  "_meta": {
+    "source": "明治大学 2026年度 文学部便覧（文学科・史学地理学科ほか）",
+    "extractedAt": "2026-10-05",
+    "faculty": "literature",
+    "facultyNameJa": "文学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2026,
+    "appliesTo": "2026年度便覧（入学年度の適用範囲は便覧表紙で要確認）",
+    "note": "文学部は学科ごとに卒業要件内訳が異なる（合計は124で共通）。文学科・史学地理学科の要件表(便覧 印刷p18)を画像レンダー検証。心理社会学科は提供PDFに未収録→TODO。各専攻の専攻必修内訳は専攻別配当表(P.38以降/P.67以降)→courseMasters TODO。",
+    "printedPageMap": {
+      "requirementTable": "印刷p18 (文学科/史学地理学科)",
+      "creditCaps": "印刷p16付近(履修制限 年48)",
+      "majorAllocation": "文学科=P.38以降 / 史学地理学科=P.67以降"
+    },
+    "verifiedBy": "requirement table rendered as image and read (lit_p11)"
+  },
+  "requirementMaster": {
+    "totalRequired": 124,
+    "byDepartment": true,
+    "departments": [
+      {
+        "id": "bungaku",
+        "nameJa": "文学科",
+        "zones": [
+          { "id": "senko-hisshu", "nameJa": "専攻必修科目", "minUnits": 38, "rule": "all-required", "noteJa": "専攻別配当表(P.38以降)。38超過分は選択科目合計に算入。" },
+          { "id": "gaikokugo", "nameJa": "外国語科目", "minUnits": 16, "rule": "min-units" },
+          { "id": "wellness", "nameJa": "ウェルネス科目", "minUnits": 4, "rule": "min-units" },
+          { "id": "sentaku", "nameJa": "選択科目", "minUnits": 66, "rule": "min-units", "noteJa": "専攻選択A12以上 + 共通選択24以上、専攻選択Bと合わせて48以上、選択合計66以上。" }
+        ]
+      },
+      {
+        "id": "shigaku-chiri",
+        "nameJa": "史学地理学科",
+        "zones": [
+          { "id": "senko-hisshu", "nameJa": "専攻必修科目", "minUnits": 32, "rule": "all-required", "noteJa": "専攻別配当表(P.67以降)。" },
+          { "id": "gaikokugo", "nameJa": "外国語科目", "minUnits": 12, "rule": "min-units" },
+          { "id": "wellness", "nameJa": "ウェルネス科目", "minUnits": 4, "rule": "min-units" },
+          { "id": "sentaku", "nameJa": "選択科目", "minUnits": 76, "rule": "min-units", "noteJa": "専攻選択A12以上 + 共通選択24以上、専攻選択Bと合わせて62以上、選択合計76以上。" }
+        ]
+      }
+    ],
+    "departmentsTodo": ["心理社会学科（提供PDF未収録）"]
+  },
+  "milestones": {
+    "promotion": {
+      "toYear3": { "minUnits": 40, "noteJa": "2年次終了時までに卒業必要科目から40単位以上で3年次進級。" }
+    }
+  },
+  "creditCaps": {
+    "perYear": { "1": 48, "2": 48, "3": 48, "4": 48 },
+    "noteJa": "履修制限単位数は各年次48（便覧p16付近）。"
+  },
+  "specialRules": {
+    "senkoHisshuOverflow": "専攻必修の超過分は選択科目合計に算入。",
+    "ryugakusei": "外国人留学生（日本語免除者除く）は「日本語」1年次4・2年次4単位が必修。",
+    "tagakubu": "他学部履修は60単位まで可能（卒業算入条件は便覧参照）。",
+    "zengakuKyotsu": "全学共通総合講座は4単位まで卒業必要単位に算入。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 専攻別配当表（文学科=P.38以降 / 史学地理学科=P.67以降）から専攻ごとの専攻必修・専攻選択A/Bリストを抽出。文学部は専攻が多数（日本文学/英米文学/ドイツ文学/フランス文学/演劇学/文芸メディア/日本史学/アジア史/西洋史学/考古学/地理学 等）。"
+  }
+}
