@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "source": "明治大学 経営学部便覧 卒業単位数および卒業要件（2017～2020年度入学者）",
+    "extractedAt": "2026-10-05",
+    "faculty": "management",
+    "facultyNameJa": "経営学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2017,
+    "appliesTo": "2017～2020年度入学者。⚠️ 2021年度以降入学者（現在の新入生）は別バンド → 要取得(TODO)。",
+    "note": "ユーザー提供の卒業要件原文（正確）から作成。合計134。上位の最低修得単位は3学科(経営/会計/公共経営)共通。学科必修8・学科専門24は学科ごとに科目が異なる(単位数は同一)。配当表(科目→科目群)はTODO。",
+    "verifiedBy": "ユーザー提供の便覧原文テキスト"
+  },
+  "requirementMaster": {
+    "band": "2017～2020年度入学者",
+    "totalRequired": 134,
+    "zones": [
+      { "id": "gakubu-hisshu", "nameJa": "学部必修科目", "minUnits": 12, "rule": "all-required", "noteJa": "経営学A・B、近代経済学A・B、簿記論Ⅰ・Ⅱ（6科目）。" },
+      { "id": "kyoyo", "nameJa": "教養科目", "minUnits": 24, "rule": "min-units", "noteJa": "24以上。日本事情の履修は外国人留学生に限る。" },
+      { "id": "gaikokugo", "nameJa": "外国語科目", "minUnits": 16, "rule": "min-units", "noteJa": "2か国語選択。英語選択は4単位、その他言語は8単位。母語選択不可。留学生は日本語を含める。英語選択者は必修以外から4単位以上。学部間共通外国語・留学生共通日本語も算入。" },
+      { "id": "taiiku", "nameJa": "体育実技科目", "minUnits": 2, "rule": "all-required", "noteJa": "体育実技A・B（各1単位）必修。" },
+      { "id": "gaikokugo-senmon", "nameJa": "外国語専門科目", "minUnits": 4, "rule": "min-units" },
+      { "id": "kiso-senmon", "nameJa": "基礎専門科目", "minUnits": 14, "rule": "min-units", "noteJa": "所属学科の基礎専門科目。" },
+      { "id": "gakka-hisshu", "nameJa": "学科必修科目", "minUnits": 8, "rule": "all-required", "noteJa": "所属学科の学科必修科目（4科目）。経営学科=企業論A/B・経営管理論A/B / 会計学科=財務会計総論A/B・管理会計総論A/B / 公共経営学科=公共経営学A/B・行政経営論A/B。" },
+      { "id": "gakka-senmon", "nameJa": "学科専門科目", "minUnits": 24, "rule": "min-units", "noteJa": "所属学科の学科専門科目。" },
+      { "id": "jiyu", "nameJa": "自由履修科目", "minUnits": 30, "rule": "min-units", "noteJa": "各区分の超過分＋実習関連・演習・ICTリテラシー・学部間共通総合講座・国際教育プログラム・各学科教職専門・国際協力人材/日ASEAN/グローバル人材育成プログラム・他学部設置科目(60まで)が算入。" }
+    ],
+    "departments": ["経営学科", "会計学科", "公共経営学科"]
+  },
+  "milestones": {
+    "year4Min": { "minUnits": 4, "noteJa": "4年次に4単位以上を履修。" }
+  },
+  "specialRules": {
+    "tagakubuCap": "他学部設置科目は60単位まで自由履修科目に算入。",
+    "eigoSelect": "外国語必修で英語を選択した者は、必修以外から4単位以上。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 学科別(経営/会計/公共経営)の基礎専門・学科専門の配当表(科目→科目群)。"
+  }
+}
