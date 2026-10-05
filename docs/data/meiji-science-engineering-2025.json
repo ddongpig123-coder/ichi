@@ -1,0 +1,72 @@
+{
+  "_meta": {
+    "source": "明治大学 理工学部便覧 卒業要件（2025年度以降／2020年度以降／2015年度以降入学者）",
+    "extractedAt": "2026-10-05",
+    "faculty": "science-engineering",
+    "facultyNameJa": "理工学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2025,
+    "appliesTo": "primaryBand=2025年度以降（2025・2026入学者）。2020年度以降・2015年度以降は historicalBands に保存。",
+    "note": "ユーザー提供の卒業要件原文（正確・OCR不要）から作成。合計136は全年度共通。総合文化8/健康スポーツ2/外国語14（英8+第2言語6）は共通。理系基礎・専門教育は学科/専攻・年度で異なる。電気電子生命学科は2025年度以降で専攻分化（電気電子工学/生命理工学）。配当表(科目→科目群)はTODO。",
+    "verifiedBy": "ユーザー提供の便覧原文テキスト（3年度band）"
+  },
+  "common": {
+    "totalRequired": 136,
+    "zones": [
+      { "id": "sogo-bunka", "nameJa": "総合文化科目", "minUnits": 8, "rule": "min-units", "noteJa": "8単位以上。日本事情A・Bの履修は外国人留学生に限る。" },
+      { "id": "kenko-sports", "nameJa": "健康・スポーツ学科目", "minUnits": 2, "rule": "all-required", "noteJa": "健康・スポーツ学1・2（各1単位）必修。" },
+      { "id": "gaikokugo", "nameJa": "外国語科目", "minUnits": 14, "rule": "composite", "noteJa": "第1外国語=英語8（留学生は日本語8）+ 第2外国語=独仏露中から1言語6（留学生は独仏露中英から1言語6）。計14。" }
+    ],
+    "kyoshokuCap": { "default": 4, "sugaku": 12, "noteJa": "教職に関する科目（教授会認定分）を卒業単位に算入: 電気電子生命/機械情報/建築/応用化学/情報科学/物理=4まで、数学=12まで。" }
+  },
+  "requirementMaster": {
+    "band": "2025年度以降",
+    "totalRequired": 136,
+    "byDepartment": true,
+    "departments": [
+      { "id": "ee-ee", "nameJa": "電気電子生命学科 電気電子工学専攻", "riskeiKiso": 32, "senmon": 72, "freezone": 8 },
+      { "id": "ee-life", "nameJa": "電気電子生命学科 生命理工学専攻", "riskeiKiso": 36, "senmon": 67, "freezone": 9 },
+      { "id": "mech", "nameJa": "機械工学科", "riskeiKiso": 28, "senmon": 76, "freezone": 8 },
+      { "id": "mech-info", "nameJa": "機械情報工学科", "riskeiKiso": 30, "senmon": 78, "freezone": 4 },
+      { "id": "arch", "nameJa": "建築学科", "riskeiKiso": 20, "senmon": 82, "freezone": 10 },
+      { "id": "applied-chem", "nameJa": "応用化学科", "riskeiKiso": 28, "senmon": 80, "freezone": 4 },
+      { "id": "info-sci", "nameJa": "情報科学科", "riskeiKiso": 24, "senmon": 76, "freezone": 12 },
+      { "id": "math", "nameJa": "数学科", "riskeiKiso": 20, "senmon": 72, "freezone": 20 },
+      { "id": "physics", "nameJa": "物理学科", "riskeiKiso": 24, "senmon": 80, "freezone": 8 }
+    ],
+    "zoneNote": "各学科の卒業要件 = 総合文化8 + 健康スポーツ2 + 外国語14 + 理系基礎(riskeiKiso) + 専門教育(senmon) + 自由/他(freezone=136に達する残り)。"
+  },
+  "historicalBands": {
+    "2020年度以降": {
+      "totalRequired": 136,
+      "note": "電気電子生命学科は理系基礎で専攻分化なし(34)。専門は電気電子工学専攻76/生命理工学専攻74。",
+      "departments": [
+        { "id": "ee", "nameJa": "電気電子生命学科", "riskeiKiso": 34, "senmon": { "電気電子工学専攻": 76, "生命理工学専攻": 74 } },
+        { "id": "mech", "nameJa": "機械工学科", "riskeiKiso": 30, "senmon": 80 },
+        { "id": "mech-info", "nameJa": "機械情報工学科", "riskeiKiso": 32, "senmon": 78 },
+        { "id": "arch", "nameJa": "建築学科", "riskeiKiso": 20, "senmon": 82 },
+        { "id": "applied-chem", "nameJa": "応用化学科", "riskeiKiso": 28, "senmon": 80 },
+        { "id": "info-sci", "nameJa": "情報科学科", "riskeiKiso": 28, "senmon": 76 },
+        { "id": "math", "nameJa": "数学科", "riskeiKiso": 20, "senmon": 72 },
+        { "id": "physics", "nameJa": "物理学科", "riskeiKiso": 24, "senmon": 80 }
+      ]
+    },
+    "2015年度以降": {
+      "totalRequired": 136,
+      "note": "2020年度以降とほぼ同じ。数学科の専門が74（2020は72）。",
+      "departments": [
+        { "id": "ee", "nameJa": "電気電子生命学科", "riskeiKiso": 34, "senmon": { "電気電子工学専攻": 76, "生命理工学専攻": 74 } },
+        { "id": "mech", "nameJa": "機械工学科", "riskeiKiso": 30, "senmon": 80 },
+        { "id": "mech-info", "nameJa": "機械情報工学科", "riskeiKiso": 32, "senmon": 78 },
+        { "id": "arch", "nameJa": "建築学科", "riskeiKiso": 20, "senmon": 82 },
+        { "id": "applied-chem", "nameJa": "応用化学科", "riskeiKiso": 28, "senmon": 80 },
+        { "id": "info-sci", "nameJa": "情報科学科", "riskeiKiso": 28, "senmon": 76 },
+        { "id": "math", "nameJa": "数学科", "riskeiKiso": 20, "senmon": 74 },
+        { "id": "physics", "nameJa": "物理学科", "riskeiKiso": 24, "senmon": 80 }
+      ]
+    }
+  },
+  "courseMasters": {
+    "_note": "TODO: 各学科の理系基礎・専門教育科目の配当表（科目→科目群）。CAN/自動分類用。"
+  }
+}
