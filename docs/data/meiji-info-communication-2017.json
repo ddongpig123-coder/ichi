@@ -1,0 +1,44 @@
+{
+  "_meta": {
+    "source": "明治大学 情報コミュニケーション学部便覧 卒業・進級に必要な単位（2017年度以降入学者）",
+    "extractedAt": "2026-10-05",
+    "faculty": "info-communication",
+    "facultyNameJa": "情報コミュニケーション学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2017,
+    "appliesTo": "2017年度以降入学者（2016年度以前は別要件）。単一学科(情報コミュニケーション学科)。",
+    "note": "単位表(画像)を読み取り検証。合計124(必修4)。専門科目群は最低64(社会科学4・人文科学4・自然科学2 を含む。画像の54は {社会システム+文化と表象+人間と環境} の最低で、4+4+2+54=64)。配当表(科目→科目群)はTODO。",
+    "verifiedBy": "requirement table image read"
+  },
+  "requirementMaster": {
+    "band": "2017年度以降入学者",
+    "totalRequired": 124,
+    "zones": [
+      { "id": "gakusai", "nameJa": "学際科目群", "minUnits": 4, "rule": "all-required", "noteJa": "情報コミュニケーション学入門 2科目4単位 必修。" },
+      {
+        "id": "senmon", "nameJa": "専門科目群", "minUnits": 64, "rule": "min-units-with-subzones",
+        "noteJa": "社会科学4・人文科学4・自然科学2を含め64単位以上。",
+        "subZones": [
+          { "id": "shakai-kagaku", "nameJa": "社会科学", "minUnits": 4 },
+          { "id": "jinbun-kagaku", "nameJa": "人文科学", "minUnits": 4 },
+          { "id": "shizen-kagaku", "nameJa": "自然科学", "minUnits": 2 },
+          { "id": "sonota", "nameJa": "社会システム/文化と表象/人間と環境", "minUnits": 54 }
+        ]
+      },
+      { "id": "gaikokugo", "nameJa": "外国語科目群", "minUnits": 10, "rule": "min-units", "noteJa": "英語6以上(English Seminar/英語コミュニケーション/英語音声学は除く) + 独仏西中韓タイから1言語(留学生は日本語)4以上。" },
+      { "id": "kenkyu-hyogen", "nameJa": "研究方法・表現実践科目群", "minUnits": 10, "rule": "min-units" },
+      { "id": "jiyu", "nameJa": "自由に選択できる科目", "minUnits": 36, "rule": "min-units", "noteJa": "各区分の超過分が自動算入。学部設置科目外の卒業単位認定科目は40単位まで(学部間共通外国語・他学部履修・留学生共通日本語・各育成プログラム等。4・5・6は16まで)。資格課程開講科目は不可。" }
+    ]
+  },
+  "milestones": {
+    "promotion": { "toYear3": { "minUnits": 40, "noteJa": "2年次終了時までに卒業要件内単位40単位以上で3年次進級。" } },
+    "year4Min": { "minUnits": 8, "noteJa": "4年次に8単位以上修得(卒業付加条件)。" }
+  },
+  "specialRules": {
+    "tagakubuCap": "学部設置科目外の卒業単位認定科目は40単位まで。",
+    "overflow": "最低修得単位を超えた分は自動的に「自由に選択できる科目」に算入。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 専門科目群の配当表(科目→社会科学/人文科学/自然科学/社会システム/文化と表象/人間と環境)。"
+  }
+}
