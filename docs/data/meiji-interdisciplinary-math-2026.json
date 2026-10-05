@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "source": "明治大学 2026年度 総合数理学部便覧 卒業要件表 (印刷p18)",
+    "extractedAt": "2026-10-05",
+    "faculty": "interdisciplinary-math",
+    "facultyNameJa": "総合数理学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2026,
+    "appliesTo": "2026年度便覧。3学科(現象数理統計学科・先端メディアサイエンス学科・ネットワークデザイン学科)。総合教育科目のみ留学生/留学生以外で必修指定・最低単位が異なる。",
+    "note": "卒業要件表(画像)を読み取り検証。全学科 合計124。各セルは[必修指定/選択必修最低/修得すべき最低]のうち zone.minUnits=修得すべき最低単位数。全学共通総合講座4まで・他学部設置科目60まで卒業要件算入。配当表(科目→科目区分)は別PDF(3学科)で受領済→courseMasters反映TODO。",
+    "verifiedBy": "requirement table rendered as image and read (sogo_req); 各学科 総合教育(留以外18)+基礎+専門+freezone=124 検算一致"
+  },
+  "requirementMaster": {
+    "band": "2026年度便覧",
+    "totalRequired": 124,
+    "byDepartment": true,
+    "sogoKyoikuByResidency": true,
+    "departments": [
+      {
+        "id": "genshosuri-tokei", "nameJa": "現象数理統計学科",
+        "zones": [
+          { "id": "sogo-kyoiku", "nameJa": "総合教育科目", "minUnits": 18, "hisshuShitei": 8, "minUnitsRyugakusei": 20, "hisshuShiteiRyugakusei": 16, "rule": "min-units-by-residency", "noteJa": "留学生以外:必修指定8・最低18 / 留学生:必修指定16・最低20。全学共通総合講座は4単位まで算入。" },
+          { "id": "kiso-kyoiku", "nameJa": "基礎教育科目", "minUnits": 32, "hisshuShitei": 26, "sentakuHisshu": 2, "rule": "min-units", "noteJa": "必修指定26・選択必修最低2・最低32。" },
+          { "id": "senmon-kyoiku", "nameJa": "専門教育科目", "minUnits": 66, "hisshuShitei": 30, "sentakuHisshu": 18, "rule": "min-units", "noteJa": "必修指定30・選択必修最低18・最低66。" },
+          { "id": "freezone", "nameJa": "自由選択ほか", "minUnits": 8, "minUnitsRyugakusei": 6, "rule": "min-units", "noteJa": "124に達する残り。他学科設置・他学部設置(60まで)・学部間共通外国語・留学生共通日本語・グローバル人材育成等。" }
+        ]
+      },
+      {
+        "id": "sentan-media", "nameJa": "先端メディアサイエンス学科",
+        "zones": [
+          { "id": "sogo-kyoiku", "nameJa": "総合教育科目", "minUnits": 18, "hisshuShitei": 8, "minUnitsRyugakusei": 20, "hisshuShiteiRyugakusei": 16, "rule": "min-units-by-residency", "noteJa": "留学生以外:必修指定8・最低18 / 留学生:必修指定16・最低20。全学共通総合講座は4単位まで算入。" },
+          { "id": "kiso-kyoiku", "nameJa": "基礎教育科目", "minUnits": 28, "hisshuShitei": 22, "rule": "min-units", "noteJa": "必修指定22・最低28。" },
+          { "id": "senmon-kyoiku", "nameJa": "専門教育科目", "minUnits": 72, "hisshuShitei": 38, "sentakuHisshu": 8, "rule": "min-units", "noteJa": "必修指定38・選択必修最低8・最低72。" },
+          { "id": "freezone", "nameJa": "自由選択ほか", "minUnits": 6, "minUnitsRyugakusei": 4, "rule": "min-units", "noteJa": "124に達する残り。他学科設置・他学部設置(60まで)・学部間共通外国語・留学生共通日本語・グローバル人材育成等。" }
+        ]
+      },
+      {
+        "id": "network-design", "nameJa": "ネットワークデザイン学科",
+        "zones": [
+          { "id": "sogo-kyoiku", "nameJa": "総合教育科目", "minUnits": 18, "hisshuShitei": 8, "minUnitsRyugakusei": 20, "hisshuShiteiRyugakusei": 16, "rule": "min-units-by-residency", "noteJa": "留学生以外:必修指定8・最低18 / 留学生:必修指定16・最低20。全学共通総合講座は4単位まで算入。" },
+          { "id": "kiso-kyoiku", "nameJa": "基礎教育科目", "minUnits": 30, "hisshuShitei": 24, "sentakuHisshu": 4, "rule": "min-units", "noteJa": "必修指定24・選択必修最低4・最低30。" },
+          { "id": "senmon-kyoiku", "nameJa": "専門教育科目", "minUnits": 61, "hisshuShitei": 30, "sentakuHisshu": 14, "rule": "min-units", "noteJa": "必修指定30・選択必修最低14・最低61。" },
+          { "id": "freezone", "nameJa": "自由選択ほか", "minUnits": 15, "minUnitsRyugakusei": 13, "rule": "min-units", "noteJa": "124に達する残り。他学科設置・他学部設置(60まで)・学部間共通外国語・留学生共通日本語・グローバル人材育成等。" }
+        ]
+      }
+    ]
+  },
+  "milestones": {},
+  "specialRules": {
+    "zenkyoKoza": "全学共通総合講座は4単位まで卒業要件に算入(総合教育科目)。",
+    "tagakubuCap": "他学部設置科目は60単位まで卒業要件に算入。",
+    "ryugakusei": "総合教育科目のみ留学生/留学生以外で必修指定・最低単位が異なる(留学生は留学生共通日本語科目を含む)。"
+  },
+  "courseMasters": {
+    "_note": "受領済みの3学科 科目配当表PDF(現象数理統計/先端メディアサイエンス/ネットワークデザイン)から 科目→科目区分 + 配当年次 + 必修(○)/選択必修(△▲)を反映予定(TODO)。△▲の最低修得規則は学科ごと異なる(例:ネットワークデザイン ▲14以上・△4以上)。"
+  }
+}
