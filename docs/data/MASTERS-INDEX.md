@@ -16,7 +16,7 @@
 | 明治 | 経営学部 (3학과) | **2017~2020** | 134 | `meiji-management-2017.json` | 영역O(3학과 공통)·**2021~ 밴드 필요(TODO)** |
 | 明治 | 情報コミュニケーション学部 (단일학과) | **2017~** | 124 | `meiji-info-communication-2017.json` | 영역만 (배당표 TODO) |
 | 明治 | 国際日本学部 (단일학과) | 2026 便覧 | 124 | `meiji-global-japanese-2026.json` | 영역만·**유학생/일본인 2트랙** (배당표 TODO) |
-| 明治 | 総合数理学部 (3학과) | 2026 便覧 | 124 | `meiji-interdisciplinary-math-2026.json` | 영역·학과별·**유학생 総合教育 가변**·**배당표PDF 수령(반영 TODO)** |
+| 明治 | 総合数理学部 (3학과) | 2026 便覧 | 124 | `meiji-interdisciplinary-math-2026.json` (+`-allocation-*.json`) | **완성** (영역+배당표·CAN, 3학과 378과목) |
 
 ## 수령 대기 / 다음
 - **메이지 10학부 영역 마스터 수집 완료** (商/法/政経/文/理工/農/経営/情コミ/国際日本/総合数理).
@@ -28,6 +28,8 @@
   `components/graduation/ZoneDiagnosis.tsx`. 졸업 마술사에 학부/학과/입학년도/유학생 선택 추가.
   商학부=기존 풀엔진(배당표·CAN), 他9학부=영역 단위 진단. "준비중"은 **메이지 외 학교/학교 미설정**만 남음.
 - 다음(완성 승격): 각 학부 배당표 반영 → 과목 자동분류·CAN. 영역 보완: 경영 2021~·문학부 心理社会.
+  - **배당표 파서**: `scripts/parse_binran_allocation.py` (便覧 (5)科目配当表 → JSON, 罫線 기반 섹션경계).
+    総合数理 3학과 반영 완료(`src/data/allocationInterdisciplinaryMath.ts`, 앱 CAN 연동). 他학부도 동일 파서로 추출 가능.
 
 ## 便覧 연도 주의
 - 같은 학부도 **입학년도에 따라 요건·과목이 다를 수 있음**. 파일명·_meta.admissionYear·appliesTo에 연도를 반드시 명시.

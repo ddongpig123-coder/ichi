@@ -1,0 +1,1226 @@
+{
+ "_meta": {
+  "source": "明治 2026 総合数理学部便覧 (5)科目配当表 先端メディアサイエンス学科",
+  "extractedAt": "2026-10-05",
+  "faculty": "interdisciplinary-math",
+  "dept": "sentan-media",
+  "deptNameJa": "先端メディアサイエンス学科",
+  "schoolDomain": "meiji.ac.jp",
+  "admissionYear": 2026,
+  "tool": "scripts/parse_binran_allocation.py",
+  "note": "罫線ベースで科目区分境界を確定。years=配当年次, mark ○=必修/△▲=選択必修。external=卒業要件外(大学院設置科目)。○合計が要件表の必修指定と±数単位差は ベーシックコース等の代替トラックが両方○のため。"
+ },
+ "courses": [
+  {
+   "name": "EnglishⅠＡ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishⅠＢ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishⅠＣ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishⅠＤ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishⅡＡ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishⅡＢ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishⅢＡ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    3
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishⅢＢ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    3
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishTestPreparationⅠ",
+   "units": 1,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "EnglishTestPreparationⅡ",
+   "units": 1,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅠＡ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅠＢ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅠＣ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅠＤ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅡＡ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅡＢ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅡＣ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語ⅡＤ",
+   "units": 1,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "哲学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "哲学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "科学哲学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "科学哲学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "芸術史Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "芸術史Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "言語学",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本語表現",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "歴史学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "歴史学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "考古学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "考古学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "地理学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "地理学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "日本国憲法",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "政治学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "政治学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "経済学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "経済学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "経営学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "経営学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "社会学Ａ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "心理学Ｂ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "情報と職業",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "社会と数学",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "社会調査法",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "情報技術概論",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "環境とエネルギー",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "スポーツ・健康科学",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "スポーツ実習Ａ",
+   "units": 1,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "スポーツ実習Ｂ",
+   "units": 1,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "スポーツ実習Ｃ",
+   "units": 1,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "スポーツ実習Ｄ",
+   "units": 1,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "スポーツ実習Ｅ",
+   "units": 1,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "総合数理テーマ講座",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "留学認定科目",
+   "units": 1,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "全学共通総合講座",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "総合教育科目",
+   "zone": "sogo-kyoiku"
+  },
+  {
+   "name": "総合数理概論",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "微積分Ⅰ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "微積分Ⅰベーシックコース",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "微積分Ⅱ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "線形代数Ⅰ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "線形代数Ⅱ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "数学基礎演習",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "統計学入門",
+   "units": 2,
+   "mark": null,
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "多変量解析基礎",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "物理学Ⅰ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "物理学Ⅰベーシックコース",
+   "units": 2,
+   "mark": null,
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "物理学Ⅱ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "物理学Ⅲ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "化学入門",
+   "units": 2,
+   "mark": null,
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "生物学入門",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "プログラミング演習Ⅰ",
+   "units": 4,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "プログラミング演習Ⅱ",
+   "units": 4,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "論理とディジタル回路",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "技術・情報倫理",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "知的財産",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "基礎教育科目",
+   "zone": "kiso-kyoiku"
+  },
+  {
+   "name": "先端メディアサイエンス概論",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "アカデミックリテラシー",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディアサイエンス特別講義",
+   "units": 2,
+   "mark": null,
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "コンテンツ・エンタテインメント概論",
+   "units": 2,
+   "mark": null,
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "エンタテインメントプログラミング演習",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "メディアプログラミング実習",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "ウェブプログラミング実習",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "基本情報技術Ⅲ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "基本情報技術Ⅳ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "情報理論",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "コンピュータ基礎",
+   "units": 2,
+   "mark": "△",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "アルゴリズム基礎",
+   "units": 2,
+   "mark": "△",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "ネットワークと情報セキュリティ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "コンテンツ・エンタテインメント産業論",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "IoTシステム",
+   "units": 2,
+   "mark": null,
+   "years": [
+    4
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "線形代数III",
+   "units": 2,
+   "mark": "△",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "システム数理基礎",
+   "units": 2,
+   "mark": "△",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "電気・電子回路基礎",
+   "units": 2,
+   "mark": "△",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "信号処理基礎",
+   "units": 2,
+   "mark": "△",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "信号処理演習",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "計算幾何学",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "計算数理",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "音声情報処理",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "映像・画像処理",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "メディア基礎実験",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "コンピュータグラフィックス基礎",
+   "units": 2,
+   "mark": "△",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "認知科学",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "知覚心理学",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "インタラクションデザイン",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "情報分析と可視化",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "パターン認識と機械学習",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "バーチャルリアリティ",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "コンピュータビジョン",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "音響・音楽表現",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "映像・アニメーション表現",
+   "units": 2,
+   "mark": null,
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "ロボット・エージェント",
+   "units": 2,
+   "mark": null,
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "メディアアート・デザイン",
+   "units": 2,
+   "mark": null,
+   "years": [
+    4
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "総合数理ゼミナール",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディアゼミナールⅠ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    1
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディアゼミナールⅡ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディアゼミナールⅢ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    2
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディア研究Ⅰ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディア研究Ⅱ",
+   "units": 2,
+   "mark": "○",
+   "years": [
+    3
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディア研究Ⅲ",
+   "units": 4,
+   "mark": "○",
+   "years": [
+    4
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端メディア研究Ⅳ",
+   "units": 4,
+   "mark": "○",
+   "years": [
+    4
+   ],
+   "kubunJa": "専門教育科目",
+   "zone": "senmon-kyoiku"
+  },
+  {
+   "name": "先端数理科学研究科設置科目",
+   "units": 2,
+   "mark": null,
+   "years": [
+    4
+   ],
+   "kubunJa": "専門教育科目",
+   "external": true,
+   "zone": null
+  }
+ ]
+}

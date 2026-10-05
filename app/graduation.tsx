@@ -16,6 +16,8 @@ import {
 } from "../src/services/gradRecordService";
 import { GradRecords, type Classified } from "../src/components/graduation/GradRecords";
 import { ZoneDiagnosis } from "../src/components/graduation/ZoneDiagnosis";
+import { AllocationCAN } from "../src/components/graduation/AllocationCAN";
+import { INTERDISCIPLINARY_MATH_ALLOCATION } from "../src/data/allocationInterdisciplinaryMath";
 import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
@@ -169,6 +171,10 @@ export default function GraduationScreen() {
     ? resolveZones(selBand, deptId, isRyugakusei)
     : null;
   const zoneBaseline = zoneCtx ? (zoneBaselines[zoneCtx] ?? {}) : {};
+  // 科目配当表（CAN）: 現状は総合数理学部のみ整備済み。
+  const allocCourses = selFaculty?.id === "interdisciplinary-math" && deptId
+    ? INTERDISCIPLINARY_MATH_ALLOCATION[deptId] ?? null
+    : null;
   function stepZone(zoneId: string, d: number) {
     if (!zoneCtx) return;
     setZoneBaselines((prev) => {
@@ -430,6 +436,33 @@ export default function GraduationScreen() {
               baseline={zoneBaseline}
               onStep={stepZone}
             />
+
+            {/* CAN — これから履修できる科目（配当表が整備済みの学科のみ） */}
+            {allocCourses ? (
+              <>
+                <Text style={styles.canHeading}>{t("grad.canHeading")}</Text>
+                <Text style={styles.miniLabel}>{t("grad.gradeLabel")}</Text>
+                <View style={styles.seg}>
+                  {GRADES.map((g) => (
+                    <TouchableOpacity
+                      key={g}
+                      style={[styles.segBtn, grade === g && styles.segBtnOn]}
+                      onPress={() => setGrade(g)}
+                    >
+                      <Text style={[styles.segText, grade === g && styles.segTextOn]}>{g}年</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <AllocationCAN
+                  theme={theme}
+                  t={t}
+                  courses={allocCourses}
+                  grade={grade}
+                  zones={resolvedZones.zones.filter((z) => !/freezone|jiyu/i.test(z.id)).map((z) => ({ id: z.id, nameJa: z.nameJa }))}
+                />
+              </>
+            ) : null}
+
             <View style={styles.disclaimer}>
               <Text style={styles.disclaimerText}>{t("grad.disclaimer")}</Text>
             </View>
