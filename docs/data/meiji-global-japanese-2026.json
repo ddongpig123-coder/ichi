@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "source": "明治大学 2026年度 国際日本学部便覧 Ⅱ.履修について 1.単位修得方法 (1)(2) 卒業に必要な最低単位数及び卒業要件 (印刷p14-15)",
+    "extractedAt": "2026-10-05",
+    "faculty": "global-japanese",
+    "facultyNameJa": "国際日本学部",
+    "schoolDomain": "meiji.ac.jp",
+    "admissionYear": 2026,
+    "appliesTo": "2026年度便覧。単一学科(国際日本学科)。日本人学生と外国人留学生で卒業要件が異なる(英語の扱いが別)→tracksで両方保持。イングリッシュトラック学生は別要件(未収録)。",
+    "note": "卒業要件表(画像)を読み取り検証。両トラックとも合計124。留学生トラックが当アプリの主ターゲット。配当表(科目→科目群)はTODO。",
+    "verifiedBy": "requirement table images read (ijs_p0 日本人 / ijs_p1 留学生), 小計の必修/選択必修/自由選択 検算一致"
+  },
+  "requirementMaster": {
+    "band": "2026年度便覧",
+    "totalRequired": 124,
+    "byTrack": true,
+    "tracks": [
+      {
+        "id": "ryugakusei", "nameJa": "外国人留学生", "primary": true,
+        "note": "当アプリの主ターゲット。小計 必修11/選択必修72/自由選択41 = 124。",
+        "zones": [
+          { "id": "eigo", "nameJa": "英語", "minUnits": 14, "rule": "select-required", "noteJa": "英語選択必修14単位[1年次8(4+4)・2年次6(3+3)]。英語選択科目は自由選択に算入。" },
+          { "id": "daini-gaikokugo-jiyu", "nameJa": "第二外国語(自由選択算入)", "minUnits": 0, "rule": "optional", "noteJa": "修得単位は自由選択に算入(母語の履修不可)。学部間共通外国語は教授会認定科目に限り8単位まで自由選択に算入。" },
+          { "id": "gakujutsu-nihongo", "nameJa": "第二外国語(留学生必修:学術日本語Ⅰ~Ⅲ)", "minUnits": 6, "rule": "all-required", "noteJa": "必修6単位(留学生のための学術日本語Ⅰ~Ⅲ)。日本語選択科目は自由選択に算入。" },
+          { "id": "senmon", "nameJa": "国際日本学専門科目", "minUnits": 50, "rule": "select-required", "noteJa": "50単位以上。超過分は自由選択に算入。" },
+          { "id": "sogo-kyoiku-hisshu", "nameJa": "総合教育科目(必修)", "minUnits": 5, "rule": "all-required", "noteJa": "必修5単位(国際日本学入門講義・アカデミックICTリテラシー・学術的文章の作成・国際日本学基礎演習)。" },
+          { "id": "sogo-kyoiku-sentaku", "nameJa": "総合教育科目(選択必修)", "minUnits": 8, "rule": "select-required", "noteJa": "選択必修8単位以上。超過分は自由選択に算入。" },
+          { "id": "jiyu", "nameJa": "自由選択科目", "minUnits": 41, "rule": "min-units", "noteJa": "各区分の超過分・演習・海外留学認定・他学部履修(20まで)・グローバル人材育成・資格課程関係(8まで)等が算入。" }
+        ]
+      },
+      {
+        "id": "domestic", "nameJa": "日本人学生", "primary": false,
+        "note": "小計 必修27/選択必修58/自由選択39 = 124。",
+        "zones": [
+          { "id": "eigo", "nameJa": "英語", "minUnits": 22, "rule": "all-required", "noteJa": "英語必修22単位[1年次12(6+6)・2年次10(5+5)]。英語選択科目は自由選択に算入。" },
+          { "id": "daini-gaikokugo-jiyu", "nameJa": "第二外国語(自由選択算入)", "minUnits": 0, "rule": "optional", "noteJa": "修得単位は自由選択に算入(母語不可)。学部間共通外国語は教授会認定で8単位まで自由選択に算入。" },
+          { "id": "senmon", "nameJa": "国際日本学専門科目", "minUnits": 50, "rule": "select-required", "noteJa": "50単位以上。超過分は自由選択に算入。" },
+          { "id": "sogo-kyoiku-hisshu", "nameJa": "総合教育科目(必修)", "minUnits": 5, "rule": "all-required", "noteJa": "必修5単位(国際日本学入門講義・アカデミックICTリテラシー・学術的文章の作成・国際日本学基礎演習)。" },
+          { "id": "sogo-kyoiku-sentaku", "nameJa": "総合教育科目(選択必修)", "minUnits": 8, "rule": "select-required", "noteJa": "選択必修8単位以上。超過分は自由選択に算入。" },
+          { "id": "jiyu", "nameJa": "自由選択科目", "minUnits": 39, "rule": "min-units", "noteJa": "各区分の超過分・演習・海外留学認定・他学部履修(20まで)・グローバル人材育成・資格課程関係(8まで)等が算入。" }
+        ]
+      }
+    ]
+  },
+  "milestones": {
+    "year4Min": { "minUnits": 12, "noteJa": "4年次に12単位以上を修得(両トラック共通)。" }
+  },
+  "specialRules": {
+    "mediaCap": "卒業要件のうちメディア授業科目により修得可能な単位数の上限は60単位。",
+    "englishMedium": "国際日本学専門科目・総合教育科目のうち最低12単位以上を英語(あるいは英語教材)で行う科目から修得。海外留学中に英語で履修し講義科目として認定された科目も英語科目として扱う。",
+    "tagakubuCap": "他学部履修科目は20単位まで自由選択に算入。",
+    "gakubukanGaikokugo": "学部間共通外国語科目は教授会認定に限り8単位まで自由選択に算入。",
+    "shikakuCap": "資格課程関係科目(教職必要科目)は教授会認定に限り8単位まで自由選択に算入。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 国際日本学専門科目・総合教育科目の配当表(科目→科目群)。CAN/自動分類用。"
+  }
+}
