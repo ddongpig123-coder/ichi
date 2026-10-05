@@ -15,24 +15,28 @@ import {
   loadGradState, saveGradState, loadTimetableSubjects, type TimetableSubject,
 } from "../src/services/gradRecordService";
 import { GradRecords, type Classified } from "../src/components/graduation/GradRecords";
+import { ZoneDiagnosis } from "../src/components/graduation/ZoneDiagnosis";
+import {
+  FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
+  MEIJI, type Faculty, type FBand,
+} from "../src/data/facultyMasters";
 import { ENROLLMENT_YEAR } from "../src/data/semesterTimetables";
 
 const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
-const MEIJI_DOMAIN = "meiji.ac.jp";
+const MEIJI_DOMAIN = MEIJI;
 
-// 対応状況の判定。マスターは (学部×入学年度) 単位で、現状は明治 商学部のみ整備済み。
-// 学部は自由記述のため「商/商学/commerce」を含むか＋空(未設定)は許容でファジー判定。
-// 通信失敗など不明時は fail-open（=対応扱い）で唯一動く画面を誤ってロックしない。
-type Coverage = "supported" | "school" | "faculty" | "noschool";
-function looksCommerce(dept: string | null): boolean {
-  if (!dept || !dept.trim()) return true; // 未設定は許容（scopeラベルで明示済み）
-  return /商学|商學|상학|commerce/i.test(dept);
-}
-function coverageOf(schoolDomain: string | null, dept: string | null): Coverage {
+// 学校レベルの対応状況。学部マスターは明治の全10学部を整備済み（商=配当表まで / 他9=区分のみ）。
+// 明治以外の学校・学校未設定のみ「準備中」。通信失敗など不明時は fail-open。
+type SchoolCoverage = "meiji" | "school" | "noschool";
+function schoolCoverageOf(schoolDomain: string | null): SchoolCoverage {
   if (schoolDomain == null) return "noschool";
   if (schoolDomain !== MEIJI_DOMAIN) return "school";
-  return looksCommerce(dept) ? "supported" : "faculty";
+  return "meiji";
+}
+// 区分のみ診断のコンテキストキー（学部/学科/在籍区分ごとに入力を分離）
+function zoneCtxKey(facultyId: string, deptId: string | null, ryu: boolean): string {
+  return `${facultyId}/${deptId ?? ""}/${ryu ? "r" : "d"}`;
 }
 
 // 卒業要件マジシャン（お試し版）。
@@ -64,12 +68,20 @@ export default function GraduationScreen() {
   const selectedCourse = COURSES_2021.find((c) => c.id === courseId) ?? null;
   const gradeLocked = grade < 3; // 基幹科目は3・4年配当
 
-  // 対応状況ゲーティング（明治 商学部のみ整備済み）。
+  // 学校レベルのゲーティング（明治のみ対応。学部は下のセレクタで選択）。
   const { user, schoolDomain, schoolReady } = useAuth();
   const [dept, setDept] = useState<string | null>(null);
   const [profileReady, setProfileReady] = useState(false);
   const [override, setOverride] = useState(false); // 「参考として見る」で解除
   const [admissionYear, setAdmissionYear] = useState<number | null>(null);
+
+  // 学部・学科・バンド・在籍区分（当アプリの主ターゲットは留学生なので既定=留学生）。
+  const [facultyId, setFacultyId] = useState<string | null>(null);
+  const [deptId, setDeptId] = useState<string | null>(null);
+  const [bandKey, setBandKey] = useState<string | null>(null);
+  const [isRyugakusei, setIsRyugakusei] = useState(true);
+  // 区分のみ診断の入力（コンテキストごと）
+  const [zoneBaselines, setZoneBaselines] = useState<Record<string, Record<string, number>>>({});
 
   useEffect(() => {
     if (!user) { setProfileReady(true); return; }
@@ -77,8 +89,12 @@ export default function GraduationScreen() {
     getUserProfile(user.uid)
       .then((p) => {
         if (!alive) return;
-        setDept(p?.department ?? null);
+        const d = p?.department ?? null;
+        setDept(d);
         setAdmissionYear(p?.admissionYear ?? null);
+        // 学部をプロフィールから自動推定。商学部なら従来エンジン。
+        const f = facultyFromDept(d);
+        if (f) setFacultyId(f.id);
         // 入学年度が分かればマスターと学年を自動プリセット（利便性）。
         if (p?.admissionYear != null) {
           setMasterIdx(p.admissionYear <= 2022 ? 0 : 1);
@@ -91,6 +107,22 @@ export default function GraduationScreen() {
     return () => { alive = false; };
   }, [user]);
 
+  // 選択中の学部・バンド（入学年度でバンド自動選択。未選択時は null）。
+  const selFaculty: Faculty | null = facultyId ? facultyById(facultyId) : null;
+  const selBand: FBand | null = selFaculty
+    ? selFaculty.bands.find((b) => b.key === bandKey) ?? bandForAdmissionYear(selFaculty, admissionYear)
+    : null;
+  const isCommerce = selFaculty?.engine === "commerce";
+
+  // 学部を変えたら学科/バンドを既定化（最初の学科・入学年度バンド）。
+  useEffect(() => {
+    if (!selFaculty) { setDeptId(null); return; }
+    const band = bandForAdmissionYear(selFaculty, admissionYear);
+    setBandKey(band.key);
+    const depts = band.byDepartment;
+    setDeptId(depts && depts.length > 0 ? depts[0].id : null);
+  }, [facultyId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // 端末に保存した記録の読み込み（uid ごと。未ログインは guest）
   const uid = user?.uid ?? null;
   const storeKey = uid ?? "guest";
@@ -101,6 +133,7 @@ export default function GraduationScreen() {
       setRecords(st.records);
       setBaseline(st.baseline);
       setCourseId(st.courseId);
+      setZoneBaselines(st.zoneBaselines ?? {});
       setDelta(null);
       setLoadedKey(storeKey);
     });
@@ -110,8 +143,8 @@ export default function GraduationScreen() {
   // 変更のたびに保存。現在のキーの読み込み完了前は保存しない（空や別uidの記録で上書きしない）。
   useEffect(() => {
     if (loadedKey !== storeKey) return;
-    saveGradState(uid, { version: 1, records, baseline, courseId });
-  }, [loadedKey, storeKey, uid, records, baseline, courseId]);
+    saveGradState(uid, { version: 2, records, baseline, courseId, zoneBaselines });
+  }, [loadedKey, storeKey, uid, records, baseline, courseId, zoneBaselines]);
 
   // 時間割の科目を候補として読む（入学年度〜今学期）
   const [ttSubjects, setTtSubjects] = useState<TimetableSubject[]>([]);
@@ -126,9 +159,24 @@ export default function GraduationScreen() {
     return () => { alive = false; };
   }, [user, profileReady, admissionYear]);
 
-  const coverage = coverageOf(schoolDomain, dept);
-  // profileReady/schoolReady 前や通信不明時は fail-open（=ブロックしない）。
-  const blocked = profileReady && schoolReady && coverage !== "supported" && !override;
+  const coverage = schoolCoverageOf(schoolDomain);
+  // 明治以外の学校・学校未設定のみブロック。profileReady/schoolReady 前や不明時は fail-open。
+  const blocked = profileReady && schoolReady && coverage !== "meiji" && !override;
+
+  // 区分のみ診断の解決マスターと入力（コンテキストごと）。
+  const zoneCtx = selFaculty && !isCommerce ? zoneCtxKey(selFaculty.id, deptId, isRyugakusei) : null;
+  const resolvedZones = selFaculty && selBand && !isCommerce
+    ? resolveZones(selBand, deptId, isRyugakusei)
+    : null;
+  const zoneBaseline = zoneCtx ? (zoneBaselines[zoneCtx] ?? {}) : {};
+  function stepZone(zoneId: string, d: number) {
+    if (!zoneCtx) return;
+    setZoneBaselines((prev) => {
+      const cur = prev[zoneCtx] ?? {};
+      const next = Math.max(0, (cur[zoneId] ?? 0) + d);
+      return { ...prev, [zoneCtx]: { ...cur, [zoneId]: next } };
+    });
+  }
 
   function step(zoneId: string, d: number) {
     setBaseline((prev) => {
@@ -216,6 +264,114 @@ export default function GraduationScreen() {
     router.canGoBack() ? router.back() : router.replace("/(tabs)");
   }
 
+  // ヘッダーの基準ラベル（学部×入学年度）。
+  const commerceBandLabel = GRAD_MASTERS[masterIdx]?.labelJa ?? "";
+  const scopeLabel = selFaculty
+    ? `明治 ${selFaculty.nameJa} · ${isCommerce ? commerceBandLabel : selBand?.labelJa ?? ""}`
+    : t("grad.scope");
+
+  // 学部セレクタ（共通）。
+  const facultyChips = (
+    <>
+      <Text style={styles.sectionLabel}>{t("grad.facultyLabel")}</Text>
+      <View style={styles.chipWrap}>
+        {FACULTIES.map((f) => {
+          const on = f.id === facultyId;
+          return (
+            <TouchableOpacity
+              key={f.id}
+              style={[styles.courseChip, on && styles.courseChipOn]}
+              onPress={() => setFacultyId(f.id)}
+            >
+              <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{f.nameJa}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </>
+  );
+
+  // 学科・在籍区分・入学年度（選択中の学部に応じて）。
+  const deptList = !isCommerce ? selBand?.byDepartment ?? null : null;
+  const selectorsBlock = selFaculty ? (
+    <>
+      {/* 入学年度（バンド） */}
+      {isCommerce ? (
+        <>
+          <Text style={styles.sectionLabel}>{t("grad.bandLabel")}</Text>
+          <View style={styles.seg}>
+            {GRAD_MASTERS.map((m, i) => (
+              <TouchableOpacity
+                key={m.key}
+                style={[styles.segBtn, masterIdx === i && styles.segBtnOn]}
+                onPress={() => { setMasterIdx(i); setBandKey(m.key); }}
+              >
+                <Text style={[styles.segText, masterIdx === i && styles.segTextOn]}>{m.labelJa}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </>
+      ) : selFaculty.bands.length > 1 ? (
+        <>
+          <Text style={styles.sectionLabel}>{t("grad.bandLabel")}</Text>
+          <View style={styles.seg}>
+            {selFaculty.bands.map((b) => (
+              <TouchableOpacity
+                key={b.key}
+                style={[styles.segBtn, selBand?.key === b.key && styles.segBtnOn]}
+                onPress={() => setBandKey(b.key)}
+              >
+                <Text style={[styles.segText, selBand?.key === b.key && styles.segTextOn]}>{b.labelJa}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </>
+      ) : null}
+
+      {/* 学科・専攻 */}
+      {deptList ? (
+        <>
+          <Text style={styles.miniLabel}>{selFaculty.deptLabel ?? t("grad.deptLabelDefault")}</Text>
+          <View style={styles.chipWrap}>
+            {deptList.map((d) => {
+              const on = d.id === deptId;
+              return (
+                <TouchableOpacity
+                  key={d.id}
+                  style={[styles.courseChip, on && styles.courseChipOn]}
+                  onPress={() => setDeptId(d.id)}
+                >
+                  <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{d.nameJa}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </>
+      ) : null}
+
+      {/* 在籍区分（留学生で要件が変わる学部のみ） */}
+      {!isCommerce && selFaculty.residencyVariable ? (
+        <>
+          <Text style={styles.miniLabel}>{t("grad.residencyLabel")}</Text>
+          <View style={styles.seg}>
+            <TouchableOpacity
+              style={[styles.segBtn, isRyugakusei && styles.segBtnOn]}
+              onPress={() => setIsRyugakusei(true)}
+            >
+              <Text style={[styles.segText, isRyugakusei && styles.segTextOn]}>{t("grad.residencyRyu")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.segBtn, !isRyugakusei && styles.segBtnOn]}
+              onPress={() => setIsRyugakusei(false)}
+            >
+              <Text style={[styles.segText, !isRyugakusei && styles.segTextOn]}>{t("grad.residencyDom")}</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : null}
+    </>
+  ) : null;
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
@@ -224,7 +380,7 @@ export default function GraduationScreen() {
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{t("grad.title")}</Text>
-          <Text style={styles.subtitle}>{t("grad.scope")}</Text>
+          <Text style={styles.subtitle}>{scopeLabel}</Text>
         </View>
         <View style={styles.expBadge}><Text style={styles.expBadgeText}>{t("grad.experiment")}</Text></View>
       </View>
@@ -252,20 +408,37 @@ export default function GraduationScreen() {
         </View>
       ) : (
       <ScrollView contentContainerStyle={styles.content}>
-        {/* 入学年度（マスター選択） */}
-        <Text style={styles.sectionLabel}>{t("grad.masterLabel")}</Text>
-        <View style={styles.seg}>
-          {GRAD_MASTERS.map((m, i) => (
-            <TouchableOpacity
-              key={m.key}
-              style={[styles.segBtn, masterIdx === i && styles.segBtnOn]}
-              onPress={() => setMasterIdx(i)}
-            >
-              <Text style={[styles.segText, masterIdx === i && styles.segTextOn]}>{m.labelJa}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* 学部・入学年度・学科・在籍区分セレクタ（全学部共通） */}
+        {facultyChips}
+        {selectorsBlock}
 
+        {/* 学部未選択（プロフィールの学部から推定できなかった場合） */}
+        {!selFaculty ? (
+          <View style={styles.canPrompt}>
+            <Text style={styles.canPromptText}>{t("grad.pickFaculty")}</Text>
+          </View>
+        ) : null}
+
+        {/* 区分のみ診断（商学部以外の9学部） */}
+        {selFaculty && !isCommerce && resolvedZones ? (
+          <>
+            <Text style={styles.zonesIntro}>{t("grad.zonesIntro")}</Text>
+            <ZoneDiagnosis
+              theme={theme}
+              t={t}
+              master={resolvedZones}
+              baseline={zoneBaseline}
+              onStep={stepZone}
+            />
+            <View style={styles.disclaimer}>
+              <Text style={styles.disclaimerText}>{t("grad.disclaimer")}</Text>
+            </View>
+          </>
+        ) : null}
+
+        {/* 商学部（配当表まで整備済みの従来エンジン） */}
+        {isCommerce ? (
+        <>
         {/* 自コース（基幹科目の自/他判定・CAN候補に使う） */}
         <Text style={styles.miniLabel}>{t("grad.courseLabel")}</Text>
         <View style={styles.chipWrap}>
@@ -493,6 +666,8 @@ export default function GraduationScreen() {
         <View style={styles.disclaimer}>
           <Text style={styles.disclaimerText}>{t("grad.disclaimer")}</Text>
         </View>
+        </>
+        ) : null}
       </ScrollView>
       )}
     </View>
@@ -524,6 +699,7 @@ function makeStyles(theme: Theme) {
 
     content: { paddingHorizontal: 16, paddingBottom: 40 },
     sectionLabel: { fontSize: 12, color: theme.textSecondary, fontWeight: "700", marginTop: 8, marginBottom: 6 },
+    zonesIntro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 14, lineHeight: 16 },
 
     seg: {
       flexDirection: "row", backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border,

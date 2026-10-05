@@ -144,6 +144,37 @@ export function calcGrad(
 }
 
 
+// ---- 区分(領域)のみの軽量集計（配当表の無い学部用。商学部以外の9学部）----
+// 入力: 便覧の区分別最低単位 × 成績表の区分別合計(手動 ＋/−)。科目記録・内訳要件は扱わない。
+// freezone(自由選択)以外の超過分は freezone に算入（便覧共通ルールの近似）。
+import { isFreeZone, type ResolvedMaster } from "../data/facultyMasters";
+
+export interface ZonesOnlyResult {
+  zones: Record<string, { acq: number; counted: number; overflow: number; min: number; met: boolean }>;
+  total: number;
+}
+
+export function calcZonesOnly(master: ResolvedMaster, baseline: Record<string, number>): ZonesOnlyResult {
+  const zones: ZonesOnlyResult["zones"] = {};
+  let overflowSum = 0;
+  master.zones.forEach((z) => {
+    if (isFreeZone(z.id)) return;
+    const acq = Math.max(0, baseline[z.id] ?? 0);
+    const counted = Math.min(acq, z.minUnits);
+    const overflow = Math.max(0, acq - z.minUnits);
+    overflowSum += overflow;
+    zones[z.id] = { acq, counted, overflow, min: z.minUnits, met: acq >= z.minUnits };
+  });
+  const free = master.zones.find((z) => isFreeZone(z.id));
+  if (free) {
+    const acq = Math.max(0, baseline[free.id] ?? 0) + overflowSum;
+    zones[free.id] = { acq, counted: acq, overflow: 0, min: free.minUnits, met: acq >= free.minUnits };
+  }
+  const total = Object.values(zones).reduce((s, z) => s + z.counted, 0);
+  return { zones, total };
+}
+
+
 // 記録を1件変えたときの「どこに何単位入ったか」メッセージ用の差分
 export interface ZoneDelta { zoneId: string; before: number; after: number; min: number }
 export function diffZones(a: GradCalc, b: GradCalc): ZoneDelta[] {

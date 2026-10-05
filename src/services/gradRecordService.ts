@@ -11,13 +11,15 @@ import type { CourseId } from "../data/gradAllocationMeijiCommerce";
 // ============================================================
 
 export interface GradState {
-  version: 1;
+  version: 2;
   records: GradRecord[];
-  baseline: Record<string, number>; // 成績表の区分別合計（記録していない過去分）
+  baseline: Record<string, number>; // 商学部: 成績表の区分別合計（記録していない過去分）
   courseId: CourseId | null;
+  // 商学部以外(区分のみ診断)の区分別合計。コンテキスト("facultyId/deptId/residency")ごとに分離。
+  zoneBaselines?: Record<string, Record<string, number>>;
 }
 
-const EMPTY: GradState = { version: 1, records: [], baseline: {}, courseId: null };
+const EMPTY: GradState = { version: 2, records: [], baseline: {}, courseId: null, zoneBaselines: {} };
 
 function storageKey(uid: string | null) {
   return `ichi:gradRecords:${uid ?? "guest"}`;
@@ -29,10 +31,11 @@ export async function loadGradState(uid: string | null): Promise<GradState> {
     if (!raw) return EMPTY;
     const parsed = JSON.parse(raw) as Partial<GradState>;
     return {
-      version: 1,
+      version: 2,
       records: Array.isArray(parsed.records) ? parsed.records : [],
       baseline: parsed.baseline ?? {},
       courseId: parsed.courseId ?? null,
+      zoneBaselines: parsed.zoneBaselines ?? {},
     };
   } catch (e) {
     console.warn("gradRecords load failed:", e);
