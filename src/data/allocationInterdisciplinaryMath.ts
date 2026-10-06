@@ -8,9 +8,10 @@ export interface AllocCourse {
   name: string;
   units: number;
   mark: AllocMark;
-  years: number[];   // 配当年次（●）
-  zone: string;      // sogo-kyoiku | kiso-kyoiku | senmon-kyoiku
+  years: number[];   // 配当年次（●）。経営は履修開始年次→[開始..4]
+  zone: string;      // sogo-kyoiku | kiso-kyoiku | senmon-kyoiku ...
   media?: boolean;   // メディア授業科目
+  gakka?: string;    // 学科専門の所属学科（経営学部）。CANの学科フィルタ用
 }
 
 export const INTERDISCIPLINARY_MATH_ALLOCATION: Record<string, AllocCourse[]> = {

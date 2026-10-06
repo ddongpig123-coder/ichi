@@ -38,6 +38,8 @@ export interface Faculty {
   residencyVariable?: boolean; // 留学生トグルを表示
   match: RegExp;               // プロフィールの学部(自由記述)から自動判定
   bands: FBand[];
+  // zoneはbyDepartmentでないが、CAN(配当表)の学科別フィルタ用に学科を持つ場合（経営=学科専門の所属学科）
+  canDepartments?: { id: string; nameJa: string }[];
 }
 
 export const MEIJI = "meiji.ac.jp";
@@ -199,6 +201,11 @@ const agriculture: Faculty = {
 const management: Faculty = {
   id: "management", nameJa: "経営学部", schoolDomain: MEIJI, engine: "zones",
   deptLabel: "学科", match: /経営/,
+  canDepartments: [
+    { id: "経営学科", nameJa: "経営学科" },
+    { id: "会計学科", nameJa: "会計学科" },
+    { id: "公共経営学科", nameJa: "公共経営学科" },
+  ],
   bands: [{
     key: "2017", labelJa: "2017〜2020年度入学", admissionYearMax: 2020, totalRequired: 134,
     zones: [

@@ -20,6 +20,8 @@ import { AllocationCAN } from "../src/components/graduation/AllocationCAN";
 import { INTERDISCIPLINARY_MATH_ALLOCATION } from "../src/data/allocationInterdisciplinaryMath";
 import { RequiredCourses } from "../src/components/graduation/RequiredCourses";
 import { LAW_REQUIRED } from "../src/data/requiredCoursesLaw";
+import { MANAGEMENT_REQUIRED } from "../src/data/requiredCoursesManagement";
+import { MANAGEMENT_ALLOCATION } from "../src/data/allocationManagement";
 import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
@@ -123,7 +125,7 @@ export default function GraduationScreen() {
     if (!selFaculty) { setDeptId(null); return; }
     const band = bandForAdmissionYear(selFaculty, admissionYear);
     setBandKey(band.key);
-    const depts = band.byDepartment;
+    const depts = band.byDepartment ?? selFaculty.canDepartments;
     setDeptId(depts && depts.length > 0 ? depts[0].id : null);
   }, [facultyId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -176,9 +178,15 @@ export default function GraduationScreen() {
   // 科目配当表（CAN）: 現状は総合数理学部のみ整備済み。
   const allocCourses = selFaculty?.id === "interdisciplinary-math" && deptId
     ? INTERDISCIPLINARY_MATH_ALLOCATION[deptId] ?? null
+    : selFaculty?.id === "management"
+    ? MANAGEMENT_ALLOCATION
     : null;
-  // 必修科目（現状は法学部のみ整備済み）。
-  const requiredCourses = selFaculty?.id === "law" ? LAW_REQUIRED : null;
+  // 経営は学科専門を所属学科で絞る（canDepartments を deptId で選択）。
+  const gakkaFilter = selFaculty?.id === "management" ? deptId : null;
+  // 必修科目（法学部・経営学部で整備済み）。
+  const requiredCourses = selFaculty?.id === "law" ? LAW_REQUIRED
+    : selFaculty?.id === "management" ? MANAGEMENT_REQUIRED
+    : null;
   function stepZone(zoneId: string, d: number) {
     if (!zoneCtx) return;
     setZoneBaselines((prev) => {
@@ -302,7 +310,7 @@ export default function GraduationScreen() {
   );
 
   // 学科・在籍区分・入学年度（選択中の学部に応じて）。
-  const deptList = !isCommerce ? selBand?.byDepartment ?? null : null;
+  const deptList = !isCommerce ? (selBand?.byDepartment ?? selFaculty?.canDepartments ?? null) : null;
   const selectorsBlock = selFaculty ? (
     <>
       {/* 入学年度（バンド） */}
@@ -472,6 +480,7 @@ export default function GraduationScreen() {
                   t={t}
                   courses={allocCourses}
                   grade={grade}
+                  gakkaFilter={gakkaFilter}
                   zones={resolvedZones.zones.filter((z) => !/freezone|jiyu/i.test(z.id)).map((z) => ({ id: z.id, nameJa: z.nameJa }))}
                 />
               </>

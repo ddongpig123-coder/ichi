@@ -10,14 +10,17 @@ interface Props {
   courses: AllocCourse[];      // 選択中の学科の配当科目
   grade: number;               // 現在の学年
   zones: { id: string; nameJa: string }[]; // 表示する区分（順序）
+  gakkaFilter?: string | null; // 学科専門を所属学科で絞る（経営）。他学科のgakka付き科目は隠す
 }
 
 // CAN: 選択中の学年に配当されている科目を区分別に表示（便覧 科目配当表より・参考）。
 export function AllocationCAN(p: Props) {
-  const { theme, t, courses, grade, zones } = p;
+  const { theme, t, courses, grade, zones, gakkaFilter } = p;
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
-  const atGrade = courses.filter((c) => c.years.includes(grade));
+  const atGrade = courses.filter(
+    (c) => c.years.includes(grade) && (!gakkaFilter || !c.gakka || c.gakka === gakkaFilter),
+  );
 
   return (
     <View>

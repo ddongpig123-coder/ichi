@@ -1,0 +1,3718 @@
+{
+ "faculty": "management",
+ "facultyNameJa": "経営学部",
+ "schoolDomain": "meiji.ac.jp",
+ "band": "2021年度以降入学者",
+ "courses": [
+  {
+   "name": "経営総論",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakubu-hisshu",
+   "kubunJa": "学部必修科目"
+  },
+  {
+   "name": "経営学",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakubu-hisshu",
+   "kubunJa": "学部必修科目"
+  },
+  {
+   "name": "会計学",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakubu-hisshu",
+   "kubunJa": "学部必修科目"
+  },
+  {
+   "name": "公共経営学",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakubu-hisshu",
+   "kubunJa": "学部必修科目"
+  },
+  {
+   "name": "近代経済学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakubu-hisshu",
+   "kubunJa": "学部必修科目"
+  },
+  {
+   "name": "近代経済学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakubu-hisshu",
+   "kubunJa": "学部必修科目"
+  },
+  {
+   "name": "言語思想Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "言語思想Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "社会思想",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "SocialThought",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "倫理思想Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "倫理思想Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "宗教思想",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "ReligiousThought",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "哲学基礎論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "哲学",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "数学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "数学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "統計学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "統計学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "生物学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "生物学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "物理学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "物理学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "化学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "化学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "自然科学思想史Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "自然科学思想史Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "自然人類学",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "文化人類学",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "生理学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "生理学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "健康科学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "健康科学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "スポーツ・レジャー・レクリエーション論",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "現代社会とスポーツ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "トレーニングの科学",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "レポート・論文作成法",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "言語表現論",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "手話コミュニケーション（初級）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "手話コミュニケーション（初級）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "手話コミュニケーション（中級）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "手話コミュニケーション（中級）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国文学（英米）",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国文学（ドイツ）",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国文学（フランス）",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国文学（中国）",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "日本語論Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "日本語論Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "日本文学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "日本文学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "日本文学（現代）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "西洋史（総論）",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "西洋史（各論）",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "法学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "法学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "地理学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "地理学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "政治学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "政治学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "社会学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "社会学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "GlobalIssuesA",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "GlobalIssuesB",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "GlobalIssuesC",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "GlobalIssuesD",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "心理学",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "教養演習Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "教養演習Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国語教養演習Ａ/LiberalArtsSeminarinForeignLanguagesA",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国語教養演習Ｂ/LiberalArtsSeminarinForeignLanguagesB",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国語教養演習Ｃ//LiberalArtsSeminarinForeignLanguagesC",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "外国語教養演習Ｄ//LiberalArtsSeminarinForeignLanguagesD",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "日本事情",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "経営総合講義Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "経営総合講義Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目"
+  },
+  {
+   "name": "英語（初級）Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語（初級）Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語（中級）Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語（中級）Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語（初級）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語（初級）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語（中級）Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語（中級）Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語（初級）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語（初級）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語（中級）Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語（中級）Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語（初級）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語（初級）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語（中級）Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語（中級）Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ロシア語（初級）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ロシア語（初級）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ロシア語（中級）Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ロシア語（中級）Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "韓国語（初級）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "韓国語（初級）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "韓国語（中級）Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "韓国語（中級）Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "日本語（作文・読解）Ⅰ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "日本語（作文・読解）Ⅱ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "日本語（速読・精読）Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "日本語（速読・精読）Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "TOEFLReading",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "TOEFLListening",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "TOEFLSpeaking",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "TOEFLWriting",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "TOEFLPreparationA",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "TOEFLPreparationB",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "EnglishExamA",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "EnglishExamB",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "GenresofWriting",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "SpeechandDebate",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語スペシャルスタディＡ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語スペシャルスタディＢ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語表現論",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語コミュニケーション初級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語コミュニケーション初級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語コミュニケーション中級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語コミュニケーション中級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語コミュニケーション上級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "英語コミュニケーション上級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語コミュニケーション初級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語コミュニケーション初級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語コミュニケーション中級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語コミュニケーション中級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語コミュニケーション上級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "ドイツ語コミュニケーション上級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語コミュニケーション初級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語コミュニケーション初級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語コミュニケーション中級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語コミュニケーション中級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語コミュニケーション上級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "フランス語コミュニケーション上級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語コミュニケーション初級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語コミュニケーション初級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語コミュニケーション中級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語コミュニケーション中級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語コミュニケーション上級Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "中国語コミュニケーション上級Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "InternationalBusinessProgram(語学研修)A",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "InternationalBusinessProgram(語学研修)B",
+   "units": 1,
+   "startYear": 1,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目"
+  },
+  {
+   "name": "体育実技Ａ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "taiiku",
+   "kubunJa": "体育実目技科"
+  },
+  {
+   "name": "体育実技Ｂ",
+   "units": 1,
+   "startYear": 1,
+   "zone": "taiiku",
+   "kubunJa": "体育実目技科"
+  },
+  {
+   "name": "選択体育実技Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "taiiku",
+   "kubunJa": "体育実目技科"
+  },
+  {
+   "name": "選択体育実技Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "taiiku",
+   "kubunJa": "体育実目技科"
+  },
+  {
+   "name": "学外選択体育実技Ａ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "taiiku",
+   "kubunJa": "体育実目技科"
+  },
+  {
+   "name": "学外選択体育実技Ｂ",
+   "units": 1,
+   "startYear": 2,
+   "zone": "taiiku",
+   "kubunJa": "体育実目技科"
+  },
+  {
+   "name": "InternationalBusinessProgram(実習)A",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "InternationalBusinessProgram(実習)B",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "グローバル・サービスラーニングＡ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "グローバル・サービスラーニングＢ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "リサーチ・リテラシーＡ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "リサーチ・リテラシーＢ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "フィールドスタディＡ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "フィールドスタディＢ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "フィールドスタディＣ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "フィールドスタディＤ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "ＤＩＧＩＴ入門演習Ⅰ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "ＤＩＧＩＴ入門演習Ⅱ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "ＤＩＧＩＴ実践演習",
+   "units": 2,
+   "startYear": 3,
+   "zone": "freezone",
+   "kubunJa": "実習関連科目"
+  },
+  {
+   "name": "ＩＣＴベーシック",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ統計解析入門",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ統計解析応用",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴデータベース入門",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴデータベース応用",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ画像編集入門",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ画像編集応用",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ動画編集入門",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ動画編集応用",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ音楽編集入門",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴ音楽編集応用",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴプログラミング入門",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴプログラミング応用",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴＷｅｂページ作成",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴｅラーニングデザイン入門",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴｅラーニングデザイン応用",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "ＩＣＴプレゼンテーション",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "ＩＣＴリテラシー科目"
+  },
+  {
+   "name": "演習Ⅰ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "freezone",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "演習ⅡＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "freezone",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "演習ⅡＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "freezone",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "演習ⅢＡ",
+   "units": 2,
+   "startYear": 4,
+   "zone": "freezone",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "演習ⅢＢ",
+   "units": 2,
+   "startYear": 4,
+   "zone": "freezone",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "全学共通総合講座Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "全総合学共講座通"
+  },
+  {
+   "name": "全学共通総合講座Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "全総合学共講座通"
+  },
+  {
+   "name": "全学共通総合講座Ｃ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "全総合学共講座通"
+  },
+  {
+   "name": "全学共通総合講座Ｄ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "freezone",
+   "kubunJa": "全総合学共講座通"
+  },
+  {
+   "name": "簿記論Ⅰ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "簿記論Ⅱ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "簿記技能",
+   "units": 1,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "BusinessPresentationA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "BusinessPresentation　B",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ビジネス英語A/BusinessEnglishA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ビジネス英語B/BusinessEnglishB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "FundamentalsofManagementＡ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "FundamentalsofManagementＢ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "FundamentalsofManagementＣ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "FundamentalsofManagementＤ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "TransculturalBusinessCommunicationA",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "TransculturalBusinessCommunicationB",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "StrategicBusinessCommunicationA",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "StrategicBusinessCommunicationB",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経済原論Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経済原論Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ビジネス・エコノミックスＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ビジネス・エコノミックスＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "JapaneseEconomy",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経済史Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経済史Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "日本経済史Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "日本経済史Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営史Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営史Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営統計学Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営統計学Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営基礎数学Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営基礎数学Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "社会調査法",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営社会学",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営心理学",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "産業生理学Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "産業生理学Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営と環境Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営と環境Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経済地理学Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経済地理学Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "マーケティング基礎論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "企業の社会的責任論/CorporateSocialResponsibility",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "情報化社会論Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "情報化社会論Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ネット・ビジネス論Ａ/InternetBusinessA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ネット・ビジネス論Ｂ/InternetBusinessB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "コンテンツ・ビジネス論Ａ/ContentsBusinessA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "コンテンツ・ビジネス論Ｂ/ContentsBusinessB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "戦略経営情報システム論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ビジネス法",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "会社法Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "会社法Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "手形法・小切手法",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "財産法",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "税法",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "労働法",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "イギリス文化論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "アメリカ文化論/AmericanCulture",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "ドイツ文化論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "中国文化論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "東南アジア文化論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "東欧文化論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "フランス文化論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "海外経営事情Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "海外経営事情Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "海外経営事情Ｃ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "海外経営事情Ｄ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営文献研究Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "経営文献研究Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門演習Ａ/CoreSubjectsSeminarA",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門演習Ｂ/CoreSubjectsSeminarB",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門演習Ｃ/CoreSubjectsSeminarC",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門演習Ｄ/CoreSubjectsSeminarD",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門特別講義Ａ/CoreSubjectsSpecialLecturesA",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門特別講義Ｂ/CoreSubjectsSpecialLecturesB",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門特別講義Ｃ/CoreSubjectsSpecialLecturesC",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "基礎専門特別講義Ｄ/CoreSubjectsSpecialLecturesD",
+   "units": 2,
+   "startYear": 1,
+   "zone": "kiso-senmon",
+   "kubunJa": "各学科基礎専門科目"
+  },
+  {
+   "name": "企業論Ａ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "企業論Ｂ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営管理論Ａ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営管理論Ｂ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営哲学Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営哲学Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営戦略論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営戦略論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InnovationStrategyinJapanA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InnovationStrategyinJapanB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "イノベーション・マネジメントＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "イノベーション・マネジメントＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "イノベーション・システムＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "イノベーション・システムＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "マーケティング・マネジメントＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "マーケティング・マネジメントＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "グローバル・マーケティング論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "グローバル・マーケティング論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "StrategicMarketingA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "StrategicMarketingB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "雇用関係論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "労使関係論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "企業内教育論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "能力開発論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "中小企業論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "中小企業論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "スタートアップ企業論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "スタートアップ企業論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学史Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学史Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "国際経営論Ａ/InternationalManagementA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "国際経営論Ｂ/InternationalManagementB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営組織論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "組織行動論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "財務管理論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "現代コーポレートファイナンス論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "生産管理論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "生産管理論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "人事労務管理論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "人事労務管理論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "ナレッジ・マネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営技術論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "技術戦略論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "StrategicAnalysisofJapaneseCompaniesA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "StrategicAnalysisofJapaneseCompaniesB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営情報論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "リスクマネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営文化論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営文化論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "国際経営史Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "国際経営史Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "日本経営論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "日本経営論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "日本経営史",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "日本企業者史",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "ComparativeBusinessManagementA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "ComparativeBusinessManagementB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（アメリカ）Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（アメリカ）Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（西欧）Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（西欧）Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（ロシア・東欧）Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（ロシア・東欧）Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（中国）Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "比較経営論（中国）Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "TransculturalManagementA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "TransculturalManagementB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学外国書講読Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学外国書講読Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学特別講義Ａ/SpecialLecturesonBusinessManagementA",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学特別講義Ｂ/SpecialLecturesonBusinessManagementB",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学特別講義Ｃ/SpecialLecturesonBusinessManagementC",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "経営学特別講義Ｄ/SpecialLecturesonBusinessManagementD",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InformationEthicsＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InformationEthicsＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InformationScienceＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InformationScienceＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "ECommerceＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "ECommerceＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "TheFutureofEBusinessＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "TheFutureofEBusinessＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "OrganizationalBehaviorＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "OrganizationalBehaviorＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "StrategicManagementＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "StrategicManagementＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "TransnationalManagementＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "TransnationalManagementＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "HumanResourceManagementＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "HumanResourceManagementＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "FamilyBusinessＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "FamilyBusinessＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InternationalMarketingＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InternationalMarketingＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "ServiceMarketingＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "ServiceMarketingＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "CorporateFinanceＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "CorporateFinanceＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InvestmentsＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "InvestmentsＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "経営学科専門科目",
+   "gakka": "経営学科"
+  },
+  {
+   "name": "財務会計総論Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "財務会計総論Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "管理会計総論Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "管理会計総論Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "中級簿記論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "上級簿記論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "財務諸表論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "財務諸表論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "現代会計基準論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "現代会計基準論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "監査論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "監査論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "国際財務報告論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "国際財務報告論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "英文会計",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "BasicAccountingＡ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "BasicAccountingＢ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "FinancialAccountingＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "FinancialAccountingＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "原価計算論Ⅰ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "原価計算論Ⅱ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "原価管理論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "原価管理論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "マネジメント・コントロールＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "マネジメント・コントロールＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "ManagementAccountingＡ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "ManagementAccountingＢ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "経営分析論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "経営分析論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "環境会計論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "環境会計論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "税務会計論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "税務会計論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "公会計論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "ＮＰＯ会計論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計史Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計史Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "法人税法Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "法人税法Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計学外国書講読Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計学外国書講読Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計プロセミナーＡ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計プロセミナーＢ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計プロセミナーＣ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計プロセミナーＤ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計学特別講義Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計学特別講義Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計学特別講義Ｃ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "会計学特別講義Ｄ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "経営戦略論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "経営戦略論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "国際経営論Ａ/InternationalManagementA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "国際経営論Ｂ/InternationalManagementB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "財務管理論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "現代コーポレートファイナンス論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "StrategicAnalysisofJapaneseCompaniesA",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "StrategicAnalysisofJapaneseCompaniesB",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "比較経営論（アメリカ）Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "比較経営論（アメリカ）Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "CorporateFinanceＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "CorporateFinanceＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "InvestmentsＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "InvestmentsＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "AdvancedFinancialAccountingＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "AdvancedFinancialAccountingＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "FinancialStatementAnalysisＡ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "FinancialStatementAnalysisＢ（GSBA）",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "会計学科専門科目",
+   "gakka": "会計学科"
+  },
+  {
+   "name": "行政経営論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "行政経営戦略論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "IntroductiontoPublicManagement",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "SocialImpactInvestment",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "BusinessforSocialImpact",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共思想論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共歴史論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共表現行為論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "地域文化と伝統産業",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "地域公共論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "現代健康論",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "住まいと仕事の地理学",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共セクター経済論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共マーケティング論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "社会会計論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "非営利組織論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "社会的企業論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "中小企業論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "中小企業論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "ＮＰＯ経営戦略論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "ソーシャル・ファイナンス論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "サステナブル投資論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "ＮＰＯ会計論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "協同組合学",
+   "units": 4,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公益事業論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共ガバナンス論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共ガバナンス論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "行政評価論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共データ分析論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "地方財政論",
+   "units": 4,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "地域活性化論（講義）Ａ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "地域活性化論（講義）Ｂ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "地域活性化論（実習）Ａ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "地域活性化論（実習）Ｂ",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共交通と地域社会",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "観光事業論Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "観光事業論Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "ツーリズム・マネジメントＡ/TourismManagementA",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "ツーリズム・マネジメントＢ/TourismManagementB",
+   "units": 2,
+   "startYear": 2,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公会計論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "国際開発論/InternationalDevelopment",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "国際協力ＮＧＯ論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "ライフスタイル・マネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "福祉マネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "医療マネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "自治体マネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "スポーツ・マネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "スポーツマーケティング論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "アウトドア組織マネジメント論",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共経営学外国書講読Ａ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共経営学外国書講読Ｂ",
+   "units": 2,
+   "startYear": 3,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共経営学特別講義Ａ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共経営学特別講義Ｂ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共経営学特別講義Ｃ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "公共経営学特別講義Ｄ",
+   "units": 2,
+   "startYear": 1,
+   "zone": "gakka-senmon",
+   "kubunJa": "公共経営学科専門科目",
+   "gakka": "公共経営学科"
+  },
+  {
+   "name": "日本史概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "東洋史概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "西洋史概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "地誌学概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "人文地理学概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "自然地理学概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "法律学概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "哲学概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "倫理学概論",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "職業指導",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  },
+  {
+   "name": "日本国憲法",
+   "units": 2,
+   "startYear": 1,
+   "zone": null,
+   "kubunJa": "教職専門科目",
+   "external": true
+  }
+ ],
+ "_meta": {
+  "source": "明治 2026 経営学部便覧 授業科目一覧(2021年度以降入学者)",
+  "extractedAt": "2026-10-06",
+  "tool": "scripts/parse_keiei_allocation.py",
+  "note": "科目名·単位·履修開始年次(startYear)·科目区分(zone)·学科(gakka)를 추출. 一覧에 必修마크 없음→学部必修 zone만 필수 확정. 2021~ 卒業要件 단위표는 이 PDF에 없음(zone 최소단위는 2017밴드 사용중)."
+ }
+}
