@@ -18,6 +18,8 @@ import { GradRecords, type Classified } from "../src/components/graduation/GradR
 import { ZoneDiagnosis } from "../src/components/graduation/ZoneDiagnosis";
 import { AllocationCAN } from "../src/components/graduation/AllocationCAN";
 import { INTERDISCIPLINARY_MATH_ALLOCATION } from "../src/data/allocationInterdisciplinaryMath";
+import { RequiredCourses } from "../src/components/graduation/RequiredCourses";
+import { LAW_REQUIRED } from "../src/data/requiredCoursesLaw";
 import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
@@ -175,6 +177,8 @@ export default function GraduationScreen() {
   const allocCourses = selFaculty?.id === "interdisciplinary-math" && deptId
     ? INTERDISCIPLINARY_MATH_ALLOCATION[deptId] ?? null
     : null;
+  // 必修科目（現状は法学部のみ整備済み）。
+  const requiredCourses = selFaculty?.id === "law" ? LAW_REQUIRED : null;
   function stepZone(zoneId: string, d: number) {
     if (!zoneCtx) return;
     setZoneBaselines((prev) => {
@@ -436,6 +440,16 @@ export default function GraduationScreen() {
               baseline={zoneBaseline}
               onStep={stepZone}
             />
+
+            {/* 必修科目（配当表の必修を整備済みの学部のみ） */}
+            {requiredCourses ? (
+              <RequiredCourses
+                theme={theme}
+                t={t}
+                courses={requiredCourses}
+                zones={resolvedZones.zones.map((z) => ({ id: z.id, nameJa: z.nameJa }))}
+              />
+            ) : null}
 
             {/* CAN — これから履修できる科目（配当表が整備済みの学科のみ） */}
             {allocCourses ? (
