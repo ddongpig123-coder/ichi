@@ -101,11 +101,12 @@ const politicaleconomics: Faculty = {
   bands: [{
     key: "2026", labelJa: "2026年度〜入学", admissionYearMax: null, totalRequired: 124,
     zones: [
-      { id: "kiso", nameJa: "基礎科目", minUnits: 28 },
+      { id: "kiso", nameJa: "基礎科目", minUnits: 28, hintJa: "人文/社会/自然/総合 各4以上" },
       { id: "gaikokugo", nameJa: "外国語科目", minUnits: 16 },
       { id: "kenko", nameJa: "健康・運動科学科目", minUnits: 4 },
       { id: "kihonouyou", nameJa: "基本・応用科目（所属学科関係）", minUnits: 42 },
-      { id: "freezone", nameJa: "専門研究・自由選択ほか", minUnits: 34 },
+      { id: "genten-kenkyu", nameJa: "原典研究科目", minUnits: 4 },
+      { id: "freezone", nameJa: "専門演習・総合講座・自由選択ほか", minUnits: 30 },
     ],
   }],
 };
