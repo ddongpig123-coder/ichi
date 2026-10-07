@@ -51,6 +51,15 @@ export async function saveGradState(uid: string | null, state: GradState): Promi
   }
 }
 
+// アカウント削除時に端末ローカルの成績記録を消す（本人以外がこの端末を使う場合のプライバシー）。
+export async function clearGradState(uid: string | null): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(storageKey(uid));
+  } catch {
+    // 消せなくても致命的ではない
+  }
+}
+
 // ── 時間割からの候補 ────────────────────────────────────
 export interface TimetableSubject {
   name: string;

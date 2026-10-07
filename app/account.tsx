@@ -19,6 +19,9 @@ import {
   reloadAndCheckEmailVerified,
   MICROSOFT_WEB_ONLY_ERROR,
   SOCIAL_WEB_ONLY_ERROR,
+  deleteAccount,
+  DELETE_PASSWORD_REQUIRED,
+  DELETE_SOCIAL_WEB_ONLY,
   type SocialProviderId,
 } from "../src/services/authService";
 import { auth } from "../src/config/firebase";
@@ -71,6 +74,9 @@ export default function AccountScreen() {
 
   const isGuest = user?.isAnonymous ?? true;
   const isUniEmail = !!user?.email && isUniversityEmail(user.email);
+  // メール/パスワードアカウントか（削除時に本人確認のパスワードが必要）
+  const isPasswordUser = user?.providerData?.some((p) => p.providerId === "password") ?? false;
+  const [deletePassword, setDeletePassword] = useState("");
 
   function goBack() {
     router.canGoBack() ? router.back() : router.replace("/(tabs)");
@@ -264,6 +270,46 @@ export default function AccountScreen() {
     );
   }
 
+  // アカウント削除。確認 → 再認証 → 本人データ削除 → Auth削除（直後に匿名で再ログイン）。
+  async function runDeleteAccount() {
+    setBusy(true);
+    try {
+      await deleteAccount(isPasswordUser ? deletePassword : undefined);
+      notify(t("account.deleteDone"), t("account.deleteDoneMessage"));
+      setDeletePassword("");
+      goBack();
+    } catch (e: any) {
+      if (e.message === DELETE_PASSWORD_REQUIRED) {
+        notify(t("account.deleteNeedPassword"));
+      } else if (e.message === DELETE_SOCIAL_WEB_ONLY) {
+        notify(t("account.msPreparingTitle"), t("account.msWebOnly"));
+      } else if (e.code === "auth/wrong-password" || e.code === "auth/invalid-credential") {
+        notify(t("account.deleteWrongPassword"));
+      } else if (e.code === "auth/requires-recent-login") {
+        notify(t("account.deleteReauthNeeded"));
+      } else if (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request") {
+        // 本人がキャンセル → 何もしない
+      } else {
+        notify(t("account.deleteFailed"), e.message ?? String(e));
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleDeleteAccount() {
+    if (isPasswordUser && !deletePassword) {
+      notify(t("account.deleteNeedPassword"));
+      return;
+    }
+    confirmDialog(
+      t("account.deleteTitle"),
+      t("account.deleteConfirmMessage"),
+      runDeleteAccount,
+      { cancel: t("common.cancel"), ok: t("account.deleteButton") }
+    );
+  }
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={goBack}>
@@ -312,6 +358,29 @@ export default function AccountScreen() {
             <TouchableOpacity style={styles.dangerButton} onPress={handleSignOut}>
               <Text style={styles.dangerButtonText}>{t("account.logout")}</Text>
             </TouchableOpacity>
+
+            {/* アカウント削除（Apple/Google 必須） */}
+            <View style={styles.deleteSection}>
+              <Text style={styles.deleteTitle}>{t("account.deleteTitle")}</Text>
+              <Text style={styles.deleteWarn}>{t("account.deleteWarn")}</Text>
+              {isPasswordUser && (
+                <TextInput
+                  style={styles.input}
+                  placeholder={t("account.deletePasswordPlaceholder")}
+                  placeholderTextColor="#aaa"
+                  secureTextEntry
+                  value={deletePassword}
+                  onChangeText={setDeletePassword}
+                />
+              )}
+              <TouchableOpacity
+                style={[styles.deleteButton, busy && styles.buttonDisabled]}
+                onPress={handleDeleteAccount}
+                disabled={busy}
+              >
+                <Text style={styles.deleteButtonText}>{t("account.deleteButton")}</Text>
+              </TouchableOpacity>
+            </View>
           </>
         ) : mode === "register" ? (
           // ── ゲスト: 新規登録（アカウント連携） ──
@@ -495,6 +564,15 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   dangerButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+
+  deleteSection: { marginTop: 36, borderTopWidth: 1, borderTopColor: "#E8D5D2", paddingTop: 20 },
+  deleteTitle: { fontSize: 14, fontWeight: "700", color: "#C0392B", marginBottom: 6 },
+  deleteWarn: { fontSize: 12, color: "#888", lineHeight: 18, marginBottom: 12 },
+  deleteButton: {
+    borderRadius: 8, paddingVertical: 11, alignItems: "center", marginTop: 12,
+    borderWidth: 1, borderColor: "#C0392B", backgroundColor: "#fff",
+  },
+  deleteButtonText: { color: "#C0392B", fontSize: 14, fontWeight: "700" },
 
   switchText: {
     color: "#2F6AD9",

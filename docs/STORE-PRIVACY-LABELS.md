@@ -85,18 +85,18 @@
 
 ---
 
-## 4. ⚠️ 제출 전 필수 — 계정·데이터 삭제 수단 (현재 미구현)
+## 4. 계정·데이터 삭제 수단 — ✅ 인앱 구현 완료
 
-**Apple·Google 모두 "계정 생성 앱은 앱 내 또는 웹에서 계정+데이터 삭제 경로"를 요구**한다.
-현재 코드에 **인앱 계정 삭제 플로우가 없음**(방침 텍스트 안내만). 둘 중 하나 필요:
+**Apple·Google 모두 "계정 생성 앱은 계정+데이터 삭제 경로"를 요구** → **인앱 삭제로 구현됨.**
 
-- **(권장) 인앱 삭제**: 프로필 → "계정 삭제" → Auth deleteUser + Firestore 본인 문서 삭제/soft-delete.
-  ※ 단, 게시물 authorUid는 법적 대응 보존(방침 공개) — 계정 삭제 시 "작성물은 익명화 보존" 정책을 UI·방침에 명시.
-- **(최소) 삭제 요청 URL**: gh-pages에 삭제 요청 안내 페이지 추가 + Play Console "데이터 삭제 요청 URL"에 입력,
-  Apple은 App Review Notes에 삭제 경로 기재. (이메일 `ddongpig123@gmail.com` 접수 → 수동 처리)
+- 위치: **프로필 → 계정(`app/account.tsx`) → "계정 삭제"** (등록 사용자 노출).
+- 동작(`authService.deleteAccount`): ① 재인증(이메일=비번 확인 / 소셜=popup, 웹) → ② 본인 식별데이터 삭제
+  (`users/{uid}`·`usersPublic/{uid}`·`emailIndex`·`timetables` + 단말 성적기록) → ③ `deleteUser`(Auth 삭제).
+- **게시물·댓글·쪽지는 authorUid를 법적대응 위해 보존**(匿名 상태, 본인 연결 해제) — UI·방침에 명시(`account.deleteWarn`).
+- rules 변경 불필요(본인 delete 이미 허용). 소셜 재인증은 현재 **웹 전용**(네이티브는 Phase 1b, EAS dev-client).
 
-> Google은 Data Safety에 **"사용자가 데이터 삭제를 요청할 수 있음 = 예"** 체크 + 삭제 URL 요구.
-> 이 수단이 없으면 리젝될 수 있으니 **출시 전 처리 필수**.
+> **콘솔 입력**: Google Data Safety "사용자가 데이터 삭제를 요청할 수 있음 = **예**". Apple App Review Notes에
+> "Account deletion: Profile → Account → Delete account (in-app)" 기재. 별도 삭제 URL 불필요.
 
 ---
 
@@ -104,5 +104,5 @@
 
 - [ ] Apple: 수집 데이터 7종(Email/Name/UserID/UserContent/OtherData, +선택 Photos) · **Linked 예 / Tracking 아니요 / App Functionality**
 - [ ] Google: Email/Name/UserID/OtherInfo/Messages(+선택 Photos) · **Shared 아니요 / 전송중 암호화 예 / 삭제요청 가능 예**
-- [ ] **계정·데이터 삭제 수단 마련**(§4) — 미구현, 출시 전 필수
+- [x] **계정·데이터 삭제 수단**(§4) — ✅ 인앱 구현 완료(프로필→계정→계정 삭제)
 - [ ] 방침서(privacy.html)와 라벨 내용 일치 재확인

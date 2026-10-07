@@ -11,6 +11,9 @@ import {
   OAuthProvider,
   sendEmailVerification,
   signOut as firebaseSignOut,
+  deleteUser,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
   User,
 } from "firebase/auth";
 import { Platform } from "react-native";
@@ -96,6 +99,44 @@ export async function signInWithSocial(id: SocialProviderId): Promise<User> {
 
 export async function signOut(): Promise<void> {
   await firebaseSignOut(auth);
+}
+
+// ── アカウント削除（Apple/Google 必須要件） ─────────────────────
+// 本人識別データ(プロフィール等)を削除 → Firebase Auth アカウントを削除。
+// 投稿・コメント・쪽지は法的対応のため保存(匿名のまま)。詳細は STORE-PRIVACY-LABELS §4。
+// 直近ログインが古いと deleteUser は auth/requires-recent-login を投げるため、先に再認証する。
+export const DELETE_PASSWORD_REQUIRED = "DELETE_PASSWORD_REQUIRED";
+export const DELETE_SOCIAL_WEB_ONLY = "DELETE_SOCIAL_WEB_ONLY";
+
+export async function deleteAccount(password?: string): Promise<void> {
+  const user = auth.currentUser;
+  if (!user) throw new Error("ログイン状態が確認できません");
+
+  // 1) 再認証（匿名ゲストは不要）。プロバイダに応じて方法を切り替える。
+  if (!user.isAnonymous) {
+    const providerId = user.providerData[0]?.providerId ?? "";
+    if (providerId === "password") {
+      if (!password) throw new Error(DELETE_PASSWORD_REQUIRED);
+      const cred = EmailAuthProvider.credential(user.email ?? "", password);
+      await reauthenticateWithCredential(user, cred);
+    } else if (providerId) {
+      // ソーシャル/Microsoft は popup 再認証（Web 専用。ネイティブは Phase 1b）。
+      if (Platform.OS !== "web") throw new Error(DELETE_SOCIAL_WEB_ONLY);
+      const provider =
+        providerId === "microsoft.com" ? microsoftProvider() : makeSocialProvider(providerId as any);
+      await reauthenticateWithPopup(user, provider);
+    }
+  }
+
+  // 2) 本人識別データを削除（再認証後 = auth 有効なうちに）。
+  const { deleteSelfData } = await import("./userService");
+  await deleteSelfData(user.uid, user.email);
+  // 端末ローカルの成績記録も消す。
+  const { clearGradState } = await import("./gradRecordService");
+  await clearGradState(user.uid);
+
+  // 3) Auth アカウント削除。直後に AuthContext が匿名で再ログインする。
+  await deleteUser(user);
 }
 
 // パスワードは Firebase Auth に直接渡すだけで、こちら側では一切保持・保存しない。

@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import type { AcademicInfo, UserProfile } from "../types/user";
 
@@ -206,4 +206,27 @@ export async function saveFriendOrders(
   friendListOrder: string[]
 ): Promise<void> {
   await setDoc(userDoc(uid), { uid, frequentFriendIds, friendListOrder }, { merge: true });
+}
+
+// ── アカウント削除: 本人を特定できるデータの削除 ───────────────────
+// Apple/Google のアカウント削除要件に対応。本人識別データ(プロフィール・公開ミラー・
+// メール索引・時間割)を物理削除する。firestore.rules は本人の delete を許可済み(ルール変更不要)。
+// ⚠️ 投稿・コメント・쪽지は authorUid を法的対応のため保存する方針(MODERATION.md)なので
+//    ここでは削除しない。表示は既に匿名(@匿名N)で、アカウント削除により本人との紐付けは切れる。
+export async function deleteSelfData(uid: string, email: string | null): Promise<void> {
+  // 時間割(サブコレクション)を全学期分削除
+  try {
+    const tts = await getDocs(collection(db, "users", uid, "timetables"));
+    await Promise.all(tts.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
+  } catch {
+    // 読めない/無い場合は無視して続行
+  }
+  // メール索引(あれば)
+  if (email) {
+    const key = email.trim().toLowerCase();
+    if (key) await deleteDoc(doc(db, "emailIndex", key)).catch(() => {});
+  }
+  // 公開ミラー → 本体の順で削除(本体を先に消すと rules の isOwner 判定は uid で続行可)
+  await deleteDoc(doc(db, "usersPublic", uid)).catch(() => {});
+  await deleteDoc(userDoc(uid)).catch(() => {});
 }
