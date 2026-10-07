@@ -40,7 +40,7 @@ import { timeAgo } from "../../../src/i18n/translations";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
-import { BOARDS, isQaBoard, type BoardId, type Post, type Comment } from "../../../src/types/board";
+import { BOARDS, isQaBoard, qaTagLabel, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
 const BEST_COLOR = "#E0A500"; // ベストアンサー（金）
 
@@ -424,6 +424,11 @@ export default function PostDetailScreen() {
                 </Text>
               </View>
             ) : null}
+            {isQa && qaTagLabel(post.tag, language) ? (
+              <View style={styles.tagChip}>
+                <Text style={styles.tagChipText}># {qaTagLabel(post.tag, language)}</Text>
+              </View>
+            ) : null}
           </View>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
@@ -558,6 +563,8 @@ function makeStyles(theme: Theme) {
     qaBadgeText: { fontSize: 11, fontWeight: "800" },
     qaBadgeTextOpen: { color: "#C77A10" },
     qaBadgeTextResolved: { color: "#1F9D6B" },
+    tagChip: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2, backgroundColor: theme.primary + "14" },
+    tagChipText: { fontSize: 11, fontWeight: "700", color: theme.primary },
     // ベストアンサー: 金色のアクセント
     bestCard: { borderLeftWidth: 3, borderLeftColor: BEST_COLOR, backgroundColor: BEST_COLOR + "0E" },
     bestBadge: { alignSelf: "flex-start", backgroundColor: BEST_COLOR, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },

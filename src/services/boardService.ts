@@ -55,7 +55,8 @@ export async function createPost(
   boardId: BoardId,
   authorUid: string,
   title: string,
-  body: string
+  body: string,
+  tag: string | null = null
 ): Promise<string> {
   const ref = await addDoc(postsCol(schoolDomain, boardId), {
     boardId,
@@ -65,6 +66,7 @@ export async function createPost(
     authorUid,
     commentCount: 0,
     createdAt: serverTimestamp(),
+    ...(tag ? { tag } : {}),
   });
   return ref.id;
 }

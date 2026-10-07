@@ -54,12 +54,34 @@ export interface Post {
   bestCommentId?: string | null;
   // 閲覧数（詳細を開くたびに+1）。既存ドキュメントには無いので undefined=0。
   viewCount?: number;
+  // 質問掲示板のカテゴリ（QA_TAGS の id）。質問板のみ。
+  tag?: string | null;
 }
 
 // 質問掲示板の boardId（知恵袋スタイルの Q&A 表示を適用する板）。
 export const QA_BOARD_ID = "question";
 export function isQaBoard(boardId: string): boolean {
   return boardId === QA_BOARD_ID;
+}
+
+// 質問掲示板のカテゴリ（軽量タグ・単一選択）。留学生向けに ビザ・バイト を含む。
+export interface QaTag {
+  id: string;
+  ja: string;
+  ko: string;
+}
+export const QA_TAGS: QaTag[] = [
+  { id: "jugyo", ja: "授業・履修", ko: "수업·이수" },
+  { id: "circle", ja: "サークル・部活", ko: "동아리·부활동" },
+  { id: "seikatsu", ja: "生活", ko: "생활" },
+  { id: "visa", ja: "ビザ・在留", ko: "비자·체류" },
+  { id: "baito", ja: "バイト", ko: "아르바이트" },
+  { id: "sonota", ja: "その他", ko: "기타" },
+];
+export function qaTagLabel(tagId: string | undefined | null, lang: "ja" | "ko"): string | null {
+  if (!tagId) return null;
+  const t = QA_TAGS.find((x) => x.id === tagId);
+  return t ? (lang === "ko" ? t.ko : t.ja) : null;
 }
 
 export interface Comment {

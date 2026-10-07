@@ -18,7 +18,7 @@ import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchPosts, fetchBoardSearchCandidates } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
-import { OFFICIAL_BOARDS, boardLabel, isQaBoard, type BoardId, type Post } from "../../../src/types/board";
+import { OFFICIAL_BOARDS, boardLabel, isQaBoard, qaTagLabel, QA_TAGS, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
 
 export default function PostListScreen() {
@@ -37,6 +37,9 @@ export default function PostListScreen() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  // 質問板のカテゴリ絞り込み（クライアント側）。null=すべて。
+  const isQa = isQaBoard(boardId as string);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
 
   // 掲示板内検索（ヘッダーの🔍でトグル）。
   // 🔍を開いた時に候補（最近N件）を1回だけ取得し、以降は入力ごとにクライアント側で
@@ -130,8 +133,31 @@ export default function PostListScreen() {
           />
         </View>
       )}
+      {!searchMode && isQa && (
+        <View style={styles.filterBar}>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={[{ id: null as string | null }, ...QA_TAGS.map((tg) => ({ id: tg.id as string | null }))]}
+            keyExtractor={(it) => it.id ?? "__all"}
+            contentContainerStyle={{ gap: 7, paddingHorizontal: 12 }}
+            renderItem={({ item }) => {
+              const on = tagFilter === item.id;
+              const label = item.id ? qaTagLabel(item.id, language) : t("qa.filterAll");
+              return (
+                <TouchableOpacity
+                  style={[styles.filterChip, on && styles.filterChipOn]}
+                  onPress={() => setTagFilter(item.id)}
+                >
+                  <Text style={[styles.filterChipText, on && styles.filterChipTextOn]}>{label}</Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+      )}
       <FlatList
-        data={searchMode ? results : posts}
+        data={searchMode ? results : (isQa && tagFilter ? posts.filter((p) => p.tag === tagFilter) : posts)}
         keyExtractor={(item) => item.id}
         refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
@@ -167,6 +193,11 @@ export default function PostListScreen() {
                     <Text style={[styles.qaBadgeText, item.resolved ? styles.qaBadgeTextResolved : styles.qaBadgeTextOpen]}>
                       {item.resolved ? t("qa.resolved") : t("qa.open")}
                     </Text>
+                  </View>
+                ) : null}
+                {isQaBoard(boardId as string) && qaTagLabel(item.tag, language) ? (
+                  <View style={styles.tagChip}>
+                    <Text style={styles.tagChipText}>{qaTagLabel(item.tag, language)}</Text>
                   </View>
                 ) : null}
                 <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
@@ -227,6 +258,19 @@ function makeStyles(theme: Theme) {
     qaBadgeText: { fontSize: 10, fontWeight: "800" },
     qaBadgeTextOpen: { color: "#C77A10" },
     qaBadgeTextResolved: { color: "#1F9D6B" },
+    tagChip: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2, backgroundColor: theme.primary + "14" },
+    tagChipText: { fontSize: 10, fontWeight: "700", color: theme.primary },
+    filterBar: {
+      paddingVertical: 10, backgroundColor: theme.card,
+      borderBottomWidth: 1, borderBottomColor: theme.border,
+    },
+    filterChip: {
+      paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
+      backgroundColor: theme.background, borderWidth: 1, borderColor: theme.border,
+    },
+    filterChipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
+    filterChipText: { fontSize: 12, fontWeight: "700", color: theme.textSecondary },
+    filterChipTextOn: { color: "#fff" },
     meta: { flexDirection: "row", gap: 6 },
     metaText: { fontSize: 12, color: theme.textSecondary },
     empty: { color: theme.textSecondary, fontSize: 14 },

@@ -18,19 +18,21 @@ import { createPost } from "../../../src/services/boardService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
-import { BOARDS, type BoardId } from "../../../src/types/board";
+import { BOARDS, isQaBoard, QA_TAGS, type BoardId } from "../../../src/types/board";
 
 export default function WriteScreen() {
   const { boardId } = useLocalSearchParams<{ boardId: string }>();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
 
   const board = BOARDS.find((b) => b.id === boardId);
+  const isQa = isQaBoard(boardId as string);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [tag, setTag] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   // 禁止語が見つかったら警告を挟む。無視して投稿することもできる（警告であって制限ではない）
   const [bannedWords, setBannedWords] = useState<string[]>([]);
@@ -50,7 +52,7 @@ export default function WriteScreen() {
     setBannedWords([]);
     setSubmitting(true);
     try {
-      await createPost(schoolDomain, boardId as BoardId, user.uid, title.trim(), body.trim());
+      await createPost(schoolDomain, boardId as BoardId, user.uid, title.trim(), body.trim(), isQa ? tag : null);
       router.back();
     } catch (e: any) {
       Alert.alert(t("post.submitFailed"), e.message);
@@ -67,6 +69,25 @@ export default function WriteScreen() {
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
         <Text style={styles.boardName}>{board?.label}</Text>
         <Text style={styles.anon}>{t("post.anonNotice")}</Text>
+
+        {isQa ? (
+          <View style={styles.tagWrap}>
+            {QA_TAGS.map((tg) => {
+              const on = tag === tg.id;
+              return (
+                <TouchableOpacity
+                  key={tg.id}
+                  style={[styles.tagChip, on && styles.tagChipOn]}
+                  onPress={() => setTag(on ? null : tg.id)}
+                >
+                  <Text style={[styles.tagChipText, on && styles.tagChipTextOn]}>
+                    {language === "ko" ? tg.ko : tg.ja}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ) : null}
 
         <TextInput
           style={styles.titleInput}
@@ -109,7 +130,15 @@ function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.card, padding: 16 },
     boardName: { fontSize: 13, color: theme.primary, fontWeight: "600", marginBottom: 2 },
-    anon: { fontSize: 12, color: theme.textSecondary, marginBottom: 20 },
+    anon: { fontSize: 12, color: theme.textSecondary, marginBottom: 16 },
+    tagWrap: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginBottom: 20 },
+    tagChip: {
+      paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999,
+      backgroundColor: theme.background, borderWidth: 1, borderColor: theme.border,
+    },
+    tagChipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
+    tagChipText: { fontSize: 12.5, fontWeight: "700", color: theme.textSecondary },
+    tagChipTextOn: { color: "#fff" },
     titleInput: {
       borderBottomWidth: 1,
       borderColor: theme.border,
