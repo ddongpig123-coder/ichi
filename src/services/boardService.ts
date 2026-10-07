@@ -190,6 +190,20 @@ export async function clearBestComment(
   });
 }
 
+// 閲覧数 +1（詳細を開いた時）。他ユーザーも実行するため firestore.rules の canUpdatePost に
+// viewCount 単独更新を許可するブランチを追加済み（ルール再デプロイが必要＝太希窓口）。
+export async function incrementViewCount(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string
+): Promise<void> {
+  try {
+    await updateDoc(doc(postsCol(schoolDomain, boardId), postId), { viewCount: increment(1) });
+  } catch {
+    // ルール未デプロイ環境では失敗しうるが、閲覧は画面表示に影響しないので握りつぶす。
+  }
+}
+
 function likesCol(schoolDomain: string, boardId: BoardId, postId: string) {
   return collection(db, "schools", schoolDomain, "boards", boardId, "posts", postId, "likes");
 }

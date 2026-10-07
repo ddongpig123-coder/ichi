@@ -52,6 +52,8 @@ export interface Post {
   // 質問の作成者のみが設定（firestore.rules の canUpdatePost = 本人更新で許可済み）。
   resolved?: boolean;
   bestCommentId?: string | null;
+  // 閲覧数（詳細を開くたびに+1）。既存ドキュメントには無いので undefined=0。
+  viewCount?: number;
 }
 
 // 質問掲示板の boardId（知恵袋スタイルの Q&A 表示を適用する板）。

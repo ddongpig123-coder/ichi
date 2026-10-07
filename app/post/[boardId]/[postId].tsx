@@ -27,6 +27,7 @@ import {
   fetchLikedCommentIds,
   setBestComment,
   clearBestComment,
+  incrementViewCount,
 } from "../../../src/services/boardService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
@@ -147,7 +148,13 @@ export default function PostDetailScreen() {
       user ? checkLiked(schoolDomain, boardId as BoardId, postId, user.uid) : Promise.resolve(false),
     ]).then(([p, _c, isLiked]) => {
       const mine = p as Post | null;
-      setPost(mine);
+      // 閲覧数+1（開くたび。表示は楽観的に+1）。削除済みは数えない。
+      if (mine && !mine.deleted && schoolDomain) {
+        setPost({ ...mine, viewCount: (mine.viewCount ?? 0) + 1 });
+        incrementViewCount(schoolDomain, boardId as BoardId, postId);
+      } else {
+        setPost(mine);
+      }
       setLiked(isLiked as boolean);
       setLikeCount(mine?.likeCount ?? 0);
       // 自分の投稿を開いたら「新着コメント」の赤丸を消す
@@ -381,8 +388,9 @@ export default function PostDetailScreen() {
             disabled={!user || likingComment === c.id}
             onPress={() => handleCommentLike(c.id)}
           >
+            {/* 質問板は「ナイス」(知恵袋), 他板は従来のハート */}
             <Text style={[styles.cmtActionText, likedByMe && styles.cmtLikeOn]}>
-              {likedByMe ? "❤️" : "🤍"} {c.likeCount}
+              {isQa ? `👍 ${t("qa.nice")} ${c.likeCount}` : `${likedByMe ? "❤️" : "🤍"} ${c.likeCount}`}
             </Text>
           </TouchableOpacity>
           {/* 返信はコメント・返信の両方に表示（req 2）。返信への返信も同じスレッドにフラット追加（req 5）。 */}
@@ -427,6 +435,8 @@ export default function PostDetailScreen() {
             </TouchableOpacity>
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(language, post.createdAt)}</Text>
+            <Text style={styles.meta}>·</Text>
+            <Text style={styles.meta}>👁 {post.viewCount ?? 0}</Text>
             <View style={{ flex: 1 }} />
             <TouchableOpacity
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}

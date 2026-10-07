@@ -216,9 +216,10 @@ service cloud.firestore {
     function canUpdatePost() {
       return isSignedIn() && (
         resource.data.authorUid == request.auth.uid ||
-        // いいね数・コメント数のカウンター更新は他ユーザー操作でも発生
+        // いいね数・コメント数・閲覧数のカウンター更新は他ユーザー操作でも発生
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount']) ||
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount'])
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']) ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount'])
       );
     }
 
