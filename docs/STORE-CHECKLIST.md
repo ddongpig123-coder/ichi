@@ -98,6 +98,8 @@
 
 ## 4. App Privacy (개인정보 라벨) — 심사 필수 입력
 
+> 📄 **코드 기준 상세 매핑 = [STORE-PRIVACY-LABELS.md](STORE-PRIVACY-LABELS.md)** (콘솔 입력용 표·삭제수단 TODO 포함).
+
 Apple "App Privacy" / Google "Data safety"에 아래대로 신고:
 
 | 데이터 종류 | 수집? | 용도 | 신원연결(Linked) | 트래킹 |
