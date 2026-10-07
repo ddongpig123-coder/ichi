@@ -18,7 +18,7 @@ import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchPosts, fetchBoardSearchCandidates } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
-import { OFFICIAL_BOARDS, boardLabel, type BoardId, type Post } from "../../../src/types/board";
+import { OFFICIAL_BOARDS, boardLabel, isQaBoard, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
 
 export default function PostListScreen() {
@@ -161,7 +161,16 @@ export default function PostListScreen() {
               style={styles.row}
               onPress={() => router.push(`/post/${boardId}/${item.id}`)}
             >
-              <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+              <View style={styles.titleRow}>
+                {isQaBoard(boardId as string) ? (
+                  <View style={[styles.qaBadge, item.resolved ? styles.qaBadgeResolved : styles.qaBadgeOpen]}>
+                    <Text style={[styles.qaBadgeText, item.resolved ? styles.qaBadgeTextResolved : styles.qaBadgeTextOpen]}>
+                      {item.resolved ? t("qa.resolved") : t("qa.open")}
+                    </Text>
+                  </View>
+                ) : null}
+                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+              </View>
               <View style={styles.meta}>
                 <Text style={styles.metaText}>{t("boards.anonymous")}</Text>
                 <Text style={styles.metaText}>·</Text>
@@ -208,7 +217,14 @@ function makeStyles(theme: Theme) {
       color: theme.textPrimary,
     },
     row: { backgroundColor: theme.card, padding: 16 },
-    title: { fontSize: 15, fontWeight: "600", color: theme.textPrimary, marginBottom: 6 },
+    titleRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 6 },
+    title: { flex: 1, fontSize: 15, fontWeight: "600", color: theme.textPrimary },
+    qaBadge: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
+    qaBadgeOpen: { backgroundColor: "#F3A43722" },
+    qaBadgeResolved: { backgroundColor: "#1F9D6B22" },
+    qaBadgeText: { fontSize: 10, fontWeight: "800" },
+    qaBadgeTextOpen: { color: "#C77A10" },
+    qaBadgeTextResolved: { color: "#1F9D6B" },
     meta: { flexDirection: "row", gap: 6 },
     metaText: { fontSize: 12, color: theme.textSecondary },
     empty: { color: theme.textSecondary, fontSize: 14 },

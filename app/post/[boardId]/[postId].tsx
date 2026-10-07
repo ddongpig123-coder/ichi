@@ -25,6 +25,8 @@ import {
   softDeleteComment,
   toggleCommentLike,
   fetchLikedCommentIds,
+  setBestComment,
+  clearBestComment,
 } from "../../../src/services/boardService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
@@ -37,7 +39,9 @@ import { timeAgo } from "../../../src/i18n/translations";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
-import { BOARDS, type BoardId, type Post, type Comment } from "../../../src/types/board";
+import { BOARDS, isQaBoard, type BoardId, type Post, type Comment } from "../../../src/types/board";
+
+const BEST_COLOR = "#E0A500"; // ベストアンサー（金）
 
 export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
@@ -187,6 +191,23 @@ export default function PostDetailScreen() {
     setLiking(false);
   }
 
+  // ベストアンサー選択/解除（質問の作成者のみ）。選ぶと解決済みに。
+  const [bestBusy, setBestBusy] = useState(false);
+  async function handleSelectBest(commentId: string) {
+    if (!schoolDomain || !post || bestBusy) return;
+    setBestBusy(true);
+    const next = post.bestCommentId === commentId ? null : commentId;
+    try {
+      if (next) await setBestComment(schoolDomain, boardId as BoardId, postId, next);
+      else await clearBestComment(schoolDomain, boardId as BoardId, postId);
+      setPost({ ...post, bestCommentId: next, resolved: !!next });
+    } catch (e: any) {
+      Alert.alert(t("common.error"), e?.message ?? "");
+    } finally {
+      setBestBusy(false);
+    }
+  }
+
   // 自分の投稿・コメントの削除（ソフトデリート）。
   // 投稿を消したら一覧に戻る。コメントは残りのスレッドを読み直す。
   async function handleDelete() {
@@ -271,6 +292,19 @@ export default function PostDetailScreen() {
   }
   const visibleCommentCount = comments.filter((c) => !c.deleted).length;
 
+  // 質問掲示板（知恵袋化）の状態。ベストアンサーは作成者が回答(トップレベルコメント)から選ぶ。
+  const isQa = isQaBoard(boardId as string);
+  const isAuthor = !!user && user.uid === post.authorUid;
+  const bestId = post.bestCommentId ?? null;
+  // ベストアンサーを先頭に固定（残りは元の順序）。
+  const orderedTopLevel =
+    isQa && bestId && topLevelComments.some((c) => c.id === bestId)
+      ? [
+          ...topLevelComments.filter((c) => c.id === bestId),
+          ...topLevelComments.filter((c) => c.id !== bestId),
+        ]
+      : topLevelComments;
+
   // 返信開始: スレッド root にぶら下げ、返信先の人をメンション。
   // フォーカスはタップのジェスチャ内で同期呼び出し（= 入力欄を直接タップしたのと同じ。setTimeout で
   // 遅延させるとジェスチャ文脈を外れて Android がキーボードを出さないため）。
@@ -297,8 +331,15 @@ export default function PostDetailScreen() {
       );
     }
     const likedByMe = likedComments.has(c.id);
+    const isBest = isQa && bestId === c.id && !isReply;
+    const canSelectBest = isQa && isAuthor && !isReply && c.authorUid !== post.authorUid;
     return (
-      <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard]}>
+      <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard, isBest && styles.bestCard]}>
+        {isBest ? (
+          <View style={styles.bestBadge}>
+            <Text style={styles.bestBadgeText}>★ {t("qa.bestAnswer")}</Text>
+          </View>
+        ) : null}
         <View style={styles.commentAuthorRow}>
           {isReply && <Text style={styles.replyArrow}>↳</Text>}
           <TouchableOpacity
@@ -348,6 +389,14 @@ export default function PostDetailScreen() {
           <TouchableOpacity style={styles.cmtAction} onPress={() => startReply(c)}>
             <Text style={styles.cmtActionText}>{t("post.reply")}</Text>
           </TouchableOpacity>
+          {/* ベストアンサー選択（質問の作成者のみ・他者の回答に対して） */}
+          {canSelectBest ? (
+            <TouchableOpacity style={styles.cmtAction} disabled={bestBusy} onPress={() => handleSelectBest(c.id)}>
+              <Text style={[styles.cmtActionText, styles.bestSelectText]}>
+                {bestId === c.id ? `★ ${t("qa.cancelBest")}` : `☆ ${t("qa.selectBest")}`}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     );
@@ -358,7 +407,16 @@ export default function PostDetailScreen() {
       <ScrollView ref={scrollRef} style={styles.container} keyboardShouldPersistTaps="handled">
         {/* Post */}
         <View style={styles.postCard}>
-          <Text style={styles.boardTag}>{board?.label}</Text>
+          <View style={styles.boardTagRow}>
+            <Text style={styles.boardTag}>{board?.label}</Text>
+            {isQa ? (
+              <View style={[styles.qaBadge, post.resolved ? styles.qaBadgeResolved : styles.qaBadgeOpen]}>
+                <Text style={[styles.qaBadgeText, post.resolved ? styles.qaBadgeTextResolved : styles.qaBadgeTextOpen]}>
+                  {post.resolved ? t("qa.resolved") : t("qa.open")}
+                </Text>
+              </View>
+            ) : null}
+          </View>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
             <TouchableOpacity
@@ -398,9 +456,9 @@ export default function PostDetailScreen() {
           </View>
         </View>
 
-        {/* Comments */}
-        <Text style={styles.commentHeader}>{t("post.commentsHeader")} {visibleCommentCount}</Text>
-        {topLevelComments.map((c) => {
+        {/* Comments (質問板は「回答」表記) */}
+        <Text style={styles.commentHeader}>{isQa ? t("qa.answersHeader") : t("post.commentsHeader")} {visibleCommentCount}</Text>
+        {orderedTopLevel.map((c) => {
           const replies = repliesByParent.get(c.id) ?? [];
           const aliveReplies = replies.filter((r) => !r.deleted);
           // コメント削除済み かつ 生存返信なし → スレッド丸ごと非表示（req 7,10）。
@@ -482,7 +540,19 @@ function makeStyles(theme: Theme) {
     container: { flex: 1, backgroundColor: theme.background },
     center: { flex: 1, justifyContent: "center", alignItems: "center" },
     postCard: { backgroundColor: theme.card, padding: 20, marginBottom: 8 },
-    boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600", marginBottom: 6 },
+    boardTagRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+    boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600" },
+    qaBadge: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2 },
+    qaBadgeOpen: { backgroundColor: "#F3A43722" },
+    qaBadgeResolved: { backgroundColor: "#1F9D6B22" },
+    qaBadgeText: { fontSize: 11, fontWeight: "800" },
+    qaBadgeTextOpen: { color: "#C77A10" },
+    qaBadgeTextResolved: { color: "#1F9D6B" },
+    // ベストアンサー: 金色のアクセント
+    bestCard: { borderLeftWidth: 3, borderLeftColor: BEST_COLOR, backgroundColor: BEST_COLOR + "0E" },
+    bestBadge: { alignSelf: "flex-start", backgroundColor: BEST_COLOR, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },
+    bestBadgeText: { fontSize: 11, fontWeight: "800", color: "#fff" },
+    bestSelectText: { color: BEST_COLOR, fontWeight: "800" },
     postTitle: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 8 },
     metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
     meta: { fontSize: 12, color: theme.textSecondary },

@@ -48,6 +48,16 @@ export interface Post {
   createdAt: number;
   deleted?: boolean;
   deletedAt?: number;
+  // 質問掲示板（知恵袋化）: 解決済みフラグ と ベストアンサーに選ばれたコメントid。
+  // 質問の作成者のみが設定（firestore.rules の canUpdatePost = 本人更新で許可済み）。
+  resolved?: boolean;
+  bestCommentId?: string | null;
+}
+
+// 質問掲示板の boardId（知恵袋スタイルの Q&A 表示を適用する板）。
+export const QA_BOARD_ID = "question";
+export function isQaBoard(boardId: string): boolean {
+  return boardId === QA_BOARD_ID;
 }
 
 export interface Comment {

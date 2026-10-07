@@ -163,6 +163,33 @@ export async function softDeleteComment(
   });
 }
 
+// ── ベストアンサー（質問掲示板の 知恵袋化） ───────────────
+// 質問の作成者が回答(コメント)の1つを「ベストアンサー」に選ぶ。選ぶと解決済みに。
+// 作成者本人の update なので firestore.rules の canUpdatePost() で許可済み（ルール変更不要）。
+export async function setBestComment(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string,
+  commentId: string
+): Promise<void> {
+  await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
+    bestCommentId: commentId,
+    resolved: true,
+  });
+}
+
+// ベストアンサー解除（受付中に戻す）。
+export async function clearBestComment(
+  schoolDomain: string,
+  boardId: BoardId,
+  postId: string
+): Promise<void> {
+  await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
+    bestCommentId: null,
+    resolved: false,
+  });
+}
+
 function likesCol(schoolDomain: string, boardId: BoardId, postId: string) {
   return collection(db, "schools", schoolDomain, "boards", boardId, "posts", postId, "likes");
 }
