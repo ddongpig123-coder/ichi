@@ -184,6 +184,14 @@ export default function HomeScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.actionBtn}
+          onPress={() =>
+            router.push(`/timetable-wizard?year=${selectedYear}&semester=${selectedSemester}`)
+          }
+        >
+          <Text style={styles.actionText} numberOfLines={1}>{t("wizard.entry")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionBtn}
           onPress={() => router.push("/graduation")}
         >
           <Text style={styles.actionText} numberOfLines={1}>{t("grad.entry")}</Text>
