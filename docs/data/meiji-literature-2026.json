@@ -1,19 +1,21 @@
 {
   "_meta": {
-    "source": "明治大学 2026年度 文学部便覧（文学科・史学地理学科ほか）",
+    "source": "明治大学 2026年度 文学部便覧（文学科・史学地理学科ほか）＋ 明治大学学則＜別表１＞授業科目の種類及びその単位数（文学部, 2026年4月施行）",
+    "sourceUrl": "https://www.meiji.ac.jp/koho/disclosure/purpose/6t5h7p0000014q2d-att/6t5h7p000034esrz.pdf",
     "extractedAt": "2026-10-05",
+    "updatedAt": "2026-10-11",
     "faculty": "literature",
     "facultyNameJa": "文学部",
     "schoolDomain": "meiji.ac.jp",
     "admissionYear": 2026,
     "appliesTo": "2026年度便覧（入学年度の適用範囲は便覧表紙で要確認）",
-    "note": "文学部は学科ごとに卒業要件内訳が異なる（合計は124で共通）。文学科・史学地理学科の要件表(便覧 印刷p18)を画像レンダー検証。心理社会学科は提供PDFに未収録→TODO。各専攻の専攻必修内訳は専攻別配当表(P.38以降/P.67以降)→courseMasters TODO。",
+    "note": "文学部は学科ごとに卒業要件内訳が異なる（合計は124で共通）。文学科・史学地理学科の要件表(便覧 印刷p18)を画像レンダー検証。心理社会学科は2026-10-11に学則別表1(公開PDF, 文学部)の「卒業要件」条文から追加: 専攻必修30・外国語16・ウェルネス4・選択74=124。同じ条文の文学科(38/16/4/66)・史学地理学科(32/12/4/76)が既存の便覧由来の数値と完全一致したため、相互検証済み。各専攻の専攻必修内訳は専攻別配当表(P.38以降/P.67以降)→courseMasters TODO。",
     "printedPageMap": {
       "requirementTable": "印刷p18 (文学科/史学地理学科)",
       "creditCaps": "印刷p16付近(履修制限 年48)",
       "majorAllocation": "文学科=P.38以降 / 史学地理学科=P.67以降"
     },
-    "verifiedBy": "requirement table rendered as image and read (lit_p11)"
+    "verifiedBy": "文学科・史学地理学科=便覧要件表を画像レンダーして読取(lit_p11)。心理社会学科=学則別表1(公開PDF)の卒業要件条文テキストを直読し、①3学科すべてで zone 合計=124、②同条文の文学科/史学地理学科の数値が既存JSONと完全一致、③心理社会学科3専攻の配当科目単位合計がいずれも30(=条文の専攻必修30)となることを確認。"
   },
   "requirementMaster": {
     "totalRequired": 124,
@@ -38,9 +40,22 @@
           { "id": "wellness", "nameJa": "ウェルネス科目", "minUnits": 4, "rule": "min-units" },
           { "id": "sentaku", "nameJa": "選択科目", "minUnits": 76, "rule": "min-units", "noteJa": "専攻選択A12以上 + 共通選択24以上、専攻選択Bと合わせて62以上、選択合計76以上。" }
         ]
+      },
+      {
+        "id": "shinri-shakai",
+        "nameJa": "心理社会学科",
+        "majors": ["臨床心理学専攻", "現代社会学専攻", "哲学専攻"],
+        "zones": [
+          { "id": "senko-hisshu", "nameJa": "専攻必修科目", "minUnits": 30, "rule": "all-required", "noteJa": "学則別表1 卒業要件 2(1)「心理社会学科は30単位」。3専攻いずれも配当科目の合計=30単位で一致（臨床心理学/現代社会学/哲学）。超過分は選択科目合計へ算入。" },
+          { "id": "gaikokugo", "nameJa": "外国語科目", "minUnits": 16, "rule": "min-units", "noteJa": "2か国語16単位（英独仏露西中朝から選択）。" },
+          { "id": "wellness", "nameJa": "ウェルネス科目", "minUnits": 4, "rule": "min-units" },
+          { "id": "sentaku", "nameJa": "選択科目", "minUnits": 74, "rule": "min-units", "noteJa": "共通選択24以上を含み、専攻指定の専攻選択と合わせて56以上。その上で選択科目合計74以上。（専攻選択A/Bの内訳は便覧側の区分で、学則別表1には無い=未取得）" }
+        ]
       }
     ],
-    "departmentsTodo": ["心理社会学科（提供PDF未収録）"]
+    "majorsNote": {
+      "shinri-shakai": "専攻必修の内訳（学則別表1 p8-9, 各専攻30単位）: 臨床心理学専攻=心理社会研究入門A/B/Cから2単位 + 基礎演習(臨床心理学)ⅠA/ⅠB・心理社会調査研究法A/B・心理的アセスメント・基礎演習ⅡA/ⅡB・臨床心理学演習A/B + 心理学実験1・臨床心理援助技法1 + 卒業論文Ⅰ/Ⅱ各4。現代社会学専攻=心理社会研究入門Bが必修2 + 入門A/Cから2単位 + 心理社会研究基礎演習ⅠA/ⅠB・心理社会調査研究法A/B・基礎演習ⅡA/ⅡB・現代社会学演習A/B + 現代社会学実習A/B各1 + 卒業論文Ⅰ/Ⅱ各4。哲学専攻=入門A/B/Cから2単位 + 基礎演習(哲学)A/B・哲学交流論・哲学演習(2年)Ⅰ/Ⅱ・心と身体の哲学・哲学プラクティスⅠ/Ⅱ・哲学演習(3年)Ⅰ/Ⅱ + 卒業論文Ⅰ/Ⅱ各4。"
+    }
   },
   "milestones": {
     "promotion": {

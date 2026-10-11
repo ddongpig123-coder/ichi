@@ -129,6 +129,12 @@ const literature: Faculty = {
         { id: "wellness", nameJa: "ウェルネス科目", minUnits: 4 },
         { id: "sentaku", nameJa: "選択科目", minUnits: 76 },
       ]},
+      { id: "shinri-shakai", nameJa: "心理社会学科", zones: [
+        { id: "senko-hisshu", nameJa: "専攻必修科目", minUnits: 30, hintJa: "臨床心理学/現代社会学/哲学 各専攻30単位" },
+        { id: "gaikokugo", nameJa: "外国語科目", minUnits: 16, hintJa: "2か国語16単位" },
+        { id: "wellness", nameJa: "ウェルネス科目", minUnits: 4 },
+        { id: "sentaku", nameJa: "選択科目", minUnits: 74, hintJa: "共通選択24以上を含み専攻選択と合わせて56以上" },
+      ]},
     ],
   }],
 };
