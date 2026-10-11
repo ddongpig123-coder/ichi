@@ -115,3 +115,20 @@
 
 ## Claude가 못 하는 것 (근본적)
 스토어 콘솔 폼 제출·심사 클릭·결제·2FA·실기기 스크린샷·Apple/Google 로그인.
+
+---
+
+## 부록 — 코드리뷰 노트 (2026-10-11, 미수정 항목)
+
+출시 전 `/code-review` 결과. **수정됨**: ① 신규투고 댓글배지 ② 와세다 서브도메인 이메일.
+아래는 **미수정**(경미/사전존재) — 출시 블로커 아님, 여유 될 때 정리 권장:
+
+- **[계정삭제] deleteUser 실패 시 고아 계정**(authService): 재인증 후라 드물지만, `deleteSelfData` 뒤
+  `deleteUser`가 네트워크로 실패하면 프로필만 지워지고 Auth 계정은 남음. 다음 로드 때 `ensureUserProfile`로
+  최소 프로필 자가복구되나 "삭제했는데 계정 생존" 상태. **완전 원자적 삭제는 Cloud Functions 필요**(Blaze).
+  현재 UI는 실패 시 "다시 시도" 안내 → 재시도로 보통 해소.
+- **[쪽지 미읽음] 서버/단말 시계 오차**(chatService.isChatUnread): `lastRead`=단말 `Date.now()` vs
+  `lastMessageAt`=serverTimestamp 비교라 시계 스큐 시 배지 오작동 가능. serverTimestamp 통일 권장.
+- **[졸업화면] calcGrad 2회 실행**(graduation.tsx): 商 외 학부에서도 商용 calc가 매 렌더 2회 실행(결과 미사용).
+  마스터가 작아 체감 無. isCommerce 가드 or useMemo로 정리 가능(로직 상관관계 있어 신중히).
+- **[알림] persistSeen 死코드**(NotificationsContext): 정의됐으나 미사용. setSeen 내 인라인 저장으로 대체됨 → 제거 가능.
