@@ -1,5 +1,19 @@
 {
   "enabledPlugins": {
     "expo@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)", "Bash(node:*)", "Bash(python3:*)",
+      "Bash(npm install:*)", "Bash(npm run build:*)", "Bash(npm test:*)",
+      "Bash(npx expo start:*)", "Bash(npx expo export:*)", "Bash(eas build:*)",
+      "Bash(git add:*)", "Bash(git commit:*)", "Bash(git status:*)",
+      "Bash(git diff:*)", "Bash(git log:*)", "Bash(git fetch:*)", "Bash(git rebase:*)",
+      "Bash(git push -u origin claude/app-dev-status-server-lnv2n9)"
+    ],
+    "deny": [
+      "Bash(eas submit:*)", "Bash(npx firebase-tools deploy:*)", "Bash(firebase deploy:*)",
+      "Bash(npm run deploy:web)", "Bash(git push origin master:*)", "Bash(git push origin main:*)"
+    ]
   }
 }
