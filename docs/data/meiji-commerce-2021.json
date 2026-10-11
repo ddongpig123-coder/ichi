@@ -2,6 +2,11 @@
   "_meta": {
     "source": "明治大学 2021年度(2022年度以前入学者) 商学部便覧",
     "extractedAt": "2026-08-31",
+    "crossCheck": {
+      "date": "2026-10-12",
+      "against": "明治大学学則＜別表１＞（商学部, 2026年4月施行）",
+      "result": "適用外(N/A)。現行学則(2026年4月施行)別表1の商学部は126単位バンド(2023年度〜)を規定しており、本マスターの134単位バンド(〜2022年度入学)は対象外。したがって学則別表1との交差検証は適用不可。現行バンドの検証は meiji-commerce-2026.json の crossCheck を参照。"
+    },
     "faculty": "commerce",
     "facultyNameJa": "商学部",
     "schoolDomain": "meiji.ac.jp",

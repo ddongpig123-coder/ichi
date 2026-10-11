@@ -3,6 +3,12 @@
     "source": "明治大学 2026年度 文学部便覧（文学科・史学地理学科ほか）＋ 明治大学学則＜別表１＞授業科目の種類及びその単位数（文学部, 2026年4月施行）",
     "sourceUrl": "https://www.meiji.ac.jp/koho/disclosure/purpose/6t5h7p0000014q2d-att/6t5h7p000034esrz.pdf",
     "extractedAt": "2026-10-05",
+    "crossCheck": {
+      "date": "2026-10-12",
+      "against": "明治大学学則＜別表１＞授業科目の種類及びその単位数（文学部, 2026年4月施行）の「卒業要件」条文",
+      "url": "https://www.meiji.ac.jp/koho/disclosure/purpose/6t5h7p0000014q2d-att/6t5h7p000034esrz.pdf",
+      "result": "一致(124)。3学科すべて条文と一致: 文学科38/16/4/66・史学地理学科32/12/4/76・心理社会学科30/16/4/74。(本マスターの心理社会学科はこの別表1から作成、他2学科は便覧由来で相互検証済み)"
+    },
     "updatedAt": "2026-10-11",
     "faculty": "literature",
     "facultyNameJa": "文学部",

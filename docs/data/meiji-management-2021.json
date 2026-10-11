@@ -3,6 +3,12 @@
     "source": "明治大学 経営学部「卒業単位数および卒業要件について（2021年度以降入学者）」",
     "sourceUrl": "https://www.meiji.ac.jp/keiei/curriculum/copy_of_graduation_requirements2021.html",
     "extractedAt": "2026-10-11",
+    "crossCheck": {
+      "date": "2026-10-12",
+      "against": "明治大学学則＜別表１＞授業科目の種類及びその単位数（経営学部, 2026年4月施行）の「卒業要件」条文",
+      "url": "https://www.meiji.ac.jp/koho/disclosure/purpose/6t5h7p0000014q2d-att/6t5h7p000034ess3.pdf",
+      "result": "一致(124)。学則別表1(2026年4月施行)の条文が本マスターの全数値(学部必修12・教養24・外国語16・体育実技2・基礎専門14・学科専門32・4年次4・「外国語を用いて講義を行う科目」4)と完全一致 → 学部公式ページ由来の本マスターを学則が追認。自由履修24は残差として整合。"
+    },
     "faculty": "management",
     "facultyNameJa": "経営学部",
     "schoolDomain": "meiji.ac.jp",

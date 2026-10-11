@@ -2,6 +2,12 @@
   "_meta": {
     "source": "明治大学 2026年度 総合数理学部便覧 卒業要件表 (印刷p18)",
     "extractedAt": "2026-10-05",
+    "crossCheck": {
+      "date": "2026-10-12",
+      "against": "明治大学学則＜別表１＞授業科目の種類及びその単位数（総合数理学部, 2026年4月施行）の「卒業要件」条文",
+      "url": "https://www.meiji.ac.jp/koho/disclosure/purpose/6t5h7p0000014q2d-att/6t5h7p000034ess6.pdf",
+      "result": "一致(124)。総合教育18(外国人留学生20)・3学科の基礎教育32/28/30・専門教育66/72/61 が条文と一致。選択必修の内訳(現象数理統計:基礎2・専門18 / 先端メディアサイエンス:専門8 / ネットワークデザイン:基礎4・専門14)まで条文と一致。自由選択は残差として整合。"
+    },
     "faculty": "interdisciplinary-math",
     "facultyNameJa": "総合数理学部",
     "schoolDomain": "meiji.ac.jp",
