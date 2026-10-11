@@ -112,18 +112,20 @@ export async function deleteAccount(password?: string): Promise<void> {
   const user = auth.currentUser;
   if (!user) throw new Error("ログイン状態が確認できません");
 
-  // 1) 再認証（匿名ゲストは不要）。プロバイダに応じて方法を切り替える。
+  // 1) 再認証（匿名ゲストは不要）。パスワードを持つなら最優先（最も確実）、無ければソーシャル popup。
   if (!user.isAnonymous) {
-    const providerId = user.providerData[0]?.providerId ?? "";
-    if (providerId === "password") {
+    const providerIds = user.providerData.map((p) => p.providerId);
+    const hasPassword = providerIds.includes("password");
+    const oauthId = providerIds.find((id) => id !== "password");
+    if (hasPassword) {
       if (!password) throw new Error(DELETE_PASSWORD_REQUIRED);
       const cred = EmailAuthProvider.credential(user.email ?? "", password);
       await reauthenticateWithCredential(user, cred);
-    } else if (providerId) {
+    } else if (oauthId) {
       // ソーシャル/Microsoft は popup 再認証（Web 専用。ネイティブは Phase 1b）。
       if (Platform.OS !== "web") throw new Error(DELETE_SOCIAL_WEB_ONLY);
       const provider =
-        providerId === "microsoft.com" ? microsoftProvider() : makeSocialProvider(providerId as any);
+        oauthId === "microsoft.com" ? microsoftProvider() : makeSocialProvider(oauthId as any);
       await reauthenticateWithPopup(user, provider);
     }
   }
