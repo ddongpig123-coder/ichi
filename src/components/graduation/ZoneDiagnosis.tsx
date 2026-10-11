@@ -13,12 +13,13 @@ interface Props {
   master: ResolvedMaster;
   baseline: Record<string, number>;
   onStep: (zoneId: string, delta: number) => void;
+  hasAllocation?: boolean; // 配当表(CAN)が整備済みの学科では「未対応」注記を出さない
 }
 
 // 区分(領域)のみの診断（配当表の無い学部用。商学部以外の9学部）。
 // 成績表を見て区分ごとに ＋/− で単位を入力 → 不足区分を優先表示。
 export function ZoneDiagnosis(p: Props) {
-  const { theme, t, master, baseline, onStep } = p;
+  const { theme, t, master, baseline, onStep, hasAllocation } = p;
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const calc = calcZonesOnly(master, baseline);
@@ -117,9 +118,11 @@ export function ZoneDiagnosis(p: Props) {
         );
       })}
 
-      <View style={styles.todoNote}>
-        <Text style={styles.todoText}>{t("grad.zonesTodo")}</Text>
-      </View>
+      {hasAllocation ? null : (
+        <View style={styles.todoNote}>
+          <Text style={styles.todoText}>{t("grad.zonesTodo")}</Text>
+        </View>
+      )}
     </View>
   );
 }

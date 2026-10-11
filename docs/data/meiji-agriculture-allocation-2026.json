@@ -1,0 +1,6357 @@
+{
+ "_meta": {
+  "source": "明治大学 2026年度 農学部便覧「Ⅴ 農学部設置科目一覧及び履修上の注意事項」(総合教育科目一覧 + 各学科専門科目一覧)",
+  "sourceUrl": "https://www.meiji.ac.jp/agri/student/6t5h7p00000gpn31-att/nouhandbook2026.pdf",
+  "extractedAt": "2026-10-12",
+  "tool": "pdfjs-dist(텍스트) + x좌표 열 판정. 이 PC에 파이썬이 없어 scripts/parse_binran_allocation.py(pymupdf) 대신 사용.",
+  "faculty": "agriculture",
+  "facultyNameJa": "農学部",
+  "schoolDomain": "meiji.ac.jp",
+  "admissionYear": 2026,
+  "requirementMaster": "meiji-agriculture-2026.json",
+  "columns": "科目名 / 単位数 / 時間数 / 履修可能年次(1~4年次の○をx座標で判定) / 備考。●=必修, △=選択必修。",
+  "excluded": "大学院農学研究科設置科目(先取履修=卒業要件に算入されない)、カリキュラムツリー/履修モデル図、表ヘッダ。",
+  "verification": "便覧【必修・選択必修科目一覧】および学則別表1と完全一致: 農芸化学科の必修16科目=32単位(別表1 基礎科目群必修32)、食料環境政策学科の必修4科目=8単位(別表1 必修8)、農学科の専門必修0(別表1 必修0)、生命科学科の選択必修14科目28単位プール(要件は11科目22単位以上・別表1 ※1)。総合教育科目の必修(英語Ⅰa/Ⅰb/Ⅱa/Ⅱb・第二外国語Ⅰa/Ⅰb/Ⅱa/Ⅱb・スポーツ実習Ⅰ)と選択必修(英語Ⅲ/科学英語/英語コミュニケーション、運動学/健康科学)も便覧の一覧と一致。全429科目で配当年次の欠落0件。",
+  "notes": [
+   "scope=\"common\" は総合教育科目(全学科共通)。それ以外は学科id。",
+   "exchangeOnly=true は交換留学生向け科目(A=半分/B=さらに半分の単位)。正規生のCANからは除外すべき。",
+   "食料環境政策学科の専攻科目Ⅲは教職関係(社会科)で要件上の最低単位は0。卒業要件への算入上限(教職科目8単位まで)が適用されるかは便覧に明記がなく未検証。",
+   "卒論関係科目群は最低単位0。農芸化学科のみ専攻科目群50に加算される(要件表※1)。詳細は requirementMaster の sotsuronKankei。"
+  ],
+  "skippedRows": 8,
+  "skippedRowsNote": "全て表ヘッダ断片(「単位数 時間数 総授業」)。科目の取りこぼしなし。"
+ },
+ "departments": [
+  {
+   "id": "nogaku",
+   "nameJa": "農学科"
+  },
+  {
+   "id": "nogei-kagaku",
+   "nameJa": "農芸化学科"
+  },
+  {
+   "id": "seimei-kagaku",
+   "nameJa": "生命科学科"
+  },
+  {
+   "id": "shokuryo-kankyo",
+   "nameJa": "食料環境政策学科"
+  }
+ ],
+ "poolSummary": {
+  "common|kyoyo": {
+   "courses": 51,
+   "units": 102,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "common|kyotsu-senmon": {
+   "courses": 13,
+   "units": 23,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "common|gaikokugo": {
+   "courses": 32,
+   "units": 32,
+   "required": 25,
+   "selectRequired": 3
+  },
+  "common|hoken": {
+   "courses": 7,
+   "units": 13,
+   "required": 1,
+   "selectRequired": 4
+  },
+  "common|ryugaku-nintei": {
+   "courses": 3,
+   "units": 5,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "nogaku|kiso": {
+   "courses": 30,
+   "units": 54,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "nogaku|senko": {
+   "courses": 67,
+   "units": 125,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "nogaku|sotsuron": {
+   "courses": 3,
+   "units": 14,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "nogei-kagaku|kiso": {
+   "courses": 28,
+   "units": 52,
+   "required": 32,
+   "selectRequired": 0
+  },
+  "nogei-kagaku|senko": {
+   "courses": 39,
+   "units": 72,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "nogei-kagaku|sotsuron": {
+   "courses": 6,
+   "units": 14,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "seimei-kagaku|kiso": {
+   "courses": 22,
+   "units": 40,
+   "required": 0,
+   "selectRequired": 28
+  },
+  "seimei-kagaku|senko": {
+   "courses": 36,
+   "units": 71,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "seimei-kagaku|sotsuron": {
+   "courses": 6,
+   "units": 14,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "shokuryo-kankyo|kiso": {
+   "courses": 20,
+   "units": 39,
+   "required": 8,
+   "selectRequired": 0
+  },
+  "shokuryo-kankyo|senko1": {
+   "courses": 15,
+   "units": 29,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "shokuryo-kankyo|senko2": {
+   "courses": 31,
+   "units": 60,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "shokuryo-kankyo|senko3": {
+   "courses": 14,
+   "units": 27,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "shokuryo-kankyo|sotsuron": {
+   "courses": 6,
+   "units": 19,
+   "required": 0,
+   "selectRequired": 0
+  }
+ },
+ "courses": [
+  {
+   "name": "宗教の哲学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "科学の哲学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "現代倫理学の諸問題",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "論理的思考の技法",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "心理学 A",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "心理学 B",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "日本文学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "外国文学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "ことばと文化 A",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "ことばと文化 B",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "日本語表現 A",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "日本語表現 B",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "文芸思潮",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "地域文化研究",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "日本の歴史Ａ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "日本の歴史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "西洋の歴史",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "アジアの歴史",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "Global Competence A",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "Global Competence B",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "Global Competence C",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第一分野",
+   "scope": "common"
+  },
+  {
+   "name": "経済学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第二分野",
+   "scope": "common"
+  },
+  {
+   "name": "社会学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第二分野",
+   "scope": "common"
+  },
+  {
+   "name": "民俗学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第二分野",
+   "scope": "common"
+  },
+  {
+   "name": "法学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第二分野",
+   "scope": "common"
+  },
+  {
+   "name": "日本国憲法",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第二分野",
+   "scope": "common"
+  },
+  {
+   "name": "教養としての食料環境政策学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第二分野",
+   "scope": "common",
+   "biko": "農・化・生のみ履修可"
+  },
+  {
+   "name": "生物学基礎",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第三分野",
+   "scope": "common"
+  },
+  {
+   "name": "物理学基礎",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第三分野",
+   "scope": "common"
+  },
+  {
+   "name": "化学基礎",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第三分野",
+   "scope": "common"
+  },
+  {
+   "name": "数学基礎",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第三分野",
+   "scope": "common"
+  },
+  {
+   "name": "教養としての生物生産学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第三分野",
+   "scope": "common",
+   "biko": "化・生・政のみ履修可"
+  },
+  {
+   "name": "教養としての農芸化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第三分野",
+   "scope": "common",
+   "biko": "農・生・政のみ履修可"
+  },
+  {
+   "name": "教養としての生命科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第三分野",
+   "scope": "common",
+   "biko": "農・化・政のみ履修可"
+  },
+  {
+   "name": "ICT ベーシック",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT 統計解析入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT 統計解析応用",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT データベース入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT データベース応用",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT 画像編集入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT 画像編集応用",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT 動画編集入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT 動画編集応用",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 音楽編集入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 音楽編集応用",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common"
+  },
+  {
+   "name": "ICT プログラミング入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT プログラミング応用",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT Web ページ作成",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "ICT e ラーニングデザイン入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common"
+  },
+  {
+   "name": "ICT e ラーニングデザイン応用",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common"
+  },
+  {
+   "name": "ICT プレゼンテーション",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyoyo",
+   "kubunJa": "教養科目群",
+   "bunya": "第四分野",
+   "scope": "common",
+   "biko": "メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "生命倫理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語農学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語農学 A：Agri-Food Science",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語農学 B：Biosciences",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語農学 C：Environmental Management and Climate Change",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語農学 D：Rural Resource Management",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語農学 E：Environmental Pollution and Control",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "農場実習Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "農場実習Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common",
+   "biko": "農場実習Ⅰを修得していること"
+  },
+  {
+   "name": "アグリサイエンス論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "フィールド先端農学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "国際農業文化理解（タイ）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "国際農業文化理解（バリ）",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kyotsu-senmon",
+   "kubunJa": "共通専門科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅰａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅰｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅱａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅱｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "科学英語",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "英語コミュニケーション",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "日本語Ⅰ a",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "留学生対象"
+  },
+  {
+   "name": "日本語Ⅰ b",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "留学生対象"
+  },
+  {
+   "name": "日本語Ⅱ a",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "留学生対象"
+  },
+  {
+   "name": "日本語Ⅱ b",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "留学生対象"
+  },
+  {
+   "name": "日本語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第一外国語",
+   "scope": "common",
+   "biko": "留学生対象、重複履修可"
+  },
+  {
+   "name": "ドイツ語Ⅰａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅰｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅱａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅱｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "フランス語Ⅰａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅰｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅱａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅱｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "スペイン語Ⅰａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅰｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅱａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅱｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "中国語Ⅰａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅰｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅱａ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅱｂ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "第二外国語",
+   "scope": "common",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "スポーツ実習Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1
+   ],
+   "mark": "必修",
+   "zone": "hoken",
+   "kubunJa": "保健・体育科目群",
+   "scope": "common"
+  },
+  {
+   "name": "スポーツ実習Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "hoken",
+   "kubunJa": "保健・体育科目群",
+   "scope": "common",
+   "biko": "1 年次秋から履修可、重複履修可"
+  },
+  {
+   "name": "スポーツ実習Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "hoken",
+   "kubunJa": "保健・体育科目群",
+   "scope": "common"
+  },
+  {
+   "name": "運動学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "hoken",
+   "kubunJa": "保健・体育科目群",
+   "scope": "common"
+  },
+  {
+   "name": "健康科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "hoken",
+   "kubunJa": "保健・体育科目群",
+   "scope": "common"
+  },
+  {
+   "name": "ゼミナール",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "hoken",
+   "kubunJa": "保健・体育科目群",
+   "scope": "common"
+  },
+  {
+   "name": "ゼミナール論文",
+   "units": 4,
+   "hours": 120,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "hoken",
+   "kubunJa": "保健・体育科目群",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（総合教育科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "ryugaku-nintei",
+   "kubunJa": "留学認定科目",
+   "scope": "common"
+  },
+  {
+   "name": "全学共通総合講座Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "ryugaku-nintei",
+   "kubunJa": "留学認定科目",
+   "scope": "common",
+   "biko": "重複履修可メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "全学共通総合講座Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "ryugaku-nintei",
+   "kubunJa": "留学認定科目",
+   "scope": "common",
+   "biko": "重複履修可メディア授業科目併設",
+   "media": true
+  },
+  {
+   "name": "数学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "化学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "化学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku",
+   "biko": "農・化（同一授業）"
+  },
+  {
+   "name": "物理学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku",
+   "biko": "農・生（同一授業）"
+  },
+  {
+   "name": "物理学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "地学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "地学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "栽培学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "アニマルサイエンス入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "ランドスケープ入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "生産環境学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "基礎生物統計学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku",
+   "biko": "農・化（同一授業）"
+  },
+  {
+   "name": "応用生物統計学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物生理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "マクロ生物学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物遺伝資源学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物遺伝資源学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "基礎図法",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "分子生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "バイオテクノロジー",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物生理・栄養学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物生産制御学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "土壌学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "生物多様性進化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "基礎植物育種学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "測量学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "測量実習Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農学基礎実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "技術者倫理",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "留学認定科目（農学科・基礎科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "作物学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "園芸学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物生産・福祉学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物保護学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "環境気象学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農地工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "応用力学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "土質力学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "水理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "生産システム学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物行動学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "資源植物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "保全生態学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "ランドスケープデザイン学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農学実験Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農学実験Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農学実験Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農学実験Ⅳ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農学実験Ⅴ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農学実験Ⅵ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "専門実習Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "専門実習Ⅱ",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku",
+   "biko": "重複履修可"
+  },
+  {
+   "name": "職業指導",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku",
+   "biko": "農・化・政（同一授業）"
+  },
+  {
+   "name": "留学認定科目（農学科・専攻科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "食用作物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "工芸作物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "野菜園芸学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "花卉園芸学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "果樹園芸学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "園芸植物繁殖学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物成長制御学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物育種学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "生産システム学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物育種学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物資源繁殖学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物資源機能利用学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "熱帯農学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "肥料学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物病理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物ウイルス学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物病害制御学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "応用昆虫学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "害虫管理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "植物線虫学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "雑草学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "野生動物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物環境学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "動物感染症学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "実験動物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku",
+   "biko": "農・生（同一授業）"
+  },
+  {
+   "name": "農村計画学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "生産気象学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "応用水理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "土壌物理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "構造力学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "材料施工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "農業水利学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "測量学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "測量実習Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "プロジェクト計画法",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "生物多様性再生学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "ランドスケープ工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "景観園芸学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "ランドスケープエコロジー",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "ランドスケープ情報論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "アグロエコロジー",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "ランドスケープ設計学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "ランドスケープ計画学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogaku"
+  },
+  {
+   "name": "文献調査・特別研究（卒論）",
+   "units": 8,
+   "hours": 240,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogaku",
+   "biko": "3･4 年次継続履修"
+  },
+  {
+   "name": "文献調査・特別研究 A（交換留学生卒論）",
+   "units": 4,
+   "hours": 120,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "文献調査・特別研究 B（交換留学生卒論）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "地学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "数学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "農芸化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "必修化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "有機化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "生化学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "生化学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "必修生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "微生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "基礎分子生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "生物有機化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "栄養科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "環境科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "土壌化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "分子生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "有機分析化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "物理化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "植物栄養学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "細胞生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "物理学（力学・熱力学）",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "物理学（電磁気学・光学）",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "基礎生物統計学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku",
+   "biko": "農・化（同一授業）"
+  },
+  {
+   "name": "化学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku",
+   "biko": "農・化（同一授業）"
+  },
+  {
+   "name": "物理学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "地学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "職業指導",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku",
+   "biko": "農・化・政（同一授業）"
+  },
+  {
+   "name": "留学認定科目（農芸化学科・基礎科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品生化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "栄養生化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品衛生学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品機能化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "発酵食品学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "天然物有機化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "生物機能化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "ケミカルバイオロジー",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "応用生化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "生物物理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku",
+   "biko": "化・生（同一授業）"
+  },
+  {
+   "name": "植物環境制御学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "環境分析化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "土壌圏科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "環境バイオテクノロジー",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "微生物化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "微生物遺伝学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "微生物生態学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "生命システム工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品健康科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品冷凍冷蔵学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品安全学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品免疫学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "応用微生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "農薬化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "高分子化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "環境化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "土壌環境保全学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "微生物生理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "環境微生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "化粧品科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "生化学・物理化学実験",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "環境化学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "環境分析実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "有機化学・有機分析実験",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "微生物学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "バイオテクノロジー実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "食品化学・食品分析実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "留学認定科目（農芸化学科・専攻科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "nogei-kagaku"
+  },
+  {
+   "name": "文献調査",
+   "units": 4,
+   "hours": 120,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogei-kagaku",
+   "biko": "3･4 年次継続履修"
+  },
+  {
+   "name": "特別研究（卒論）",
+   "units": 4,
+   "hours": 120,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogei-kagaku",
+   "biko": "3･4 年次継続履修"
+  },
+  {
+   "name": "文献調査 A（交換留学生）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "特別研究 A（交換留学生卒論）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "文献調査 B（交換留学生）",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "特別研究 B（交換留学生卒論）",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "nogei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "生命科学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "化学要論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "動物生命科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "植物生命科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "分子生物学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "遺伝学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "細胞生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生物有機化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "基礎生化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "分子生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "微生物学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "動物生化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "植物生化学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "バイオインフォマティクス入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "遺伝子工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "キャリア教育",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "物理学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku",
+   "biko": "農・生（同一授業）"
+  },
+  {
+   "name": "地学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "数学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "物理学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "地学実験",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku",
+   "biko": "農・化・生（同一授業）"
+  },
+  {
+   "name": "留学認定科目（生命科学科・基礎科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "動物生理学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "動物生理学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生殖生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生体機構学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生体機構学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生体防御学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "動物栄養学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "神経科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "分子発生学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生体機能物質学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "実験動物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku",
+   "biko": "農・生（同一授業）"
+  },
+  {
+   "name": "植物細胞生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "植物環境生理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "植物分子生理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "植物工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "環境応答生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "環境応答植物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "分子遺伝学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "植物機能制御学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "糖鎖生物学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "タンパク質科学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "タンパク質科学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "微生物学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "微生物工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "ウイルス学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生物物理学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku",
+   "biko": "化・生（同一授業）"
+  },
+  {
+   "name": "生物統計学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "バイオインフォマティクス",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "ゲノム機能工学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "細胞情報制御学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "動物再生システム学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生命科学実験Ⅰ",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生命科学実験Ⅱ",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生命科学実験Ⅲ",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "生命科学実験Ⅳ",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "留学認定科目（生命科学科・専攻科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko",
+   "kubunJa": "専攻科目群",
+   "scope": "seimei-kagaku"
+  },
+  {
+   "name": "文献調査・特別研究",
+   "units": 4,
+   "hours": 120,
+   "years": [
+    3
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "seimei-kagaku",
+   "biko": "3･4 年次継続履修"
+  },
+  {
+   "name": "文献調査・特別研究（卒論）",
+   "units": 4,
+   "hours": 120,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "seimei-kagaku",
+   "biko": "3･4 年次継続履修"
+  },
+  {
+   "name": "文献調査・特別研究 A（交換留学生）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "seimei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "文献調査・特別研究 A（交換留学生卒論）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "seimei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "文献調査・特別研究 B（交換留学生）",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "seimei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "文献調査・特別研究 B（交換留学生卒論）",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "seimei-kagaku",
+   "exchangeOnly": true
+  },
+  {
+   "name": "食料環境政策学を学ぶ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食料環境政策入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "経済学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "ミクロ経済学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "マクロ経済学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "政治経済学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "政策科学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "社会学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "統計学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "経営学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "会計学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "社会経済史入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "社会調査法入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "農学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "環境学入門",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "基礎ゼミ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "プロジェクトゼミ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "ファームステイ実習",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "海外農業体験",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "留学認定科目（食料環境政策学科・基礎科目）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目群",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食料貿易論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "フードシステム論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食ビジネス論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食料農業社会学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "農業政策論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "農業マネジメント論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "国際農業経済論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "国際開発論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "食と農の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "環境経済論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "環境と資源の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "資源経済論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "環境と資源の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "環境資源会計論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "環境と資源の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "環境社会学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "環境と資源の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "地域ガバナンス論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "環境と資源の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "共生社会論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "環境と資源の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "留学認定科目（食料環境政策学科・専攻科目Ⅰ）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko1",
+   "kubunJa": "専攻科目Ⅰ",
+   "bunya": "環境と資源の分野",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "現代社会と食",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食生活の科学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食品ブランド化戦略論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食品マーケティング論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "６次産業化論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食文化と農業ビジネス",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食農メディア論 A",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食農メディア論 B",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "農業経営の発展と地域農業",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "農業史",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "アジア農業論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "比較農業論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "国際食料需給論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "食と農の貿易ルール",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "国際協力論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "途上国と一次産品論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "先進国の食と環境",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "途上国の食と環境",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "農業・環境法",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "農業・資源問題の経済学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "アグリデータサイエンス",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "環境行動経済学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "持続可能性の経済学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "持続可能性の会計学",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "環境問題と地域社会",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "内発的発展論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "協同組合論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "森林・水産政策論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "キャリア探求実習",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "「食料環境政策」総合講座",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "留学認定科目（食料環境政策学科・専攻科目Ⅱ）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko2",
+   "kubunJa": "専攻科目Ⅱ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "職業指導",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo",
+   "biko": "農・化・政（同一授業）"
+  },
+  {
+   "name": "法律学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "民法Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "民法Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "政治学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "政治学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "日本史概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "東洋史概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "西洋史概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "地誌学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "地理学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "哲学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "倫理学概論",
+   "units": 2,
+   "hours": 30,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "留学認定科目（食料環境政策学科・専攻科目Ⅲ）",
+   "units": 1,
+   "hours": 15,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senko3",
+   "kubunJa": "専攻科目Ⅲ",
+   "scope": "shokuryo-kankyo"
+  },
+  {
+   "name": "フィールドワーク実習",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "shokuryo-kankyo",
+   "biko": "3･4 年次継続履修"
+  },
+  {
+   "name": "リサーチゼミ・卒論ゼミ",
+   "units": 8,
+   "hours": 240,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "shokuryo-kankyo",
+   "biko": "3･4 年次継続履修"
+  },
+  {
+   "name": "フィールドワーク実習 A（交換留学生）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "shokuryo-kankyo",
+   "exchangeOnly": true
+  },
+  {
+   "name": "リサーチゼミ・卒論ゼミ A（交換留学生）",
+   "units": 4,
+   "hours": 120,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "shokuryo-kankyo",
+   "exchangeOnly": true
+  },
+  {
+   "name": "フィールドワーク実習 B（交換留学生）",
+   "units": 1,
+   "hours": 30,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "shokuryo-kankyo",
+   "exchangeOnly": true
+  },
+  {
+   "name": "リサーチゼミ・卒論ゼミ B（交換留学生）",
+   "units": 2,
+   "hours": 60,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "sotsuron",
+   "kubunJa": "卒論関係科目群",
+   "scope": "shokuryo-kankyo",
+   "exchangeOnly": true
+  }
+ ]
+}
