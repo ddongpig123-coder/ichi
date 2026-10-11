@@ -1,0 +1,149 @@
+{
+  "_meta": {
+    "source": "早稲田大学 商学部 学部要項 2026年度版「Ⅰ.学位と卒業 3.卒業必要単位数（1）正規入学者」（印刷 P.4 / PDF p.6）",
+    "sourceUrl": "https://www.waseda.jp/fcom/soc/assets/uploads/2026/07/soc_bulletin_2026-1.pdf",
+    "sourceIndexUrl": "https://www.waseda.jp/fcom/soc/students/guide",
+    "errataUrl": "https://www.waseda.jp/fcom/soc/assets/uploads/2026/07/f75613f7c7efe3e73b205c05a28d63f2.pdf",
+    "extractedAt": "2026-10-11",
+    "school": "waseda",
+    "schoolNameJa": "早稲田大学",
+    "schoolDomain": "waseda.jp",
+    "faculty": "commerce",
+    "facultyNameJa": "商学部",
+    "admissionYear": 2024,
+    "appliesTo": "2024年度以降入学者（2024年度新カリキュラム。2026年度版学部要項に掲載の「正規入学者」要件）",
+    "note": "⚠️ 明治とは表の作りが違う: 早稲田商は『系列ごとの最低単位の単純合計 ≠ 卒業必要単位』。外国語専門科目分野4単位が「外国語科目選択8」と「専門教育科目52」の両方に算入される二重計上があり、表の右側の中括弧が示す『108単位以上』がこの重複を除いた学部科目の最低計。残り16単位は各系列の超過分または他箇所・他機関設置科目(0〜16)で満たす。詳細は _validation を参照。2026年7月の正誤表はダブルディグリー(64単位)表のみの修正で、正規入学者の要件には影響しない（本PDFは修正反映済み）。",
+    "verifiedBy": "PDF p.6 を 2.6倍でPNGレンダーして目視読取（罫線・結合セル・中括弧の範囲を確認）。テキスト抽出のみでは『108単位以上』の適用範囲が判別できなかったため画像で確定。",
+    "appIntegration": "未統合。src/data/facultyMasters.ts は meiji.ac.jp 固定のため、他校はJSON蓄積のみ（出荷ブロッカーではない）。"
+  },
+  "requirementMaster": {
+    "totalRequired": 124,
+    "structuredMinimum": 108,
+    "zones": [
+      {
+        "id": "sogo-kyoiku",
+        "nameJa": "総合教育科目",
+        "minUnits": 12,
+        "rule": "min-units",
+        "noteJa": "総合教育科目から選択履修。"
+      },
+      {
+        "id": "gaikokugo-hisshu",
+        "nameJa": "外国語科目必修",
+        "minUnits": 12,
+        "rule": "all-required",
+        "noteJa": "英語Ⅰ必修4（含 Tutorial English）＋ 英語Ⅱ必修4 ＋ 第二外国語必修4。第二外国語はドイツ語・フランス語・スペイン語・中国語・朝鮮語から選択。",
+        "subZones": [
+          { "id": "eigo1", "nameJa": "英語Ⅰ必修", "minUnits": 4 },
+          { "id": "eigo2", "nameJa": "英語Ⅱ必修", "minUnits": 4 },
+          { "id": "daini-gaikokugo", "nameJa": "第二外国語必修", "minUnits": 4 }
+        ]
+      },
+      {
+        "id": "gaikokugo-sentaku",
+        "nameJa": "外国語科目選択",
+        "minUnits": 8,
+        "rule": "min-units",
+        "noteJa": "英語選択0以上・第二外国語選択0以上で合計8以上。ただし『うち4単位は外国語専門科目分野必須』。この4単位は専門教育科目(52)にも算入される二重計上。",
+        "overlapsWith": ["senmon-kyoiku.gaikokugo-senmon"],
+        "subZonesAreFloors": true,
+        "subZones": [
+          { "id": "eigo-sentaku", "nameJa": "英語選択", "minUnits": 0 },
+          { "id": "daini-sentaku", "nameJa": "第二外国語選択", "minUnits": 0 }
+        ]
+      },
+      {
+        "id": "senmon-kyoiku",
+        "nameJa": "専門教育科目",
+        "minUnits": 52,
+        "rule": "composite",
+        "noteJa": "外国語専門科目分野4以上 ＋ 所属するトラック(含他分野指定科目)24以上 ＋ 所属以外のトラック0以上 ＋ 総合・学際科目分野4以上で、合計52以上。「基礎演習」「学術的文章の作成」(各1単位)は1年次に自動登録されるが必修科目ではない。",
+        "subZonesAreFloors": true,
+        "subZonesFloorSum": 32,
+        "subZonesNote": "下位の数値は各分野の最低ライン（合計32）で、グループ合計52との差20はどの分野で満たしてもよい。",
+        "subZones": [
+          { "id": "gaikokugo-senmon", "nameJa": "外国語専門科目分野", "minUnits": 4 },
+          { "id": "shozoku-track", "nameJa": "所属するトラック（含他分野指定科目）", "minUnits": 24 },
+          { "id": "hoka-track", "nameJa": "所属以外のトラック", "minUnits": 0 },
+          { "id": "sogo-gakusai", "nameJa": "総合・学際科目分野", "minUnits": 4 }
+        ]
+      },
+      {
+        "id": "senmon-kiso",
+        "nameJa": "専門基礎科目",
+        "minUnits": 28,
+        "rule": "composite",
+        "noteJa": "必修科目20 ＋ 選択必修科目8以上。必修=基礎数学・基礎会計学・基礎経済学(各4単位)＋ビジネス概論・ビジネス法入門(各2単位)＋統計リテラシーα・β・γ・Pythonによるデータ解析(各1単位)。選択必修=経営学・マーケティング論・金融入門・保険入門・基礎統計学から2科目。",
+        "subZones": [
+          { "id": "kiso-hisshu", "nameJa": "必修科目", "minUnits": 20, "rule": "all-required" },
+          { "id": "kiso-sentaku-hisshu", "nameJa": "選択必修科目", "minUnits": 8, "rule": "min-units" }
+        ]
+      },
+      {
+        "id": "takasho",
+        "nameJa": "他箇所・他機関設置科目",
+        "minUnits": 0,
+        "maxUnits": 16,
+        "rule": "capped",
+        "noteJa": "他箇所・他機関で修得した単位は0〜16単位まで卒業必要単位に算入可（科目ごとの上限は要項P.22）。"
+      }
+    ],
+    "tracks": [
+      "経営トラック",
+      "会計トラック",
+      "マーケティングトラック",
+      "ファイナンストラック",
+      "保険・リスクマネジメントトラック",
+      "ビジネスエコノミクストラック"
+    ],
+    "tracksNote": "3年次進級時にいずれか1つを選択（専門教育科目演習=ゼミを履修する場合はそのゼミの属するトラックが自動適用）。一度決定したトラックは変更不可（所属ゼミ変更時のみ変更）。"
+  },
+  "_validation": {
+    "zoneSumRaw": 112,
+    "zoneSumRawNote": "12(総合教育) + 12(外国語必修) + 8(外国語選択) + 52(専門教育) + 28(専門基礎) = 112。他箇所(0)は含まず。",
+    "doubleCount": 4,
+    "doubleCountNote": "外国語専門科目分野4単位は『外国語科目選択8』と『専門教育科目52』の両方に算入されるため、実単位では1回だけ数える。",
+    "structuredMinimumCheck": "112 - 4 = 108 = 要項の表右側の中括弧『108単位以上』と一致 ✓",
+    "totalCheck": "108 + 16(他箇所・他機関の上限) = 124 = 卒業必要単位 ✓。実際には残り16単位は各系列の超過分でも他箇所でも充当可能。",
+    "status": "verified"
+  },
+  "milestones": {
+    "noPromotionRequirement": "学部要項に2→3年次の進級要件（単位ハードル）の記載なし。"
+  },
+  "creditCaps": {
+    "perYear": 49,
+    "perYearNote": "卒業必要単位に算入しない自由科目・随意科目を含めて年間49単位が登録上限（9月入学は春学期起点）。"
+  },
+  "mediaCap": {
+    "maxUnits": 60,
+    "noteJa": "オンライン授業科目は卒業必要単位に60単位まで算入可（大学設置基準）。修得先が早稲田/留学先のいずれでも同じ。"
+  },
+  "studyAbroadCap": {
+    "halfYear": 20,
+    "oneYear": 40,
+    "oneAndHalfYearOrMore": 60,
+    "noteJa": "留学の認定単位は通算60単位を超えない範囲。"
+  },
+  "specialPrograms": {
+    "doubleDegree": {
+      "partners": ["国立台湾大学", "国立政治大学"],
+      "totalRequired": 64,
+      "appliesTo": "2026年度以降入学者（3年次編入扱い）",
+      "zones": [
+        { "id": "senmon-kiso-sentaku", "nameJa": "専門基礎科目 選択必修", "minUnits": 8 },
+        { "id": "shozoku-track", "nameJa": "所属トラック", "minUnits": 24 },
+        { "id": "sogo-gakusai", "nameJa": "総合・学際科目分野", "minUnits": 4 },
+        { "id": "gaikokugo-senmon", "nameJa": "外国語専門科目分野", "minUnits": 4 },
+        { "id": "izureka", "nameJa": "上記のいずれか（所属トラック以外含む）", "minUnits": 4 },
+        { "id": "sogo-kyoiku", "nameJa": "総合教育科目", "minUnits": 4 },
+        { "id": "nihongo", "nameJa": "日本語科目", "minUnits": 4 },
+        { "id": "kyotsu-sentaku", "nameJa": "共通選択科目", "minUnits": 12 }
+      ],
+      "validation": "8+24+4+4+4+4+4+12 = 64 = 合計64単位 ✓（2026年7月正誤表の【正】版と一致）",
+      "noteJa": "外国語科目は母語以外から日本語科目を含めて2か国語まで。日本語科目は4単位まで算入（免除可、免除分は他系列で修得）。共通選択科目=各系列の超過分＋他箇所・他機関科目。"
+    }
+  },
+  "courseMasters": {
+    "_note": "TODO: 要項の専門教育科目一覧（6トラック×講義科目、総合・学際科目分野、外国語専門科目分野、他分野指定科目）→ 科目→系列の辞書。『自/他』マーク（自己の所属トラック科目 / 他トラックだが所属トラックで指定され所定単位に算入可）も保持が必要。"
+  }
+}
