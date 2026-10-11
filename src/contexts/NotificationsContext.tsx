@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "./AuthContext";
 import { isChatUnread, markChatRead, subscribeToMyChats } from "../services/chatService";
@@ -132,15 +132,18 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     []
   );
 
-  const newCommentKeys = new Set(
-    myPosts
-      .filter((p) => {
-        const key = myPostKey(p.kind, p.boardId, p.id);
-        const prev = seen[key];
-        return prev !== undefined && (p.commentCount ?? 0) > prev;
-      })
-      .map((p) => myPostKey(p.kind, p.boardId, p.id))
-  );
+  // 新着コメント判定: 既読数(seen[key])より commentCount が多い投稿。
+  // seen に無い投稿(初回シード後に書いた新規投稿)は既読0扱い(?? 0)にする。
+  // 以前は prev!==undefined で除外していたため、新規投稿に付いたコメントが永遠にバッジにならなかった。
+  // seen の読み込み完了前は空(過去分の一瞬の誤点灯を防ぐ)。unmemoized だと毎レンダー新Set→全consumer再描画になるため useMemo。
+  const newCommentKeys = useMemo(() => {
+    if (!seenLoaded.current) return new Set<string>();
+    return new Set(
+      myPosts
+        .filter((p) => (p.commentCount ?? 0) > (seen[myPostKey(p.kind, p.boardId, p.id)] ?? 0))
+        .map((p) => myPostKey(p.kind, p.boardId, p.id))
+    );
+  }, [myPosts, seen]);
 
   return (
     <NotificationsContext.Provider

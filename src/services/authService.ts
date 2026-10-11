@@ -190,10 +190,11 @@ export function isUniversityEmail(email: string): boolean {
     ".university",
   ];
   if (suffixes.some((suffix) => lower.endsWith(suffix))) return true;
-  // .ac.jp を使わない大学の例外ドメイン（@付きで厳密一致）。
-  // 例: 早稲田(waseda.jp)・慶應(keio.jp)。学校を追加したらここも更新する。
-  const exactDomains = ["waseda.jp", "keio.jp"];
-  return exactDomains.some((d) => lower.endsWith("@" + d));
+  // .ac.jp を使わない大学の例外ドメイン。ドメイン直下(@waseda.jp)だけでなく
+  // サブドメイン(@toki.waseda.jp / @ruri.waseda.jp 等, 早稲田は学部別サブドメインが実在)も許可する。
+  // 学校を追加したらここも更新する。
+  const exceptionDomains = ["waseda.jp", "keio.jp"];
+  return exceptionDomains.some((d) => lower.endsWith("@" + d) || lower.endsWith("." + d));
 }
 
 // ── 学校メール認証（sendEmailVerification） ──────────────────
