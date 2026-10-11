@@ -207,20 +207,34 @@ const management: Faculty = {
     { id: "会計学科", nameJa: "会計学科" },
     { id: "公共経営学科", nameJa: "公共経営学科" },
   ],
-  bands: [{
-    key: "2017", labelJa: "2017〜2020年度入学", admissionYearMax: 2020, totalRequired: 134,
-    zones: [
-      { id: "gakubu-hisshu", nameJa: "学部必修科目", minUnits: 12 },
-      { id: "kyoyo", nameJa: "教養科目", minUnits: 24 },
-      { id: "gaikokugo", nameJa: "外国語科目", minUnits: 16 },
-      { id: "taiiku", nameJa: "体育実技科目", minUnits: 2 },
-      { id: "gaikokugo-senmon", nameJa: "外国語専門科目", minUnits: 4 },
-      { id: "kiso-senmon", nameJa: "基礎専門科目", minUnits: 14 },
-      { id: "gakka-hisshu", nameJa: "学科必修科目", minUnits: 8 },
-      { id: "gakka-senmon", nameJa: "学科専門科目", minUnits: 24 },
-      { id: "freezone", nameJa: "自由履修科目", minUnits: 30 },
-    ],
-  }],
+  bands: [
+    {
+      key: "2017", labelJa: "2017〜2020年度入学", admissionYearMax: 2020, totalRequired: 134,
+      zones: [
+        { id: "gakubu-hisshu", nameJa: "学部必修科目", minUnits: 12 },
+        { id: "kyoyo", nameJa: "教養科目", minUnits: 24 },
+        { id: "gaikokugo", nameJa: "外国語科目", minUnits: 16 },
+        { id: "taiiku", nameJa: "体育実技科目", minUnits: 2 },
+        { id: "gaikokugo-senmon", nameJa: "外国語専門科目", minUnits: 4 },
+        { id: "kiso-senmon", nameJa: "基礎専門科目", minUnits: 14 },
+        { id: "gakka-hisshu", nameJa: "学科必修科目", minUnits: 8 },
+        { id: "gakka-senmon", nameJa: "学科専門科目", minUnits: 24 },
+        { id: "freezone", nameJa: "自由履修科目", minUnits: 30 },
+      ],
+    },
+    {
+      key: "2021", labelJa: "2021年度〜入学", admissionYearMax: null, totalRequired: 124,
+      zones: [
+        { id: "gakubu-hisshu", nameJa: "学部必修科目", minUnits: 12 },
+        { id: "kyoyo", nameJa: "教養科目", minUnits: 24 },
+        { id: "gaikokugo", nameJa: "外国語科目", minUnits: 16, hintJa: "2か国語選択(英語4・その他8)。英語選択者は必修以外から4単位以上" },
+        { id: "taiiku", nameJa: "体育実技科目", minUnits: 2 },
+        { id: "kiso-senmon", nameJa: "基礎専門科目", minUnits: 14 },
+        { id: "gakka-senmon", nameJa: "学科専門科目", minUnits: 32, hintJa: "基礎専門・学科専門の「外国語を用いた科目」から合計4単位以上" },
+        { id: "freezone", nameJa: "自由履修科目", minUnits: 24 },
+      ],
+    },
+  ],
 };
 
 const infoCommunication: Faculty = {
