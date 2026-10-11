@@ -194,15 +194,18 @@ export async function clearBestComment(
 
 // 閲覧数 +1（詳細を開いた時）。他ユーザーも実行するため firestore.rules の canUpdatePost に
 // viewCount 単独更新を許可するブランチを追加済み（ルール再デプロイが必要＝太希窓口）。
+// 成功したかを返す。ルール未デプロイ環境では失敗しうるため、呼び出し側は
+// 成功時だけ表示を+1する（画面だけ増えて再読込で戻る食い違いを防ぐ）。
 export async function incrementViewCount(
   schoolDomain: string,
   boardId: BoardId,
   postId: string
-): Promise<void> {
+): Promise<boolean> {
   try {
     await updateDoc(doc(postsCol(schoolDomain, boardId), postId), { viewCount: increment(1) });
+    return true;
   } catch {
-    // ルール未デプロイ環境では失敗しうるが、閲覧は画面表示に影響しないので握りつぶす。
+    return false;
   }
 }
 

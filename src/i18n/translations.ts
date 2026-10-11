@@ -926,7 +926,7 @@ const ko: Record<TranslationKey, string> = {
   "qa.selectBest": "베스트 답변으로 선택",
   "qa.cancelBest": "다시 고르기",
   "qa.answersHeader": "답변",
-  "qa.nice": "ナイス",
+  "qa.nice": "도움돼요",
   "qa.filterAll": "전체",
   "post.commentPlaceholder": "댓글 입력...",
   "post.reply": "답글",

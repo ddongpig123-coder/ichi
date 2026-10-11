@@ -148,18 +148,28 @@ export default function PostDetailScreen() {
       user ? checkLiked(schoolDomain, boardId as BoardId, postId, user.uid) : Promise.resolve(false),
     ]).then(([p, _c, isLiked]) => {
       const mine = p as Post | null;
-      // 閲覧数+1（開くたび。表示は楽観的に+1）。削除済みは数えない。
+      const loadedComments = _c as Comment[];
+      setPost(mine);
+      // 閲覧数+1（開くたび）。書き込みが通った時だけ表示に反映する。削除済みは数えない。
       if (mine && !mine.deleted && schoolDomain) {
-        setPost({ ...mine, viewCount: (mine.viewCount ?? 0) + 1 });
-        incrementViewCount(schoolDomain, boardId as BoardId, postId);
-      } else {
-        setPost(mine);
+        incrementViewCount(schoolDomain, boardId as BoardId, postId).then((ok) => {
+          if (ok) setPost((prev) => (prev ? { ...prev, viewCount: (prev.viewCount ?? 0) + 1 } : prev));
+        });
       }
       setLiked(isLiked as boolean);
       setLikeCount(mine?.likeCount ?? 0);
       // 自分の投稿を開いたら「新着コメント」の赤丸を消す
       if (mine && user && mine.authorUid === user.uid) {
         markPostSeen("board", boardId as string, postId, mine.commentCount ?? 0);
+      }
+      // ベストアンサーが削除済み/不在なら「解決済み」を解除する。回答者が自分のコメントを
+      // 消してもルール上 post を更新できるのは作成者だけなので、作成者が開いた時に直す。
+      if (mine && !mine.deleted && schoolDomain && mine.bestCommentId && user && mine.authorUid === user.uid) {
+        const best = loadedComments.find((c) => c.id === mine.bestCommentId);
+        if (!best || best.deleted) {
+          clearBestComment(schoolDomain, boardId as BoardId, postId).catch(() => {});
+          setPost((prev) => (prev ? { ...prev, bestCommentId: null, resolved: false } : prev));
+        }
       }
     }).finally(() => setLoading(false));
   }, [schoolDomain, boardId, postId]);
