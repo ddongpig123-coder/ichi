@@ -76,7 +76,11 @@ export async function fetchPosts(
   boardId: BoardId,
   pageSize = 20,
   after?: QueryDocumentSnapshot<DocumentData>
-): Promise<{ posts: Post[]; lastDoc: QueryDocumentSnapshot<DocumentData> | null }> {
+): Promise<{
+  posts: Post[];
+  lastDoc: QueryDocumentSnapshot<DocumentData> | null;
+  hasMore: boolean;
+}> {
   const q = after
     ? query(postsCol(schoolDomain, boardId), orderBy("createdAt", "desc"), startAfter(after), limit(pageSize))
     : query(postsCol(schoolDomain, boardId), orderBy("createdAt", "desc"), limit(pageSize));
@@ -93,7 +97,13 @@ export async function fetchPosts(
       createdAt: toMs(d.data().createdAt),
     }))
     .filter((p) => !p.deleted);
-  return { posts, lastDoc: snap.docs[snap.docs.length - 1] ?? null };
+  // hasMore は「取得した生ドキュメント数 == pageSize」で判定する。posts.length は
+  // 削除ぶん減るので次ページ有無の判定には使えない。
+  return {
+    posts,
+    lastDoc: snap.docs[snap.docs.length - 1] ?? null,
+    hasMore: snap.docs.length === pageSize,
+  };
 }
 
 export async function fetchPost(

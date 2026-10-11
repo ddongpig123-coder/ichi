@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import type { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import {
   View,
   Text,
@@ -40,6 +41,14 @@ export default function PostListScreen() {
   // 質問板のカテゴリ絞り込み（クライアント側）。null=すべて。
   const isQa = isQaBoard(boardId as string);
   const [tagFilter, setTagFilter] = useState<string | null>(null);
+
+  // ページング。tag 絞り込みはクライアント側なので、1ページ(20件)だけ読んだ状態だと
+  // 該当タグの投稿が古い位置にあると「投稿なし」に見えてしまう。そこで絞り込み中は
+  // 表示が FILTER_MIN 件に達するまで（or 最後まで）自動で次ページを読む。
+  const lastDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const FILTER_MIN = 10;
 
   // 掲示板内検索（ヘッダーの🔍でトグル）。
   // 🔍を開いた時に候補（最近N件）を1回だけ取得し、以降は入力ごとにクライアント側で
@@ -91,9 +100,36 @@ export default function PostListScreen() {
 
   const load = useCallback(async () => {
     if (!schoolDomain || !boardId) return;
-    const { posts: p } = await fetchPosts(schoolDomain, boardId as BoardId);
+    const { posts: p, lastDoc, hasMore: more } = await fetchPosts(schoolDomain, boardId as BoardId);
+    lastDocRef.current = lastDoc;
+    setHasMore(more);
     setPosts(p);
   }, [schoolDomain, boardId]);
+
+  // 次ページを追記。重複 id は弾く（焦点復帰と追記が重なった場合の保険）。
+  const loadMore = useCallback(async () => {
+    if (!schoolDomain || !boardId) return;
+    if (!hasMore || loadingMore || !lastDocRef.current) return;
+    setLoadingMore(true);
+    try {
+      const { posts: p, lastDoc, hasMore: more } = await fetchPosts(
+        schoolDomain,
+        boardId as BoardId,
+        20,
+        lastDocRef.current
+      );
+      lastDocRef.current = lastDoc;
+      setHasMore(more);
+      setPosts((prev) => {
+        const seen = new Set(prev.map((x) => x.id));
+        return [...prev, ...p.filter((x) => !seen.has(x.id))];
+      });
+    } catch {
+      setHasMore(false);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [schoolDomain, boardId, hasMore, loadingMore]);
 
   // 화면 포커스될 때마다 새로고침 (글 작성 후 돌아올 때 포함)
   useFocusEffect(
@@ -108,6 +144,24 @@ export default function PostListScreen() {
     await load();
     setRefreshing(false);
   }
+
+  // 表示対象（検索中は検索結果、質問板で絞り込み中はタグ一致のみ）。
+  const visiblePosts = useMemo(() => {
+    if (searchMode) return results;
+    if (isQa && tagFilter) return posts.filter((p) => p.tag === tagFilter);
+    return posts;
+  }, [searchMode, results, isQa, tagFilter, posts]);
+
+  // 絞り込み中に表示が足りなければ次ページを読む（最後まで読んだら止まる）。
+  useEffect(() => {
+    if (searchMode || !isQa || !tagFilter) return;
+    if (!hasMore || loadingMore || loading) return;
+    if (visiblePosts.length >= FILTER_MIN) return;
+    loadMore();
+  }, [searchMode, isQa, tagFilter, hasMore, loadingMore, loading, visiblePosts.length, loadMore]);
+
+  // 絞り込み中でまだ読み進めている間は「投稿なし」ではなくスピナーを出す。
+  const fillingFilter = !searchMode && isQa && !!tagFilter && (loadingMore || hasMore);
 
   if (loading) {
     return (
@@ -157,14 +211,23 @@ export default function PostListScreen() {
         </View>
       )}
       <FlatList
-        data={searchMode ? results : (isQa && tagFilter ? posts.filter((p) => p.tag === tagFilter) : posts)}
+        data={visiblePosts}
         keyExtractor={(item) => item.id}
         refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
         ItemSeparatorComponent={() => <View style={styles.sep} />}
+        onEndReached={searchMode ? undefined : () => loadMore()}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          loadingMore ? (
+            <View style={styles.footer}>
+              <ActivityIndicator color={theme.primary} />
+            </View>
+          ) : null
+        }
         ListEmptyComponent={
           <View style={styles.center}>
-            {searchMode && candidatesLoading ? (
+            {(searchMode && candidatesLoading) || fillingFilter ? (
               <ActivityIndicator size="large" color={theme.primary} />
             ) : (
               <Text style={styles.empty}>
@@ -273,6 +336,7 @@ function makeStyles(theme: Theme) {
     filterChipTextOn: { color: "#fff" },
     meta: { flexDirection: "row", gap: 6 },
     metaText: { fontSize: 12, color: theme.textSecondary },
+    footer: { paddingVertical: 16, alignItems: "center" },
     empty: { color: theme.textSecondary, fontSize: 14 },
     blockedText: { fontSize: 13, color: theme.textSecondary, fontStyle: "italic" },
     fab: {

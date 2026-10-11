@@ -219,7 +219,13 @@ service cloud.firestore {
         // いいね数・コメント数・閲覧数のカウンター更新は他ユーザー操作でも発生
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likeCount']) ||
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']) ||
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount'])
+        // 閲覧数は「ちょうど+1」のみ許可する。affectedKeys だけ見ると任意の値に
+        // 書き換えられる（水増し・0埋め）ため。既存文書は viewCount 欠落なので get で既定0。
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount']) &&
+          request.resource.data.viewCount is int &&
+          request.resource.data.viewCount == resource.data.get('viewCount', 0) + 1
+        )
       );
     }
 
