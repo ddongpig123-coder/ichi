@@ -80,6 +80,15 @@ const commerce: Faculty = {
 const law: Faculty = {
   id: "law", nameJa: "法学部", schoolDomain: MEIJI, engine: "zones",
   match: /法学|法學|law/i,
+  // 学科は法律学科のみ。コース科目群(44単位)の中身がコースで変わるため、CANの絞り込み用に保持。
+  deptLabel: "コース",
+  canDepartments: [
+    { id: "法曹", nameJa: "法曹コース" },
+    { id: "公共法務", nameJa: "公共法務コース" },
+    { id: "ビジネスロー", nameJa: "ビジネスローコース" },
+    { id: "国際関係法", nameJa: "国際関係法コース" },
+    { id: "法と情報", nameJa: "法と情報コース" },
+  ],
   bands: [{
     key: "2026", labelJa: "2026年度〜入学", admissionYearMax: null, totalRequired: 128,
     zones: [

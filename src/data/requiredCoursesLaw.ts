@@ -44,7 +44,8 @@ export const LAW_REQUIRED: RequiredCourse[] = [
   { name: "民法（契約）Ⅰ", units: 2, zone: "course", years: [3, 4], courseTag: "法曹コース" },
   { name: "民法（契約）Ⅱ", units: 2, zone: "course", years: [3, 4], courseTag: "法曹コース" },
   { name: "民法（損害賠償）", units: 2, zone: "course", years: [3, 4], courseTag: "法曹コース" },
-  { name: "会社法Ⅰ", units: 2, zone: "course", years: [3, 4], courseTag: "法曹コース" },
+  // 配当年次は便覧p32の表で2・3・4年次に○（2026-10-12にテキスト抽出と画像で再確認して修正。旧: [3,4]）
+  { name: "会社法Ⅰ", units: 2, zone: "course", years: [2, 3, 4], courseTag: "法曹コース" },
   { name: "会社法Ⅱ", units: 2, zone: "course", years: [3, 4], courseTag: "法曹コース" },
   // 公共法務コース科目群（公共法務コース登録者の必修）
   { name: "行政法ＡⅠ", units: 2, zone: "course", years: [2, 3, 4], courseTag: "公共法務コース" },

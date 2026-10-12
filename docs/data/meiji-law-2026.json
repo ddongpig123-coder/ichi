@@ -112,11 +112,12 @@
     "kokusaiCulture": "国際関係法コース選択者は教養12とは別に「地域と文化」8単位以上。"
   },
   "courseMasters": {
-    "_note": "TODO: 便覧 p24-25（各コース必修/選択必修）+ 授業科目配当表（科目→科目群）を抽出して充填。CAN/自動分類に必要。",
-    "law-practitioner": { "nameJa": "法曹コース", "subjects": [] },
-    "public-law": { "nameJa": "公共法務コース", "subjects": [] },
-    "business-law": { "nameJa": "ビジネスローコース", "subjects": [] },
-    "international-law": { "nameJa": "国際関係法コース", "subjects": [] },
-    "law-and-information": { "nameJa": "法と情報コース", "subjects": [] }
+    "_note": "✅ 2026-10-12 完了: 便覧2026の「授業科目配当年次表」から全931科目を抽出 → meiji-law-allocation-2026.json（アプリは src/data/allocationLaw.ts で CAN に使用）。コース別の絞り込みは allocation の course/gakka フィールドで行う。各コースの小区分別 必要修得単位は allocation の requiredUnitsBySubArea を参照（5コースとも合計44で本マスターと一致）。",
+    "allocationFile": "meiji-law-allocation-2026.json",
+    "law-practitioner": { "nameJa": "法曹コース", "allocationKey": "法曹", "requiredUnits": { "コース専門法律科目": 32, "コース展開・先端科目": 4, "基礎法・外国法科目": 8 } },
+    "public-law": { "nameJa": "公共法務コース", "allocationKey": "公共法務", "requiredUnits": { "コース専門法律科目": 24, "コース展開・先端科目": 12, "基礎法・外国法科目": 8 } },
+    "business-law": { "nameJa": "ビジネスローコース", "allocationKey": "ビジネスロー", "requiredUnits": { "コース専門法律科目": 24, "コース展開・先端科目": 12, "基礎法・外国法科目": 8 } },
+    "international-law": { "nameJa": "国際関係法コース", "allocationKey": "国際関係法", "requiredUnits": { "コース専門法律科目": 20, "コース専門文化科目": 8, "グローバル・スタディーズ科目": 8, "基礎法・外国法科目": 8 } },
+    "law-and-information": { "nameJa": "法と情報コース", "allocationKey": "法と情報", "requiredUnits": { "コース専門法律科目": 28, "コース専門情報科目": 8, "基礎法・外国法科目": 8 } }
   }
 }
