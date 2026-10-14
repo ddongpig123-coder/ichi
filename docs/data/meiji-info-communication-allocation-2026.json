@@ -1,0 +1,3445 @@
+{
+ "_meta": {
+  "source": "明治大学学則＜別表１＞授業科目の種類及びその単位数（情報コミュニケーション学部, 2026年4月施行）の授業科目一覧",
+  "sourceUrl": "https://www.meiji.ac.jp/koho/disclosure/purpose/6t5h7p0000014q2d-att/6t5h7p000034ess4.pdf",
+  "extractedAt": "2026-10-14",
+  "faculty": "info-communication",
+  "facultyNameJa": "情報コミュニケーション学部",
+  "schoolDomain": "meiji.ac.jp",
+  "requirementMaster": "meiji-info-communication-2017.json",
+  "tool": "pdfjs-dist(cMapUrl 상대경로) + x좌표 열 판정",
+  "⚠️limitation": "🔴 この学部は便覧（配当表つき）が公開されていないため、学則別表1の授業科目一覧を出典にしている。別表1には**配当年次が無い**ので、全科目 yearsUnknown=true。アプリのCAN（学年フィルタ）には使えず、科目→科目群の辞書としてのみ利用可能。配当年次が必要になったら、公開された便覧の入手が前提。",
+  "sourceSearch": "情報コミュニケーション学部は公開ページに「履修の手引き」しかなく、その「設置科目一覧表」は年次別のマトリクス表示で**単位数が無い**ため配当表として使えない。便覧は非公開。",
+  "verification": [
+   "必修は「情報コミュニケーション学入門Ａ・Ｂ」の2科目4単位のみ。要件マスターの学際科目群4単位（学則卒業要件「情報コミュニケーション学入門を2科目4単位修得」）と一致。",
+   "スキップ0行・単位欠落0件。未知の科目群: なし"
+  ],
+  "excluded": "教職関係科目（卒業要件外）は zone=null として保持（除外はしていないが要件には算入しない）。"
+ },
+ "poolSummary": {
+  "情報コミュニケーション学部|jiyu": {
+   "courses": 23,
+   "units": 44,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "情報コミュニケーション学部|gakusai": {
+   "courses": 3,
+   "units": 6,
+   "required": 4,
+   "selectRequired": 0
+  },
+  "情報コミュニケーション学部|senmon": {
+   "courses": 190,
+   "units": 380,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "情報コミュニケーション学部|gaikokugo": {
+   "courses": 67,
+   "units": 82,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "情報コミュニケーション学部|kenkyu-hyogen": {
+   "courses": 50,
+   "units": 96,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "総合講座|jiyu": {
+   "courses": 4,
+   "units": 8,
+   "required": 0,
+   "selectRequired": 0
+  }
+ },
+ "courses": [
+  {
+   "name": "基礎ゼミナール",
+   "units": 4,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "問題発見テーマ演習Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "問題発見テーマ演習Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "問題分析ゼミナールⅠ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "問題分析ゼミナールⅡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "問題解決ゼミナールⅠ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "問題解決ゼミナールⅡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "卒業論文・卒業制作",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ゼミナール科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報コミュニケーション学入門Ａ",
+   "units": 2,
+   "mark": "必修",
+   "kubunJa": "学際科目群",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "gakusai",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報コミュニケーション学入門Ｂ",
+   "units": 2,
+   "mark": "必修",
+   "kubunJa": "学際科目群",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "gakusai",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報コミュニケーション学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "学際科目群",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "gakusai",
+   "yearsUnknown": true
+  },
+  {
+   "name": "家族社会学概論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "環境と社会",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "経営学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "憲法Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "憲法Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "コミュニティ論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジェンダー論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "市民社会と法Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "市民社会と法Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会学Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会学Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会心理学Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会心理学Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会と経済",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報倫理",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "政治学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "組織論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "犯罪と法Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "犯罪と法Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "法学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "マクロ経済学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ミクロ経済学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "メディア・リテラシー",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "異文化理解",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "英語文学Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "英語文学Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "外国文学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "言語学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "宗教学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "小集団コミュニケーション",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "新興国事情",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "心理学Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "心理学Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "生命論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "生命論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "西洋史概論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（基礎）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地誌学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "哲学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "東洋史概論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本史概論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本文学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "パブリック・スピーキング",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "比較文化（基礎）Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "比較文化（基礎）Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "メディア批評",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "歴史学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "科学技術史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "環境生物学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報科学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報検索論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "人類学Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "人類学Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地球環境科学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "脳科学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "イノベーションの経済学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ＮＰＯ論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "家族と法Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "家族と法Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "経済思想史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "現代アメリカ政治論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "現代型犯罪と刑法Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "現代型犯罪と刑法Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "現代行政と法Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "現代行政と法Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "現代政治学Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "現代政治学Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "公共政策Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "公共政策Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "コーポレート・ガバナンスⅠ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "コーポレート・ガバナンスⅡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "国際開発論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "国際関係論Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "国際関係論Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "国際経済論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "国際経済論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "個人と国家",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "財産と法Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "財産と法Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジェンダーと法Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジェンダーと法Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジェンダー・マネジメントⅠ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジェンダー・マネジメントⅡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会思想史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会福祉学Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会福祉学Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報産業論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報システム論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報政策論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報政策論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報法Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報法Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "人権と政策",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "政治とメディア",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ソーシャルビジネス論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "組織と情報",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "知的財産法Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "知的財産法Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "犯罪社会学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ビジネスと法Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ビジネスと法Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ファイナンス論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ファイナンス論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "紛争解決システム論Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "紛争解決システム論Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "マスコミュニケーション論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "マスコミュニケーション論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "メディアの歴史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "メディア論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "アート・マネジメント",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "異文化コミュニケーション史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "英語の文化と歴史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "映像表現論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "音楽表現論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "記号論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "近・現代史Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "近・現代史Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "言語態研究",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "言語表現論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "広告論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジェンダーと社会Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジェンダーと社会Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジャーナリズム論Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ジャーナリズム論Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会文化史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会と教育Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会と教育Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会と芸術",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会と出版",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報デザイン論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報文化論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "スポーツ・ジャーナリズム論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "造形表現論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "多文化と相互理解Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "多文化と相互理解Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（英語圏）Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（英語圏）Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（ドイツ）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（フランス）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（スペイン）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（中国）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（朝鮮）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "地域文化論（イスラーム）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "超域文化論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本文化論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本文化論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "比較文学・比較文化ＡⅠ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "比較文学・比較文化ＡⅡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "比較文学・比較文化ＢⅠ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "比較文学・比較文化ＢⅡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ユニバーサルデザイン",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "倫理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "意思決定論Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "意思決定論Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "異文化間コミュニケーション",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "科学技術と人間",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "家族社会学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "環境政策Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "環境政策Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "言語使用とディスコース",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "コミュニケーション思想史",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "自然言語の生成モデル",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "自然地理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "消費行動の心理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会と安全Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報社会と安全Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報と経済行動",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "情報と職業",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "人口論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "身体と意識",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "身体表現論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "人文地理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "生命思想史Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "生命思想史Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "組織コミュニケーションＡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "組織コミュニケーションＢ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "都市情報論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "人間性心理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "認知科学Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "認知科学Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ネットワーク社会論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "パーソナリティ心理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "不確実性下の人間行動",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "不思議現象の心理学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "法コミュニケーション",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "リスク社会論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "先取り履修科目（３・４年次配当科目）",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "専門科目群",
+   "bunya": "先取り履修科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "senmon",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＡⅠ（基礎）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＡⅠ（中級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＡⅠ（上級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＡⅡ（基礎）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＡⅡ（中級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＡⅡ（上級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＢⅠ（基礎）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＢⅠ（中級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＢⅠ（上級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＢⅡ（基礎）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＢⅡ（中級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSkillsＢⅡ（上級）",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "Speech&DebateＡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "Speech&DebateＢ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "CriticalReading",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "CriticalDiscussion",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "CriticalWritingＡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "CriticalWritingＢ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSeminarⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "EnglishSeminarⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "英語コミュニケーションⅠ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "英語コミュニケーションⅡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "英語音声学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ドイツ語ＡⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ドイツ語ＡⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ドイツ語ＢⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ドイツ語ＢⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ドイツ語演習Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ドイツ語演習Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "フランス語ＡⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "フランス語ＡⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "フランス語ＢⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "フランス語ＢⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "フランス語演習Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "フランス語演習Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "スペイン語ＡⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "スペイン語ＡⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "スペイン語ＢⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "スペイン語ＢⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "スペイン語演習Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "スペイン語演習Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "中国語ＡⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "中国語ＡⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "中国語ＢⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "中国語ＢⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "中国語演習Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "中国語演習Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "韓国語ＡⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "韓国語ＡⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "韓国語ＢⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "韓国語ＢⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "韓国語演習Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "韓国語演習Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "タイ語ＡⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "タイ語ＡⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "タイ語ＢⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "タイ語ＢⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "タイ語演習Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "タイ語演習Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＡⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＡⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＢⅠ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＢⅡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "biko": "外国人",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＡⅢ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＡⅣ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＢⅢ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語ＢⅣ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "section": "情報コミュニケーション学部",
+   "zone": "gaikokugo",
+   "yearsUnknown": true
+  },
+  {
+   "name": "アルゴリズム実習Ⅰ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "アルゴリズム実習Ⅱ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "専門情報リテラシー",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ネットワーク技術Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ネットワーク技術Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ネットワーク技術Ⅲ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ネットワーク技術Ⅳ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "プログラミング実習Ⅰ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "プログラミング実習Ⅱ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT統計解析入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT統計解析応用",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTデータベース入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTデータベース応用",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT画像編集入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT画像編集応用",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT動画編集入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT動画編集応用",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT音楽編集入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICT音楽編集応用",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTプログラミング入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTプログラミング応用",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTWebページ作成",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTeラーニングデザイン入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTeラーニングデザイン応用",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTプレゼンテーション",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語表現Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "日本語表現科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "日本語表現Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "日本語表現科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "演劇学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "音楽論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "クリエイティブ・コミュニケーション",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "身体コミュニケーションＡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "身体コミュニケーションＢ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "デジタルアートＡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "デジタルアートＢ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "デジタルプレゼンテーション",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "美学・芸術学",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "非言語コミュニケーション",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "メディア・アート",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "メディア教育論",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "科学リテラシー",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "質的調査分析法",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会調査実習",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会調査法Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "社会調査法Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "数理リテラシー",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "データ解析論Ⅰ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "データ解析論Ⅱ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "統計学Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "統計学Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "論理リテラシー",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "section": "情報コミュニケーション学部",
+   "zone": "kenkyu-hyogen",
+   "yearsUnknown": true
+  },
+  {
+   "name": "国際交流",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "海外留学科目群",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "留学関係科目（語学・実習）Ａ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "海外留学科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "留学関係科目（語学・実習）Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "海外留学科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "留学関係科目（講義）Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "海外留学科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "留学関係科目（講義）Ｂ",
+   "units": 3,
+   "mark": null,
+   "kubunJa": "海外留学科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ウェルネスＡ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ウェルネス科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ウェルネスＢ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "ウェルネス科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ウェルネス・スポーツＡ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "ウェルネス科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ウェルネス・スポーツＢ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "ウェルネス科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ウェルネス・スポーツＣ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "ウェルネス科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ウェルネス・スポーツＤ",
+   "units": 1,
+   "mark": null,
+   "kubunJa": "ウェルネス科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "キャリアデザイン",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "キャリアデザイン科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "インターンシップ入門",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "キャリアデザイン科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "実践キャリア支援講座",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "キャリアデザイン科目群",
+   "section": "情報コミュニケーション学部",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "ICTベーシック",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "情報リテラシー科目群",
+   "section": "情報コミュニケーション学部",
+   "biko": "メディア授業科目併設",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "総合講座Ａ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "情報リテラシー科目群",
+   "section": "総合講座",
+   "biko": "メディア授業科目併設",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "総合講座Ｂ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "情報リテラシー科目群",
+   "section": "総合講座",
+   "biko": "メディア授業科目併設",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "総合講座Ｃ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "情報リテラシー科目群",
+   "section": "総合講座",
+   "biko": "メディア授業科目併設",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  },
+  {
+   "name": "総合講座Ｄ",
+   "units": 2,
+   "mark": null,
+   "kubunJa": "情報リテラシー科目群",
+   "section": "総合講座",
+   "biko": "メディア授業科目併設",
+   "zone": "jiyu",
+   "yearsUnknown": true
+  }
+ ]
+}
