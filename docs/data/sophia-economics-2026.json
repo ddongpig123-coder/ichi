@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "source": "上智大学 2026年度 履修要覧（経済学部）「1．卒業に要する科目、単位数の最低基準」",
+    "sourceUrl": "https://piloti.sophia.ac.jp/assets/uploads/2026/03/b64b684a4ff8b1697f889eb826cae6d2.pdf",
+    "indexUrl": "https://piloti.sophia.ac.jp/jpn/academic/g_youran/youran2026/",
+    "extractedAt": "2026-10-14",
+    "school": "sophia",
+    "schoolNameJa": "上智大学",
+    "schoolDomain": "sophia.ac.jp",
+    "faculty": "economics",
+    "facultyNameJa": "経済学部",
+    "admissionYear": 2022,
+    "appliesTo": "22年次生以降（2022年度以降入学者）。18〜21年次生は別バンド（全学共通科目の内訳が異なる・合計は同じ124）。",
+    "note": "上智は「年次生」表記（入学年度の下2桁）でバンドを分ける。学科科目94・合計124は両バンド共通で、違うのは全学共通科目の内訳（22年次生以降は必修8＋選択必修6＋選択12、18〜21年次生は必修2〔体育〕＋選択必修4＋選択20）。",
+    "verifiedBy": "履修要覧PDFのテキストを直読。① 全学共通26＋語学4＋学科科目94＝124＝「合計124単位」と一致。② 学科科目94の内訳も一致（経済学科=語学選必4＋必修8＋選択必修30＋選択必修および選択52＝94 / 経営学科=必修4＋語学選必4＋選択必修46＋選択必修および選択40＝94）。",
+    "appIntegration": "未統合。src/data/facultyMasters.ts は meiji.ac.jp 固定のため、他校はJSON蓄積のみ（出荷ブロッカーではない）。"
+  },
+  "requirementMaster": {
+    "totalRequired": 124,
+    "band": "22年次生以降",
+    "byDepartment": true,
+    "departments": [
+      {
+        "id": "economics",
+        "nameJa": "経済学科",
+        "zones": [
+          {
+            "id": "zengaku-kyotsu",
+            "nameJa": "全学共通科目",
+            "minUnits": 26,
+            "rule": "composite",
+            "noteJa": "必修8単位（キリスト教人間学・身体知・思考と表現・データサイエンス・課題認識）＋ 選択必修6単位（キリスト教人間学2＋高学年向け科目4）＋ 選択12単位。",
+            "subZones": [
+              { "id": "hisshu", "nameJa": "必修", "minUnits": 8 },
+              { "id": "sentaku-hisshu", "nameJa": "選択必修", "minUnits": 6 },
+              { "id": "sentaku", "nameJa": "選択", "minUnits": 12 }
+            ]
+          },
+          { "id": "gogaku", "nameJa": "語学科目（必修）", "minUnits": 4, "rule": "all-required" },
+          {
+            "id": "gakka",
+            "nameJa": "学科科目",
+            "minUnits": 94,
+            "rule": "composite",
+            "noteJa": "語学科目選択必修4＋必修科目8＋選択必修科目30＋選択必修科目および選択科目52＝94。",
+            "subZones": [
+              { "id": "gogaku-sentaku-hisshu", "nameJa": "語学科目選択必修", "minUnits": 4 },
+              { "id": "hisshu", "nameJa": "必修科目", "minUnits": 8 },
+              { "id": "sentaku-hisshu", "nameJa": "選択必修科目", "minUnits": 30 },
+              { "id": "sentaku", "nameJa": "選択必修科目および選択科目", "minUnits": 52 }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "management",
+        "nameJa": "経営学科",
+        "zones": [
+          {
+            "id": "zengaku-kyotsu",
+            "nameJa": "全学共通科目",
+            "minUnits": 26,
+            "rule": "composite",
+            "noteJa": "経済学科と同一（必修8＋選択必修6＋選択12）。",
+            "subZones": [
+              { "id": "hisshu", "nameJa": "必修", "minUnits": 8 },
+              { "id": "sentaku-hisshu", "nameJa": "選択必修", "minUnits": 6 },
+              { "id": "sentaku", "nameJa": "選択", "minUnits": 12 }
+            ]
+          },
+          { "id": "gogaku", "nameJa": "語学科目（必修）", "minUnits": 4, "rule": "all-required" },
+          {
+            "id": "gakka",
+            "nameJa": "学科科目",
+            "minUnits": 94,
+            "rule": "composite",
+            "noteJa": "必修科目4＋語学科目選択必修4＋選択必修科目46＋選択必修科目および選択科目40＝94。経済学科とは内訳が違う（必修が4、選択必修が46）。",
+            "subZones": [
+              { "id": "hisshu", "nameJa": "必修科目", "minUnits": 4 },
+              { "id": "gogaku-sentaku-hisshu", "nameJa": "語学科目選択必修", "minUnits": 4 },
+              { "id": "sentaku-hisshu", "nameJa": "選択必修科目", "minUnits": 46 },
+              { "id": "sentaku", "nameJa": "選択必修科目および選択科目", "minUnits": 40 }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "_validation": {
+    "zoneSum": 124,
+    "check": "26 + 4 + 94 = 124 = 要覧の「合計124単位」 ✓（両学科とも）",
+    "subZoneCheck": "経済学科 学科科目: 4+8+30+52 = 94 ✓ / 経営学科 学科科目: 4+4+46+40 = 94 ✓ / 全学共通科目: 8+6+12 = 26 ✓",
+    "status": "verified"
+  },
+  "otherBands": {
+    "18-21年次生": {
+      "totalRequired": 124,
+      "noteJa": "全学共通科目＝必修2（体育2）＋選択必修4（キリスト教人間学）＋選択20（高学年向け教養科目2を含む）、語学科目必修4、学科科目94。合計124。zone構成は同じだが全学共通科目の内訳が異なる。"
+    }
+  },
+  "programs": {
+    "noteJa": "経済学部・経営学英語特修プログラム（Faculty of Economics, Management in English Program）あり。一定の条件を満たした学生にプログラム認定。"
+  },
+  "courseMasters": {
+    "_note": "TODO: 要覧「2．標準配当表」に学年別の科目一覧がある（全学共通科目／学科科目）。科目→区分の辞書化は未着手。"
+  }
+}

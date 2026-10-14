@@ -1,0 +1,1257 @@
+{
+ "_meta": {
+  "source": "法政大学「卒業要件（卒業所要単位）」公開ページ（法政大学大学学則により規定）",
+  "sourceUrl": "https://www.hosei.ac.jp/hosei/disclosure/acquire/sotsugyo_yohken/",
+  "extractedAt": "2026-10-14",
+  "school": "hosei",
+  "schoolNameJa": "法政大学",
+  "schoolDomain": "hosei.ac.jp",
+  "kind": "reference-transcription",
+  "⚠️status": "🔴 これは**公開ページの数値をそのまま転記した参照データ**であり、学部ごとの個別検証は行っていない（verified:false）。アプリ用マスターとして使う前に、学部ごとに sumCheck を見て「以上/以下の積み上げ方」を読み解く作業が要る。検証済みなのは経営学部のみ（hosei-management-2026.json）。",
+  "howToUse": [
+   "sumCheck.matches = \"lower-bound-exact\" … 下限の単純合計が卒業単位と一致。そのままマスター化しやすい。",
+   "sumCheck.matches = \"matches-when-caps-included\" … 「◯単位以下」の上限を足すと一致する型（国際文化・生命科学・経営GBPなど）。",
+   "sumCheck.matches = \"needs-reasoning\" … 差分を各区分の超過分で埋める型。経営学部と同じく _validation に산식을 書いてからマスター化すること。"
+  ],
+  "sections": "一般 / SSI（スーパーグローバル系の特別プログラム）/ GBP・SCOPE・IGESS（英語学位プログラム）",
+  "manualFixes": 2,
+  "note": "便覧・履修の手引きは学内ポータル(Hoppii)内のため、区分内の内訳（必修科目・配当年次など）は公開範囲では取得できない。本ファイルは「学部×区分×最低単位」までの粒度。"
+ },
+ "faculties": [
+  {
+   "name": "法学部",
+   "section": "一般",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 88,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 132,
+    "withCapsSum": 132,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "文学部",
+   "section": "一般",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 88,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 132,
+    "withCapsSum": 132,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "経済学部経済学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "基礎教育科目",
+     "units": 2,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "外国語科目",
+     "units": 12,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "保健体育科目",
+     "units": 2,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "総合教育科目",
+     "units": 26,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 76,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 118,
+    "withCapsSum": 118,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "経済学部国際経済学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "基礎教育科目",
+     "units": 2,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "外国語科目",
+     "units": 20,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "保健体育科目",
+     "units": 2,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "総合教育科目",
+     "units": 24,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 70,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 118,
+    "withCapsSum": 118,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "経済学部現代ビジネス学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "基礎教育科目",
+     "units": 2,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "外国語科目",
+     "units": 12,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "保健体育科目",
+     "units": 2,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "総合教育科目",
+     "units": 22,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 80,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 118,
+    "withCapsSum": 118,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "社会学部社会政策科学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合科目",
+     "units": 34,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "学科専門科目",
+     "units": 74,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "自由選択科目",
+     "units": 16,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "社会学部社会学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合科目",
+     "units": 34,
+     "bound": "以上",
+     "noteJa": "「国際・社会コース」選択者は46単位以上"
+    },
+    {
+     "nameJa": "学科専門科目",
+     "units": 74,
+     "bound": "以上",
+     "noteJa": "「国際・社会コース」選択者は62単位以上"
+    },
+    {
+     "nameJa": "自由選択科目",
+     "units": 16,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "manualFix": "補足行(（但し…）)で取り込みが途切れたため原文から手入力",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "社会学部メディア社会学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合科目",
+     "units": 34,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "学科専門科目",
+     "units": 74,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "自由選択科目",
+     "units": 16,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "経営学部",
+   "section": "一般",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "連環科目",
+     "units": 4,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 68,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 116,
+    "withCapsSum": 116,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "国際文化学部",
+   "section": "一般",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 46,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "学部専門科目",
+     "units": 66,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "自由科目",
+     "units": 20,
+     "bound": "以下"
+    }
+   ],
+   "note": "卒業所要単位は132単位で、科目ごとの修得単位は次の通りとする。ただし、学部専門科目と自由科目を合計して86単位以上修得しなければならない。",
+   "sumCheck": {
+    "lowerBoundSum": 112,
+    "withCapsSum": 132,
+    "matches": "matches-when-caps-included"
+   },
+   "verified": false
+  },
+  {
+   "name": "人間環境学部",
+   "section": "一般",
+   "totalRequired": 130,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 40,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "リテラシー科目",
+     "units": 6,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "展開科目",
+     "units": 84,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は130単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 130,
+    "withCapsSum": 130,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "人間環境学部RSP",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 36,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 88,
+     "bound": "以上"
+    }
+   ],
+   "note": "人間環境学部RSPの卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "現代福祉学部",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合教育科目",
+     "units": 30,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 80,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 110,
+    "withCapsSum": 110,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "情報科学部コンピュータ科学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "英語科目",
+     "units": 10,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "教養科目",
+     "units": 10,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "科学基礎科目",
+     "units": 9,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 74,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "公開選択科目",
+     "units": 4,
+     "bound": "以下"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 103,
+    "withCapsSum": 107,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "情報科学部ディジタルメディア科学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "英語科目",
+     "units": 10,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "教養科目",
+     "units": 10,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "科学基礎科目",
+     "units": 13,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 72,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "公開選択科目",
+     "units": 4,
+     "bound": "以下"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 105,
+    "withCapsSum": 109,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "キャリアデザイン学部",
+   "section": "一般",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 37,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "理論系科目群",
+     "units": 64,
+     "bound": "以上",
+     "noteJa": "理論系科目群 64単位以上（但し、基礎Ⅱ科目は「発達・教育キャリア」「ビジネスキャリア」「ライフキャリア」から選択した一つの領域で4単位以上 また、専門Ⅱ科目は同様の領域で6単位以上）"
+    },
+    {
+     "nameJa": "方法系科目群",
+     "units": 4,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "実践系科目群",
+     "units": 4,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 109,
+    "withCapsSum": 109,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "デザイン工学部建築学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "外国語科目",
+     "units": 8,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "基盤科目",
+     "units": 8,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 64,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 80,
+    "withCapsSum": 80,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "デザイン工学部都市環境デザイン工学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "外国語科目",
+     "units": 8,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "基盤科目",
+     "units": 40,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 76,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "デザイン工学部システムデザイン学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "外国語科目",
+     "units": 8,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "基盤科目",
+     "units": 25,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 80,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 113,
+    "withCapsSum": 113,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "理工学部機械工学科、電気電子工学科、応用情報工学科、経営システム工学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "但し，公開選択科目については，",
+     "units": 12,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "英語科目",
+     "units": 8,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "教養科目",
+     "units": 12,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "理系教養科目",
+     "units": 12,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 80,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "公開選択科目",
+     "units": 12,
+     "bound": "以下"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 136,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "理工学部創生科学科",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "但し，公開選択科目については，",
+     "units": 12,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "英語・選択語学系",
+     "units": 14,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "教養科目",
+     "units": 12,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "理系教養科目",
+     "units": 12,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 72,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "公開選択科目",
+     "units": 12,
+     "bound": "以下"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 122,
+    "withCapsSum": 134,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "生命科学部",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "英語科目",
+     "units": 8,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "教養科目及び理系教養科目",
+     "units": 24,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 80,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "自由選択科目",
+     "units": 12,
+     "bound": "以下"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。但し、卒業所要単位としては、英語科目、教養科目、理系教養科目合わせて44単位まで、専門教育科目92単位、自由選択科目12単位まで認める。",
+   "sumCheck": {
+    "lowerBoundSum": 112,
+    "withCapsSum": 124,
+    "matches": "matches-when-caps-included"
+   },
+   "verified": false
+  },
+  {
+   "name": "グローバル教養学部",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合科目",
+     "units": 10,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "入門科目",
+     "units": 22,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "中級科目",
+     "units": 40,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "上級科目・演習科目",
+     "units": 32,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 104,
+    "withCapsSum": 104,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "スポーツ健康学部",
+   "section": "一般",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合教育科目",
+     "units": 28,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 84,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 112,
+    "withCapsSum": 112,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "法学部SSI",
+   "section": "SSI",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 24,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 56,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "文学部SSI",
+   "section": "SSI",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 24,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 56,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "経済学部経済学科SSI、現代ビジネス学科SSI",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "基礎教育科目",
+     "units": 2,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "外国語科目",
+     "units": 6,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "保健体育科目",
+     "units": 2,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "総合教育科目",
+     "units": 14,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 54,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 122,
+    "withCapsSum": 122,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "社会学部社会政策科学科",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合科目",
+     "units": 34,
+     "bound": "以上",
+     "noteJa": "総合科目 34単位以上（SSI基礎科目14単位を含む）"
+    },
+    {
+     "nameJa": "学科専門科目",
+     "units": 74,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "自由選択科目",
+     "units": 16,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "社会学部社会学科",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合科目",
+     "units": 34,
+     "bound": "以上",
+     "noteJa": "「国際・社会コース」選択者は46単位以上"
+    },
+    {
+     "nameJa": "学科専門科目",
+     "units": 74,
+     "bound": "以上",
+     "noteJa": "「国際・社会コース」選択者は62単位以上"
+    },
+    {
+     "nameJa": "自由選択科目",
+     "units": 16,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "manualFix": "補足行(（但し…）)で取り込みが途切れたため原文から手入力",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "社会学部メディア社会学科",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合科目",
+     "units": 34,
+     "bound": "以上",
+     "noteJa": "総合科目 34単位以上（SSI基礎科目14単位を含む）"
+    },
+    {
+     "nameJa": "学科専門科目",
+     "units": 74,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "自由選択科目",
+     "units": 16,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "経営学部SSI",
+   "section": "SSI",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 24,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "連環科目",
+     "units": 4,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 48,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 120,
+    "withCapsSum": 120,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "国際文化学部SSI",
+   "section": "SSI",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 26,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "学部専門科目",
+     "units": 38,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "自由科目",
+     "units": 18,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。但し、学部専門科目と自由科目を合計して62単位以上修得しなければならない。",
+   "sumCheck": {
+    "lowerBoundSum": 126,
+    "withCapsSum": 126,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "人間環境学部SSI",
+   "section": "SSI",
+   "totalRequired": 130,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 24,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "リテラシー科目",
+     "units": 6,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "展開科目",
+     "units": 56,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は130単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 130,
+    "withCapsSum": 130,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "キャリアデザイン学部SSI",
+   "section": "SSI",
+   "totalRequired": 132,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 24,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "キャリアスタディーズ専門科目及び関連科目",
+     "units": 56,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は132単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "現代福祉学部SSI",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合教育科目",
+     "units": 30,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 50,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 124,
+    "withCapsSum": 124,
+    "matches": "lower-bound-exact"
+   },
+   "verified": false
+  },
+  {
+   "name": "デザイン工学部システムデザイン学科SSI",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "外国語科目",
+     "units": 4,
+     "bound": "exact"
+    },
+    {
+     "nameJa": "基盤科目",
+     "units": 14,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "SSI科目",
+     "units": 44,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 56,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 118,
+    "withCapsSum": 118,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "経営学部GBP",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 36,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "連環科目",
+     "units": 20,
+     "bound": "以下"
+    },
+    {
+     "nameJa": "専門教育科目",
+     "units": 68,
+     "bound": "以上"
+    }
+   ],
+   "note": "経営学部GBPの卒業所要単位は124単位で、科目ごとの修得単位は次の通りとする。ただし、連環科目については、20単位まで卒業所要単位として認める。",
+   "sumCheck": {
+    "lowerBoundSum": 104,
+    "withCapsSum": 124,
+    "matches": "matches-when-caps-included"
+   },
+   "verified": false
+  },
+  {
+   "name": "人間環境学部SCOPE",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "基礎科目",
+     "units": 31,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "展開科目",
+     "units": 40,
+     "bound": "以上"
+    }
+   ],
+   "note": "人間環境学部SCOPEの卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。",
+   "sumCheck": {
+    "lowerBoundSum": 71,
+    "withCapsSum": 71,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  },
+  {
+   "name": "経済学部ＩＧＥＳＳ",
+   "section": "SSI",
+   "totalRequired": 124,
+   "zones": [
+    {
+     "nameJa": "総合教育科目",
+     "units": 40,
+     "bound": "以上"
+    },
+    {
+     "nameJa": "専門科目",
+     "units": 76,
+     "bound": "以上"
+    }
+   ],
+   "note": "卒業所要単位数は124単位で、科目ごとの修得単位は次の通りとする。但し、人文分野、社会分野、自然分野、言語教育分野、情報学分野、キャリア分野、保健体育分野を合計して12単位以上修得しなければならない。",
+   "sumCheck": {
+    "lowerBoundSum": 116,
+    "withCapsSum": 116,
+    "matches": "needs-reasoning"
+   },
+   "verified": false
+  }
+ ]
+}
