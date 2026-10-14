@@ -1,0 +1,7267 @@
+{
+ "_meta": {
+  "source": "明治大学 2026年度 政治経済学部便覧「4．授業科目表」(PDF p34-46)。便覧自身が「学則別表1を基に作成」と明記。",
+  "sourceUrl": "https://www.meiji.ac.jp/seikei/student/6t5h7p00000ejc6i-att/qfki0t00000hwmng.pdf",
+  "indexUrl": "https://www.meiji.ac.jp/seikei/student/syllabus.html",
+  "extractedAt": "2026-10-14",
+  "faculty": "politicaleconomics",
+  "facultyNameJa": "政治経済学部",
+  "schoolDomain": "meiji.ac.jp",
+  "admissionYear": 2026,
+  "requirementMaster": "meiji-politicaleconomics-2026.json",
+  "tool": "pdfjs-dist(cMapUrl 상대경로 필수) + x좌표 열 판정",
+  "columns": "科目区分（群）等 x120-226 / ○△マーク x226-243 / 授業科目 x245 / 単位数 x394 / 総授業時間数 x426 / 開講期間 x454 / 履修開始年次 x491 / 備考 x550",
+  "verification": [
+   "政治学科の必修が「1年次10単位＋2年次4単位＝14」で要件マスターの note と完全一致（憲法A/B・政治学基礎・政治理論基礎・政治学社会学総合講座=10、政治学原論4）。",
+   "経済学科 必修14単位も note と一致。経済/政策の「選択必修」は note の要件(6/4単位)に対し本表の候補プールが8単位で、要件以上あることを確認。",
+   "健康・運動科学の必修は運動学演習Ⅰ-1/Ⅰ-2の各1単位=2で、要件マスターの kenko note と一致。",
+   "スキップ1行のみ（表ヘッダ断片）。履修開始年次の欠落0件。"
+  ],
+  "notes": [
+   "years は「履修開始年次」から [開始..4] を機械的に展開したもの（経営学部の配当表と同じ扱い）。便覧は配当年次を○印ではなく開始年次で示す。",
+   "scope=\"common\" は3学科共通、それ以外は学科id（seiji/keizai/seisaku）。",
+   "⚠️ 便覧の「応用科目」には総合講座科目・特殊講義科目も含まれるが、要件マスターの freezone note は「総合講座(4まで)・特殊講義」を freezone 側に数える。本ファイルは便覧の区分どおり kihonouyou のままにしてあり、この粒度の差は未解決（zone 診断には影響しないが、科目自動分類を厳密にやる際は要調整）。",
+   "専門演習(卒論)ⅠＢ/ⅡＢ・専門研究Ⅰ/Ⅱ のみ zone=\"genten-kenkyu\" に上書き（zoneOverride 参照）。"
+  ],
+  "skippedRows": 1
+ },
+ "departments": [
+  {
+   "id": "seiji",
+   "nameJa": "政治学科"
+  },
+  {
+   "id": "keizai",
+   "nameJa": "経済学科"
+  },
+  {
+   "id": "seisaku",
+   "nameJa": "政策学科"
+  }
+ ],
+ "poolSummary": {
+  "common|kiso": {
+   "courses": 59,
+   "units": 130,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "common|gaikokugo": {
+   "courses": 29,
+   "units": 29,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "common|kenko": {
+   "courses": 12,
+   "units": 15,
+   "required": 2,
+   "selectRequired": 0
+  },
+  "common|kihonouyou": {
+   "courses": 89,
+   "units": 175,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "common|freezone": {
+   "courses": 6,
+   "units": 12,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "common|genten-kenkyu": {
+   "courses": 4,
+   "units": 8,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "seiji|kihonouyou": {
+   "courses": 88,
+   "units": 200,
+   "required": 14,
+   "selectRequired": 0
+  },
+  "keizai|kihonouyou": {
+   "courses": 71,
+   "units": 204,
+   "required": 14,
+   "selectRequired": 8
+  },
+  "seisaku|kihonouyou": {
+   "courses": 88,
+   "units": 220,
+   "required": 12,
+   "selectRequired": 8
+  }
+ },
+ "courses": [
+  {
+   "name": "哲学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "scope": "common"
+  },
+  {
+   "name": "哲学史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "基礎論理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "応用論理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "歴史学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "国語表現",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "日本文学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "外国文学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "言語と文化",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（基礎科目・人文）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "人文科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "法学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "地理学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "文化人類学 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "文化人類学 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "現代心理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "心理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "文化論概論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "異文化理解とコミュニケーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "異文化摩擦とコミュニケーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "国際地域研究基礎論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "ジェンダー論Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "ジェンダー論Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（基礎科目・社会）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "社会科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "基礎数学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "数学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "線形代数学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "線形代数学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "線形代数学Ⅲ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "線形代数学Ⅳ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "解析学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "解析学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "科学史 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "科学史 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "技術史 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "技術史 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "物理科学概論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "物理科学概論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "環境科学概論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "環境科学概論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "生命科学概論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "生命科学概論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（基礎科目・自然）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "教養演習Ⅰ A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "教養演習Ⅰ B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "教養演習Ⅰ C",
+   "units": 4,
+   "hours": 60,
+   "term": "通年",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "教養演習Ⅱ A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "教養演習Ⅱ B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "教養演習Ⅱ C",
+   "units": 4,
+   "hours": 60,
+   "term": "通年",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "ICT ベーシック",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "共通総合講座Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "共通総合講座Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common",
+   "biko": ""
+  },
+  {
+   "name": "国際文化特殊講義 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "国際文化特殊講義 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "Top School Seminar(International Cultures)A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "Top School Seminar(International Cultures)B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "日本事情 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "日本事情 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "日本事情 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（基礎科目・総合）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kiso",
+   "kubunJa": "基礎科目",
+   "bunya": "自然科学科目群",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "英語Ⅳ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ドイツ語Ⅳ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "フランス語Ⅳ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "中国語Ⅳ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "スペイン語Ⅳ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本語Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本語Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本語Ⅲ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本語Ⅳ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ACE Content-based Study",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ACE General Communication Skills",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ACE Exam Skills",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ACE Presentation Skills",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "ACE Academic Training",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅰ－1",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅰ－2",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "健康・運動科学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "健康・運動科学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "健康・運動科学Ⅲ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅱ－1",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅱ－2",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅲ－1",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅲ－2",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅳ－1",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "運動学演習Ⅳ－2",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "生涯スポーツ演習",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenko",
+   "kubunJa": "健康・運動科学科目",
+   "scope": "common"
+  },
+  {
+   "name": "政治学特殊講義 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "政治学特殊講義 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "社会学特殊講義 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "社会学特殊講義 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済学特殊講義 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済学特殊講義 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済政策特殊講義 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済政策特殊講義 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "海外留学演習Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "海外留学演習Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "海外留学演習Ⅲ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "海外留学演習Ⅳ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "留学準備講座",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "留学基礎講座",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "就業力育成総合講座",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（基本科目・3学科共通）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア文化論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア文化論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア文化論 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア文化論 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア地域論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア地域論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア地域論 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "日本・アジア地域論 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ文化論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ文化論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ文化論 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ文化論 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ地域論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ地域論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ地域論 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ヨーロッパ地域論 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "アメリカ文化論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "アメリカ文化論 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "アメリカ文化論 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "アメリカ地域論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "アメリカ地域論 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "アメリカ地域論 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "連環地域文化論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "連環地域文化論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "連環地域文化論 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "連環地域文化論 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "身体文化論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "スポーツ文化論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "表象文化論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（応用科目・3学科共通）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "専門演習（卒業論文）Ⅰ A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "freezone",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1の（専門演習科目）。要件マスターでは freezone（専門演習・総合講座・自由選択ほか）に含まれる"
+  },
+  {
+   "name": "専門演習（卒業論文）Ⅱ A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "freezone",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1の（専門演習科目）。要件マスターでは freezone（専門演習・総合講座・自由選択ほか）に含まれる"
+  },
+  {
+   "name": "専門演習（卒業論文）Ⅲ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "freezone",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1の（専門演習科目）。要件マスターでは freezone（専門演習・総合講座・自由選択ほか）に含まれる"
+  },
+  {
+   "name": "専門演習（卒業論文）Ⅳ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "freezone",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1の（専門演習科目）。要件マスターでは freezone（専門演習・総合講座・自由選択ほか）に含まれる"
+  },
+  {
+   "name": "専門研究Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "genten-kenkyu",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1 卒業要件5(5)「専門演習(卒論)ⅠＢ・ⅡＢ・専門研究Ⅰ・Ⅱから4単位以上」= 原典研究科目4単位の実体"
+  },
+  {
+   "name": "専門研究Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "genten-kenkyu",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1 卒業要件5(5)「専門演習(卒論)ⅠＢ・ⅡＢ・専門研究Ⅰ・Ⅱから4単位以上」= 原典研究科目4単位の実体"
+  },
+  {
+   "name": "専門研究Ⅲ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "freezone",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1の（専門演習科目）。要件マスターでは freezone（専門演習・総合講座・自由選択ほか）に含まれる"
+  },
+  {
+   "name": "専門研究Ⅳ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "freezone",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1の（専門演習科目）。要件マスターでは freezone（専門演習・総合講座・自由選択ほか）に含まれる"
+  },
+  {
+   "name": "専門演習（卒業論文）Ⅰ B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "genten-kenkyu",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1 卒業要件5(5)「専門演習(卒論)ⅠＢ・ⅡＢ・専門研究Ⅰ・Ⅱから4単位以上」= 原典研究科目4単位の実体"
+  },
+  {
+   "name": "専門演習（卒業論文）Ⅱ B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "genten-kenkyu",
+   "kubunJa": "応用科目",
+   "scope": "common",
+   "zoneOverride": "学則別表1 卒業要件5(5)「専門演習(卒論)ⅠＢ・ⅡＢ・専門研究Ⅰ・Ⅱから4単位以上」= 原典研究科目4単位の実体"
+  },
+  {
+   "name": "応用総合講座 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "応用総合講座 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "応用総合講座 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "応用総合講座 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "応用総合講座 E",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "応用総合講座 F",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "応用総合講座 G",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "政治学特殊講義 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "政治学特殊講義 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "政治学特殊講義 E",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "政治学特殊講義 F",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "社会学特殊講義 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "社会学特殊講義 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済学特殊講義 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済学特殊講義 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済政策特殊講義 C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "経済政策特殊講義 D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "国際文化特殊講義 E",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "国際文化特殊講義 F",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "Top School Seminar(International Cultures)C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "Top School Seminar(International Cultures)D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "Top School Seminar(International Cultures)E",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "Top School Seminar(International Cultures)F",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "留学認定科目（応用科目・特殊講義）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "社会実習",
+   "units": 2,
+   "hours": 30,
+   "term": "通年",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "＊2大学院政治経済学研究科設置科目",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "＊3専門職大学院会計専門職研究科設置科目",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 統計解析入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 統計解析応用",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT データベース入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT データベース応用",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 画像編集入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 画像編集応用",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 動画編集入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 動画編集応用",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 音楽編集入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT 音楽編集応用",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT プログラミング入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT プログラミング応用",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT Wab ページ作成",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT e ラーニングデザイン入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT e ラーニングデザイン応用",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "ICT プレゼンテーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "common"
+  },
+  {
+   "name": "憲法 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "憲法 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治学基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治理論基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治学原論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治学・社会学総合講座",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "行政学基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "行政理論基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "社会学 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "社会学 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "統計学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "社会科学方法論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "ジャーナリズム論 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "ジャーナリズム論 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "メディアコミュニケーション論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Politics)A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Politics)B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Sociology)A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Sociology)B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治思想史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治理論史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "日本政治史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "西洋政治史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "現代思想",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "現代政治理論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "日本政治思想史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "日本政治文化論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "メディアリテラシー論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "国際コミュニケーション論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "マスコミュニケーション論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "メディアと世論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "留学認定科目（基本科目・政治学科）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "自治体経営論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "国家論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "現代国家分析",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "国際政治学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "都市政策",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "都市行政",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治過程論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治体制論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治体制変動論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "比較政治論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "比較政治論（東アジア）",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "計量政治学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "政治行動論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "国際関係史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "アジア政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "アメリカ政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "ラテンアメリカ政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "アフリカ政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "ロシア政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "中国政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "東欧政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "現代社会学 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "現代社会学 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "現代社会心理学 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "現代社会心理学 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "産業心理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "消費心理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "社会調査法",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "フィールドワーク論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "比較社会学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "民俗学 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "民俗学 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "社会人類学 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "社会人類学 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "地域開発論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "地域振興論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "地域情報論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "応用数量分析",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "国際法 A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "国際法 B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "行政法",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Politics)C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Politics)D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Politics)E",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Politics)F",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Sociology)C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "Top School Seminar(Sociology)D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "留学認定科目（応用科目・政治学科）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "日本史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "東洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "西洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "地誌学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "人文地理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "自然地理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "法律学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "倫理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seiji"
+  },
+  {
+   "name": "マクロ経済学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "マクロ経済学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "ミクロ経済学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "ミクロ経済学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済学総合講座",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済政策",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "財政学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済学史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "現代経済事情",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済原論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "社会科学方法論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "統計学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "数量経済分析",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "日本経済史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "社会思想史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済思想",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "簿記論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics)A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics)B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics Policy)A",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics Policy)B",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "留学認定科目（基本科目・経済学科）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "社会経済史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "近代経済学史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "国際経済史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "現代経済史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "社会経済思想史",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "近代経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済統計学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済変動論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "計量経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "数理経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済政策原理",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "国際経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "現代日本経済論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "産業組織論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "金融論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "金融政策",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "国際金融論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "経済地理学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "地域開発論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "地域振興論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "地方財政論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "中小企業論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "地域産業論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "人口学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "労働経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "社会保障論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "協同組合学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "現代経済政策",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "食料経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "開発経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "国際経済政策",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "財政政策",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "環境経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "租税論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "応用数量分析",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics)C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics)D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics Policy)C",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "Top School Seminar(Economics Policy)D",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "留学認定科目（応用科目・経済学科）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "日本史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "東洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "西洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "地誌学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "人文地理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "自然地理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "法律学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "倫理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "keizai"
+  },
+  {
+   "name": "政策学基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "憲法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政治学基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政治理論基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "マクロ経済学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "ミクロ経済学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "行政学基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "行政理論基礎",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政策研究総合講座",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "経済政策",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": "選択必修",
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "民法（総則）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "民法（物権）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地域研究論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地域分析法",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "簿記論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "統計学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "社会科学方法論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "数量経済分析",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "社会学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "社会学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "憲法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "マクロ経済学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "ミクロ経済学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政策フィールドスタディーズ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政策評価・デザイン",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "財政学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "現代経済事情",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "留学認定科目（基本科目・政策学科）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "基本科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地域行政学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "都市政策",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "都市行政",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地方自治法",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "自治体経営論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地方財政論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "社会保障論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "情報政策論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "公共政策学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "公会計学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "行政法",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "社会福祉政策論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "コミュニティ福祉論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地域産業論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "中小企業論",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "協同組合学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "食料経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "労働経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "異文化ビジネス論概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "実践異文化ビジネス論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用政策論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用政策論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用政策論Ｃ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用政策論Ｄ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用政策論Ｅ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用政策論Ｆ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用政策論Ｇ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "環境経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地域情報論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "人口学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "経済地理学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地域開発論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地域振興論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "応用数量分析",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "民法（債権）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "民法（家族法）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "経済法",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "租税論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "経済政策原理",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "金融政策",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "現代経済政策",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "開発経済学",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "国際経済政策",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "財政政策",
+   "units": 4,
+   "hours": 60,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "国際法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "国際法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "観光・文化政策論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "社会的企業論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政策マーケティング",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政策実践総合講座",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "政策研究インターンシップ",
+   "units": 2,
+   "hours": 30,
+   "term": "通年",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "留学認定科目（応用科目・政策学科）",
+   "units": 1,
+   "hours": 15,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "日本史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "東洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "西洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "地誌学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "人文地理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "自然地理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "法律学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  },
+  {
+   "name": "倫理学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kihonouyou",
+   "kubunJa": "応用科目",
+   "scope": "seisaku"
+  }
+ ]
+}

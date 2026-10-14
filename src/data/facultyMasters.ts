@@ -107,6 +107,12 @@ const law: Faculty = {
 const politicaleconomics: Faculty = {
   id: "politicaleconomics", nameJa: "政治経済学部", schoolDomain: MEIJI, engine: "zones",
   deptLabel: "学科", match: /政治経済|政経|政治|経済学部/i,
+  // 区分別の最低単位は3学科共通。学科差は基本・応用科目の中身なので、CANの絞り込み用に保持。
+  canDepartments: [
+    { id: "seiji", nameJa: "政治学科" },
+    { id: "keizai", nameJa: "経済学科" },
+    { id: "seisaku", nameJa: "政策学科" },
+  ],
   bands: [{
     key: "2026", labelJa: "2026年度〜入学", admissionYearMax: null, totalRequired: 124,
     zones: [

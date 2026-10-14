@@ -24,6 +24,7 @@ import { MANAGEMENT_REQUIRED } from "../src/data/requiredCoursesManagement";
 import { MANAGEMENT_ALLOCATION } from "../src/data/allocationManagement";
 import { AGRICULTURE_ALLOCATION, AGRICULTURE_CAN_EXTRA_ZONES } from "../src/data/allocationAgriculture";
 import { LAW_ALLOCATION } from "../src/data/allocationLaw";
+import { POLITICALECONOMICS_ALLOCATION } from "../src/data/allocationPoliticalEconomics";
 import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
@@ -177,11 +178,13 @@ export default function GraduationScreen() {
     ? resolveZones(selBand, deptId, isRyugakusei)
     : null;
   const zoneBaseline = zoneCtx ? (zoneBaselines[zoneCtx] ?? {}) : {};
-  // 科目配当表（CAN）: 総合数理・経営・農・法 が整備済み。
+  // 科目配当表（CAN）: 総合数理・経営・農・法・政治経済 が整備済み。
   const allocCourses = selFaculty?.id === "interdisciplinary-math" && deptId
     ? INTERDISCIPLINARY_MATH_ALLOCATION[deptId] ?? null
     : selFaculty?.id === "agriculture" && deptId
     ? AGRICULTURE_ALLOCATION[deptId] ?? null
+    : selFaculty?.id === "politicaleconomics" && deptId
+    ? POLITICALECONOMICS_ALLOCATION[deptId] ?? null
     : selFaculty?.id === "law"
     ? LAW_ALLOCATION
     : selFaculty?.id === "management"
