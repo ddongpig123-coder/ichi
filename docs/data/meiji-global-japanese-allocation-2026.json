@@ -1,0 +1,5396 @@
+{
+ "_meta": {
+  "source": "明治大学 2026年度 国際日本学部便覧「3．国際日本学部授業科目配当表」(PDF p28-36)",
+  "sourceUrl": "https://www.meiji.ac.jp/nippon/mkmht000000uzoyt-att/qfki0t00000hysp0.pdf",
+  "indexUrl": "https://www.meiji.ac.jp/nippon/office-info/6t5h7p00000e66ny.html",
+  "extractedAt": "2026-10-14",
+  "faculty": "global-japanese",
+  "facultyNameJa": "国際日本学部",
+  "schoolDomain": "meiji.ac.jp",
+  "admissionYear": 2026,
+  "requirementMaster": "meiji-global-japanese-2026.json",
+  "tool": "pdfjs-dist(cMapUrl 상대경로) + x좌표 열 판정",
+  "columns": "科目名 x99-262 / 日本人学生マーク x~274 / 外国人留学生マーク x~316 / 単位数 x~361 / 総授業時間数 x~401 / 配当学年 x~446 / 備考 x472-",
+  "verification": [
+   "必修単位が要件マスターと完全一致: 日本人27単位 / 外国人留学生11単位。",
+   "zone別でも一致: 日本人の英語必修22（マスター eigo 22）、留学生の学術日本語必修6（マスター gakujutsu-nihongo 6）、総合教育の必修5（両トラック、マスター sogo-kyoiku-hisshu 5）。",
+   "選択必修は本表が候補プール（留学生の英語22・総合教育115・専門370）で、マスターの要件（英語14・総合教育8・専門50）以上であることを確認。",
+   "配当学年の欠落0件。スキップ2行のみ。"
+  ],
+  "notes": [
+   "⚠️ この配当表のマークは「日本人学生」「外国人留学生」の2列のみ。イングリッシュ・トラック(ET)学生の要件は別冊(AY2026 English Track Course Registration Handbook)で、本ファイルには含まれない。",
+   "日本語科目は留学生の必修枠(学術日本語Ⅰ〜Ⅲ)。日本人学生では自由選択に算入されるため、トラック別に zone を解決している(zoneFor)。",
+   "総合教育科目はマークで必修/選択必修に分かれるため、トラック別に sogo-kyoiku-hisshu / sogo-kyoiku-sentaku へ振り分けている。",
+   "大学院国際日本学研究科設置科目は卒業要件外のため除外。",
+   "配当学年は \"1\" / \"3・4\" / \"1～4\" / \"2～4\" の表記を数値配列に展開。"
+  ],
+  "skippedRows": 2
+ },
+ "tracks": [
+  {
+   "id": "ryugakusei",
+   "nameJa": "外国人留学生"
+  },
+  {
+   "id": "domestic",
+   "nameJa": "日本人学生"
+  }
+ ],
+ "poolSummary": {
+  "ryugakusei|eigo": {
+   "courses": 24,
+   "units": 40,
+   "required": 0,
+   "selectRequired": 22
+  },
+  "ryugakusei|daini-gaikokugo-jiyu": {
+   "courses": 30,
+   "units": 40,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "ryugakusei|gakujutsu-nihongo": {
+   "courses": 24,
+   "units": 39,
+   "required": 6,
+   "selectRequired": 0
+  },
+  "ryugakusei|senmon": {
+   "courses": 185,
+   "units": 370,
+   "required": 0,
+   "selectRequired": 370
+  },
+  "ryugakusei|sogo-kyoiku-hisshu": {
+   "courses": 4,
+   "units": 5,
+   "required": 5,
+   "selectRequired": 0
+  },
+  "ryugakusei|sogo-kyoiku-sentaku": {
+   "courses": 68,
+   "units": 127,
+   "required": 0,
+   "selectRequired": 115
+  },
+  "ryugakusei|jiyu": {
+   "courses": 12,
+   "units": 22,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "domestic|eigo": {
+   "courses": 24,
+   "units": 40,
+   "required": 22,
+   "selectRequired": 0
+  },
+  "domestic|daini-gaikokugo-jiyu": {
+   "courses": 30,
+   "units": 40,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "domestic|jiyu": {
+   "courses": 36,
+   "units": 61,
+   "required": 0,
+   "selectRequired": 0
+  },
+  "domestic|senmon": {
+   "courses": 185,
+   "units": 370,
+   "required": 0,
+   "selectRequired": 370
+  },
+  "domestic|sogo-kyoiku-hisshu": {
+   "courses": 4,
+   "units": 5,
+   "required": 5,
+   "selectRequired": 0
+  },
+  "domestic|sogo-kyoiku-sentaku": {
+   "courses": 68,
+   "units": 127,
+   "required": 0,
+   "selectRequired": 115
+  }
+ },
+ "courses": [
+  {
+   "name": "English（Speaking）Ⅰ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "English（Speaking）Ⅱ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "English（Listening）Ⅰ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "English（Listening）Ⅱ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "English（Reading & Writing）Ⅰ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "English（Reading & Writing）Ⅱ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Research Paper Writing",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Speech ＆ Presentation",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Advanced Reading & Writing",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Advanced Speaking & Listening",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "TOEIC Preparation Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "TOEIC Preparation Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "選択必修",
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "TOEFL Preparation",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Advanced Level TOEIC",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Current English A",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Current English B",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Discussion & Debate",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Integrated English A",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Integrated English B",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Literature Reading A",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Literature Reading B",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Practical Drama A",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Practical Drama B",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "Business English",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "eigo",
+   "kubunJa": "外国語科目",
+   "area": "英語"
+  },
+  {
+   "name": "ドイツ語（初級）Ａ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "ドイツ語（初級）Ｂ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "ドイツ語（中級）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "ドイツ語（中級）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "ドイツ語（中級）Ｃ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "ドイツ語（中級）Ｄ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "フランス語（初級）Ａ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "フランス語（初級）Ｂ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "フランス語（中級）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "フランス語（中級）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "フランス語（中級）Ｃ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "フランス語（中級）Ｄ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "中国語（初級）Ａ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "中国語（初級）Ｂ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "中国語（中級）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "中国語（中級）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "中国語（中級）Ｃ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "中国語（中級）Ｄ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "スペイン語（初級）Ａ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "スペイン語（初級）Ｂ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "スペイン語（中級）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "スペイン語（中級）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "スペイン語（中級）Ｃ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "スペイン語（中級）Ｄ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "韓国語（初級）Ａ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "韓国語（初級）Ｂ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "韓国語（中級）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "韓国語（中級）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "韓国語（中級）Ｃ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "韓国語（中級）Ｄ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "daini-gaikokugo-jiyu",
+   "kubunJa": "外国語科目",
+   "area": "第二外国語"
+  },
+  {
+   "name": "留学生のための学術日本語Ⅰ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": "必修",
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "留学生のための学術日本語Ⅱ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": "必修",
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "留学生のための学術日本語Ⅲ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": "必修",
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "Introductory Japanese（General）",
+   "units": 3,
+   "hours": 90,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "初級日本語（総合）",
+   "units": 3,
+   "hours": 90,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "初級日本語（語彙・漢字）",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "中級入門日本語（総合）",
+   "units": 3,
+   "hours": 90,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "中級入門日本語（語彙・漢字）",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "中級日本語（総合）",
+   "units": 3,
+   "hours": 90,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目",
+   "biko": "下 ET 学生）、交換留学生"
+  },
+  {
+   "name": "中級日本語（語彙・漢字）",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "中上級日本語（総合）",
+   "units": 3,
+   "hours": 90,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "中上級日本語（語彙・漢字）",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級入門日本語（総合）",
+   "units": 3,
+   "hours": 90,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級入門日本語（語彙・漢字）",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級日本語（聴解）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級日本語（聴解）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級日本語（読解）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級日本語（読解）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "上級日本語（文章表現）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目",
+   "biko": "み履修可能"
+  },
+  {
+   "name": "上級日本語（文章表現）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級日本語（口頭表現）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "上級日本語（口頭表現）Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目"
+  },
+  {
+   "name": "日本語能力試験対策（中級）",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目",
+   "biko": "ET 学 生、 外 国 人 留 学 生"
+  },
+  {
+   "name": "日本語能力試験対策（上級）",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "gakujutsu-nihongo",
+   "kubunJa": "日本語科目",
+   "biko": "あり"
+  },
+  {
+   "name": "漫画文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "漫画文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "アニメーション文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "アニメーション文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "日本先端文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "日本先端文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "現代都市とデザインＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "現代都市とデザインＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "ジェンダーと表象Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ジェンダーと表象Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "特撮の歴史と技術Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "特撮の歴史と技術Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "日本漫画史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "日本漫画史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "ポップカルチャー研究領域"
+  },
+  {
+   "name": "日本社会システム論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "日本社会システム論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "メディア社会学",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "広告とメディアＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "広告とメディアＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "クリエータービジネス論",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "ツーリズム・マネジメントＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "ツーリズム・マネジメントＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "グローバル化と金融サービス業Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "グローバル化と金融サービス業Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "ホスピタリティ・マネジメント論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "ホスピタリティ・マネジメント論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "テクノロジーと日本社会Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "テクノロジーと日本社会Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "メディア・アートＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "メディア・アートＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "組織マネジメントと文化Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "組織マネジメントと文化Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本の政治Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本の政治Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "インターネットと社会",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "日本的流通システム論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本的流通システム論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "コンテンツ産業論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "コンテンツ産業論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本的ものづくり論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "日本的ものづくり論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "日本技術移転史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本技術移転史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "知的財産と企業戦略Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "知的財産と企業戦略Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "社会保障論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "社会保障論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "経済団体研究Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "経済団体研究Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "都市交通システム論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "都市交通システム論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本のジャーナリズムＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本のジャーナリズムＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本人の行動モデルＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "日本人の行動モデルＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "国際マーケティング論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "国際マーケティング論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "社会システム・メディア研究領域"
+  },
+  {
+   "name": "国際経済史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "国際経済史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "平和学",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "アジア太平洋政治経済論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "アジア太平洋政治経済論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "東アジア地域研究Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "東アジア地域研究Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "東アジア地域研究Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "東アジア地域研究Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "多文化共生論",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "異文化間教育学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "異文化間教育学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "海外留学入門Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "海外留学入門Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "国際教育交流論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "国際教育交流論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "日本とドイツＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "日本とドイツＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "世界のなかのアフリカＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "世界のなかのアフリカＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "東南アジア地域研究Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "東南アジア地域研究Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "ヨーロッパ政治経済論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ヨーロッパ政治経済論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ファッション文化史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "ファッション文化史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "モードの神話学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "モードの神話学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "ダイバーシティと社会Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "ダイバーシティと社会Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "アフリカと近現代世界Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "アフリカと近現代世界Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "グローバル開発学入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "共生と学びのデザイン論",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "国際関係論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "国際関係論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "ロシアとユーラシアＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "ロシアとユーラシアＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "インド経済論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "インド経済論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "移民政策論",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "グローバル共生社会研究領域"
+  },
+  {
+   "name": "映画史概論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "映画史概論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "フランス文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "フランス文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "東アジア芸術論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "東アジア芸術論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "宗教と哲学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "宗教と哲学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "宗教と哲学Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "宗教と哲学Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "比較宗教論",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "比較文化学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "比較文化学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "比較文化学Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "比較文化学Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "ラテンアメリカの歴史と文化Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ラテンアメリカの歴史と文化Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2・3",
+   "years": [
+    2,
+    3
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "映像文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "映像文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "映像文化論Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "映像文化論Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "東アジア文化交流史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "東アジア文化交流史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "イスラーム史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "イスラーム史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "ヨーロッパ都市風俗論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "ヨーロッパ都市風俗論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "ヨーロッパ都市風俗論Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "ヨーロッパ都市風俗論Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "近現代イギリス研究Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "近現代イギリス研究Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "現代アメリカ論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "現代アメリカ論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "現代アメリカ論Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "現代アメリカ論Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "国際文化・思想研究領域"
+  },
+  {
+   "name": "武道文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "武道文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "海外日本研究事情",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本表象文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本表象文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "近現代日本文学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "近現代日本文学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "近現代日本文学Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "近現代日本文学Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "舞台芸術論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "舞台芸術論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "舞台芸術論Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "舞台芸術論Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本の哲学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本の哲学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "武道思想史",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "刀剣文化論",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本の文化伝統Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本の文化伝統Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "世界から見た日本美術Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "世界から見た日本美術Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "江戸学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "江戸学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "伝統芸能論",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "歌舞伎・能の美学",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本伝統工芸研究",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本映画文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本映画文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域"
+  },
+  {
+   "name": "日本の宗教Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "日本の宗教Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本文化・思想研究領域",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "日本語学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語と社会Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語と社会Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語教育学（文法）Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語教育学（文法）Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語教育学（語彙）Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語教育学（語彙）Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語教育学（音声）Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語教育学（音声）Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語の歴史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "日本語の歴史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "外国語としての日本語教育法Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "外国語としての日本語教育法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "日本語研究領域"
+  },
+  {
+   "name": "言語と文化Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "言語と文化Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "心理と言語Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域"
+  },
+  {
+   "name": "心理と言語Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域"
+  },
+  {
+   "name": "応用言語学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "応用言語学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "英語学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域"
+  },
+  {
+   "name": "英語学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "senmon",
+   "kubunJa": "国際日本学専門科目",
+   "area": "英語研究領域"
+  },
+  {
+   "name": "国際日本学入門講義",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "アカデミック・ICT リテラシー",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "学術的文章の作成",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "国際日本学基礎演習",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "必修",
+   "markRyugakusei": "必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "国際日本学講座",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "ET 学生のみ履修可能"
+  },
+  {
+   "name": "学術研究・キャリア開発入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "ET 学生のみ履修可能"
+  },
+  {
+   "name": "社会学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "政治学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "政治学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "経済学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "経済学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "経営学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "経営学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "西洋史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "西洋史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "日本史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "日本史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "アジア史Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "アジア史Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "地理学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "地理学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "統計学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "統計学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "人類学Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "人類学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "メディアリテラシーＡ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目"
+  },
+  {
+   "name": "メディアリテラシーＢ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1・2",
+   "years": [
+    1,
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "テクスト分析Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "テクスト分析Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "スポーツ・身体運動文化Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "スポーツ・身体運動文化Ｂ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "スポーツ・身体運動文化Ｃ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "スポーツ・身体運動文化Ｄ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "スポーツ・身体運動文化Ｅ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "集中科目"
+  },
+  {
+   "name": "国際日本学実践科目Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "国際日本学実践科目Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "国際日本学実践科目Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "国際日本学実践科目Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "国際日本学実践科目Ｅ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "集中科目"
+  },
+  {
+   "name": "国際日本学部特別講座Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "国際日本学部特別講座Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "国際日本学特別演習Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "国際日本学特別演習Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "3・4",
+   "years": [
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ｅ",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ｆ",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ｇ",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "社会連携科目Ｈ",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "海外インターンシップ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "海外ボランティア実習",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "全学共通総合講座",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT 統計解析入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT 統計解析応用",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT データベース入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT データベース応用",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT 画像編集入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT 画像編集応用",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT 動画編集入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT 動画編集応用",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "ICT 音楽編集入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "ICT 音楽編集応用",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "ICT プログラミング入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICT プログラミング応用",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICTWeb ページ作成",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "ICTe ラーニングデザイン入門",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "ICTe ラーニングデザイン応用",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "ICT プレゼンテーション",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": "選択必修",
+   "markRyugakusei": "選択必修",
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目",
+   "biko": "メディア授業科目併設"
+  },
+  {
+   "name": "日本国憲法",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "1～4",
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "sogo-kyoiku",
+   "kubunJa": "総合教育科目"
+  },
+  {
+   "name": "演習Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "演習Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "演習Ｃ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "演習Ｄ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2～4",
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "演習科目"
+  },
+  {
+   "name": "Study-Abroad Program",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "1",
+   "years": [
+    1
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目",
+   "biko": "集中科目"
+  },
+  {
+   "name": "留学関係科目（語学・実習）Ａ",
+   "units": 1,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目"
+  },
+  {
+   "name": "留学関係科目（語学・実習）Ｂ",
+   "units": 2,
+   "hours": 60,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目"
+  },
+  {
+   "name": "留学関係科目（講義）Ａ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目"
+  },
+  {
+   "name": "留学関係科目（講義）Ｂ",
+   "units": 3,
+   "hours": 45,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目"
+  },
+  {
+   "name": "留学関係科目（講義）Ｃ",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目"
+  },
+  {
+   "name": "海外大学等関係科目Ａ",
+   "units": 1,
+   "hours": 15,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目"
+  },
+  {
+   "name": "海外大学等関係科目Ｂ",
+   "units": 2,
+   "hours": 30,
+   "gradeRaw": "2",
+   "years": [
+    2
+   ],
+   "markDomestic": null,
+   "markRyugakusei": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学認定科目"
+  }
+ ]
+}
