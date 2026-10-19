@@ -30,7 +30,13 @@ const app = initializeApp({
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const PASSWORD = "ichitest1234";           // テスト専用の共通パスワード
+// テスト専用の共通パスワード。公開リポジトリなのでコードに書かない。
+// .env に TEST_ACCOUNT_PASSWORD=... を1行足すか、環境変数で渡す。
+const PASSWORD = process.env.TEST_ACCOUNT_PASSWORD || env.TEST_ACCOUNT_PASSWORD;
+if (!PASSWORD) {
+  console.error("TEST_ACCOUNT_PASSWORD が未設定。.env に1行足してから実行してください。");
+  process.exit(1);
+}
 const SCHOOL = "meiji.ac.jp";
 const C = ["#2F6AD9", "#E2574C", "#2FA84F", "#F0A93B", "#8E5CD9"];
 const s = (day, period, name, teacher, room, ci) => ({ day, period, name, teacher, room, color: C[ci % C.length] });

@@ -17,8 +17,15 @@ const app = initializeApp({
 const auth = getAuth(app), db = getFirestore(app);
 const YEAR = new Date().getFullYear();
 
+// 公開リポジトリなのでパスワードはコードに書かない（seed 側と同じキー）。
+const PASSWORD = process.env.TEST_ACCOUNT_PASSWORD || env.TEST_ACCOUNT_PASSWORD;
+if (!PASSWORD) {
+  console.error("TEST_ACCOUNT_PASSWORD が未設定。.env に1行足してから実行してください。");
+  process.exit(1);
+}
+
 for (const email of ["ichitest1@example.com","ichitest2@example.com","ichitest3@example.com","ichitest4@example.com"]) {
-  const { user } = await signInWithEmailAndPassword(auth, email, "ichitest1234");
+  const { user } = await signInWithEmailAndPassword(auth, email, PASSWORD);
   const u = (await getDoc(doc(db, "users", user.uid))).data();
   const pub = (await getDoc(doc(db, "usersPublic", user.uid))).data();
   const fall = (await getDoc(doc(db, "users", user.uid, "timetables", `${YEAR}-秋`))).data();
