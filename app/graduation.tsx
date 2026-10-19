@@ -239,27 +239,39 @@ export default function GraduationScreen() {
   );
   const eigoLabel = allocKey === "from2023" ? t("grad.rec.kikanEigo") : t("grad.rec.gaisen");
 
-  const calc = calcGrad(master, baseline, records, courseId, false);
-  const projected = calcGrad(master, baseline, records, courseId, true);
+  // 商学部エンジンの集計。商学部以外では結果を使わないので走らせない。
+  // メモ化しないと毎レンダー2回（現状＋見込み）走っていた。
+  const commerceCalc = useMemo(
+    () =>
+      isCommerce
+        ? {
+            calc: calcGrad(master, baseline, records, courseId, false),
+            projected: calcGrad(master, baseline, records, courseId, true),
+          }
+        : null,
+    [isCommerce, master, baseline, records, courseId],
+  );
+  const calc = commerceCalc?.calc ?? null;
+  const projected = commerceCalc?.projected ?? null;
 
   // 区分ごとの判定（不足分 diff・充足 met）。acq = 区分に算入された単位（超過分はフリーゾーンへ）。
   const zoneRows = master.zones.map((z) => {
-    const zc = calc.zones[z.id];
+    const zc = calc?.zones[z.id];
     const acq = zc?.counted ?? 0;
     const diff = Math.max(0, z.minUnits - acq);
     return {
       zone: z, acq, diff, met: zc?.met ?? false, overflow: zc?.overflow ?? 0,
-      planned: (projected.zones[z.id]?.counted ?? 0) - acq,
+      planned: (projected?.zones[z.id]?.counted ?? 0) - acq,
       subShort: zc?.subShort ?? false, subUnverified: zc?.subUnverified ?? false,
     };
   });
 
   const shortRows = zoneRows.filter((r) => !r.met).sort((a, b) => b.diff - a.diff);
   const unverifiedCount = zoneRows.filter((r) => r.subUnverified).length;
-  const totalAcquired = calc.total;
+  const totalAcquired = calc?.total ?? 0;
   const remaining = Math.max(0, master.totalRequired - totalAcquired);
   const pct = Math.min(100, Math.round((totalAcquired / master.totalRequired) * 100));
-  const projPct = Math.min(100, Math.round((projected.total / master.totalRequired) * 100));
+  const projPct = Math.min(100, Math.round(((projected?.total ?? 0) / master.totalRequired) * 100));
 
   // 記録の追加・状態変更 → どの区分に何単位入ったかを表示
   const zoneLabel = (id: string) => master.zones.find((z) => z.id === id)?.nameJa ?? id;
@@ -518,8 +530,8 @@ export default function GraduationScreen() {
           </>
         ) : null}
 
-        {/* 商学部（配当表まで整備済みの従来エンジン） */}
-        {isCommerce ? (
+        {/* 商学部（配当表まで整備済みの従来エンジン）。calc は商学部のときだけ作られる */}
+        {isCommerce && calc && projected ? (
         <>
         {/* 自コース（基幹科目の自/他判定・CAN候補に使う） */}
         <Text style={styles.miniLabel}>{t("grad.courseLabel")}</Text>
