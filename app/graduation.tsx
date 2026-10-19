@@ -10,7 +10,7 @@ import type { Theme } from "../src/theme/themes";
 import { GRAD_MASTERS, type GradMaster } from "../src/data/graduationMaster";
 import { COURSES_2021, YEAR3_ONLY } from "../src/data/graduationCourses2021";
 import { classifySubject, type AllocKey, type CourseId } from "../src/data/gradAllocationMeijiCommerce";
-import { calcGrad, canToggleOwnCourse, diffZones, GRAD_SUB_MINS, type GradRecord, type RecordStatus } from "../src/utils/gradCalc";
+import { calcGrad, canToggleOwnCourse, diffZones, GRAD_SUB_MINS, MEDIA_CAP, type GradRecord, type RecordStatus } from "../src/utils/gradCalc";
 import {
   loadGradState, saveGradState, loadTimetableSubjects, type TimetableSubject,
 } from "../src/services/gradRecordService";
@@ -748,14 +748,38 @@ export default function GraduationScreen() {
           </View>
         )}
 
-        {/* 履修のルール */}
+        {/* 履修のルール。メディア授業(〔M〕)の60単位上限は記録から集計して出す */}
         <Text style={styles.rulesHeading}>{t("grad.rulesHeading")}</Text>
-        {[t("grad.ruleCap"), t("grad.ruleMedia"), t("grad.ruleFree")].map((r, i) => (
-          <View key={i} style={styles.ruleCard}>
-            <Text style={styles.ruleDot}>•</Text>
-            <Text style={styles.ruleText}>{r}</Text>
+        {[
+          { text: t("grad.ruleCap"), over: false },
+          {
+            text:
+              `${t("grad.ruleMedia")}\n${t("grad.ruleMediaNow")}: ${calc.media} / ${MEDIA_CAP} ${t("grad.unit")}` +
+              (projected.media > calc.media ? ` ⏳ +${projected.media - calc.media}` : ""),
+            over: calc.media > MEDIA_CAP,
+          },
+          { text: t("grad.ruleFree"), over: false },
+        ].map((r, i) => (
+          <View key={i} style={[styles.ruleCard, r.over && styles.ruleCardWarn]}>
+            <Text style={[styles.ruleDot, r.over && styles.ruleTextWarn]}>•</Text>
+            <Text style={[styles.ruleText, r.over && styles.ruleTextWarn]}>{r.text}</Text>
           </View>
         ))}
+        {calc.media > MEDIA_CAP ? (
+          <View style={styles.mediaWarnCard}>
+            <Text style={styles.mediaWarnTitle}>
+              {t("grad.ruleMediaOver")} +{calc.media - MEDIA_CAP} {t("grad.unit")}
+            </Text>
+            <Text style={styles.mediaWarnText}>{t("grad.ruleMediaOverNote")}</Text>
+          </View>
+        ) : projected.media > MEDIA_CAP ? (
+          <View style={styles.mediaWarnCard}>
+            <Text style={styles.mediaWarnText}>{t("grad.ruleMediaProjOver")}</Text>
+          </View>
+        ) : null}
+        {calc.media > 0 || projected.media > 0 ? (
+          <Text style={styles.mediaMarkNote}>{t("grad.ruleMediaMark")}</Text>
+        ) : null}
 
         <View style={styles.disclaimer}>
           <Text style={styles.disclaimerText}>{t("grad.disclaimer")}</Text>
@@ -923,6 +947,15 @@ function makeStyles(theme: Theme) {
     },
     ruleDot: { fontSize: 13, color: theme.primary, fontWeight: "800", lineHeight: 18 },
     ruleText: { flex: 1, fontSize: 11.5, color: theme.textSecondary, lineHeight: 17 },
+    ruleCardWarn: { borderColor: theme.accent },
+    ruleTextWarn: { color: theme.accent, fontWeight: "700" },
+    mediaWarnCard: {
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.accent,
+      borderRadius: 10, padding: 11, marginTop: 7,
+    },
+    mediaWarnTitle: { fontSize: 12, color: theme.accent, fontWeight: "800", marginBottom: 3 },
+    mediaWarnText: { fontSize: 11.5, color: theme.textSecondary, lineHeight: 17 },
+    mediaMarkNote: { fontSize: 10.5, color: theme.textSecondary, marginTop: 6 },
 
     // 準備中(ゲート)
     soonCard: {

@@ -30,6 +30,22 @@ const OWN_COURSE_MIN = 28;
 const EIGO_MIN = 4; // 〜2022: 外国専門書講読 / 2023〜: 基幹英語
 export const GRAD_SUB_MINS = { ownCourse: OWN_COURSE_MIN, eigo: EIGO_MIN, sogoSub: 4 };
 
+// メディア授業（オンライン）科目は卒業要件に60単位まで算入できる（便覧 共通ルール）。
+export const MEDIA_CAP = 60;
+
+// メディア授業かどうかは「科目名に付く〔M〕マーカー」で判定する。
+// 配当表(AllocEntry)に科目単位のフラグを持たせないのは、〔M〕が科目そのものではなく
+// 開講クラスに付く印だからで（同じ科目に対面クラスとメディアクラスが併設されることがある。
+// 例: 農学部配当表の「メディア授業科目併設」）、商学部の配当表にも〔M〕は載っていない。
+// 一方シラバスから取り込んだ講義データは科目名に〔M〕を含み（例「教養演習ⅠＡ〔M〕」）、
+// 時間割→修得記録では名前がそのまま残るので、利用者が実際に取ったクラスの印で数えられる。
+// NFKC で全角［Ｍ］も半角 [M] に寄せてから見る（normalizeSubjectName と同じ扱い）。
+const MEDIA_MARK = /[〔[]\s*M\s*[〕\]]/i;
+
+export function isMediaSubject(name: string): boolean {
+  return MEDIA_MARK.test(name.normalize("NFKC"));
+}
+
 export interface ZoneCalc {
   raw: number;       // 区分に入った単位（手動入力＋記録）
   counted: number;   // 区分として算入（最低単位で頭打ち。フリーゾーンは超過分込み）
@@ -46,6 +62,7 @@ export interface GradCalc {
   ownCourse: number | null;     // 自コース基幹単位（コース未選択なら null）
   eigo: number;                 // 〜2022: 外国専門書講読 / 2023〜: 基幹英語
   sogoSubs: Record<"bunka" | "chiiki" | "ningen", number>;
+  media: number;                // メディア授業（科目名に〔M〕）の単位合計。MEDIA_CAP(60)が上限
 }
 
 function allocKeyOf(master: GradMaster): AllocKey {
@@ -82,6 +99,7 @@ export function calcGrad(
   let shikaku = 0;
   let ownCourse = 0;
   let eigo = 0;
+  let media = 0;
   const allocKey = allocKeyOf(master);
   const sogoSubs = { bunka: 0, chiiki: 0, ningen: 0 };
 
@@ -99,6 +117,9 @@ export function calcGrad(
       shikaku += u;
     }
     raw[r.zone] = (raw[r.zone] ?? 0) + u;
+    // 留学生・資格の上限で削った後の単位で数える（区分の最低単位を超えた分は
+    // フリーゾーンへ回って卒業要件には残るので、ここでは頭打ちしない）。
+    if (isMediaSubject(r.name)) media += u;
     if (isOwnCourse(r, courseId, allocKey)) ownCourse += u;
     if (c?.entry.kikanEigo && r.zone === "kikan") eigo += u;
     const sub = c?.entry.sub;
@@ -140,7 +161,7 @@ export function calcGrad(
     zones.freezone = { raw: r, counted: r, overflow: 0, min: fz.minUnits, met: r >= fz.minUnits, subShort: false, subUnverified: false };
   }
   const total = Object.values(zones).reduce((s, z) => s + z.counted, 0);
-  return { zones, total, ownCourse: courseId ? ownCourse : null, eigo, sogoSubs };
+  return { zones, total, ownCourse: courseId ? ownCourse : null, eigo, sogoSubs, media };
 }
 
 
