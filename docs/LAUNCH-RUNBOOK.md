@@ -123,10 +123,19 @@
 출시 전 `/code-review` 결과. **수정됨**: ① 신규투고 댓글배지 ② 와세다 서브도메인 이메일.
 아래는 **미수정**(경미/사전존재) — 출시 블로커 아님, 여유 될 때 정리 권장:
 
-- **[계정삭제] deleteUser 실패 시 고아 계정**(authService): 재인증 후라 드물지만, `deleteSelfData` 뒤
-  `deleteUser`가 네트워크로 실패하면 프로필만 지워지고 Auth 계정은 남음. 다음 로드 때 `ensureUserProfile`로
-  최소 프로필 자가복구되나 "삭제했는데 계정 생존" 상태. **완전 원자적 삭제는 Cloud Functions 필요**(Blaze).
-  현재 UI는 실패 시 "다시 시도" 안내 → 재시도로 보통 해소.
+- **[계정삭제] deleteUser 실패 시 고아 계정**(authService) — **✅ 확인됨(2026-10-20, 코드 수정 없음)**:
+  재인증 후라 드물지만, `deleteSelfData` 뒤 `deleteUser`가 네트워크로 실패하면 프로필만 지워지고 Auth 계정은
+  남음. 다음 로드 때 `ensureUserProfile`로 최소 프로필 자가복구되나 "삭제했는데 계정 생존" 상태.
+  **완전 원자적 삭제는 Cloud Functions 필요**(Blaze) → 1.0 범위 밖.
+  **재시도 경로 점검 결과 — 실제로 동작함**:
+  ① `account.tsx:runDeleteAccount`의 `finally`가 `busy`를 풀어 삭제 버튼이 다시 눌림.
+  ② 실패 시 `goBack()`을 하지 않고 `isGuest`도 false 그대로라 계정 삭제 카드가 화면에 남음.
+  ③ 비밀번호 입력값은 성공 시에만 비우므로(`setDeletePassword("")`) 재입력 없이 바로 재시도 가능.
+  ④ `deleteSelfData`는 전부 `deleteDoc(...).catch(() => {})`라 **멱등** — 이미 지워진 문서에 다시 돌려도
+  실패하지 않음(`updateDoc` 미사용). `clearGradState`도 예외를 삼킴. 재인증에 쓰는 `user.email`은
+  Auth 쪽 값이라 Firestore 프로필이 지워져도 남아 있음.
+  ⚠️ 단, 실패 알림 문구는 `account.deleteFailed`("削除に失敗しました") + 에러 메시지뿐이고 **"다시 시도하세요"라는
+  문장은 없음**(버튼이 그대로 남아 있어 재시도 자체는 가능). 문구 보강은 선택사항.
 - **[쪽지 미읽음] 서버/단말 시계 오차**(chatService.isChatUnread): `lastRead`=단말 `Date.now()` vs
   `lastMessageAt`=serverTimestamp 비교라 시계 스큐 시 배지 오작동 가능. serverTimestamp 통일 권장.
 - **[졸업화면] calcGrad 2회 실행**(graduation.tsx): 商 외 학부에서도 商용 calc가 매 렌더 2회 실행(결과 미사용).
