@@ -77,6 +77,9 @@
 - [ ] `npm i -g eas-cli`
 - [ ] `eas login` (Expo 계정 = 이미 만든 그 계정 사용 가능)
 - [ ] `eas init` → 프로젝트 생성, `app.json`에 `extra.eas.projectId` 자동 기입됨(커밋 OK)
+- [ ] `eas update:configure` → `app.json`에 `updates.url` 기입. **프로덕션 빌드 전에 반드시**
+      (OTA = 졸업요건 데이터·버그픽스를 심사 없이 배포. 빌드에 포함돼 있어야만 작동 —
+      운용 규칙은 [LAUNCH-RUNBOOK.md](LAUNCH-RUNBOOK.md) "OTA 업데이트" 절)
 - [ ] `.env`는 커밋 금지 유지. **EAS 빌드에 env 주입**: `eas env:create`(또는 eas.json `env`)로
       `EXPO_PUBLIC_FIREBASE_*` 6개 + `EXPO_PUBLIC_MICROSOFT_CLIENT_ID` 등록
       (EXPO_PUBLIC_ 접두사는 클라 공개값이라 빌드에 포함되어야 함).
