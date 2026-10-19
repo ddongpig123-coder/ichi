@@ -57,11 +57,6 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
       });
   }, []);
 
-  const persistSeen = useCallback((next: Record<string, number>) => {
-    setSeen(next);
-    AsyncStorage.setItem(SEEN_KEY, JSON.stringify(next)).catch(() => {});
-  }, []);
-
   // ── ① メッセージ未読（リアルタイム購読） ──
   useEffect(() => {
     if (!user || !schoolDomain) {
