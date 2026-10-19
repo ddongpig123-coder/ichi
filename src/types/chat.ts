@@ -4,7 +4,7 @@ export interface ChatRoom {
   relatedPostTitle: string;
   lastMessage: string;
   lastSenderUid?: string;      // 最後の発言者（未読バッジ判定）
-  lastRead?: Record<string, number>; // uid → 最後に読んだ時刻(ms)
+  lastRead?: Record<string, number>; // uid → 最後に読んだ時刻(ms。保存は serverTimestamp、読み出しで ms 化)
   lastMessageAt: number;
   createdAt: number;
 }
