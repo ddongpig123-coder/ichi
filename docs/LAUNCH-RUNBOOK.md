@@ -118,10 +118,11 @@
 
 ---
 
-## 부록 — 코드리뷰 노트 (2026-10-11, 미수정 항목)
+## 부록 — 코드리뷰 노트 (2026-10-11 → 2026-10-20 전부 처리 완료)
 
 출시 전 `/code-review` 결과. **수정됨**: ① 신규투고 댓글배지 ② 와세다 서브도메인 이메일.
-아래는 **미수정**(경미/사전존재) — 출시 블로커 아님, 여유 될 때 정리 권장:
+아래 4건은 당시 **미수정**으로 남겼던 항목(경미/사전존재, 출시 블로커 아님).
+**2026-10-20에 전부 처리됨** — 3건은 코드 수정, 1건(계정삭제)은 확인만 하고 코드는 그대로 둠:
 
 - **[계정삭제] deleteUser 실패 시 고아 계정**(authService) — **✅ 확인됨(2026-10-20, 코드 수정 없음)**:
   재인증 후라 드물지만, `deleteSelfData` 뒤 `deleteUser`가 네트워크로 실패하면 프로필만 지워지고 Auth 계정은
@@ -136,8 +137,14 @@
   Auth 쪽 값이라 Firestore 프로필이 지워져도 남아 있음.
   ⚠️ 단, 실패 알림 문구는 `account.deleteFailed`("削除に失敗しました") + 에러 메시지뿐이고 **"다시 시도하세요"라는
   문장은 없음**(버튼이 그대로 남아 있어 재시도 자체는 가능). 문구 보강은 선택사항.
-- **[쪽지 미읽음] 서버/단말 시계 오차**(chatService.isChatUnread): `lastRead`=단말 `Date.now()` vs
-  `lastMessageAt`=serverTimestamp 비교라 시계 스큐 시 배지 오작동 가능. serverTimestamp 통일 권장.
-- **[졸업화면] calcGrad 2회 실행**(graduation.tsx): 商 외 학부에서도 商용 calc가 매 렌더 2회 실행(결과 미사용).
-  마스터가 작아 체감 無. isCommerce 가드 or useMemo로 정리 가능(로직 상관관계 있어 신중히).
-- **[알림] persistSeen 死코드**(NotificationsContext): 정의됐으나 미사용. setSeen 내 인라인 저장으로 대체됨 → 제거 가능.
+- **[쪽지 미읽음] 서버/단말 시계 오차**(chatService.isChatUnread) — **✅ 수정됨(2026-10-20)**:
+  `lastRead`=단말 `Date.now()` vs `lastMessageAt`=serverTimestamp 비교라 시계 스큐 시 배지 오작동 가능했음.
+  `markChatRead`도 `serverTimestamp()`로 통일하고, 읽을 때 `lastRead` 맵을 ms로 정규화(`toMsMap`).
+  옛 number 데이터도 그대로 읽히고, 쓰기 직후 로컬 스냅샷(null)은 "지금"으로 쳐서 배지가 되살아나지 않음.
+  chats update 규칙은 필드 검증이 없어 **규칙 배포 불필요**.
+- **[졸업화면] calcGrad 2회 실행**(graduation.tsx) — **✅ 수정됨(2026-10-20)**:
+  `isCommerce` 가드 + `useMemo`로 정리. 商学部일 때만, 입력(master·baseline·records·courseId)이 바뀔 때만 계산.
+  `calc`/`projected`가 null일 수 있어 商学部 블록을 `isCommerce && calc && projected` 가드 안으로 넣음.
+  **판정 결과는 수정 전후 동일**(회귀 스냅샷 5개 시나리오 완전 일치 + 웹 미리보기에서 商学部 화면 확인).
+- **[알림] persistSeen 死코드**(NotificationsContext) — **✅ 수정됨(2026-10-20)**: 제거.
+  `setSeen` 내 인라인 저장이 이미 대체하고 있었음.
