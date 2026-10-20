@@ -51,6 +51,51 @@ export async function saveGradState(uid: string | null, state: GradState): Promi
   }
 }
 
+// ── バックアップ（書き出し / 読み込み） ───────────────────────────
+// 記録は端末ローカルにしか無いので、機種変更・再インストールで消える。
+// E2E 金庫（CREDIT-TRACKING §6-2, Phase 3）ができるまでの橋渡しとして、
+// JSON テキストで手動の持ち出し・持ち込みを用意する。
+// ファイル入出力ではなくテキストにしたのは依存パッケージを増やさないため
+// （ネイティブは OS の共有シート、Web はクリップボードに載せる）。
+
+const BACKUP_KIND = "ichi.gradRecords";
+
+export interface GradBackup {
+  kind: typeof BACKUP_KIND;
+  version: 2;
+  exportedAt: string;
+  state: GradState;
+}
+
+export function serializeGradState(state: GradState): string {
+  const payload: GradBackup = {
+    kind: BACKUP_KIND,
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    state,
+  };
+  return JSON.stringify(payload, null, 2);
+}
+
+// 貼り付けテキストから GradState を取り出す。壊れていれば null（呼び出し側で「形式が違う」表示）。
+export function parseGradBackup(text: string): GradState | null {
+  try {
+    const parsed = JSON.parse(text.trim());
+    const st = parsed?.kind === BACKUP_KIND ? parsed.state : parsed; // 素の GradState も受ける
+    if (!st || typeof st !== "object") return null;
+    if (!Array.isArray(st.records)) return null;
+    return {
+      version: 2,
+      records: st.records,
+      baseline: st.baseline && typeof st.baseline === "object" ? st.baseline : {},
+      courseId: st.courseId ?? null,
+      zoneBaselines: st.zoneBaselines && typeof st.zoneBaselines === "object" ? st.zoneBaselines : {},
+    };
+  } catch {
+    return null;
+  }
+}
+
 // アカウント削除時に端末ローカルの成績記録を消す（本人以外がこの端末を使う場合のプライバシー）。
 export async function clearGradState(uid: string | null): Promise<void> {
   try {
