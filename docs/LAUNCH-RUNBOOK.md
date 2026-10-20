@@ -103,6 +103,43 @@
 
 ---
 
+## OTA 업데이트 (EAS Update) — 심사 없이 내보내기
+
+> **왜 넣었나**: 졸업요건 마스터가 앱 번들 내 코드(`src/data/*.ts`)라서, 학교·학부를 추가하면
+> 원래는 재빌드 + 스토어 심사가 필요했다. OTA가 있으면 JS·데이터·버그픽스는 심사 없이 배포된다.
+> ⚠️ **프로덕션 빌드에 `expo-updates`가 들어 있어야만 작동** → 그래서 첫 빌드 전인 2026-10-20에 도입했다.
+
+도입 완료분(2026-10-20): `expo-updates ~57.0.26` 설치 · `app.json`에
+`runtimeVersion: { policy: "appVersion" }` · `eas.json`은 이미 프로필별 `channel` 보유.
+
+### 1회 세팅 (본인 — Expo 로그인 필요)
+- [ ] **[본인]** `eas update:configure` → `app.json`에 `updates.url`, `extra.eas.projectId` 자동 기입(커밋 OK)
+      ※ `eas init`을 먼저 했으면 projectId는 이미 있음. **이 설정 없이는 OTA가 동작하지 않는다.**
+
+### 평소 운용
+```
+eas update --channel production --message "졸업요건: 와세다 商 추가" --environment production
+```
+- `--environment`는 **SDK 55+에서 필수**.
+- 테스트는 `--channel preview`로 먼저. 단말은 앱을 완전히 종료 후 2회까지 재실행하면 적용된다
+  (백그라운드 다운로드 → 다음 시작 시 반영).
+
+### OTA로 되는 것 / 안 되는 것
+| 되는 것 | 안 되는 것(= 재빌드+심사) |
+|---|---|
+| 졸업요건 마스터·배당표 등 데이터 추가 | 네이티브 패키지 추가·제거 (expo-* 설치 등) |
+| 화면·문구·i18n·버그픽스 | `app.json`의 권한·아이콘·번들ID 변경 |
+| 스타일·레이아웃 수정 | SDK 업그레이드 |
+
+- **runtimeVersion = `appVersion` 정책**: `app.json`의 `version`(현재 1.0.0)이 런타임 식별자다.
+  **version을 올리면 기존 설치본은 새 OTA를 받지 못한다**(새 빌드를 받아야 함). 반대로 네이티브를
+  건드렸는데 version을 안 올리고 OTA를 쏘면 **구버전 네이티브에 신버전 JS가 얹혀 크래시할 수 있다.**
+  → 규칙: **네이티브가 바뀌면 version을 올리고 재빌드. JS만 바뀌면 version 그대로 OTA.**
+- **스토어 규정**: 버그픽스·콘텐츠·데이터 갱신은 OTA 허용. 앱의 **주 목적·주 기능을 바꾸는** OTA는
+  Apple 가이드라인 위반이다. 새 기능은 심사를 통해 낼 것.
+
+---
+
 ## 🛑 정지선 (사람 확인 필수 — Claude 단독 금지)
 1. `npm run deploy:web` (프로덕션 웹 배포)
 2. `firebase ... deploy` (규칙/호스팅 배포)
