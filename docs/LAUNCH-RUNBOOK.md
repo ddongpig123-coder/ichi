@@ -166,6 +166,23 @@ npm run deploy:web      # → https://ichi-6b8f7.web.app
 ```sh
 git config --unset core.hooksPath
 ```
+## `eas submit` 시 Apple ID 입력 (eas.json에 안 둠)
+
+`submit.production.ios.appleId`는 **일부러 비워뒀습니다.** 준희님 Apple 계정 이메일이
+커밋 이력에 없는 주소라, 공개 저장소에 적으면 그 주소가 새로 노출되기 때문입니다.
+
+제출할 때 둘 중 하나로 넘기세요:
+
+```sh
+# (a) 환경변수로
+EXPO_APPLE_ID="your@email" eas submit -p ios --profile production
+
+# (b) 그냥 실행하면 대화형으로 물어봅니다
+eas submit -p ios --profile production
+```
+
+`appleTeamId`(`3498G5A326`)와 `ascAppId`는 비밀값이 아니라 eas.json에 그대로 둡니다
+(`ascAppId`는 App Store Connect에서 앱 생성 후 준희님이 채웁니다).
 
 ---
 ## 🛑 정지선 (사람 확인 필수 — Claude 단독 금지)
