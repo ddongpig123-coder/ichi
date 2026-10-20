@@ -140,6 +140,34 @@ eas update --channel production --message "졸업요건: 와세다 商 추가" -
 
 ---
 
+## 웹 배포는 수동 1단계 (2026-10-20 — pre-push 훅 폐지)
+
+```sh
+npm run deploy:web      # → https://ichi-6b8f7.web.app
+```
+
+**왜 훅을 없앴나.** 이전에는 태희 PC의 `.githooks/pre-push`가 푸시마다 `npm run deploy:web`을
+돌렸다. 문제가 두 가지였다:
+
+1. **브랜치 구분이 없어서** 피처 브랜치 푸시 한 번에 운영이 배포됐다(2026-10-20 실제 발생).
+2. **`.claude/settings.json`의 deny를 우회했다.** deny는 Claude의 Bash 호출을 막지만,
+   훅은 `git push` 내부에서 git이 실행하므로 걸리지 않는다. 즉 "배포는 사람이"라는 규칙이
+   훅 하나로 무력화됐다.
+
+새 브랜치 규칙에서는 master가 **GitHub PR 머지**로 갱신되고 그건 로컬 훅을 아예 안 거치므로,
+훅을 master 전용으로 좁혀도 거의 돌지 않는다. 그래서 훅에서 배포를 빼고 **명시적 수동 실행**으로 되돌린다.
+
+> 장차 자동화하려면 GitHub Actions(master 머지 시 배포)로 옮기는 편이 맞다.
+> 다만 Firebase 서비스 계정 키 + `EXPO_PUBLIC_*` 7개를 GitHub Secrets에 넣어야 해서
+> 출시 주간에 할 일은 아니다. 1.0 이후 과제.
+
+**훅을 이미 켠 PC는 해제할 것** (로컬 설정이라 커밋으로는 안 꺼진다):
+
+```sh
+git config --unset core.hooksPath
+```
+
+---
 ## 🛑 정지선 (사람 확인 필수 — Claude 단독 금지)
 1. `npm run deploy:web` (프로덕션 웹 배포)
 2. `firebase ... deploy` (규칙/호스팅 배포)
