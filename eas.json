@@ -24,8 +24,8 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "REPLACE_APPLE_ID_EMAIL",
-        "ascAppId": "REPLACE_APP_STORE_CONNECT_APP_ID",
+        
+                "ascAppId": "REPLACE_APP_STORE_CONNECT_APP_ID",
         "appleTeamId": "3498G5A326"
       },
       "android": {
