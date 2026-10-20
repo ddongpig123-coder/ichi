@@ -19,15 +19,21 @@ export interface CourseUnit {
 
 const slotKey = (day: Day, period: Period) => `${day}${period}`;
 
-// 講義名 + 教員 + 科目ナンバーでコマをまとめる。同一キーは週複数コマの同一講義と
-// みなし、必ずセットで配置する。
+// グルーピングキー。同一キーは週複数コマの同一講義とみなし、必ずセットで配置する。
 // ※ courseNumber 単独では束ねない: シラバスデータは未採番講義に "-" 等の
 //   プレースホルダを共有で持つことがあり、それだと別々の講義まで1つに融合してしまう。
 //   名前・教員を含めることで、本当に同一の講義（曜日/時限違い）だけをまとめる。
+// 候補プールから1講義を取り除く側(画面)も必ずこれを使うこと — CourseUnit.courses には
+// 同じ曜限の重複コマが入らないので、Course.id で引くと取りこぼす。
+export function courseUnitKey(c: Course): string {
+  return `${c.name}@@${c.teacher}@@${c.courseNumber ?? ""}`;
+}
+
+// 講義名 + 教員 + 科目ナンバーでコマをまとめる。
 export function groupCourseUnits(courses: Course[]): CourseUnit[] {
   const map = new Map<string, CourseUnit>();
   for (const c of courses) {
-    const key = `${c.name}@@${c.teacher}@@${c.courseNumber ?? ""}`;
+    const key = courseUnitKey(c);
     let u = map.get(key);
     if (!u) {
       u = { key, name: c.name, teacher: c.teacher, credits: c.credits ?? 0, slots: [], courses: [] };
