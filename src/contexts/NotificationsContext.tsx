@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "./AuthContext";
 import { isChatUnread, markChatRead, subscribeToMyChats } from "../services/chatService";
@@ -43,17 +43,19 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   const [unreadChatCount, setUnreadChatCount] = useState(0);
   const [myPosts, setMyPosts] = useState<MyPostItem[]>([]);
   const [seen, setSeen] = useState<Record<string, number>>({});
-  const seenLoaded = useRef(false);
+  // ref ではなく state。ref だとロード完了が再レンダーを起こさず、
+  // 下の newCommentKeys(useMemo) と refreshMyPosts の初回シードが取り残される。
+  const [seenLoaded, setSeenLoaded] = useState(false);
 
   // ── 既読コメント数のロード ──
   useEffect(() => {
     AsyncStorage.getItem(SEEN_KEY)
       .then((raw) => {
         if (raw) setSeen(JSON.parse(raw));
-        seenLoaded.current = true;
+        setSeenLoaded(true);
       })
       .catch(() => {
-        seenLoaded.current = true;
+        setSeenLoaded(true);
       });
   }, []);
 
@@ -89,7 +91,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     setMyPosts(posts);
 
     // 初回（保存が空）のときは現在値で初期化して過去分を新着扱いしない
-    if (seenLoaded.current) {
+    if (seenLoaded) {
       setSeen((prev) => {
         if (Object.keys(prev).length > 0) return prev;
         const init: Record<string, number> = {};
@@ -100,7 +102,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         return init;
       });
     }
-  }, [user, schoolDomain, schoolReady]);
+  }, [user, schoolDomain, schoolReady, seenLoaded]);
 
   useEffect(() => {
     refreshMyPosts();
@@ -132,13 +134,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   // 以前は prev!==undefined で除外していたため、新規投稿に付いたコメントが永遠にバッジにならなかった。
   // seen の読み込み完了前は空(過去分の一瞬の誤点灯を防ぐ)。unmemoized だと毎レンダー新Set→全consumer再描画になるため useMemo。
   const newCommentKeys = useMemo(() => {
-    if (!seenLoaded.current) return new Set<string>();
+    if (!seenLoaded) return new Set<string>();
     return new Set(
       myPosts
         .filter((p) => (p.commentCount ?? 0) > (seen[myPostKey(p.kind, p.boardId, p.id)] ?? 0))
         .map((p) => myPostKey(p.kind, p.boardId, p.id))
     );
-  }, [myPosts, seen]);
+  }, [myPosts, seen, seenLoaded]);
 
   return (
     <NotificationsContext.Provider

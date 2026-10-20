@@ -20,10 +20,11 @@ import { searchCourses } from "../src/services/courseService";
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
-import { DAYS, type ClassSession, type Day, type Period } from "../src/types/timetable";
+import { DAYS, type ClassSession, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
 import {
   groupCourseUnits,
+  courseUnitKey,
   generateTimetables,
   type CourseUnit,
   type WizardOutcome,
@@ -157,8 +158,9 @@ export default function TimetableWizardScreen() {
   }
 
   function removeUnit(u: CourseUnit) {
-    const slotIds = new Set(u.courses.map((c) => c.id));
-    setCandidates((prev) => prev.filter((c) => !slotIds.has(c.id)));
+    // キーで消す。同じ講義の同じ曜限が2件ある(別キャンパス開講など)と groupCourseUnits が
+    // 2件目を u.courses に入れないため、id で消すと候補に残ってユニットが復活してしまう。
+    setCandidates((prev) => prev.filter((c) => courseUnitKey(c) !== u.key));
     setRequiredKeys((prev) => {
       const next = new Set(prev);
       next.delete(u.key);

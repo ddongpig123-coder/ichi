@@ -175,7 +175,11 @@ export default function GraduationScreen() {
   const blocked = profileReady && schoolReady && coverage !== "meiji" && !override;
 
   // 区分のみ診断の解決マスターと入力（コンテキストごと）。
-  const zoneCtx = selFaculty && !isCommerce ? zoneCtxKey(selFaculty.id, deptId, isRyugakusei) : null;
+  // 区分が学科で変わる学部(byDepartment あり)だけ deptId を鍵に含める。法・政経・経営の
+  // canDepartments は CAN の絞り込み専用で区分は全学科共通なので、鍵に入れるとコースを
+  // 選び替えただけで入力済みの単位が別バケットに飛んで消えてしまう。
+  const zoneCtxDept = selBand?.byDepartment?.length ? deptId : null;
+  const zoneCtx = selFaculty && !isCommerce ? zoneCtxKey(selFaculty.id, zoneCtxDept, isRyugakusei) : null;
   const resolvedZones = selFaculty && selBand && !isCommerce
     ? resolveZones(selBand, deptId, isRyugakusei)
     : null;

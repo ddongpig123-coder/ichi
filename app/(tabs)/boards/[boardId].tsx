@@ -19,7 +19,7 @@ import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchPosts, fetchBoardSearchCandidates } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
-import { OFFICIAL_BOARDS, boardLabel, isQaBoard, qaTagLabel, QA_TAGS, type BoardId, type Post } from "../../../src/types/board";
+import { boardLabel, isQaBoard, qaTagLabel, QA_TAGS, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
 
 export default function PostListScreen() {
