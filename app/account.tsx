@@ -204,11 +204,21 @@ export default function AccountScreen() {
   }
 
   // ── 外部ログイン（Microsoft / Google / X / LINE）の表示可否 ─────────────
-  // いずれも Firebase の popup フロー = Web 専用で、ネイティブでは「準備中」しか出ない。
-  // 動かないボタンは App Store 審査 2.1(App Completeness) に触れる。さらに 4.8 で
-  // 第三者ログインを載せるなら Sign in with Apple の併設が必須になるため、
-  // 1.0 ではネイティブで外部ログインを出さない（実装は残す＝Webと将来のdev-client用）。
-  const showExternalLogin = Platform.OS === "web";
+  // 1.0 では **全プラットフォームで非表示**（2026-10-20 決定）。実装は消さずに残す。
+  //
+  // ネイティブで出せない理由:
+  //   いずれも Firebase の popup フロー = Web 専用で、実機では「準備中」しか出ない。
+  //   動かないボタンは審査 2.1(App Completeness) に触れ、さらに 4.8 で第三者ログインを
+  //   載せるなら Sign in with Apple の併設が必須になる。
+  //
+  // Web でも出さない理由:
+  //   パスワードを持たない純粋な OAuth アカウントは、ネイティブでは**ログインも
+  //   アカウント削除もできない**（再認証が popup = Web 専用。authService の
+  //   DELETE_SOCIAL_WEB_ONLY）。Web は既にライブなので、そういう「消せないアカウント」が
+  //   生まれる前に入口を塞ぐ。Apple はアプリ内でのアカウント削除を必須にしている。
+  //
+  // 2.0 で Sign in with Apple と一緒に復活させる予定。その時はここを戻すだけでよい。
+  const showExternalLogin = false;
 
   // 登録/ログイン両モードで使う ソーシャルボタン群（Google / X / LINE）。
   function renderSocialButtons() {
