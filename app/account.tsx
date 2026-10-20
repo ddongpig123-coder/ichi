@@ -203,8 +203,16 @@ export default function AccountScreen() {
     }
   }
 
+  // ── 外部ログイン（Microsoft / Google / X / LINE）の表示可否 ─────────────
+  // いずれも Firebase の popup フロー = Web 専用で、ネイティブでは「準備中」しか出ない。
+  // 動かないボタンは App Store 審査 2.1(App Completeness) に触れる。さらに 4.8 で
+  // 第三者ログインを載せるなら Sign in with Apple の併設が必須になるため、
+  // 1.0 ではネイティブで外部ログインを出さない（実装は残す＝Webと将来のdev-client用）。
+  const showExternalLogin = Platform.OS === "web";
+
   // 登録/ログイン両モードで使う ソーシャルボタン群（Google / X / LINE）。
   function renderSocialButtons() {
+    if (!showExternalLogin) return null;
     const suffix = mode === "register" ? "Register" : "Login";
     return (
       <>
@@ -435,14 +443,18 @@ export default function AccountScreen() {
               </Text>
             </TouchableOpacity>
 
-            <Text style={styles.dividerText}>{t("account.or")}</Text>
-            <TouchableOpacity
-              style={[styles.microsoftButton, busy && styles.buttonDisabled]}
-              onPress={handleMicrosoft}
-              disabled={busy}
-            >
-              <Text style={styles.microsoftButtonText}>{t("account.microsoftRegister")}</Text>
-            </TouchableOpacity>
+            {showExternalLogin && (
+              <>
+                <Text style={styles.dividerText}>{t("account.or")}</Text>
+                <TouchableOpacity
+                  style={[styles.microsoftButton, busy && styles.buttonDisabled]}
+                  onPress={handleMicrosoft}
+                  disabled={busy}
+                >
+                  <Text style={styles.microsoftButtonText}>{t("account.microsoftRegister")}</Text>
+                </TouchableOpacity>
+              </>
+            )}
             {renderSocialButtons()}
 
             <TouchableOpacity onPress={() => setMode("login")}>
@@ -490,14 +502,18 @@ export default function AccountScreen() {
               </Text>
             </TouchableOpacity>
 
-            <Text style={styles.dividerText}>{t("account.or")}</Text>
-            <TouchableOpacity
-              style={[styles.microsoftButton, busy && styles.buttonDisabled]}
-              onPress={handleMicrosoft}
-              disabled={busy}
-            >
-              <Text style={styles.microsoftButtonText}>{t("account.microsoftLogin")}</Text>
-            </TouchableOpacity>
+            {showExternalLogin && (
+              <>
+                <Text style={styles.dividerText}>{t("account.or")}</Text>
+                <TouchableOpacity
+                  style={[styles.microsoftButton, busy && styles.buttonDisabled]}
+                  onPress={handleMicrosoft}
+                  disabled={busy}
+                >
+                  <Text style={styles.microsoftButtonText}>{t("account.microsoftLogin")}</Text>
+                </TouchableOpacity>
+              </>
+            )}
             {renderSocialButtons()}
 
             <TouchableOpacity onPress={() => setMode("register")}>
