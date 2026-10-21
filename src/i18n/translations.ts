@@ -30,11 +30,11 @@ const ja = {
   "tabs.profile": "プロフィール",
 
   // オンボーディング
-  "onboarding.welcome": "ichiへようこそ",
+  "onboarding.welcome": "大学の森へようこそ",
   "onboarding.subtitle": "日本の大学生活を、もっとつながりやすく",
   "onboarding.termsTitle": "利用規約への同意",
   "onboarding.termsSummary":
-    "ichiを利用するには、利用規約とプライバシーポリシーへの同意が必要です。\n\n・掲示板はニックネーム・匿名で利用できますが、運営者は法令に基づき投稿者を特定できる情報を保持します\n・誹謗中傷・個人情報の無断公開などの禁止行為には、投稿削除・利用停止などの措置を行います\n・詳細は全文をご確認ください",
+    "大学の森を利用するには、利用規約とプライバシーポリシーへの同意が必要です。\n\n・掲示板はニックネーム・匿名で利用できますが、運営者は法令に基づき投稿者を特定できる情報を保持します\n・誹謗中傷・個人情報の無断公開などの禁止行為には、投稿削除・利用停止などの措置を行います\n・詳細は全文をご確認ください",
   "onboarding.readTerms": "利用規約の全文を読む",
   "onboarding.readPrivacy": "プライバシーポリシーの全文を読む",
   "onboarding.agree": "同意して始める",
@@ -43,7 +43,7 @@ const ja = {
   "onboarding.schoolTitle": "学校を選択",
   "onboarding.schoolSubtitle": "所属している学校を選んでください",
   "onboarding.schoolOther": "その他・まだ決まっていない",
-  "onboarding.start": "ichiを始める",
+  "onboarding.start": "大学の森を始める",
 
   // アカウント
   "account.title": "アカウント",
@@ -176,7 +176,7 @@ const ja = {
   "friends.promote": "上げる",
   "friends.promoteFull": "上限",
   "friends.inviteShare": "招待リンクで追加（LINE等）",
-  "friends.inviteMessage": "ichiで友達になろう！リンクから友達申請できます。",
+  "friends.inviteMessage": "大学の森で友達になろう！リンクから友達申請できます。",
   "friends.inviteCopied": "招待リンクをコピーしました",
   "friends.inviteFailed": "共有できませんでした。もう一度お試しください。",
   "addFriend.invalidTitle": "無効な招待リンク",
@@ -599,11 +599,11 @@ const ko: Record<TranslationKey, string> = {
   "tabs.messages": "쪽지",
   "tabs.profile": "프로필",
 
-  "onboarding.welcome": "ichi에 오신 것을 환영합니다",
+  "onboarding.welcome": "대학의 숲에 오신 것을 환영합니다",
   "onboarding.subtitle": "일본 대학 생활을, 더 가깝게",
   "onboarding.termsTitle": "이용약관 동의",
   "onboarding.termsSummary":
-    "ichi를 이용하려면 이용약관과 개인정보처리방침에 대한 동의가 필요합니다.\n\n・게시판은 닉네임·익명으로 이용할 수 있지만, 운영자는 법령에 따라 투고자를 특정할 수 있는 정보를 보유합니다\n・비방·개인정보 무단 공개 등 금지행위에는 투고 삭제·이용 정지 등의 조치가 취해집니다\n・자세한 내용은 전문을 확인해 주세요",
+    "대학의 숲을 이용하려면 이용약관과 개인정보처리방침에 대한 동의가 필요합니다.\n\n・게시판은 닉네임·익명으로 이용할 수 있지만, 운영자는 법령에 따라 투고자를 특정할 수 있는 정보를 보유합니다\n・비방·개인정보 무단 공개 등 금지행위에는 투고 삭제·이용 정지 등의 조치가 취해집니다\n・자세한 내용은 전문을 확인해 주세요",
   "onboarding.readTerms": "이용약관 전문 보기",
   "onboarding.readPrivacy": "개인정보처리방침 전문 보기",
   "onboarding.agree": "동의하고 시작하기",
@@ -612,7 +612,7 @@ const ko: Record<TranslationKey, string> = {
   "onboarding.schoolTitle": "학교 선택",
   "onboarding.schoolSubtitle": "소속 학교를 선택해 주세요",
   "onboarding.schoolOther": "기타·아직 미정",
-  "onboarding.start": "ichi 시작하기",
+  "onboarding.start": "대학의 숲 시작하기",
 
   "account.title": "계정",
   "account.registerTitle": "계정 등록",
@@ -743,7 +743,7 @@ const ko: Record<TranslationKey, string> = {
   "friends.promote": "올리기",
   "friends.promoteFull": "가득 참",
   "friends.inviteShare": "초대 링크로 추가 (LINE 등)",
-  "friends.inviteMessage": "ichi에서 친구가 되어요! 링크에서 친구 신청할 수 있어요.",
+  "friends.inviteMessage": "대학의 숲에서 친구가 되어요! 링크에서 친구 신청할 수 있어요.",
   "friends.inviteCopied": "초대 링크를 복사했어요",
   "friends.inviteFailed": "공유하지 못했어요. 다시 시도해 주세요.",
   "addFriend.invalidTitle": "유효하지 않은 초대 링크",

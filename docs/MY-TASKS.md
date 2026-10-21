@@ -49,10 +49,10 @@
    - 48시간 넘었으면 Apple Developer 지원에 문의.
 2. Active가 되면 → https://appstoreconnect.apple.com → **My Apps → + → New App**
    - Platform: **iOS**
-   - Name: `japan time` (스토어 표시명. `japan time - 時間割`은 부제 포함 형태)
+   - Name: `大学の森 - 大学生の時間割・卒業単位` (스토어 표시명 30자. 기기 홈 화면 라벨은 `大学の森`)
    - Primary Language: **Japanese**
    - Bundle ID: `jp.timetable.app` ← 목록에 없으면 먼저 Certificates, Identifiers & Profiles에서 등록
-   - SKU: 아무 문자열 (예: `japantime001`) — 외부에 안 보입니다
+   - SKU: 아무 문자열 (예: `daigakunomori001`) — 외부에 안 보입니다
 3. **값 3개를 받아 적으세요.** 이게 `eas.json`에 들어갑니다:
 
 | 값 | 어디서 보나 |
@@ -69,7 +69,7 @@
 
 1. https://play.google.com/console → 로그인 → 알림/설정에서 **신원 확인 상태** 확인
 2. 미완료면 여권 또는 재류카드로 본인·주소 확인 진행 (수일 소요)
-3. 완료되면 → **앱 만들기**: 앱 이름 `japan time`, 기본 언어 일본어, 무료
+3. 완료되면 → **앱 만들기**: 앱 이름 `大学の森`, 기본 언어 일본어, 무료
 4. **서비스 계정 JSON 발급** (EAS가 자동 업로드할 때 필요):
    - Play Console → 설정 → API 액세스 → 서비스 계정 만들기
    - 받은 JSON 파일을 맥 로컬에 저장 → 경로를 `eas.json`의 `serviceAccountKeyPath`에
