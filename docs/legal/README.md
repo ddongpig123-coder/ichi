@@ -40,20 +40,56 @@ README 위쪽 안내(= `/docs` 폴더 공개)와 달리, 실제로는 **`gh-page
 
 ### 이 폴더의 HTML을 고친 뒤 할 일
 
-```sh
-# 1) gh-pages 갱신 (스토어 제출 URL)
-git checkout gh-pages
-git checkout master -- docs/legal/privacy.html docs/legal/terms.html
-mv docs/legal/privacy.html privacy.html && mv docs/legal/terms.html terms.html && rm -rf docs
-git add -A && git commit -m "gh-pages: 약관·방침 갱신" && git push origin gh-pages
-git checkout master
+**전제:** `master`에 변경이 머지된 뒤에 합니다. gh-pages는 `master`의 `docs/legal/*.html`을 그대로 복사해 둔 것입니다.
 
-# 2) web.app 갱신
-npm run deploy:web
+```sh
+# 0) master 최신화
+git checkout master && git pull
+
+# 1) gh-pages로 이동 (작업 중인 변경이 없어야 합니다)
+git checkout gh-pages && git pull
+
+# 2) master의 최신 법적 문서를 gh-pages 루트로 복사
+#    (gh-pages는 폴더 구조가 없고 루트에 html 4개만 있습니다)
+git show master:docs/legal/privacy.html > privacy.html
+git show master:docs/legal/terms.html   > terms.html
+
+# 3) 확인 → 커밋 → 푸시
+git diff --stat
+git add privacy.html terms.html
+git commit -m "gh-pages: 약관·방침 갱신"
+git push origin gh-pages
+
+# 4) master로 복귀
+git checkout master
 ```
 
-> ⚠️ `index.html`·`support.html`은 master에 원본이 없어 위 절차로 안 바뀝니다.
-> 앱 이름 등을 바꿨다면 **gh-pages에서 직접 수정**해야 합니다.
+푸시 후 **1~3분** 뒤 GitHub Pages가 다시 빌드됩니다. 확인:
+
+```sh
+curl -s https://ddongpig123-coder.github.io/ichi/privacy.html | grep -o "<title>[^<]*"
+```
+
+### `index.html` · `support.html` (master에 원본 없음)
+
+이 둘은 **gh-pages 브랜치에만** 존재합니다. `master`에서 고칠 수 없고 gh-pages에서 직접 편집합니다.
+스토어에 제출하는 **Support URL / Marketing URL** 이라 앱 표시명과 반드시 일치해야 합니다.
+
+```sh
+git checkout gh-pages && git pull
+# 편집기로 index.html · support.html 수정
+git add -A && git commit -m "gh-pages: ..." && git push origin gh-pages
+git checkout master
+```
+
+> 앱 이름이 바뀌면 여기도 같이 바꿔야 합니다. 바꿀 곳(현재 기준):
+> `index.html` — `<title>`, 상단 `.mark` 로고
+> `support.html` — `<title>`, 헤더 링크, 푸터의 「運営者 / 운영자」 줄
+
+### web.app(Firebase Hosting) 쪽
+
+`scripts/deploy-web.mjs`가 `docs/legal/*.html`을 `dist/legal/`로 복사하므로 **`npm run deploy:web` 한 번**이면 갱신됩니다.
+(`/legal/privacy.html`, `/legal/terms.html`)
 ## 문서 수정 시
 
 `.md`(정본)와 `app/*.tsx`(앱 화면), `.html`(호스팅)을 **함께** 갱신하세요. HTML은 세션에서 Artifact로도 발행됩니다.
