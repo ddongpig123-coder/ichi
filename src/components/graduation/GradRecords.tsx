@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Platform, Share } from "react-native";
 import type { Theme } from "../../theme/themes";
 import type { TranslationKey } from "../../i18n/translations";
 import type { GradMaster } from "../../data/graduationMaster";
@@ -27,6 +27,9 @@ interface Props {
   onDelete: (id: string) => void;
   canToggleOwn: (r: GradRecord) => boolean; // 「自コースのゼミ」切替を出す記録か
   onToggleOwn: (id: string) => void;
+  // バックアップ（端末ローカル保存の橋渡し）
+  exportBackup: () => string;              // 現在の記録を JSON テキストに
+  importBackup: (text: string) => boolean; // 成功したら true（失敗＝形式不正）
 }
 
 const STATUS_ORDER: RecordStatus[] = ["passed", "failed", "inProgress"];
@@ -47,6 +50,41 @@ export function GradRecords(p: Props) {
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [pickZone, setPickZone] = useState<ZoneId | null>(null);
   const [pickUnits, setPickUnits] = useState(2);
+
+  // バックアップ UI
+  const [exportText, setExportText] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importText, setImportText] = useState("");
+  const [importMsg, setImportMsg] = useState<"ok" | "fail" | null>(null);
+
+  async function doExport() {
+    const text = p.exportBackup();
+    setExportText(text);
+    setCopied(false);
+    if (Platform.OS === "web") {
+      // Web: クリップボードへ。失敗しても下のテキスト欄から手でコピーできる。
+      try {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+      } catch {
+        /* 権限なし等 — テキスト欄で手動コピー */
+      }
+    } else {
+      // ネイティブ: OS の共有シート（メモ・メール・ファイルへ保存）
+      try {
+        await Share.share({ message: text });
+      } catch {
+        /* ユーザーが閉じた等 — テキスト欄は出したままにする */
+      }
+    }
+  }
+
+  function doImport() {
+    const ok = p.importBackup(importText);
+    setImportMsg(ok ? "ok" : "fail");
+    if (ok) { setImportText(""); setImportOpen(false); }
+  }
 
   // 手動追加フォーム
   const [formOpen, setFormOpen] = useState(false);
@@ -301,6 +339,69 @@ export function GradRecords(p: Props) {
         )}
       </View>
       <Text style={styles.localNote}>{t("grad.rec.localNote")}</Text>
+
+      {/* バックアップ — 端末を変えると記録が消えるため、テキストで持ち出し・持ち込みできるようにする。
+          ファイル I/O にすると expo-file-system/sharing が要るので、依存を増やさずテキストで扱う。 */}
+      <View style={styles.backup}>
+        <Text style={styles.backupTitle}>{t("grad.rec.backupHeading")}</Text>
+        <Text style={styles.backupIntro}>{t("grad.rec.backupIntro")}</Text>
+        <View style={styles.backupBtnRow}>
+          <TouchableOpacity style={styles.backupBtn} onPress={doExport}>
+            <Text style={styles.backupBtnText}>{t("grad.rec.exportBtn")}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.backupBtn}
+            onPress={() => { setImportOpen((v) => !v); setImportMsg(null); }}
+          >
+            <Text style={styles.backupBtnText}>{t("grad.rec.importBtn")}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {exportText !== null && (
+          <View style={styles.backupBox}>
+            <Text style={styles.backupHint}>
+              {t("grad.rec.exportHint")}{copied ? `  ·  ${t("grad.rec.copied")}` : ""}
+            </Text>
+            <TextInput
+              style={styles.backupArea}
+              value={exportText}
+              multiline
+              editable={false}
+              selectTextOnFocus
+            />
+            <TouchableOpacity onPress={() => setExportText(null)}>
+              <Text style={styles.backupClose}>{t("grad.rec.close")}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {importOpen && (
+          <View style={styles.backupBox}>
+            <Text style={styles.backupWarn}>{t("grad.rec.importWarn")}</Text>
+            <TextInput
+              style={styles.backupArea}
+              value={importText}
+              onChangeText={setImportText}
+              multiline
+              placeholder={t("grad.rec.importPlaceholder")}
+              placeholderTextColor={theme.textSecondary}
+            />
+            <View style={styles.backupBtnRow}>
+              <TouchableOpacity style={styles.backupBtn} onPress={doImport}>
+                <Text style={styles.backupBtnText}>{t("grad.rec.importDo")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { setImportOpen(false); setImportText(""); setImportMsg(null); }}>
+                <Text style={styles.backupClose}>{t("grad.rec.close")}</Text>
+              </TouchableOpacity>
+            </View>
+            {importMsg && (
+              <Text style={importMsg === "ok" ? styles.backupOk : styles.backupFail}>
+                {t(importMsg === "ok" ? "grad.rec.importOk" : "grad.rec.importFail")}
+              </Text>
+            )}
+          </View>
+        )}
+      </View>
     </View>
   );
 }
@@ -308,6 +409,26 @@ export function GradRecords(p: Props) {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     heading: { fontSize: 13, color: theme.textPrimary, fontWeight: "800", marginTop: 22 },
+    backup: { marginTop: 14, borderTopWidth: 1, borderTopColor: theme.border, paddingTop: 12 },
+    backupTitle: { fontSize: 12.5, fontWeight: "800", color: theme.textPrimary },
+    backupIntro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 4, lineHeight: 16 },
+    backupBtnRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 8 },
+    backupBtn: {
+      borderWidth: 1, borderColor: theme.border, borderRadius: 8,
+      paddingVertical: 7, paddingHorizontal: 12, backgroundColor: theme.card,
+    },
+    backupBtnText: { fontSize: 12, fontWeight: "700", color: theme.textPrimary },
+    backupBox: { marginTop: 10, gap: 8 },
+    backupHint: { fontSize: 11, color: theme.textSecondary, lineHeight: 16 },
+    backupWarn: { fontSize: 11, color: "#E2574C", lineHeight: 16 },
+    backupArea: {
+      minHeight: 96, maxHeight: 180, borderWidth: 1, borderColor: theme.border, borderRadius: 8,
+      padding: 8, fontSize: 11, color: theme.textPrimary, backgroundColor: theme.background,
+      textAlignVertical: "top",
+    },
+    backupClose: { fontSize: 12, color: theme.textSecondary, paddingVertical: 7 },
+    backupOk: { fontSize: 11.5, color: theme.textPrimary },
+    backupFail: { fontSize: 11.5, color: "#E2574C", lineHeight: 16 },
     intro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 4, lineHeight: 16 },
     delta: {
       backgroundColor: MET_COLOR + "16", borderWidth: 1, borderColor: MET_COLOR + "44",

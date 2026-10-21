@@ -12,7 +12,8 @@ import { COURSES_2021, YEAR3_ONLY } from "../src/data/graduationCourses2021";
 import { classifySubject, type AllocKey, type CourseId } from "../src/data/gradAllocationMeijiCommerce";
 import { calcGrad, canToggleOwnCourse, diffZones, GRAD_SUB_MINS, MEDIA_CAP, type GradRecord, type RecordStatus } from "../src/utils/gradCalc";
 import {
-  loadGradState, saveGradState, loadTimetableSubjects, type TimetableSubject,
+  loadGradState, saveGradState, loadTimetableSubjects, serializeGradState, parseGradBackup,
+  type TimetableSubject,
 } from "../src/services/gradRecordService";
 import { GradRecords, type Classified } from "../src/components/graduation/GradRecords";
 import { ZoneDiagnosis } from "../src/components/graduation/ZoneDiagnosis";
@@ -156,6 +157,18 @@ export default function GraduationScreen() {
     if (loadedKey !== storeKey) return;
     saveGradState(uid, { version: 2, records, baseline, courseId, zoneBaselines });
   }, [loadedKey, storeKey, uid, records, baseline, courseId, zoneBaselines]);
+
+  // バックアップの読み込み。state を差し替えると保存 effect が走って端末にも書かれる。
+  function importBackup(text: string): boolean {
+    const st = parseGradBackup(text);
+    if (!st) return false;
+    setRecords(st.records);
+    setBaseline(st.baseline);
+    setCourseId(st.courseId);
+    setZoneBaselines(st.zoneBaselines ?? {});
+    setDelta(null);
+    return true;
+  }
 
   // 時間割の科目を候補として読む（入学年度〜今学期）
   const [ttSubjects, setTtSubjects] = useState<TimetableSubject[]>([]);
@@ -629,6 +642,8 @@ export default function GraduationScreen() {
           onDelete={deleteRecord}
           canToggleOwn={(r) => canToggleOwnCourse(r, allocKey)}
           onToggleOwn={toggleOwn}
+          exportBackup={() => serializeGradState({ version: 2, records, baseline, courseId, zoneBaselines })}
+          importBackup={importBackup}
         />
 
         {/* 区分別ゲージ（記録していない過去分は ＋/− で成績表の合計を入力） */}
