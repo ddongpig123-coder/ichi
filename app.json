@@ -3,7 +3,9 @@
     "name": "大学の森",
     "slug": "uni-community",
     "version": "1.0.0",
-    "runtimeVersion": { "policy": "appVersion" },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -37,6 +39,9 @@
         "projectId": "d57937dd-576b-4174-a2c0-96e918a7bca9"
       }
     },
-    "owner": "qopdri"
+    "owner": "qopdri",
+    "updates": {
+      "url": "https://u.expo.dev/d57937dd-576b-4174-a2c0-96e918a7bca9"
+    }
   }
 }

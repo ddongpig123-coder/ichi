@@ -7,13 +7,19 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "ios": { "simulator": false },
+      "ios": {
+        "simulator": false
+      },
       "channel": "development"
     },
     "preview": {
       "distribution": "internal",
-      "android": { "buildType": "apk" },
-      "ios": { "simulator": false },
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      },
       "channel": "preview"
     },
     "production": {
@@ -24,8 +30,7 @@
   "submit": {
     "production": {
       "ios": {
-        
-                "ascAppId": "REPLACE_APP_STORE_CONNECT_APP_ID",
+        "ascAppId": "REPLACE_APP_STORE_CONNECT_APP_ID",
         "appleTeamId": "3498G5A326"
       },
       "android": {
