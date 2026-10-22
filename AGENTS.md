@@ -1,6 +1,7 @@
 # Expo HAS CHANGED
 
-Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before writing any code.
+Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before writing any code.
+(이 프로젝트는 **Expo SDK 57**입니다. v56 문서를 보면 안 됩니다.)
 
 # ichi 프로젝트 규칙 (모든 세션 공통)
 
@@ -31,7 +32,14 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 ## 작업 절차
 - 커밋 전 `npx tsc --noEmit` 통과 필수
 - UI 변경 시 미리보기(launch.json의 `expo-web`, 포트 8090)로 확인
-- 기능 단위로 커밋. 브랜치: 태희 = `taehui`, 준희 = `junhee`, 병합 후 `master` 푸시
+- 기능 단위로 커밋
+- 🔴 **브랜치 규칙 (2026-10-20 변경)**: `master` 최신화 → **작업 브랜치** → **PR** → 머지 → 브랜치 삭제
+  - `master`에 직접 push 금지. 예전의 "태희=taehui / 준희=junhee 브랜치" 규칙은 **폐기**됨
+  - `junhee` 브랜치는 삭제됨(`archive/junhee-2026-08-17` 태그에 보존). master보다 96커밋 뒤처진 채
+    방치돼 양쪽에서 같은 기능을 중복 구현하는 사고가 났기 때문
+  - 작업 시작 전 `git log --oneline HEAD..origin/master`로 master 선행분 확인
+  - 새 기능 만들기 전 `git grep`으로 master에 같은 기능이 이미 있는지 확인(기능명·파일명·i18n 키)
+  - PR 머지와 브랜치·stash 삭제는 **준희가 직접** 한다(Claude 권한으로 막혀 있음)
 - 규칙 배포: `npx firebase-tools deploy --only firestore:rules` (프로젝트 ichi-6b8f7)
 
 ## 병렬 작업 축 (충돌 방지)
@@ -41,7 +49,29 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 - **크롤러(scripts/) 작업 시**: 적재 데이터는 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.
   서비스 계정 키는 절대 커밋 금지 (.gitignore에 패턴 등록됨)
 
-## 현재 상태 요약 (2026-08-24 기준) — 다음 세션은 여기부터 읽을 것
+## 🚀 현재 상태 (2026-10-22) — 출시 스프린트. 새 세션은 이 블록부터 읽을 것
+
+**목표: 2026-10-25에 iOS 심사 제출.** (원래 2027-01-15였으나 앞당김)
+안드로이드는 Play 폐쇄 테스트 12명×14일 요건 때문에 **11월 중순** 제출.
+
+- **스토어 표시명 = `大学の森`** (내부 코드명 `ichi`, 번들ID `jp.timetable.app`은 그대로)
+  - App Store 이름: `大学の森 - 大学生の時間割・卒業単位`
+  - 부제: `卒業単位を自動計算・友達と時間割共有`
+- **1.0에서 외부 로그인(Microsoft/Google/X/LINE)은 웹·네이티브 모두 숨김** — 심사지침 2.1(미완성 기능)과
+  4.8(제3자 로그인 시 동등한 프라이버시 로그인 병설) 때문. 구현은 남아 있음. 이메일 로그인만 노출
+- EAS 설정 완료: `projectId`, OTA `updates.url`, 환경변수 7개, `appleTeamId`, `ascAppId`(6825671804)
+- 졸업 마술사 메이지 10학부 완료. 理工·情コミ만 배당표 미연동(便覧이 학내 포털 비공개)
+- **네이티브 푸시 알림은 구현돼 있지 않음**(`expo-notifications` 미설치). 앱 내 빨간 점 배지만 있음
+- 학점 기록은 단말 로컬(AsyncStorage) 전용 — 설계상 의도(CREDIT-TRACKING §6-2, 서버에 평문 저장 금지).
+  기기 변경 시 소실 경고는 이미 화면에 표시됨. JSON 백업 내보내기/가져오기 추가됨
+
+**🛑 정지선 (Claude 단독 금지, 준희가 직접):** `npm run deploy:web` / `firebase deploy` /
+`eas submit` / 심사 제출(Submit for Review) / 결제·약관 동의·2FA·소셜 콘솔 설정.
+`eas build`는 Claude 허용이지만 **첫 iOS 빌드는 Apple 2FA 때문에 준희가 직접** 돌려야 한다.
+
+---
+
+## 현재 상태 요약 (2026-08-24 기준) — 이하는 이력
 
 **진행도: 11월 Phase 2 전 주차 완료.** 다음 관문은 12월 스토어 준비(TestFlight/EAS·자산).
 상세·완료 이력은 [docs/ROADMAP.md](docs/ROADMAP.md). 목업은 전부 제거됨(실데이터화 완료).
@@ -118,5 +148,6 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before 
 ### 협업 상태
 - **준희 복귀함(2026-07-27).** 위 📌 준희 복귀 인계 블록 참조 — schoolDomain 부채 해소가 최우선 조율감.
   규칙·`src/types/` 변경·배포는 여전히 **태희 창구 일원화**(준희는 게시판 코드 정합).
-- 사용자 직접 처리 대기(§6): 실계정 메일 인증 테스트, 폰 통합 테스트, 약관 자리표시자 3종,
-  **선배 시간표 2계정 E2E**(ROADMAP §6, 리스트 population·뷰어 렌더 미검증).
+- 사용자 직접 처리 대기(§6): 실계정 메일 인증 테스트, 폰 통합 테스트.
+  ~~약관 자리표시자 3종~~ → **완료**(2026-08-24 확정, 현재 `[■...]` 0건).
+  ~~선배 시간표 2계정 E2E~~ → **해당 없음**(선배 시간표는 2026-08-23 폐기 확정, 코드도 삭제됨).
