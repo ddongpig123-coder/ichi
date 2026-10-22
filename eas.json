@@ -30,7 +30,7 @@
   "submit": {
     "production": {
       "ios": {
-        "ascAppId": "REPLACE_APP_STORE_CONNECT_APP_ID",
+        "ascAppId": "6825671804",
         "appleTeamId": "3498G5A326"
       },
       "android": {
