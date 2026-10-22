@@ -13,7 +13,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "jp.timetable.app",
-      "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -26,8 +25,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "jp.timetable.app",
-      "versionCode": 1
+      "package": "jp.timetable.app"
     },
     "web": {
       "favicon": "./assets/favicon.png",
