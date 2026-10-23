@@ -10,6 +10,17 @@ import type { CourseId } from "../data/gradAllocationMeijiCommerce";
 // → 端末を変えると記録は引き継がれない（画面で明示）。
 // ============================================================
 
+// 画面の選択状態（学部・学科など）。これを保存しないと、画面を出入りするたびに
+// 学部が既定へ戻り、学部ごとに分かれている入力（zoneBaselines）が「消えた」ように見える。
+export interface GradUiState {
+  facultyId: string | null;
+  deptId: string | null;
+  bandKey: string | null;
+  masterIdx: number;
+  grade: number;
+  isRyugakusei: boolean;
+}
+
 export interface GradState {
   version: 2;
   records: GradRecord[];
@@ -17,9 +28,26 @@ export interface GradState {
   courseId: CourseId | null;
   // 商学部以外(区分のみ診断)の区分別合計。コンテキスト("facultyId/deptId/residency")ごとに分離。
   zoneBaselines?: Record<string, Record<string, number>>;
+  // 画面の選択状態。古い保存データには無いので任意。
+  ui?: GradUiState;
 }
 
 const EMPTY: GradState = { version: 2, records: [], baseline: {}, courseId: null, zoneBaselines: {} };
+
+// 保存データの ui を安全に取り出す（型が壊れていれば捨てる）。
+function sanitizeUi(raw: any): GradUiState | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const num = (v: any, min: number, max: number, dflt: number) =>
+    typeof v === "number" && v >= min && v <= max ? v : dflt;
+  return {
+    facultyId: typeof raw.facultyId === "string" ? raw.facultyId : null,
+    deptId: typeof raw.deptId === "string" ? raw.deptId : null,
+    bandKey: typeof raw.bandKey === "string" ? raw.bandKey : null,
+    masterIdx: num(raw.masterIdx, 0, 10, 0),
+    grade: num(raw.grade, 1, 4, 3),
+    isRyugakusei: typeof raw.isRyugakusei === "boolean" ? raw.isRyugakusei : true,
+  };
+}
 
 function storageKey(uid: string | null) {
   return `ichi:gradRecords:${uid ?? "guest"}`;
@@ -36,6 +64,7 @@ export async function loadGradState(uid: string | null): Promise<GradState> {
       baseline: parsed.baseline ?? {},
       courseId: parsed.courseId ?? null,
       zoneBaselines: parsed.zoneBaselines ?? {},
+      ui: sanitizeUi(parsed.ui),
     };
   } catch (e) {
     console.warn("gradRecords load failed:", e);
@@ -90,6 +119,7 @@ export function parseGradBackup(text: string): GradState | null {
       baseline: st.baseline && typeof st.baseline === "object" ? st.baseline : {},
       courseId: st.courseId ?? null,
       zoneBaselines: st.zoneBaselines && typeof st.zoneBaselines === "object" ? st.zoneBaselines : {},
+      ui: sanitizeUi(st.ui),
     };
   } catch {
     return null;

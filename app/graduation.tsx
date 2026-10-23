@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -95,6 +95,14 @@ export default function GraduationScreen() {
   // 区分のみ診断の入力（コンテキストごと）
   const [zoneBaselines, setZoneBaselines] = useState<Record<string, Record<string, number>>>({});
 
+  // 画面の選択状態の復元フラグ。
+  // - facultyPinned: 保存値 or 利用者のタップで学部が決まっている → プロフィール推定で上書きしない
+  // - uiRestored   : 保存済みの選択を復元した → 入学年度からの自動プリセットで上書きしない
+  // - skipDeptReset: 復元で学部を入れた直後の「学部が変わったら学科を既定化」を1回だけ飛ばす
+  const facultyPinnedRef = useRef(false);
+  const uiRestoredRef = useRef(false);
+  const skipDeptResetRef = useRef(false);
+
   useEffect(() => {
     if (!user) { setProfileReady(true); return; }
     let alive = true;
@@ -105,10 +113,12 @@ export default function GraduationScreen() {
         setDept(d);
         setAdmissionYear(p?.admissionYear ?? null);
         // 学部をプロフィールから自動推定。商学部なら従来エンジン。
+        // ただし利用者が選んだ学部（端末に保存済み）があれば、そちらを優先する。
         const f = facultyFromDept(d);
-        if (f) setFacultyId(f.id);
+        if (f && !facultyPinnedRef.current) setFacultyId(f.id);
         // 入学年度が分かればマスターと学年を自動プリセット（利便性）。
-        if (p?.admissionYear != null) {
+        // 保存済みの選択を復元した場合は、それが利用者の意思なので触らない。
+        if (p?.admissionYear != null && !uiRestoredRef.current) {
           setMasterIdx(p.admissionYear <= 2022 ? 0 : 1);
           const g = new Date().getFullYear() - p.admissionYear + 1;
           setGrade(Math.min(4, Math.max(1, g)));
@@ -127,7 +137,9 @@ export default function GraduationScreen() {
   const isCommerce = selFaculty?.engine === "commerce";
 
   // 学部を変えたら学科/バンドを既定化（最初の学科・入学年度バンド）。
+  // 保存値からの復元で学部を入れた直後だけは、復元した学科/バンドを潰さないよう飛ばす。
   useEffect(() => {
+    if (skipDeptResetRef.current) { skipDeptResetRef.current = false; return; }
     if (!selFaculty) { setDeptId(null); return; }
     const band = bandForAdmissionYear(selFaculty, admissionYear);
     setBandKey(band.key);
@@ -147,6 +159,21 @@ export default function GraduationScreen() {
       setCourseId(st.courseId);
       setZoneBaselines(st.zoneBaselines ?? {});
       setDelta(null);
+      // 画面を出入りしても選択が既定へ戻らないよう、学部・学科なども復元する。
+      // （学部ごとに入力が分かれているため、学部が戻ると入力まで消えたように見える）
+      if (st.ui) {
+        uiRestoredRef.current = true;
+        setMasterIdx(st.ui.masterIdx);
+        setGrade(st.ui.grade);
+        setIsRyugakusei(st.ui.isRyugakusei);
+        if (st.ui.facultyId) {
+          facultyPinnedRef.current = true;
+          skipDeptResetRef.current = true;
+          setFacultyId(st.ui.facultyId);
+          setDeptId(st.ui.deptId);
+          setBandKey(st.ui.bandKey);
+        }
+      }
       setLoadedKey(storeKey);
     });
     return () => { alive = false; };
@@ -155,8 +182,18 @@ export default function GraduationScreen() {
   // 変更のたびに保存。現在のキーの読み込み完了前は保存しない（空や別uidの記録で上書きしない）。
   useEffect(() => {
     if (loadedKey !== storeKey) return;
-    saveGradState(uid, { version: 2, records, baseline, courseId, zoneBaselines });
-  }, [loadedKey, storeKey, uid, records, baseline, courseId, zoneBaselines]);
+    saveGradState(uid, {
+      version: 2,
+      records,
+      baseline,
+      courseId,
+      zoneBaselines,
+      ui: { facultyId, deptId, bandKey, masterIdx, grade, isRyugakusei },
+    });
+  }, [
+    loadedKey, storeKey, uid, records, baseline, courseId, zoneBaselines,
+    facultyId, deptId, bandKey, masterIdx, grade, isRyugakusei,
+  ]);
 
   // バックアップの読み込み。state を差し替えると保存 effect が走って端末にも書かれる。
   function importBackup(text: string): boolean {
@@ -353,7 +390,11 @@ export default function GraduationScreen() {
             <TouchableOpacity
               key={f.id}
               style={[styles.courseChip, on && styles.courseChipOn]}
-              onPress={() => setFacultyId(f.id)}
+              onPress={() => {
+                facultyPinnedRef.current = true;
+                skipDeptResetRef.current = false; // 手動変更では必ず学科を既定化する
+                setFacultyId(f.id);
+              }}
             >
               <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{f.nameJa}</Text>
             </TouchableOpacity>
