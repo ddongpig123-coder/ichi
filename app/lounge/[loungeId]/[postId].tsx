@@ -147,7 +147,9 @@ export default function LoungePostDetailScreen() {
       if (mine && user && mine.authorUid === user.uid) {
         markPostSeen("lounge", loungeId as string, postId, mine.commentCount ?? 0);
       }
-    }).finally(() => setLoading(false));
+    })
+      .catch((e) => console.warn("lounge post load failed:", e))
+      .finally(() => setLoading(false));
   }, [loungeId, postId]);
 
   async function handleCommentLike(commentId: string) {

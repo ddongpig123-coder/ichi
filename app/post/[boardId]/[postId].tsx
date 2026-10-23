@@ -171,7 +171,9 @@ export default function PostDetailScreen() {
           setPost((prev) => (prev ? { ...prev, bestCommentId: null, resolved: false } : prev));
         }
       }
-    }).finally(() => setLoading(false));
+    })
+      .catch((e) => console.warn("post load failed:", e))
+      .finally(() => setLoading(false));
   }, [schoolDomain, boardId, postId]);
 
   async function handleCommentLike(commentId: string) {

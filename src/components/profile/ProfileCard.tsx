@@ -23,10 +23,13 @@ export default function ProfileCard() {
       setPhotoURL(null);
       return;
     }
-    getUserProfile(user.uid).then((p) => {
-      setNickname(p?.nickname ?? null);
-      setPhotoURL(p?.photoURL ?? null);
-    });
+    getUserProfile(user.uid)
+      .then((p) => {
+        setNickname(p?.nickname ?? null);
+        setPhotoURL(p?.photoURL ?? null);
+      })
+      // アカウント削除直後の認証切れ（上の profile.tsx と同じ理由）で落ちても画面は壊さない。
+      .catch((e) => console.warn("profile card load failed:", e));
   }, [user]);
 
   return (
