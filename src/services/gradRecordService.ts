@@ -16,7 +16,8 @@ export interface GradUiState {
   facultyId: string | null;
   deptId: string | null;
   bandKey: string | null;
-  masterIdx: number;
+  // 商学部マスターは key で保存する（配列の並びを変えても壊れないように）
+  masterKey: string | null;
   grade: number;
   isRyugakusei: boolean;
 }
@@ -43,7 +44,7 @@ function sanitizeUi(raw: any): GradUiState | undefined {
     facultyId: typeof raw.facultyId === "string" ? raw.facultyId : null,
     deptId: typeof raw.deptId === "string" ? raw.deptId : null,
     bandKey: typeof raw.bandKey === "string" ? raw.bandKey : null,
-    masterIdx: num(raw.masterIdx, 0, 10, 0),
+    masterKey: typeof raw.masterKey === "string" ? raw.masterKey : null,
     grade: num(raw.grade, 1, 4, 3),
     isRyugakusei: typeof raw.isRyugakusei === "boolean" ? raw.isRyugakusei : true,
   };

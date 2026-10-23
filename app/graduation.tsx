@@ -119,7 +119,7 @@ export default function GraduationScreen() {
         // 入学年度が分かればマスターと学年を自動プリセット（利便性）。
         // 保存済みの選択を復元した場合は、それが利用者の意思なので触らない。
         if (p?.admissionYear != null && !uiRestoredRef.current) {
-          setMasterIdx(p.admissionYear <= 2022 ? 0 : 1);
+          setMasterIdx(GRAD_MASTERS.findIndex((m) => m.key === (p.admissionYear! <= 2022 ? "pre2023" : "from2023")));
           const g = new Date().getFullYear() - p.admissionYear + 1;
           setGrade(Math.min(4, Math.max(1, g)));
         }
@@ -163,7 +163,8 @@ export default function GraduationScreen() {
       // （学部ごとに入力が分かれているため、学部が戻ると入力まで消えたように見える）
       if (st.ui) {
         uiRestoredRef.current = true;
-        setMasterIdx(st.ui.masterIdx);
+        const mi = GRAD_MASTERS.findIndex((m) => m.key === st.ui!.masterKey);
+        if (mi >= 0) setMasterIdx(mi);
         setGrade(st.ui.grade);
         setIsRyugakusei(st.ui.isRyugakusei);
         if (st.ui.facultyId) {
@@ -179,21 +180,24 @@ export default function GraduationScreen() {
     return () => { alive = false; };
   }, [uid, storeKey]);
 
+  // 画面の選択状態（端末保存とバックアップで共用）
+  const uiState = useMemo(
+    () => ({
+      facultyId,
+      deptId,
+      bandKey,
+      masterKey: GRAD_MASTERS[masterIdx]?.key ?? null,
+      grade,
+      isRyugakusei,
+    }),
+    [facultyId, deptId, bandKey, masterIdx, grade, isRyugakusei]
+  );
+
   // 変更のたびに保存。現在のキーの読み込み完了前は保存しない（空や別uidの記録で上書きしない）。
   useEffect(() => {
     if (loadedKey !== storeKey) return;
-    saveGradState(uid, {
-      version: 2,
-      records,
-      baseline,
-      courseId,
-      zoneBaselines,
-      ui: { facultyId, deptId, bandKey, masterIdx, grade, isRyugakusei },
-    });
-  }, [
-    loadedKey, storeKey, uid, records, baseline, courseId, zoneBaselines,
-    facultyId, deptId, bandKey, masterIdx, grade, isRyugakusei,
-  ]);
+    saveGradState(uid, { version: 2, records, baseline, courseId, zoneBaselines, ui: uiState });
+  }, [loadedKey, storeKey, uid, records, baseline, courseId, zoneBaselines, uiState]);
 
   // バックアップの読み込み。state を差し替えると保存 effect が走って端末にも書かれる。
   function importBackup(text: string): boolean {
@@ -441,6 +445,21 @@ export default function GraduationScreen() {
         </>
       ) : null}
 
+      {/* 現在の学年（基幹科目の自/他判定・CANの学年フィルタに使う）。
+          入学年度の隣に置く — 下のCANセクションにあると見つけられないため。 */}
+      <Text style={styles.miniLabel}>{t("grad.gradeLabel")}</Text>
+      <View style={styles.seg}>
+        {GRADES.map((g) => (
+          <TouchableOpacity
+            key={g}
+            style={[styles.segBtn, grade === g && styles.segBtnOn]}
+            onPress={() => setGrade(g)}
+          >
+            <Text style={[styles.segText, grade === g && styles.segTextOn]}>{g}年</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       {/* 学科・専攻 */}
       {deptList ? (
         <>
@@ -559,18 +578,6 @@ export default function GraduationScreen() {
             {allocCourses ? (
               <>
                 <Text style={styles.canHeading}>{t("grad.canHeading")}</Text>
-                <Text style={styles.miniLabel}>{t("grad.gradeLabel")}</Text>
-                <View style={styles.seg}>
-                  {GRADES.map((g) => (
-                    <TouchableOpacity
-                      key={g}
-                      style={[styles.segBtn, grade === g && styles.segBtnOn]}
-                      onPress={() => setGrade(g)}
-                    >
-                      <Text style={[styles.segText, grade === g && styles.segTextOn]}>{g}年</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
                 <AllocationCAN
                   theme={theme}
                   t={t}
@@ -683,7 +690,7 @@ export default function GraduationScreen() {
           onDelete={deleteRecord}
           canToggleOwn={(r) => canToggleOwnCourse(r, allocKey)}
           onToggleOwn={toggleOwn}
-          exportBackup={() => serializeGradState({ version: 2, records, baseline, courseId, zoneBaselines })}
+          exportBackup={() => serializeGradState({ version: 2, records, baseline, courseId, zoneBaselines, ui: uiState })}
           importBackup={importBackup}
         />
 
@@ -760,20 +767,6 @@ export default function GraduationScreen() {
         {/* CAN — これから履修できる科目（参考） */}
         <Text style={styles.canHeading}>{t("grad.canHeading")}</Text>
         <Text style={styles.canIntro}>{t("grad.canIntro")}</Text>
-
-        {/* 現在の学年 */}
-        <Text style={styles.miniLabel}>{t("grad.gradeLabel")}</Text>
-        <View style={styles.seg}>
-          {GRADES.map((g) => (
-            <TouchableOpacity
-              key={g}
-              style={[styles.segBtn, grade === g && styles.segBtnOn]}
-              onPress={() => setGrade(g)}
-            >
-              <Text style={[styles.segText, grade === g && styles.segTextOn]}>{g}年</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
 
 
         {selectedCourse ? (
