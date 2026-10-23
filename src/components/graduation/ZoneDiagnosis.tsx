@@ -111,7 +111,10 @@ export function ZoneDiagnosis(p: Props) {
               </View>
             </View>
             {r.overflow > 0 ? (
-              <Text style={styles.zoneSub}>{t("grad.rec.overflow")} {r.overflow} {t("grad.unit")}</Text>
+              <Text style={styles.zoneSub}>
+                {calc.hasFreeZone ? t("grad.rec.overflow") : t("grad.rec.overflowNoFree")} {r.overflow}{" "}
+                {t("grad.unit")}
+              </Text>
             ) : null}
             {z.hintJa && r.met ? <Text style={styles.zoneSub}>{z.hintJa}</Text> : null}
           </View>

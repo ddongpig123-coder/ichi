@@ -171,12 +171,26 @@ reviews, boards, DMs, study-abroad lounge).
   reported and users can be blocked. Reports are reviewed within ~24h and
   actioned (in-app 通報/ブロック). Hard delete is disabled; removed content
   is flagged server-side.
-- Auth: anonymous guest, email/password, Microsoft, Google, X, LINE.
+- Auth in this version: anonymous guest and email/password ONLY.
+  No third-party / social sign-in is offered in 1.0.
+- Account deletion is available in the app: Profile > Account > Delete account
+  (re-authentication with the password, then the account and profile data are
+  deleted). Posts/comments stay stored in anonymized form for legal
+  record-keeping, as stated in the privacy policy.
 - The graduation-requirement checker is a reference tool only, clearly
   labeled "参考" with a disclaimer to verify with the university. It covers
   all 10 faculties of Meiji University (zone-level shortfall diagnosis;
-  some faculties include per-course guidance).
+  some faculties include per-course guidance). Credit records are stored
+  only on the device, never on our servers.
+- Course data comes from the university's public syllabus pages. The app
+  does not log in to, or scrape, any university system on the user's behalf.
+- Free app. No in-app purchases, no ads, no tracking (ATT not required).
+- UI language is Japanese, with Korean available in settings.
 ```
+
+> ⚠️ **"Auth" 줄 주의**: 1.0은 외부 로그인(Microsoft/Google/X/LINE)을 **숨겼습니다**(심사지침 4.8 —
+> 제3자 로그인을 노출하면 Sign in with Apple 병설이 필수). 심사노트에 외부 로그인이 있다고 쓰면
+> 없는 기능으로 리젝 사유를 자초합니다. 2.0에서 되살릴 때 이 줄도 같이 고칠 것.
 
 ### 데모 계정 (제출 전에 본인이 생성해서 값 채우기)
 ```

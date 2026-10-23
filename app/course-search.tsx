@@ -299,6 +299,7 @@ export default function CourseSearchScreen() {
       ) : (
         <FlatList
           data={results}
+          style={styles.list}
           keyExtractor={(item) => item.id}
           keyboardShouldPersistTaps="handled"
           ItemSeparatorComponent={() => <View style={styles.sep} />}
@@ -484,8 +485,12 @@ function makeStyles(theme: Theme) {
       paddingBottom: 6,
     },
     // flexGrow:0 がないと横スクロールビューが縦方向の余白を全部吸って
-    // チップが縦に引き伸ばされる（列レイアウト内の ScrollView の既定挙動）
-    deptScroll: { flexGrow: 0 },
+    // チップが縦に引き伸ばされる（列レイアウト内の ScrollView の既定挙動）。
+    // flexShrink:0 は逆向きの潰れ対策 — 検索結果が入って縦が足りなくなると、
+    // 高さ指定の無いこのビューが縮められて学部チップが潰れて見えていた。
+    deptScroll: { flexGrow: 0, flexShrink: 0 },
+    // 結果リストが残りの余白を取る（これが無いと中身の高さのぶんだけ上を押しのける）
+    list: { flex: 1 },
     deptRow: { paddingHorizontal: 12, gap: 8, paddingBottom: 4, alignItems: "center" },
     deptChip: {
       paddingHorizontal: 12,

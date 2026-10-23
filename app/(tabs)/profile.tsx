@@ -87,11 +87,17 @@ export default function ProfileScreen() {
         setProfile(null);
         return;
       }
-      getUserProfile(current.uid).then((p) => {
-        setProfile(p);
-        setAcademicInput(p?.academic ?? EMPTY_ACADEMIC);
-        setAdmissionYearInput(p?.admissionYear ? String(p.admissionYear) : "");
-      });
+      getUserProfile(current.uid)
+        .then((p) => {
+          setProfile(p);
+          setAcademicInput(p?.academic ?? EMPTY_ACADEMIC);
+          setAdmissionYearInput(p?.admissionYear ? String(p.admissionYear) : "");
+        })
+        // アカウント削除直後は「削除済み → 匿名で再ログイン」の間だけ認証が切れた状態になり、
+        // ここの読み取りが permission-denied で落ちる。catch が無いと未処理 Promise 拒否として
+        // 赤いエラー画面が出る。再ログインで user が変わればこの effect は再実行されるので、
+        // 警告だけ残して握りつぶす。
+        .catch((e) => console.warn("profile load failed:", e));
     }, [user])
   );
 

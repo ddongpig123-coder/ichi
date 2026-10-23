@@ -213,20 +213,37 @@ export async function saveFriendOrders(
 // メール索引・時間割)を物理削除する。firestore.rules は本人の delete を許可済み(ルール変更不要)。
 // ⚠️ 投稿・コメント・쪽지は authorUid を法的対応のため保存する方針(MODERATION.md)なので
 //    ここでは削除しない。表示は既に匿名(@匿名N)で、アカウント削除により本人との紐付けは切れる。
+// ⚠️ 直列 await だと、1件目の書き込みが（ネイティブで ack が返らず）止まった時点で
+//    残り全部が実行されない。並列(allSettled)にして、機微な本人識別データから先に投げる。
+//    どのルールも isOwner(uid) ベースで他の文書を参照しないため、順序に依存しない
+//    （emailIndex の delete だけは自身の resource.data.uid を見るが、他文書とは独立）。
+//    この関数は reject しない。呼び出し側(deleteAccount)は制限時間付きで await し、
+//    未完了でも Auth アカウント削除へ進む。
 export async function deleteSelfData(uid: string, email: string | null): Promise<void> {
-  // 時間割(サブコレクション)を全学期分削除
-  try {
-    const tts = await getDocs(collection(db, "users", uid, "timetables"));
-    await Promise.all(tts.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
-  } catch {
-    // 読めない/無い場合は無視して続行
-  }
-  // メール索引(あれば)
+  const tasks: { step: string; task: Promise<unknown> }[] = [];
+
+  // メール索引（メール→uid。最も機微なのでいちばん先に投げる）
   if (email) {
     const key = email.trim().toLowerCase();
-    if (key) await deleteDoc(doc(db, "emailIndex", key)).catch(() => {});
+    if (key) tasks.push({ step: "emailIndex", task: deleteDoc(doc(db, "emailIndex", key)) });
   }
-  // 公開ミラー → 本体の順で削除(本体を先に消すと rules の isOwner 判定は uid で続行可)
-  await deleteDoc(doc(db, "usersPublic", uid)).catch(() => {});
-  await deleteDoc(userDoc(uid)).catch(() => {});
+  // 本体プロフィール（メール・ニックネーム）
+  tasks.push({ step: "users", task: deleteDoc(userDoc(uid)) });
+  // 公開ミラー
+  tasks.push({ step: "usersPublic", task: deleteDoc(publicDoc(uid)) });
+  // 時間割(サブコレクション)を全学期分削除
+  tasks.push({ step: "timetables", task: deleteTimetables(uid) });
+
+  const results = await Promise.allSettled(tasks.map((t) => t.task));
+  results.forEach((r, i) => {
+    if (r.status === "rejected") {
+      // 握って続行（Auth 削除を止めないため）。どれが落ちたかはログに残す。
+      console.warn(`[deleteSelfData] ${tasks[i].step} の削除に失敗:`, r.reason?.message ?? r.reason);
+    }
+  });
+}
+
+async function deleteTimetables(uid: string): Promise<void> {
+  const tts = await getDocs(collection(db, "users", uid, "timetables"));
+  await Promise.all(tts.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
 }

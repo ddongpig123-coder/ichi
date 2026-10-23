@@ -52,7 +52,9 @@ const FROM_2023: GradMaster = {
   ],
 };
 
-export const GRAD_MASTERS: GradMaster[] = [PRE_2023, FROM_2023];
+// 並び順 = 画面の並び順。いまの新入生（2023年度〜）を先頭＝既定にする。
+// 入学年度がプロフィールにあれば自動で選ばれるので、ここは「分からないときの既定」。
+export const GRAD_MASTERS: GradMaster[] = [FROM_2023, PRE_2023];
 
 // 入学年度からマスターを選ぶ（2022以前→134 / 2023以降→126）。
 export function masterForAdmissionYear(year: number | null): GradMaster {

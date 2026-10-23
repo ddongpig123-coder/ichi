@@ -225,9 +225,9 @@ function makeStyles(theme: Theme) {
       borderLeftWidth: 3,
       padding: 3,
     },
-    sessionName: { fontSize: 9, fontWeight: "700", color: theme.textPrimary },
-    sessionTeacher: { fontSize: 8, color: theme.textSecondary, marginTop: 1 },
-    sessionRoom: { fontSize: 8, color: theme.textSecondary },
+    sessionName: { fontSize: 10, fontWeight: "700", color: theme.textPrimary },
+    sessionTeacher: { fontSize: 9, color: theme.textSecondary, marginTop: 1 },
+    sessionRoom: { fontSize: 9, color: theme.textSecondary },
 
     avatarWrapper: {
       position: "absolute",

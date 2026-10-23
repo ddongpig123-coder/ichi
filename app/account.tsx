@@ -22,6 +22,7 @@ import {
   deleteAccount,
   DELETE_PASSWORD_REQUIRED,
   DELETE_SOCIAL_WEB_ONLY,
+  DELETE_TIMEOUT,
   type SocialProviderId,
 } from "../src/services/authService";
 import { auth } from "../src/config/firebase";
@@ -289,6 +290,8 @@ export default function AccountScreen() {
   }
 
   // アカウント削除。確認 → 再認証 → 本人データ削除 → Auth削除（直後に匿名で再ログイン）。
+  // deleteAccount は全ステップに制限時間付き（authService 参照）なので、ここの await は
+  // 必ず返る = 「押したまま固まって通知も出ない」状態にはならない。
   async function runDeleteAccount() {
     setBusy(true);
     try {
@@ -307,8 +310,18 @@ export default function AccountScreen() {
         notify(t("account.deleteReauthNeeded"));
       } else if (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request") {
         // 本人がキャンセル → 何もしない
+      } else if (e.code === DELETE_TIMEOUT) {
+        // 通信が返ってこないまま時間切れ。何も壊れていないので、そのまま再試行できる。
+        notify(t("account.deleteFailed"), t("account.deleteTimeoutMessage"));
+      } else if (e.code === "auth/network-request-failed") {
+        notify(t("account.deleteFailed"), t("account.deleteNetworkMessage"));
+      } else if (e.code === "auth/too-many-requests") {
+        notify(t("account.deleteFailed"), t("account.deleteTooManyMessage"));
       } else {
-        notify(t("account.deleteFailed"), e.message ?? String(e));
+        notify(
+          t("account.deleteFailed"),
+          `${e.message ?? String(e)}\n\n${t("account.deleteRetryHint")}`
+        );
       }
     } finally {
       setBusy(false);
@@ -316,6 +329,7 @@ export default function AccountScreen() {
   }
 
   function handleDeleteAccount() {
+    if (busy) return; // 二度押しで削除処理が二重に走らないように
     if (isPasswordUser && !deletePassword) {
       notify(t("account.deleteNeedPassword"));
       return;
@@ -396,7 +410,9 @@ export default function AccountScreen() {
                 onPress={handleDeleteAccount}
                 disabled={busy}
               >
-                <Text style={styles.deleteButtonText}>{t("account.deleteButton")}</Text>
+                <Text style={styles.deleteButtonText}>
+                  {busy ? t("account.deleting") : t("account.deleteButton")}
+                </Text>
               </TouchableOpacity>
             </View>
           </>
