@@ -1,14 +1,10 @@
 // シードしたテストアカウントの検証（読み戻し）
-import { readFileSync } from "node:fs";
+import { loadEnv } from "./load-env.mjs";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 
-const env = Object.fromEntries(
-  readFileSync(new URL("../.env", import.meta.url), "utf8")
-    .split(/\r?\n/).filter((l) => l.includes("=") && !l.startsWith("#"))
-    .map((l) => { const i = l.indexOf("="); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
-);
+const env = loadEnv(import.meta.url);
 const app = initializeApp({
   apiKey: env.EXPO_PUBLIC_FIREBASE_API_KEY, authDomain: env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: env.EXPO_PUBLIC_FIREBASE_PROJECT_ID, storageBucket: env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
@@ -24,7 +20,7 @@ if (!PASSWORD) {
   process.exit(1);
 }
 
-for (const email of ["ichitest1@example.com","ichitest2@example.com","ichitest3@example.com","ichitest4@example.com"]) {
+for (const email of ["ichidemo1@example.com","ichidemo2@example.com","ichidemo3@example.com","ichidemo4@example.com"]) {
   const { user } = await signInWithEmailAndPassword(auth, email, PASSWORD);
   const u = (await getDoc(doc(db, "users", user.uid))).data();
   const pub = (await getDoc(doc(db, "usersPublic", user.uid))).data();
