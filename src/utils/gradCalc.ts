@@ -173,6 +173,9 @@ import { isFreeZone, type ResolvedMaster } from "../data/facultyMasters";
 export interface ZonesOnlyResult {
   zones: Record<string, { acq: number; counted: number; overflow: number; min: number; met: boolean }>;
   total: number;
+  // 自由選択(freezone)区分があるか。無い学部では超過分の行き先が無く、合計にも入らない。
+  // 「超過分 → フリーゾーン」と出したまま合計が増えないと嘘になるので、表示側で文言を変える。
+  hasFreeZone: boolean;
 }
 
 export function calcZonesOnly(master: ResolvedMaster, baseline: Record<string, number>): ZonesOnlyResult {
@@ -192,7 +195,7 @@ export function calcZonesOnly(master: ResolvedMaster, baseline: Record<string, n
     zones[free.id] = { acq, counted: acq, overflow: 0, min: free.minUnits, met: acq >= free.minUnits };
   }
   const total = Object.values(zones).reduce((s, z) => s + z.counted, 0);
-  return { zones, total };
+  return { zones, total, hasFreeZone: free != null };
 }
 
 
