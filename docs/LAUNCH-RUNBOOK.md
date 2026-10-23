@@ -230,3 +230,53 @@ eas submit -p ios --profile production
   **판정 결과는 수정 전후 동일**(회귀 스냅샷 5개 시나리오 완전 일치 + 웹 미리보기에서 商学部 화면 확인).
 - **[알림] persistSeen 死코드**(NotificationsContext) — **✅ 수정됨(2026-10-20)**: 제거.
   `setSeen` 내 인라인 저장이 이미 대체하고 있었음.
+
+---
+
+## 부록 — 실기기 계정 삭제 멈춤 버그 (2026-10-23 수정)
+
+**증상**: 실기기 dev 빌드에서 계정 삭제 → 비밀번호 입력 → 확인 팝업 → 「削除する」를 누르면
+화면이 그대로 멈추고 성공/실패 알림이 **둘 다 안 뜸**. 이후 같은 메일로 가입하면
+"이미 등록된 이메일"이 떠서 **Auth 계정이 안 지워진 것**이 확인됨. Apple 5.1.1(v) 필수 요건.
+
+**진단**: 알림이 하나도 안 뜨는데 확인 팝업까지는 떴다 = `Alert`는 정상, `await`가 영구히
+해결되지 않는 상태. 그리고 `deleteUser`(마지막 단계)가 실행되지 않았다 = 그 앞 단계에서 멈춤.
+멈출 수 있는 지점이 네이티브에만 두 군데 있었음:
+1. **Firestore 쓰기** — `deleteDoc`은 서버 ack가 올 때까지 resolve되지 않는다. 네이티브에서
+   스트림이 확립되지 않으면 promise가 영구 pending (`.catch()`로도 안 잡힘 — reject가 아니니까).
+   게다가 구현이 **직렬 await**였어서 첫 건(시간표)이 멈추면 나머지 3종도 아예 실행 안 됨.
+2. **동적 import** — `await import("./userService")`는 Metro/Hermes의 비동기 청크 해결에
+   의존. 웹에서는 번들 스플리팅으로 문제없지만 네이티브 dev 빌드에서 돌아오지 않을 수 있음.
+
+**수정** (`authService.deleteAccount` / `userService.deleteSelfData` / `app/account.tsx`):
+- 동적 import 2개 → **정적 import**. (순환 참조 없음 — `authService`는 이미 `userService`를
+  정적으로 import 중)
+- 모든 단계에 **제한시간**(`withTimeout`): 재인증 15s / Firestore 삭제 8s / 로컬 삭제 3s /
+  Auth 삭제 15s. 시간 초과 시 `code = DELETE_TIMEOUT`, `step = <단계명>`으로 reject →
+  화면이 반드시 성공 또는 실패 알림으로 끝난다.
+- **Firestore 삭제 실패·시간초과로 Auth 삭제를 막지 않는다.** Auth 계정이 남는 쪽이
+  심사 요건상 치명적이기 때문(= 이번 증상). 반대로 프로필이 남는 건 본인이 더는 접근할 수 없는
+  고아 데이터이고, 완전 원자적 삭제는 Cloud Functions(Blaze) 필요 → 1.0 범위 밖(위 부록 참조).
+- `deleteSelfData`를 **병렬(`Promise.allSettled`)**로 바꾸고 민감한 순서대로 던진다
+  (emailIndex → users → usersPublic → timetables). 한 건이 멈춰도 나머지는 지워짐.
+- 단계별 로그 `[deleteAccount] 1/4 … 4/4`. 비밀번호·메일은 로그에 안 남긴다(AGENTS 불변 제약).
+- 화면: 진행 중 버튼 문구 `削除中…`, 이중 탭 가드, 타임아웃/네트워크/시도초과 전용 안내 문구,
+  일반 실패 시 "다시 시도해 주세요" 한 줄 추가.
+
+**검증**: `npx tsc --noEmit` 통과 + 스텁(가짜 firebase 모듈)으로 실제 `authService.ts`를 돌려
+7개 시나리오 확인 — ①정상 ②Firestore hang→Auth 삭제 실행됨 ③로컬 hang→Auth 삭제 실행됨
+④재인증 hang→`DELETE_TIMEOUT(step=reauthenticate)` ⑤Auth 삭제 hang→`DELETE_TIMEOUT(step=deleteUser)`
+⑥Firestore reject→Auth 삭제 계속 ⑦비번 미입력→`DELETE_PASSWORD_REQUIRED`.
+**실기기 재현 확인은 준희님 몫**(이 환경에 `.env`가 없어 실제 Firebase 연결 테스트 불가).
+
+**실기기에서 다시 확인할 것**:
+```
+npx expo start --dev-client     # 폰에서 앱 열면 터미널에 로그가 붙음
+```
+- 삭제가 성공하면 `[deleteAccount] 1/4 … 4/4 … 完了` + 「削除しました」 알림.
+- `2/4`에서 8초 타임아웃 로그(`プロフィール削除が未完了`)가 떠도 **계정 삭제 자체는 성공**해야 한다.
+  다만 이 로그가 매번 뜬다면 네이티브에서 Firestore 쓰기가 ack를 못 받고 있다는 뜻 →
+  다음 레버는 `src/config/firebase.ts`의 `getFirestore(app)`를
+  `initializeFirestore(app, { experimentalForceLongPolling: true })`로 바꾸는 것(네이티브 전용).
+  앱 전체의 통신 방식이 바뀌므로 **로그로 근거를 확인한 뒤에** 적용할 것.
+- `1/4`에서 15초 타임아웃이 뜨면 재인증(= Auth 통신) 자체가 막힌 것 → 기기 네트워크/VPN 확인.
