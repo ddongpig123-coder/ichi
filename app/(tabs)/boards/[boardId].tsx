@@ -272,7 +272,7 @@ export default function PostListScreen() {
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>💬 {item.commentCount}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>👁 {item.viewCount ?? 0}</Text>
+                <Text style={styles.metaText}>{t("boards.views")} {item.viewCount ?? 0}</Text>
               </View>
             </TouchableOpacity>
           )
