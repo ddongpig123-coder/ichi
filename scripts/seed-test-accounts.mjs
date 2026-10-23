@@ -5,19 +5,16 @@
 // 実行: node scripts/seed-test-accounts.mjs
 // ※ 本番データではない。作成後は Firebase Console から削除可能。
 
-import { readFileSync } from "node:fs";
+import { loadEnv } from "./load-env.mjs";
 import { initializeApp } from "firebase/app";
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
 } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 
-// .env（EXPO_PUBLIC_* はクライアント公開値）を読む
-const env = Object.fromEntries(
-  readFileSync(new URL("../.env", import.meta.url), "utf8")
-    .split(/\r?\n/).filter((l) => l.includes("=") && !l.startsWith("#"))
-    .map((l) => { const i = l.indexOf("="); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
-);
+// .env / .env.local（EXPO_PUBLIC_* はクライアント公開値）を読む。
+// eas env:pull は .env.local に書くので、そちらも見ないとキーが見つからない。
+const env = loadEnv(import.meta.url);
 
 const app = initializeApp({
   apiKey: env.EXPO_PUBLIC_FIREBASE_API_KEY,
