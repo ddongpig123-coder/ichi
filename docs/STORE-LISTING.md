@@ -165,8 +165,13 @@ App Store Connect の「App Review Information > Notes」に記入する内容�
 This is a community app for university students in Japan (timetable, course
 reviews, boards, DMs, study-abroad lounge).
 
-- You can browse as an anonymous guest without signing up.
-- Demo account for full features: (see 데모 계정 below)
+DEMO ACCOUNT
+  Email:    ichidemo1@example.com
+  Password: (심사노트 입력창에 직접 기입 — 이 파일에는 적지 않는다)
+
+- Most of the app can be browsed as an anonymous guest without signing up.
+  The demo account is only needed for features that require an account
+  (friends, DMs, writing reviews, graduation checker).
 - User-generated content is moderated: every post/comment/message can be
   reported and users can be blocked. Reports are reviewed within ~24h and
   actioned (in-app 通報/ブロック). Hard delete is disabled; removed content
@@ -192,13 +197,22 @@ reviews, boards, DMs, study-abroad lounge).
 > 제3자 로그인을 노출하면 Sign in with Apple 병설이 필수). 심사노트에 외부 로그인이 있다고 쓰면
 > 없는 기능으로 리젝 사유를 자초합니다. 2.0에서 되살릴 때 이 줄도 같이 고칠 것.
 
-### 데모 계정 (제출 전에 본인이 생성해서 값 채우기)
+### 데모 계정 (시드 스크립트로 생성)
 ```
-Email:    demo-review@<도메인>       ← 제출 직전 생성
-Password: (안전한 임시 비번)
+Email:    ichidemo1@example.com
+Password: (.env 의 TEST_ACCOUNT_PASSWORD 값)
 비고: 게스트로도 대부분 열람 가능. 데모 계정은 로그인 필요 기능(친구·쪽지·리뷰 작성) 확인용.
 ```
-> ⚠️ 데모 계정 비번은 이 파일에 **커밋하지 말 것**. 심사 노트 입력창에만 직접 기입.
+생성 방법 — `.env` 에 `TEST_ACCOUNT_PASSWORD=...` 한 줄 추가 후:
+```sh
+node scripts/seed-test-accounts.mjs      # ichidemo1~4 + 봄·가을 시간표
+node scripts/verify-test-accounts.mjs    # 읽기 확인
+```
+`ichidemo1`(商学部)과 `ichidemo2`는 **月1·火2를 공유**하도록 짜여 있어, 앱에서 서로 친구 추가하면
+시간표 겹침 스크린샷을 바로 찍을 수 있다(친구 관계는 스크립트가 만들지 않음 — 앱에서 1회 수동).
+
+> ⚠️ 데모 계정 비번은 이 파일에 **커밋하지 말 것**(`.env` 와 심사 노트 입력창에만).
+> `@example.com` 은 메일 수신이 안 되는 예약 도메인이지만, 이 앱은 메일 인증 없이 로그인되므로 심사에 문제없다.
 
 ---
 

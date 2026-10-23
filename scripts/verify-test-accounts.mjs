@@ -20,7 +20,7 @@ if (!PASSWORD) {
   process.exit(1);
 }
 
-for (const email of ["ichitest1@example.com","ichitest2@example.com","ichitest3@example.com","ichitest4@example.com"]) {
+for (const email of ["ichidemo1@example.com","ichidemo2@example.com","ichidemo3@example.com","ichidemo4@example.com"]) {
   const { user } = await signInWithEmailAndPassword(auth, email, PASSWORD);
   const u = (await getDoc(doc(db, "users", user.uid))).data();
   const pub = (await getDoc(doc(db, "usersPublic", user.uid))).data();

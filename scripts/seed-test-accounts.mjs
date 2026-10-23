@@ -41,25 +41,25 @@ const s = (day, period, name, teacher, room, ci) => ({ day, period, name, teache
 // 友達の「重なり」テスト用に、わざと同じコマを共有させている
 const ACCOUNTS = [
   {
-    email: "ichitest1@example.com", nickname: "テスト太郎", department: "商学部", admissionYear: 2024,
+    email: "ichidemo1@example.com", nickname: "テスト太郎", department: "商学部", admissionYear: 2024,
     fall: [s("月",1,"経営学A","佐藤 教授","1101",0), s("火",2,"会計学B","田中 教授","2203",1),
            s("水",3,"マーケティング論","鈴木 教授","3305",2), s("木",2,"統計学入門","高橋 教授","1204",3)],
     spring: [s("月",2,"簿記原理","伊藤 教授","1102",1), s("水",1,"日本語表現法","渡辺 教授","2101",4)],
   },
   {
-    email: "ichitest2@example.com", nickname: "テスト花子", department: "商学部", admissionYear: 2024,
+    email: "ichidemo2@example.com", nickname: "テスト花子", department: "商学部", admissionYear: 2024,
     fall: [s("月",1,"経営学A","佐藤 教授","1101",0), s("火",2,"会計学B","田中 教授","2203",1),
            s("水",1,"簿記原理","伊藤 教授","1102",2), s("金",3,"国際経済学","中村 教授","4402",3)],
     spring: [s("火",1,"ミクロ経済学","小林 教授","3201",0), s("木",3,"英語コミュニケーション","Smith","2302",2)],
   },
   {
-    email: "ichitest3@example.com", nickname: "テスト先輩", department: "商学部", admissionYear: 2023,
+    email: "ichidemo3@example.com", nickname: "テスト先輩", department: "商学部", admissionYear: 2023,
     fall: [s("月",1,"経営学A","佐藤 教授","1101",4), s("木",2,"統計学入門","高橋 教授","1204",0),
            s("火",4,"経営組織論","山本 教授","3103",1), s("金",2,"データサイエンス入門","加藤 教授","5501",2)],
     spring: [s("水",2,"民法総則","吉田 教授","1303",3), s("金",1,"経済史","松本 教授","2204",0)],
   },
   {
-    email: "ichitest4@example.com", nickname: "テスト後輩", department: "経営学部", admissionYear: 2025,
+    email: "ichidemo4@example.com", nickname: "テスト後輩", department: "経営学部", admissionYear: 2025,
     fall: [s("火",2,"会計学B","田中 教授","2203",2), s("水",3,"マーケティング論","鈴木 教授","3305",3),
            s("月",3,"ミクロ経済学","小林 教授","3201",4), s("木",1,"英語コミュニケーション","Smith","2302",0)],
     spring: [s("月",4,"情報リテラシー","清水 教授","5102",1), s("火",3,"心理学概論","森 教授","1401",2)],
