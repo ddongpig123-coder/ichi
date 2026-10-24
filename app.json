@@ -11,7 +11,7 @@
     "userInterfaceStyle": "automatic",
     "scheme": "uni-community",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "jp.timetable.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
