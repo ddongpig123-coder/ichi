@@ -78,12 +78,16 @@
 ※本アプリは各大学の公式アプリではありません。単位・卒業可否など重要な情報は必ず大学の公式情報でご確認ください。
 ```
 
-### Keywords（100字・カンマ区切り・スペース入れない）
+### Keywords（100字・カンマ区切り・スペース入れない）— 2026-10-24 改訂
 > ⚠️ 大学名（明治 等）はキーワードにも入れない。他者の商標であり 5.2.1 のリジェクト事由になりうる。
-> 外した枠に「卒業単位」「単位計算」を入れ、名前・サブタイトルと検索語をそろえた。
+> 10校分は 100 字に収まらないので、校名戦略は 1.1 以降に別途検討。
+> 名前・サブタイトルに既にある語（時間割／卒業単位／友達）は索引済みなので外し、表記ゆれ（時間割り・卒単）と
+> 日本ストアを使う韓国人学生向けの韓国語（시간표・졸업・학점）を入れた。
+> キーワードは**バージョン単位**。承認後に変えるには新バージョンの審査が必要（随時変更できるのは Promotional Text のみ）。
 ```
-卒業単位,単位計算,時間割,大学,講義,シラバス,履修,卒業要件,掲示板,質問,サークル,留学生,教科書
+単位計算,大学,講義,シラバス,履修,卒業要件,掲示板,質問,サークル,留学生,教科書,授業,単位,口コミ,評価,新入生,履修登録,時間割り,卒単,空きコマ,学部,시간표,졸업,학점
 ```
+（91 字）
 
 ### What's New（v1.0.0）
 ```
@@ -153,6 +157,71 @@
 · 신고·차단 기능. 운영은 신고를 원칙 24시간 이내 확인
 
 ※ 본 앱은 각 대학 공식 앱이 아닙니다. 단위·졸업 가부 등 중요한 정보는 반드시 대학 공식 정보에서 확인하세요.
+```
+
+### 키워드（100자·쉼표 구분·띄어쓰기 없음）
+> 한국 스토어(KOR)에서만 색인됨(일본 스토어는 일본어 + English (U.S.)만 색인). 이름·부제에 있는 시간표·졸업학점·친구는 제외.
+```
+학점계산,졸업요건,대학,강의,수업,강의평,게시판,질문,동아리,유학생,일본,일본유학,교과서,신입생,수강신청,강의계획서,공강,대학생활,일본대학,시라버스,학점,졸업
+```
+（88자）
+
+---
+
+## 3b. English (U.S.) — 일본 스토어 추가 색인용 (2026-10-24 추가)
+
+> Apple 표: Japan 스토어는 **Japanese + English (U.S.)** 두 로컬라이즈의 메타데이터를 색인한다.
+> 즉 en-US 로컬라이즈를 추가하면 **일본 스토어에서 키워드 100자를 더** 쓸 수 있다. 스크린샷은 안 올리면 일본어 것이 자동 사용됨.
+> 앱 UI에 영어는 없지만 스토어 로컬라이즈와 UI 언어 일치는 요구되지 않는다.
+
+### Name（30）
+```
+大学の森 - University Timetable
+```
+### Subtitle（30）
+```
+Credits, timetable & friends
+```
+### Keywords（100）
+```
+timetable,schedule,university,credits,graduation,syllabus,class,course,student,japan,대학,강의,수업,유학생
+```
+（97 chars）
+### Description
+```
+大学の森 (Daigaku no Mori) is a "graduation credits + timetable" app for university students and international students in Japan.
+
+■ Timetable × Friends
+- Search courses and add them to your timetable in one tap
+- Share your timetable with friends; courses you take together are highlighted automatically
+- Visibility is your choice: private, or friends only
+
+■ Find courses & reviews
+- Search over 20,000 courses by course name or instructor (partial match supported)
+- Check star ratings and tags (easy credits, attendance checks, international-student friendly, etc.)
+- Syllabus info and ratings in one course detail screen
+
+■ Community
+- Anonymous boards per university (free talk, questions, clubs, textbook hand-me-downs, etc.)
+- Question board with best answers and categories
+- Nationwide lounge for international students (visa, part-time jobs, housing, trading, careers)
+- Direct messages
+
+■ Graduation requirement checker (reference)
+- Diagnoses missing credits by category and lists candidate courses you can still take
+- Covers all 10 faculties of Meiji University (select faculty, department and admission year)
+※ For reference only. Always confirm credits and graduation eligibility with your university's official information.
+
+■ Safe by design
+- Start right away as a guest, no sign-up needed; link an email later to keep your data
+- "Verified" badge via university email verification
+- Report and block features; reports are reviewed within 24 hours as a rule
+
+※ This app is not an official app of any university and is not affiliated with or endorsed by any university.
+```
+### What's New (1.0.0)
+```
+First release.
 ```
 
 ---
