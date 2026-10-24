@@ -3,6 +3,8 @@
 앱 번들과 분리된 **로컬 실행 전용** 스크립트 모음. 크롤러·적재 도구가 여기 들어간다.
 
 > ⚠️ **출력은 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.** 앱 강의 검색 UX가 이 형식을 기준으로 동작한다. 임의 필드 구조 금지.
+>
+> 📘 매년 돌리는 순서·검증·알려진 빈 곳은 [docs/DATA-MANUAL.md §11](../docs/DATA-MANUAL.md) 참조. 便覧(졸업요건) 추출 도구는 [binran/](binran/README.md).
 
 ## 설치
 

@@ -44,6 +44,8 @@ scripts/**/serviceAccount*.json
 # 크롤러 출력 (대용량 데이터 — 커밋 제외)
 scripts/output/
 scripts/node_modules/
+# 便覧 PDF 보관함(저작권·용량) — DATA-MANUAL §4. URL만 JSON _meta에 남긴다
+docs/binran/
 
 # typescript
 *.tsbuildinfo

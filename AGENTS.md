@@ -61,6 +61,8 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
   4.8(제3자 로그인 시 동등한 프라이버시 로그인 병설) 때문. 구현은 남아 있음. 이메일 로그인만 노출
 - EAS 설정 완료: `projectId`, OTA `updates.url`, 환경변수 7개, `appleTeamId`, `ascAppId`(6825671804)
 - 졸업 마술사 메이지 10학부 완료. 理工·情コミ만 배당표 미연동(便覧이 학내 포털 비공개)
+- 📘 **데이터 작업(便覧·졸업요건·배당표·시라버스 크롤·연간 갱신)은 [docs/DATA-MANUAL.md](docs/DATA-MANUAL.md) 절차대로만.**
+  현황 [docs/data/MASTERS-INDEX.md](docs/data/MASTERS-INDEX.md) · 분담 [docs/COLLAB-DATA-TAEHUI.md](docs/COLLAB-DATA-TAEHUI.md) · 도구 `scripts/binran/`
 - **네이티브 푸시 알림은 구현돼 있지 않음**(`expo-notifications` 미설치). 앱 내 빨간 점 배지만 있음
 - 학점 기록은 단말 로컬(AsyncStorage) 전용 — 설계상 의도(CREDIT-TRACKING §6-2, 서버에 평문 저장 금지).
   기기 변경 시 소실 경고는 이미 화면에 표시됨. JSON 백업 내보내기/가져오기 추가됨
