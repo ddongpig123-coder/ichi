@@ -26,7 +26,8 @@ export const DEPARTMENTS: Department[] = [
   { id: "82", nameJa: "資格課程科目", nameKo: "자격과정(교직)과목" },
   { id: "83", nameJa: "情報関係科目", nameKo: "정보관계과목" },
   { id: "84", nameJa: "留学生・国際連携科目", nameKo: "유학생·국제연계과목" },
-  { id: "87", nameJa: "国際協力人材育成プログラム", nameKo: "국제협력인재육성프로그램" },
+  // 87 国際協力人材育成プログラム は 2026年度の開講が0件（クロール結果）のためチップを出さない。
+  // 次年度のクロールで科目が出たらここに追加する。
 ];
 
 export function departmentName(dept: Department, language: "ja" | "ko"): string {
