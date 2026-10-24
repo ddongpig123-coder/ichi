@@ -20,6 +20,13 @@ export const DEPARTMENTS: Department[] = [
   { id: "18", nameJa: "情報コミュニケーション学部", nameKo: "정보커뮤니케이션학부" },
   { id: "19", nameJa: "国際日本学部", nameKo: "국제일본학부" },
   { id: "26", nameJa: "総合数理学部", nameKo: "종합수리학부" },
+  // 学部間共通（どの学部の学生も履修する区分）。シラバス検索の category 81〜87 と同一コード。
+  // 外国語・資格課程(教職)・情報科目は学部コードの検索結果に出ないため別チップで出す（2026-10-25）。
+  { id: "81", nameJa: "共通外国語科目", nameKo: "공통외국어과목" },
+  { id: "82", nameJa: "資格課程科目", nameKo: "자격과정(교직)과목" },
+  { id: "83", nameJa: "情報関係科目", nameKo: "정보관계과목" },
+  { id: "84", nameJa: "留学生・国際連携科目", nameKo: "유학생·국제연계과목" },
+  { id: "87", nameJa: "国際協力人材育成プログラム", nameKo: "국제협력인재육성프로그램" },
 ];
 
 export function departmentName(dept: Department, language: "ja" | "ko"): string {
