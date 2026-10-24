@@ -204,6 +204,8 @@ DEMO ACCOUNT
 > 없는 기능으로 리젝 사유를 자초합니다. 2.0에서 되살릴 때 이 줄도 같이 고칠 것.
 
 ### 데모 계정 (시드 스크립트로 생성)
+> ✅ **2026-10-24 생성 완료** (`ichidemo1~4`, 준희 로컬에서 시드 4/4 성공). 아래는 재생성 절차.
+
 ```
 Email:    ichidemo1@example.com
 Password: (.env 의 TEST_ACCOUNT_PASSWORD 값)
