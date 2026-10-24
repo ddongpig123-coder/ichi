@@ -18,7 +18,7 @@
 | Secondary category | Social Networking（ソーシャル） |
 | Primary language | 日本語 (ja) |
 | Additional language | 한국어 (ko) |
-| Age rating | **17+ (Apple) / Teen〜Mature (Google)** ※ユーザー生成コンテンツ有 |
+| Age rating | **13+ (Apple, 2025年新設問)** / Teen〜Mature (Google) ※回答表は STORE-CHECKLIST §5 |
 | Price | 無料 (Free) |
 | Support URL | `https://ddongpig123-coder.github.io/ichi/support.html` |
 | Marketing URL | `https://ddongpig123-coder.github.io/ichi/` or 省略可 |
@@ -296,6 +296,6 @@ node scripts/verify-test-accounts.mjs    # 읽기 확인
 ## 5. 자산·확인 메모
 
 - **스크린샷**(사용자 촬영): ①시간표+친구 겹침 ②강의검색·리뷰 ③질문게시판(受付中/ベストアンサー) ④졸업요건 마술사(학부 선택·부족영역) ⑤라운지/쪽지. 일/한 2세트 권장.
-- **연령 등급**: 익명 UGC → App Store 17+ / Google 성인 상당. 설문에서 "사용자 생성 콘텐츠" 정직하게 체크.
+- **연령 등급**: Apple은 2025년 설문 개편으로 17+ 폐지(4+/9+/13+/16+/18+). 소셜 미디어=예 → **13+**. 회답표는 STORE-CHECKLIST §5.
 - **개인정보 라벨·제출 절차**: [STORE-CHECKLIST.md](STORE-CHECKLIST.md) 참조.
 - **미검증**: 소셜 로그인(콘솔 설정 후), 스크린샷과 실제 화면 문구 일치.
