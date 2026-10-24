@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import type { Theme } from "../../theme/themes";
 import type { TranslationKey } from "../../i18n/translations";
+import { isFreeZone } from "../../data/facultyMasters";
 import type { ResolvedMaster } from "../../data/facultyMasters";
 import { calcZonesOnly } from "../../utils/gradCalc";
 
@@ -20,6 +21,9 @@ interface Props {
 // 成績表を見て区分ごとに ＋/− で単位を入力 → 不足区分を優先表示。
 export function ZoneDiagnosis(p: Props) {
   const { theme, t, master, baseline, onStep, hasAllocation } = p;
+  // 超過分の受け皿になる区分の表示名（学部ごとに違う: フリーゾーン / 自由選択 / 選択科目…）。
+  // "フリーゾーン" と決め打ちすると、その名前の区分が無い学部（文学部）で嘘になる。
+  const freeZoneName = master.zones.find((z) => isFreeZone(z))?.nameJa ?? "";
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const calc = calcZonesOnly(master, baseline);
@@ -112,7 +116,10 @@ export function ZoneDiagnosis(p: Props) {
             </View>
             {r.overflow > 0 ? (
               <Text style={styles.zoneSub}>
-                {calc.hasFreeZone ? t("grad.rec.overflow") : t("grad.rec.overflowNoFree")} {r.overflow}{" "}
+                {calc.hasFreeZone
+                  ? `${t("grad.rec.overflow")} ${freeZoneName}`
+                  : t("grad.rec.overflowNoFree")}{" "}
+                {r.overflow}{" "}
                 {t("grad.unit")}
               </Text>
             ) : null}
