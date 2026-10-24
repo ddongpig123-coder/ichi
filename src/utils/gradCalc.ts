@@ -182,14 +182,14 @@ export function calcZonesOnly(master: ResolvedMaster, baseline: Record<string, n
   const zones: ZonesOnlyResult["zones"] = {};
   let overflowSum = 0;
   master.zones.forEach((z) => {
-    if (isFreeZone(z.id)) return;
+    if (isFreeZone(z)) return;
     const acq = Math.max(0, baseline[z.id] ?? 0);
     const counted = Math.min(acq, z.minUnits);
     const overflow = Math.max(0, acq - z.minUnits);
     overflowSum += overflow;
     zones[z.id] = { acq, counted, overflow, min: z.minUnits, met: acq >= z.minUnits };
   });
-  const free = master.zones.find((z) => isFreeZone(z.id));
+  const free = master.zones.find((z) => isFreeZone(z));
   if (free) {
     const acq = Math.max(0, baseline[free.id] ?? 0) + overflowSum;
     zones[free.id] = { acq, counted: acq, overflow: 0, min: free.minUnits, met: acq >= free.minUnits };
