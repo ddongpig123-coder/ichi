@@ -187,8 +187,14 @@ DEMO ACCOUNT
   all 10 faculties of Meiji University (zone-level shortfall diagnosis;
   some faculties include per-course guidance). Credit records are stored
   only on the device, never on our servers.
+- This app is NOT affiliated with, endorsed by, or operated by any university.
+  University and faculty names appear only so that students can select their
+  own curriculum. We do not claim any partnership with these institutions.
 - Course data comes from the university's public syllabus pages. The app
   does not log in to, or scrape, any university system on the user's behalf.
+- The "お試し" badge on the graduation checker means the underlying data
+  currently covers a subset of faculties. The app is completely free and
+  there is no paid tier or locked content.
 - Free app. No in-app purchases, no ads, no tracking (ATT not required).
 - UI language is Japanese, with Korean available in settings.
 ```
