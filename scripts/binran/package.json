@@ -1,0 +1,11 @@
+{
+  "name": "ichi-binran-tools",
+  "private": true,
+  "type": "module",
+  "description": "便覧・学則 PDF → 졸업요건·배당표 JSON 추출 도구. 로컬 전용(앱 번들 무관). 사용법은 docs/DATA-MANUAL.md",
+  "dependencies": {
+    "pdfjs-dist": "^4.0.0",
+    "pdfjs-dist-v3": "npm:pdfjs-dist@3.11.174",
+    "@napi-rs/canvas": "^0.1.0"
+  }
+}
