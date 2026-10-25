@@ -307,6 +307,9 @@ schoolDomain "global" 부채는 해소 완료(착수 선행조건 충족). 便�
 **트랙 B** = 학생 手입력(성적표 이수 이력). 런타임 계산은 결정론(LLM 0).
 최소 v1: 프로필 학부·입학년도 선택 → 마스터 로드 → 성적 手입력 → 영역별 진행률 대시보드.
 
+**데이터 상시 수집·연간 갱신 (2026-10-25 확정)** — 절차 정본 [DATA-MANUAL.md](DATA-MANUAL.md), 분담·결정 [COLLAB-DATA-TAEHUI.md](COLLAB-DATA-TAEHUI.md) §8, 현황 [data/MASTERS-INDEX.md](data/MASTERS-INDEX.md).
+메이지 10학부 졸업요건·배당표 + 강의 21,078건(学部間共通 포함) 완료. **1.1 항목**: ① 他校는 **早稲田 1개교 완전 지원**(졸업요건+시라버스 크롤+앱 학교 분기)을 먼저 해 패턴을 굳힌 뒤 복제 ② `Course` day/period nullable(집중강의·日曜) ③ 검색 결과 분반 표시(`courseNumber`) ④ 매년 3~4월 매뉴얼 §12 연간 체크리스트.
+
 ---
 
 ## 2. 주간 리듬 (하루 단위 템플릿)
