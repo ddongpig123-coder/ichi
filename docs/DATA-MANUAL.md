@@ -155,6 +155,8 @@ node render.mjs <pdf> <page> 2.6 p.png   # 4) 병합셀·○표·중괄호가 �
 | 9-13 | PowerShell 다운로드가 HTML을 받아옴 | Cloudflare 챌린지 | curl + 브라우저 UA + Referer(§4) |
 | 9-14 | `git add`에 남의 미커밋 파일이 딸려옴 | 같은 워킹트리에 다른 세션 | `git add` 직후 `git status --short` 확인, 커밋 후 `git show --stat` 재확인 |
 | 9-15 | 렌더 스크립트가 `ctx.fill(Path2D)`에서 터짐 | pdfjs v4 + napi-rs canvas 비호환 | 렌더는 `pdfjs-dist-v3` alias 사용(`render.mjs`) |
+| 9-16 | **Windows에서 `render.mjs`가 `Error: Cannot find module 'canvas'`로 죽음** (9-15의 v3 alias가 원인) | `pdfjs-dist-v3`가 DOMMatrix·Path2D 폴리필로 **node-canvas**를 require. Windows는 네이티브 빌드 체인이 필요해 사실상 설치 불가 | **poppler `pdftoppm`으로 대체**. `winget install oschwartz10612.Poppler` → `pdftoppm -png -r 150 -f <첫장> -l <끝장> in.pdf out` → PNG를 눈으로 판독. 조판이 학부마다 달라도 영향 없음. 설치 경로가 PATH에 안 잡히면 `%LOCALAPPDATA%/Microsoft/WinGet/Packages/oschwartz10612.Poppler_*/poppler-*/Library/bin/` 직접 지정 |
+| 9-17 | **`pdftotext`로 일본어가 한 글자도 안 나옴**(숫자·영문만). `-layout`/`-raw`/`-enc UTF-8` 전부 동일 | PDF 폰트에 **ToUnicode CMap이 없음** → 글리프→문자 역매핑 불가. 上智 履修要覧 9학부 전부 해당 | 텍스트 추출을 포기하고 **9-16의 이미지 판독**으로. 숫자는 추출되므로 **판독값 교차검증에는 쓸 수 있다**(上智 経済: 텍스트의 26/8/6/12/4/94/124가 이미지 판독과 일치) |
 
 ## 10. 못 구할 때 — "미검증" 규칙
 
@@ -216,7 +218,7 @@ MASTERS-INDEX 「他校 10개교 공개본 전수 조사」표가 현황.
 
 | 경로 | 상태 | 비고 |
 |---|---|---|
-| ① 공식 시라버스 `www.wsl.waseda.jp/syllabus/` | ❌ **현재 접속 불가** — 준희 PC에서 443·80 타임아웃, 외부 fetch는 `ECONNREFUSED`, 브라우저도 실패. DNS는 정상(202.209.29.17). 검색엔진엔 2026년도 상세페이지가 색인돼 있어 **최근까지는 공개 운영**. 원인(일시 장애 / 접속 제한) 미확정 | 다른 네트워크(학내 Wi-Fi·다른 회선)에서 재시도할 것 |
+| ① 공식 시라버스 `www.wsl.waseda.jp/syllabus/` | ❌ **접속 불가 — 2개 회선에서 재현(2026-10-25)**. 준희 PC: 443·80 타임아웃, 외부 fetch `ECONNREFUSED`, 브라우저 실패. **태희 PC(다른 회선·다른 ISP): 동일하게 443·80 TCP 타임아웃**(`curl` 20초, 브라우저 UA·인앱 브라우저 모두 실패). 양쪽 다 **DNS는 정상**(202.209.29.17)이고 `www.waseda.jp`는 200. 검색엔진엔 2026년도 상세페이지가 색인돼 있어 최근까지는 공개 운영 | **회선 문제가 아님이 확인됨** → 일시 장애이거나 호스트 측 접속 제한(지역·교내망). 남은 재시도 경로는 **일본 국내망·학내 Wi-Fi**뿐. ②를 1차 경로로 쓰는 판단은 유지 |
 | ② **학부별 「学科目配当表」 PDF** (학부 사이트, 공개) | ✅ **商学部 2026 확보** — `waseda.jp/fcom/soc/students/registration` 의 「2026年度学科目配当表」(2024年度以降入学者用 34p / 2023年度以前用, 10/19 갱신). 텍스트 추출 가능 | **1차 경로로 채택 권장** |
 
 **① 시라버스 구조(2025-12 아카이브 저장본으로 확인, 실측 아님)**: 폼 `cForm` → `POST ./index.php`, `ControllerParameters=JAA103SubCon`(검색) / `JAA102SubCon`(과년도). 상세는 `GET JAA104.php?pKey=…`(pKey에 연도 포함).
