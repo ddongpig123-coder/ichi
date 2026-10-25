@@ -19,6 +19,7 @@ import { useI18n } from "../src/contexts/I18nContext";
 import { DEPARTMENTS, departmentName } from "../src/data/departments";
 import {
   searchCourses,
+  COURSE_SEARCH_MIN_CHARS,
   contributeCourse,
   confirmCourse,
   fetchConfirmState,
@@ -306,7 +307,12 @@ export default function CourseSearchScreen() {
           ListEmptyComponent={
             searched ? (
               <View style={styles.center}>
-                <Text style={styles.empty}>{t("courseSearch.noResults")}</Text>
+                {/* 1文字は2-gram適載データと噛み合わず必ず0件 → 「ない」ではなく入力案内を出す */}
+                <Text style={styles.empty}>
+                  {keyword.trim().length > 0 && keyword.trim().length < COURSE_SEARCH_MIN_CHARS
+                    ? t("courseSearch.tooShort")
+                    : t("courseSearch.noResults")}
+                </Text>
                 <Text style={styles.hint}>{t("courseSearch.manualHint")}</Text>
                 {deptId && keyword.trim() ? (
                   <TouchableOpacity style={styles.registerCta} onPress={() => setRegisterOpen(true)}>
