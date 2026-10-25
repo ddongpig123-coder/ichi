@@ -11,6 +11,9 @@ export interface FZone {
   minUnits: number;
   minUnitsRyugakusei?: number; // 留学生で最低単位が異なる区分（総合数理の総合教育 等）
   hintJa?: string;
+  // 他区分の超過分を受け取る「自由選択」枠か。
+  // id が freezone/jiyu でない学部（文学部の選択科目 等）は、ここで明示する。
+  free?: boolean;
 }
 
 export interface FDept {
@@ -44,9 +47,18 @@ export interface Faculty {
 
 export const MEIJI = "meiji.ac.jp";
 
-// freezone(自由選択)の判定: 超過分の受け皿になる区分
-export function isFreeZone(id: string): boolean {
-  return /freezone|jiyu/i.test(id);
+// freezone(自由選択)の判定: 超過分の受け皿になる区分。
+// 明示フラグ free を最優先し、無ければ id から推測する（既存データ互換）。
+// ⚠️ id だけで判定すると文学部の「選択科目(sentaku)」を取りこぼし、超過分が
+//    どこにも入らず総単位が過少計算になる。逆に /sentaku/ を足すと国際日本の
+//    「総合教育科目(選択必修)=sogo-kyoiku-sentaku」まで拾ってしまうため、
+//    自由枠は zone 側で free: true と書くのが正。
+export function isFreeZone(zone: string | FZone): boolean {
+  if (typeof zone !== "string") {
+    if (zone.free !== undefined) return zone.free;
+    return /freezone|jiyu/i.test(zone.id);
+  }
+  return /freezone|jiyu/i.test(zone);
 }
 
 // ---- 理工学部: 共通区分 + 学科別(理系基礎/専門/自由) を合成 ----
@@ -136,19 +148,19 @@ const literature: Faculty = {
         { id: "senko-hisshu", nameJa: "専攻必修科目", minUnits: 38 },
         { id: "gaikokugo", nameJa: "外国語科目", minUnits: 16 },
         { id: "wellness", nameJa: "ウェルネス科目", minUnits: 4 },
-        { id: "sentaku", nameJa: "選択科目", minUnits: 66 },
+        { id: "sentaku", nameJa: "選択科目", minUnits: 66, free: true },
       ]},
       { id: "shigaku-chiri", nameJa: "史学地理学科", zones: [
         { id: "senko-hisshu", nameJa: "専攻必修科目", minUnits: 32 },
         { id: "gaikokugo", nameJa: "外国語科目", minUnits: 12 },
         { id: "wellness", nameJa: "ウェルネス科目", minUnits: 4 },
-        { id: "sentaku", nameJa: "選択科目", minUnits: 76 },
+        { id: "sentaku", nameJa: "選択科目", minUnits: 76, free: true },
       ]},
       { id: "shinri-shakai", nameJa: "心理社会学科", zones: [
         { id: "senko-hisshu", nameJa: "専攻必修科目", minUnits: 30, hintJa: "臨床心理学/現代社会学/哲学 各専攻30単位" },
         { id: "gaikokugo", nameJa: "外国語科目", minUnits: 16, hintJa: "2か国語16単位" },
         { id: "wellness", nameJa: "ウェルネス科目", minUnits: 4 },
-        { id: "sentaku", nameJa: "選択科目", minUnits: 74, hintJa: "共通選択24以上を含み専攻選択と合わせて56以上" },
+        { id: "sentaku", nameJa: "選択科目", minUnits: 74, free: true, hintJa: "共通選択24以上を含み専攻選択と合わせて56以上" },
       ]},
     ],
   }],
@@ -358,7 +370,7 @@ export function bandForAdmissionYear(f: Faculty, year: number | null): FBand {
 
 export interface ResolvedMaster {
   totalRequired: number;
-  zones: { id: string; nameJa: string; minUnits: number; hintJa?: string }[];
+  zones: { id: string; nameJa: string; minUnits: number; hintJa?: string; free?: boolean }[];
 }
 
 // (学部・学科・留学生) から診断用のフラットな区分リストを得る（engine="zones"用）。
@@ -377,7 +389,7 @@ export function resolveZones(
   return {
     totalRequired: band.totalRequired,
     zones: zs.map((z) => ({
-      id: z.id, nameJa: z.nameJa, hintJa: z.hintJa,
+      id: z.id, nameJa: z.nameJa, hintJa: z.hintJa, free: z.free, // free を落とすと超過分の受け皿を見失う
       minUnits: isRyugakusei && z.minUnitsRyugakusei != null ? z.minUnitsRyugakusei : z.minUnits,
     })),
   };
