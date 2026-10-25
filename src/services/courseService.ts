@@ -22,8 +22,13 @@ import { makeBigrams, queryGram, matchesQuery, normalizeForSearch } from "../uti
 export const COURSE_DATA_LOADED = true;
 
 export const COURSE_SEARCH_LIMIT = 50;
-// array-contains の候補上限。よく出る2-gramでも年度・学期フィルタ前に十分拾えるよう広め。
-const CANDIDATE_LIMIT = 300;
+// array-contains の候補上限。年度・学期を**サーバー側**で絞ってから数えるので、
+// 「その学部・その学期に実在する該当科目数」が上限。実データ最大は理工の235件(2026春「英語」)。
+const CANDIDATE_LIMIT = 500;
+
+// 1文字クエリは 2-gram と噛み合わない（適載データは2-gramのみ）ので必ず0件になる。
+// 呼び出し側が「2文字以上」と案内できるよう、長さの下限をエクスポートする。
+export const COURSE_SEARCH_MIN_CHARS = 2;
 
 export interface CourseSearchParams {
   schoolDomain: string;
@@ -50,13 +55,21 @@ export async function searchCourses(params: CourseSearchParams): Promise<Course[
   const keyword = params.keyword.trim();
   if (!keyword) return [];
 
+  // 1文字では 2-gram に当たらない（必ず0件）。呼び出し側で案内する。
+  if (normalizeForSearch(keyword).length < COURSE_SEARCH_MIN_CHARS) return [];
+
   const gram = queryGram(keyword);
   if (!gram) return []; // 正規化後に空
 
-  // 講義名gramで候補を絞り込み、年度・学期・全文含有はクライアントで判定する
-  // （array-contains + 等価フィルタの複合インデックスを増やさないため）。
+  // 年度・学期は**サーバー側**で絞る。以前はここをクライアントで落としていたため、
+  // 「英語」のような頻出2-gramでは上限300件が別学期の科目で埋まり、該当科目があるのに
+  // 結果から消えていた（2026春「英語」: 理工 235件中169件しか出ない = 28%欠落。
+  // 商24件・政経5件も同様に欠落）。array-contains + 等価2件は既存インデックスで通る
+  // （複合インデックスの追加デプロイ不要 — 実データで確認済み）。
   const q = query(
     coursesRef(params.schoolDomain, params.deptId),
+    where("year", "==", params.year),
+    where("semester", "==", params.semester),
     where("nameGrams", "array-contains", gram),
     limit(CANDIDATE_LIMIT)
   );
@@ -65,7 +78,6 @@ export async function searchCourses(params: CourseSearchParams): Promise<Course[
 
   return snap.docs
     .map((d) => ({ ...(d.data() as Course), id: d.id }))
-    .filter((c) => c.year === params.year && c.semester === params.semester)
     .filter(
       (c) =>
         matchesQuery(c.name, keyword) ||
