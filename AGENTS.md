@@ -49,21 +49,37 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 - **크롤러(scripts/) 작업 시**: 적재 데이터는 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.
   서비스 계정 키는 절대 커밋 금지 (.gitignore에 패턴 등록됨)
 
-## 🧭 현재 상태 (2026-10-28) — **1.1 계획 수립 완료. 새 세션은 이 블록부터 읽을 것**
+## 🧭 현재 상태 (2026-10-28) — **1.1 스프린트. 새 세션은 이 블록부터 읽을 것**
 
-- **iOS**: 10/25 심사 제출(빌드 4), 결과 대기 중 / **Android**: 비공개 테스트 `alpha` 게시 완료,
-  🔴 **테스터 12명 모집이 유일한 병목** (14일 + 심사 7일 역산 → 11/1 시작해야 11월 말 출시)
-- 📘 **1.1 작업은 전부 [docs/ROADMAP-1.1.md](docs/ROADMAP-1.1.md) §5 세션표(S1~S10) 순서대로.**
-  새 세션은 "ROADMAP-1.1 §5의 S번호 하나"만 맡는다. 입력 문서가 세션마다 지정돼 있다.
-  - QA 수정 항목 → [docs/QA-FEEDBACK.md](docs/QA-FEEDBACK.md) (준희가 계속 추가하는 곳)
-  - 게시판·라운지 권한 설계 → [docs/BOARD-ACCESS.md](docs/BOARD-ACCESS.md) 🔴 준희 결정 대기
-  - 콘텐츠 운영(AI 시딩·강의평) → [docs/CONTENT-OPS.md](docs/CONTENT-OPS.md) 🔴 준희 결정 대기
-- 🔴 **알아둘 구조 문제 3개** (1.1의 뼈대):
-  1. `src/data/departments.ts`가 **메이지 10학부 하드코딩** → 어느 학교 유저든 메이지 학부가 뜬다
-  2. `firestore.rules`의 학교 게시판에 **소속 검증이 없다** (분리는 UI 차원일 뿐)
-  3. 채팅이 `schools/{sd}/chats` 스코프라 **라운지에서 타교 유저에게 보낸 쪽지가 상대에게 안 간다**
-- 데이터 현황: 明治 10학부 중 **8학부 완성**(理工·情コミ는 便覧 비공개로 배당년차 없음) /
-  早稲田 商 · 法政 経営 · 上智 経済 각 1건 — **앱은 아직 meiji.ac.jp 전용**
+### 🔴 새 세션이 읽는 순서 (이 순서를 지키면 같은 걸 두 번 묻지 않는다)
+1. **이 블록** → 2. **[docs/DECISIONS.md](docs/DECISIONS.md)** (결정 로그. 정해진 것/안 정해진 것이 한눈에)
+→ 3. **[docs/ROADMAP-1.1.md](docs/ROADMAP-1.1.md) §5 세션표**에서 자기 세션(S번호) 찾기
+→ 4. 그 세션의 **입력 문서**만 읽기
+
+### 지금 상황
+- **🔴 데드라인: 1.1 OTA 배포 = 2026-12-15 / 기능 동결 = 12-08** (ROADMAP-1.1 §7에 역산 일정)
+- **iOS**: 10/25 심사 제출(빌드 4), 결과 대기 / **Android**: 비공개 테스트 `alpha` 게시 완료,
+  🔴 **테스터 12명 모집이 유일한 병목** (11/1 카운트 시작해야 11월 말 출시)
+- 🔴 **최대 리스크: 11/08까지 S2(학교 분기)·S3(게시판 권한)을 태희가 끝내야 한다.** 둘이 나머지 전부의 선행이다
+
+### 1.1 문서 지도
+| 문서 | 내용 |
+|---|---|
+| [docs/DECISIONS.md](docs/DECISIONS.md) | **결정 로그 — 제일 먼저 읽을 것** |
+| [docs/ROADMAP-1.1.md](docs/ROADMAP-1.1.md) | 전체 그림 · 세션표 S1~S13 · 역산 일정 |
+| [docs/QA-FEEDBACK.md](docs/QA-FEEDBACK.md) | 실기기 피드백 트래커 (준희가 계속 추가) |
+| [docs/BOARD-ACCESS.md](docs/BOARD-ACCESS.md) | 게시판·숲 구조와 권한 · 게시판 라인업 · 익명 체크박스 |
+| [docs/CONTENT-OPS.md](docs/CONTENT-OPS.md) | AI 시딩 · 문체 규칙 · 소재 40개 · 강의평 전략 |
+| [docs/MARKETING.md](docs/MARKETING.md) | 카드뉴스·SNS 외부 유입 |
+
+### 🔴 알아둘 구조 문제 3개 (1.1의 뼈대)
+1. `src/data/departments.ts`가 **메이지 10학부 하드코딩** → 어느 학교 유저든 메이지 학부가 뜬다
+2. `firestore.rules`의 학교 게시판에 **소속 검증이 없다** (분리는 UI 차원일 뿐)
+3. 채팅이 `schools/{sd}/chats` 스코프라 **라운지에서 타교 유저에게 보낸 쪽지가 상대에게 안 간다**
+
+### 데이터 현황
+明治 10학부 중 **8학부 완성**(理工·情コミ는 便覧 비공개) / 早稲田 商 · 法政 経営 · 上智 経済 각 1건.
+**앱은 아직 meiji.ac.jp 전용.** 비공개 便覧 입수 경로는 [COLLAB §10](docs/COLLAB-DATA-TAEHUI.md).
 
 ---
 
