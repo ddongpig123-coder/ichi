@@ -14,7 +14,10 @@ npm install          # pdfjs-dist(텍스트) + pdfjs-dist-v3 alias(렌더) + @na
 | `rawxy.mjs` | 한 페이지 좌표 덤프 — **표 열 경계(x) 잡을 때** | `node rawxy.mjs x.pdf 34` |
 | `render.mjs` | 한 페이지 PNG — **병합셀·중괄호·○표는 반드시 눈으로** | `node render.mjs x.pdf 22 2.6 p22.png` |
 | `strip-html.mjs` | 공개 HTML 요건 페이지 → 텍스트 | `node strip-html.mjs page.html > page.txt` |
-| `parsers/` | 학부별 예시 파서 4종(농·국제일본·별표1·법정HTML). 복사해서 X_* 상수만 교체 | |
+| `rules.mjs` | 한 페이지의 **괘선** 좌표 덤프(가로·세로줄) — 병합셀 범위를 볼 때 | `node rules.mjs x.pdf 3 h` |
+| `grid.mjs` | (모듈) 괘선으로 표 칸을 복원 → 병합셀 값을 행마다 정확히 배정. 밑줄·배경색 오인 처리 포함(DATA-MANUAL §9-16~18) | 파서에서 import |
+| `gridtest.mjs` | `grid.mjs` 결과를 사람이 확인하는 덤프(표·열 이름·행별 값) | `node gridtest.mjs x.pdf 12` |
+| `parsers/` | 학부별 예시 파서(농·국제일본·별표1·법정HTML) + **早稲田 商 学科目配当表 → 강의 데이터**(`parse-waseda-commerce-haitou.mjs`, grid.mjs 사용). 실행법·기대값은 DATA-MANUAL §13-1-a | |
 | `builders/` | 파서 출력 → `docs/data` JSON + `src/data` TS 예시 | |
 
 파서·빌더는 **예시**다. 새 학부/학교는 가장 비슷한 것을 복사해 열 좌표와 zone 표만 바꾼다.
