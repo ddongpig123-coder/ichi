@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
+import { schoolNameByDomain } from "../../src/data/schools";
 import { auth } from "../../src/config/firebase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
@@ -61,7 +62,7 @@ function stubProfile(uid: string): UserProfile {
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, schoolDomain } = useAuth();
   const { theme, themeId, setThemeId } = useTheme();
   const { t, language, setLanguage } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -298,6 +299,20 @@ export default function ProfileScreen() {
       <View style={styles.sectionHeaderRow}>
         <Text style={styles.sectionTitle}>{t("profile.settingsSection")}</Text>
       </View>
+      {/* 学校の変更（1.1 / docs/BOARD-ACCESS.md §3-3 Q2）
+          クールダウンなし。これが無いと、学校を選び間違えた人は再インストールしか
+          手段がなく、匿名 uid が変わってデータが消えてしまう。
+          画面は onboarding の mode=school（規約・言語ステップを飛ばす）を再利用する。 */}
+      <TouchableOpacity
+        style={styles.settingRow}
+        onPress={() => router.push("/onboarding?mode=school")}
+      >
+        <Text style={styles.settingText}>{t("school.changeLabel")}</Text>
+        <Text style={styles.settingText}>
+          {schoolNameByDomain(schoolDomain, language) ?? t("school.notSelected")}
+          {"  ›"}
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/blocked-users")}>
         <Text style={styles.settingText}>{t("profile.blockList")}</Text>
         <Text style={styles.settingArrow}>›</Text>

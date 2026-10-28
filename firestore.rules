@@ -42,6 +42,23 @@ service cloud.firestore {
       return request.resource.data.authorUid == request.auth.uid;
     }
 
+    // 学校所属の確認（1.1 / docs/BOARD-ACCESS.md §3）
+    // 学校掲示板は「読みは全員・書きはその学校を選んだ人だけ」。
+    // ゲートはログイン有無ではなく users.schoolDomain の一致で張る
+    // （匿名認証が常に発行されるので isSignedIn() は常に真になるため）。
+    // ・users ドキュメントは AuthContext の ensureUserProfile が必ず作る。
+    //   それでも無ければ get() がエラー＝拒否になる（fail closed で正しい）。
+    // ・schoolDomain が null（「その他」＝未選択）の人はどの学校掲示板にも書けない。
+    //   その人たちの行き先は森（lounges）。画面側で「学校を選択」導線を出す。
+    // ・get() はリクエストあたり読み取り1回の課金（§3-5）。usersPublic でも同コスト。
+    // 🔑 1.2 で学校メール認証を入れるときは、ここに
+    //    && ...data.verificationLevel >= 1 を足すだけでよい（再設計が起きない）。
+    function belongsToSchool(schoolDomain) {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid))
+             .data.schoolDomain == schoolDomain;
+    }
+
     // ── ユーザープロフィール ─────────────────────────────
     // 本人のみ読み書き可能。パスワードはここに保存しない（Firebase Authが管理）。
     // verificationLevel はクライアントから変更不可（自己昇格の防止）。
@@ -241,9 +258,13 @@ service cloud.firestore {
     match /schools/{schoolDomain} {
 
       // 学校掲示板（学校ごとに分離）
+      // 読み取りは全員に開放（コールドスタート優先。他校を覗けること自体が動機になる）。
+      // 書き込みだけ所属を見る。締めるときは read 側に belongsToSchool を足せばよい
+      // ＝スイッチは残してある（BOARD-ACCESS §3-3）。
+      // いいね（likes / likeCount）は所属を見ない：読めるのに押せないと壊れて見えるため。
       match /boards/{boardId}/posts/{postId} {
         allow read: if isSignedIn();
-        allow create: if canWriteContent() && isAuthor();
+        allow create: if canWriteContent() && isAuthor() && belongsToSchool(schoolDomain);
         allow update: if canUpdatePost();
         // 物理削除は禁止（MODERATION.md §1）: 削除は deleted:true フラグ(=update)で行い、
         // authorUid 等の記録を残す。ハード削除を許すと法的対応の証跡が消えるため。
@@ -252,7 +273,7 @@ service cloud.firestore {
         match /comments/{commentId} {
           allow read: if isSignedIn();
           // 대댓글도同じcomments配下（parentIdフィールドで区別、1階層）。
-          allow create: if canWriteContent() && isAuthor();
+          allow create: if canWriteContent() && isAuthor() && belongsToSchool(schoolDomain);
           allow update: if canUpdateComment();
           allow delete: if false; // 物理削除禁止（上と同じ理由）
 
@@ -279,22 +300,47 @@ service cloud.firestore {
           && resource.data.createdBy == request.auth.uid;
       }
 
-      // 友達との個別チャット（参加者のみ読み書き可能）
+      // ⚠️ DEPRECATED（1.1 で /chats 最上位へ移設。下の「全国チャット」を見ること）
+      // 学校スコープだったため、森から他校ユーザーに送ったメッセージが
+      // 相手に届かなかった（送信者の学校の下に部屋ができ、受信者は自分の学校の下だけを
+      // 購読していた）。アプリは新パスしか書かない。
+      // ここは移行スクリプト（scripts/migrate-chats-to-global.mjs）完了までの
+      // 読み取り互換のために残す。新規作成は塞いである。
+      // 移行確認後にこのブロックごと削除する。
       match /chats/{chatId} {
         allow read: if isSignedIn()
           && (resource == null || request.auth.uid in resource.data.participants);
-        allow create: if isSignedIn()
-          && request.auth.uid in request.resource.data.participants;
-        allow update: if isSignedIn()
-          && request.auth.uid in resource.data.participants;
+        allow create: if false; // 移設済み。新パスへ書く
+        allow update: if false;
 
         match /messages/{messageId} {
           allow read: if isSignedIn()
             && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
-          allow create: if isSignedIn()
-            && request.resource.data.senderUid == request.auth.uid
-            && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
+          allow create: if false;
         }
+      }
+    }
+
+    // ── 個別チャット（メッセージ。全国スコープ・1.1） ──────
+    // 学校の下から最上位へ移した。理由は上の DEPRECATED ブロックのコメント参照。
+    // 権限は参加者（participants）ベースなので学校とは無関係に成立する。
+    // schoolDomain を見ないので、学校未選択（その他）のユーザーもメッセージを使える。
+    match /chats/{chatId} {
+      allow read: if isSignedIn()
+        && (resource == null || request.auth.uid in resource.data.participants);
+      allow create: if isSignedIn()
+        && request.auth.uid in request.resource.data.participants;
+      allow update: if isSignedIn()
+        && request.auth.uid in resource.data.participants;
+      allow delete: if false; // 物理削除禁止（MODERATION.md §1）
+
+      match /messages/{messageId} {
+        allow read: if isSignedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        allow create: if isSignedIn()
+          && request.resource.data.senderUid == request.auth.uid
+          && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        allow update, delete: if false; // 送信済みメッセージは改変・物理削除不可
       }
     }
 

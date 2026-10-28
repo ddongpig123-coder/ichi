@@ -49,12 +49,19 @@ function mapChat(d: QueryDocumentSnapshot): ChatRoom {
   };
 }
 
-function chatsCol(schoolDomain: string) {
-  return collection(db, "schools", schoolDomain, "chats");
+// チャットは全国スコープ（1.1 で schools/{sd}/chats から移設）。
+// 旧パスは学校ごとに分かれていたため、森から他校ユーザーに送った
+// メッセージが相手に届かなかった（送信者の学校の下に部屋ができ、
+// 受信者は自分の学校の下だけを購読していた）。
+// 権限は participants ベースなので学校とは無関係に成立する
+// → 学校未選択（その他）のユーザーもメッセージを使える。
+// 旧パスの既存ルームは scripts/migrate-chats-to-global.mjs で移す。
+function chatsCol() {
+  return collection(db, "chats");
 }
 
-function messagesCol(schoolDomain: string, chatId: string) {
-  return collection(db, "schools", schoolDomain, "chats", chatId, "messages");
+function messagesCol(chatId: string) {
+  return collection(db, "chats", chatId, "messages");
 }
 
 function chatId(uid1: string, uid2: string): string {
@@ -62,13 +69,12 @@ function chatId(uid1: string, uid2: string): string {
 }
 
 export async function getOrCreateChat(
-  schoolDomain: string,
   myUid: string,
   otherUid: string,
   relatedPostTitle: string
 ): Promise<string> {
   const id = chatId(myUid, otherUid);
-  const ref = doc(chatsCol(schoolDomain), id);
+  const ref = doc(chatsCol(), id);
   const snap = await getDoc(ref);
   if (!snap.exists()) {
     await setDoc(ref, {
@@ -83,17 +89,16 @@ export async function getOrCreateChat(
 }
 
 export async function sendMessage(
-  schoolDomain: string,
   chatRoomId: string,
   senderUid: string,
   text: string
 ): Promise<void> {
-  await addDoc(messagesCol(schoolDomain, chatRoomId), {
+  await addDoc(messagesCol(chatRoomId), {
     senderUid,
     text,
     createdAt: serverTimestamp(),
   });
-  await updateDoc(doc(chatsCol(schoolDomain), chatRoomId), {
+  await updateDoc(doc(chatsCol(), chatRoomId), {
     lastMessage: text.length > 40 ? text.slice(0, 40) + "…" : text,
     lastMessageAt: serverTimestamp(),
     lastSenderUid: senderUid, // 未読バッジ判定（自分が送ったものは未読にしない）
@@ -101,11 +106,10 @@ export async function sendMessage(
 }
 
 export function subscribeToMessages(
-  schoolDomain: string,
   chatRoomId: string,
   callback: (messages: ChatMessage[]) => void
 ): () => void {
-  const q = query(messagesCol(schoolDomain, chatRoomId), orderBy("createdAt", "asc"));
+  const q = query(messagesCol(chatRoomId), orderBy("createdAt", "asc"));
   return onSnapshot(q, (snap) => {
     const messages: ChatMessage[] = snap.docs.map((d) => ({
       id: d.id,
@@ -116,13 +120,10 @@ export function subscribeToMessages(
   });
 }
 
-export async function fetchMyChats(
-  schoolDomain: string,
-  uid: string
-): Promise<ChatRoom[]> {
+export async function fetchMyChats(uid: string): Promise<ChatRoom[]> {
   // array-contains는 orderBy와 조합 시 인덱스 불필요, 정렬은 클라이언트에서
   const q = query(
-    chatsCol(schoolDomain),
+    chatsCol(),
     where("participants", "array-contains", uid),
     limit(50)
   );
@@ -145,11 +146,10 @@ export function isChatUnread(chat: ChatRoom, uid: string): boolean {
 
 // 自分が参加するチャットの購読（未読バッジ用。リアルタイムで届く）
 export function subscribeToMyChats(
-  schoolDomain: string,
   uid: string,
   callback: (chats: ChatRoom[]) => void
 ): () => void {
-  const q = query(chatsCol(schoolDomain), where("participants", "array-contains", uid), limit(50));
+  const q = query(chatsCol(), where("participants", "array-contains", uid), limit(50));
   return onSnapshot(
     q,
     (snap) => {
@@ -161,11 +161,10 @@ export function subscribeToMyChats(
 
 // 既読にする（チャット画面を開いたとき）。失敗しても表示は壊さない。
 export async function markChatRead(
-  schoolDomain: string,
   chatRoomId: string,
   uid: string
 ): Promise<void> {
-  await updateDoc(doc(chatsCol(schoolDomain), chatRoomId), {
+  await updateDoc(doc(chatsCol(), chatRoomId), {
     [`lastRead.${uid}`]: serverTimestamp(),
   }).catch((e) => console.warn("markChatRead failed:", e));
 }

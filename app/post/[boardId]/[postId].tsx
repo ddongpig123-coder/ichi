@@ -33,6 +33,7 @@ import { findBannedWords } from "../../../src/utils/contentFilter";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
+import { writeErrorBody } from "../../../src/utils/writeError";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
@@ -194,10 +195,11 @@ export default function PostDetailScreen() {
     }
   }
 
+  // チャットは全国スコープ（1.1）。schoolDomain は使わない。
   async function handleSendMessage(targetUid: string) {
-    if (!user || !schoolDomain || !post) return;
+    if (!user || !post) return;
     if (user.uid === targetUid) return;
-    const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, targetUid, post.title);
+    const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
     router.push(`/(tabs)/messages/${chatRoomId}`);
   }
 
@@ -266,7 +268,8 @@ export default function PostDetailScreen() {
       setMention(null);
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
-      Alert.alert(t("post.commentFailed"), e.message);
+      // 所属違い（ルールが弾いた）ときは理由を案内に差し替える
+      Alert.alert(t("post.commentFailed"), writeErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }

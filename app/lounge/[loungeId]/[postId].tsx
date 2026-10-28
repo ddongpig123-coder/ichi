@@ -170,10 +170,12 @@ export default function LoungePostDetailScreen() {
     }
   }
 
+  // 森（全国）からのメッセージ。1.0 では学校スコープの部屋を作っていたため
+  // 他校ユーザー宛てが相手に届かなかった。1.1 で全国スコープに移設して解消。
   async function handleSendMessage(targetUid: string) {
-    if (!user || !schoolDomain || !post) return;
+    if (!user || !post) return;
     if (user.uid === targetUid) return;
-    const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, targetUid, post.title);
+    const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
     router.push(`/(tabs)/messages/${chatRoomId}`);
   }
 

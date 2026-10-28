@@ -117,12 +117,11 @@ export default function FriendsScreen() {
   }
 
   // 友達へのDM: 投稿経由と同じ chats/{uid1_uid2} を使う（既存なら再利用）。
-  // チャットは学校スコープなので学校未選択(schoolDomain=null)の場合は案内のみ。
+  // 1.1 でチャットを全国スコープに移したので、学校未選択でも送れる。
   async function handleMessage(friendId: string) {
     if (!user) return;
-    if (!schoolDomain) { notify(t("school.promptTitle")); return; }
     try {
-      const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, friendId, "");
+      const chatRoomId = await getOrCreateChat(user.uid, friendId, "");
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
       notify(t("friends.actionFailed"), e.message ?? String(e));

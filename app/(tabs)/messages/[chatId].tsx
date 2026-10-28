@@ -27,7 +27,8 @@ function timeStr(ms: number): string {
 
 export default function ChatRoomScreen() {
   const { chatId } = useLocalSearchParams<{ chatId: string }>();
-  const { user, schoolDomain } = useAuth();
+  // チャットは全国スコープなので学校に依存しない（1.1）。
+  const { user } = useAuth();
   const { theme } = useTheme();
   const { isBlocked } = useBlock();
   const { markChatAsRead } = useNotifications();
@@ -40,21 +41,21 @@ export default function ChatRoomScreen() {
   const listRef = useRef<FlatList>(null);
 
   useEffect(() => {
-    if (!schoolDomain || !chatId) return;
-    const unsub = subscribeToMessages(schoolDomain, chatId, (msgs) => {
+    if (!chatId) return;
+    const unsub = subscribeToMessages(chatId, (msgs) => {
       setMessages(msgs);
       markChatAsRead(chatId); // 開いている間に届いた分も既読にする
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
     });
     return unsub;
-  }, [schoolDomain, chatId]);
+  }, [chatId]);
 
   async function handleSend() {
     const trimmed = text.trim();
-    if (!trimmed || !user || !schoolDomain) return;
+    if (!trimmed || !user) return;
     setSending(true);
     setText("");
-    await sendMessage(schoolDomain, chatId, user.uid, trimmed);
+    await sendMessage(chatId, user.uid, trimmed);
     setSending(false);
   }
 
@@ -80,7 +81,7 @@ export default function ChatRoomScreen() {
             style={styles.avatar}
             onPress={() =>
               setModTarget({
-                path: `schools/${schoolDomain}/chats/${chatId}/messages/${item.id}`,
+                path: `chats/${chatId}/messages/${item.id}`,
                 authorUid: item.senderUid,
               })
             }
