@@ -95,7 +95,7 @@ export default function OnboardingScreen() {
           </TouchableOpacity>
         )}
       </View>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.appName}>大学の森</Text>
 
         {step === 1 && (
@@ -188,7 +188,7 @@ function makeStyles(theme: Theme) {
     container: { flex: 1, backgroundColor: theme.background },
     topBar: { height: 44, justifyContent: "center", paddingHorizontal: 12 },
     backIcon: { fontSize: 32, color: theme.primary, lineHeight: 34, width: 30 },
-    content: { paddingHorizontal: 28, paddingBottom: 40 },
+    content: { paddingHorizontal: 28 },
     appName: {
       fontSize: 34,
       fontWeight: "800",

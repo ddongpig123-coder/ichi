@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Linking,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
@@ -25,6 +26,7 @@ import type { Theme } from "../src/theme/themes";
 // ============================================================
 
 export default function CourseDetailScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user } = useAuth();
   const { theme } = useTheme();
@@ -101,7 +103,7 @@ export default function CourseDetailScreen() {
       ) : !course ? (
         <View style={styles.center}><Text style={styles.dim}>{t("courseDetail.notFound")}</Text></View>
       ) : (
-        <ScrollView contentContainerStyle={styles.body}>
+        <ScrollView contentContainerStyle={[styles.body, { paddingBottom: 16 + insets.bottom }]}>
           <Text style={styles.courseName}>{course.name}</Text>
 
           {/* シラバス情報 */}

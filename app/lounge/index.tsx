@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
@@ -8,6 +9,7 @@ import { LOUNGES, loungeLabel, loungeDescription, type LoungeMeta } from "../../
 
 // 全国の留学生が学校の枠を越えて交流するラウンジ。カテゴリ一覧。
 export default function LoungeHomeScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { theme } = useTheme();
   const { t, language } = useI18n();
@@ -33,6 +35,7 @@ export default function LoungeHomeScreen() {
     <View style={styles.container}>
       <FlatList
         data={LOUNGES}
+        contentContainerStyle={{ paddingBottom: insets.bottom }}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         ListHeaderComponent={

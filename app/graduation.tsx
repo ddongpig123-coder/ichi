@@ -539,7 +539,7 @@ export default function GraduationScreen() {
           </View>
         </View>
       ) : (
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
         {/* 学部・入学年度・学科・在籍区分セレクタ（全学部共通） */}
         {facultyChips}
         {selectorsBlock}
@@ -868,7 +868,7 @@ function makeStyles(theme: Theme) {
     },
     expBadgeText: { fontSize: 10, fontWeight: "700", color: theme.accent },
 
-    content: { paddingHorizontal: 16, paddingBottom: 40 },
+    content: { paddingHorizontal: 16 },
     sectionLabel: { fontSize: 12, color: theme.textSecondary, fontWeight: "700", marginTop: 8, marginBottom: 6 },
     zonesIntro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 14, lineHeight: 16 },
 

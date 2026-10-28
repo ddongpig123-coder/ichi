@@ -3,6 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import {
@@ -58,6 +59,7 @@ function confirmDialog(
 // ゲスト(匿名)ユーザー: メール登録(=アカウント連携。uidを維持しデータが残る) or 既存アカウントへログイン
 // 登録済みユーザー: アカウント情報表示 + ログアウト
 export default function AccountScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user } = useAuth();
   const { t } = useI18n();
@@ -348,7 +350,7 @@ export default function AccountScreen() {
         <Text style={styles.backIcon}>←</Text>
       </TouchableOpacity>
 
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         {!isGuest ? (
           // ── 登録済みユーザー ──
           <>
@@ -569,7 +571,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backIcon: { fontSize: 18, color: "#333" },
-  content: { paddingTop: 72, paddingHorizontal: 24, paddingBottom: 40 },
+  content: { paddingTop: 72, paddingHorizontal: 24 },
 
   title: { fontSize: 20, fontWeight: "700", color: "#1A1A2E", marginBottom: 12 },
   description: { fontSize: 13, color: "#666", lineHeight: 19, marginBottom: 16 },

@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
@@ -21,6 +22,7 @@ import type { Theme } from "../../../src/theme/themes";
 import { BOARDS, isQaBoard, QA_TAGS, type BoardId } from "../../../src/types/board";
 
 export default function WriteScreen() {
+  const insets = useSafeAreaInsets();
   const { boardId } = useLocalSearchParams<{ boardId: string }>();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
@@ -66,7 +68,7 @@ export default function WriteScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
         <Text style={styles.boardName}>{board?.label}</Text>
         <Text style={styles.anon}>{t("post.anonNotice")}</Text>
 

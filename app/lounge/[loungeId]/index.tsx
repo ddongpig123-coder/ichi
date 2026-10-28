@@ -128,6 +128,7 @@ export default function LoungePostListScreen() {
       )}
       <FlatList
         data={searchMode ? results : posts}
+        contentContainerStyle={{ paddingBottom: insets.bottom }}
         keyExtractor={(item) => item.id}
         refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
