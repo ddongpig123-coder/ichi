@@ -16,7 +16,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
-import { DEPARTMENTS, departmentName } from "../src/data/departments";
+import {
+  departmentName,
+  hasDepartmentData,
+  matchDepartment,
+  orderDepartments,
+} from "../src/data/departments";
 import {
   searchCourses,
   COURSE_SEARCH_MIN_CHARS,
@@ -92,18 +97,19 @@ export default function CourseSearchScreen() {
   const semesterKey = `${year}-${semester}`;
 
   const [deptId, setDeptId] = useState<string | null>(null);
-  // プロフィールの学部を DEPARTMENTS に照合（id か名称で）。見つからなければ null。
-  const myDept = useMemo(() => {
-    if (!myDeptRaw) return null;
-    return DEPARTMENTS.find(
-      (d) => d.id === myDeptRaw || d.nameJa === myDeptRaw || d.nameKo === myDeptRaw
-    ) ?? null;
-  }, [myDeptRaw]);
+  // 学部は学校ごと（1.1 S2）。プロフィールの department は自由記述のことがあるので
+  // id・日本語名・韓国語名のいずれかで照合する。
+  const myDept = useMemo(
+    () => matchDepartment(schoolDomain, myDeptRaw),
+    [schoolDomain, myDeptRaw]
+  );
   // 本人の学部を先頭に、残りは元の並び（学部コード順）で表示する。
-  const orderedDepartments = useMemo(() => {
-    if (!myDept) return DEPARTMENTS;
-    return [myDept, ...DEPARTMENTS.filter((d) => d.id !== myDept.id)];
-  }, [myDept]);
+  const orderedDepartments = useMemo(
+    () => orderDepartments(schoolDomain, myDept),
+    [schoolDomain, myDept]
+  );
+  // 講義データが無い学校では学部チップを出さない（明治の学部が他校の人に見えてしまうため）。
+  const deptReady = hasDepartmentData(schoolDomain);
   // 既定選択は本人の学部（ユーザーが未選択のときのみ）。
   useEffect(() => {
     if (myDept) setDeptId((cur) => cur ?? myDept.id);
@@ -254,6 +260,11 @@ export default function CourseSearchScreen() {
       </View>
 
       <Text style={styles.sectionLabel}>{t("courseSearch.departmentLabel")}</Text>
+      {!deptReady ? (
+        // この学校はまだ講義データが入っていない。学部チップを出すと選べてしまい
+        // 0件になるので、準備中であることを明示する。
+        <Text style={styles.deptEmpty}>{t("courseSearch.schoolNotReady")}</Text>
+      ) : (
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -275,6 +286,7 @@ export default function CourseSearchScreen() {
           );
         })}
       </ScrollView>
+      )}
 
       <View style={styles.searchBar}>
         <TextInput
@@ -495,6 +507,14 @@ function makeStyles(theme: Theme) {
     // flexShrink:0 は逆向きの潰れ対策 — 検索結果が入って縦が足りなくなると、
     // 高さ指定の無いこのビューが縮められて学部チップが潰れて見えていた。
     deptScroll: { flexGrow: 0, flexShrink: 0 },
+    // 講義データ未投入の学校に出す案内（学部チップの代わり）
+    deptEmpty: {
+      fontSize: 13,
+      color: theme.textSecondary,
+      paddingHorizontal: 16,
+      paddingBottom: 10,
+      lineHeight: 19,
+    },
     // 結果リストが残りの余白を取る（これが無いと中身の高さのぶんだけ上を押しのける）
     list: { flex: 1 },
     deptRow: { paddingHorizontal: 12, gap: 8, paddingBottom: 4, alignItems: "center" },

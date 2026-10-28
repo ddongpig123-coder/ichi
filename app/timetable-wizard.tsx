@@ -15,7 +15,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
-import { DEPARTMENTS, departmentName } from "../src/data/departments";
+import {
+  departmentName,
+  hasDepartmentData,
+  matchDepartment,
+  orderDepartments,
+} from "../src/data/departments";
 import { searchCourses } from "../src/services/courseService";
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
@@ -92,17 +97,17 @@ export default function TimetableWizardScreen() {
       .catch(() => {});
   }, [user]);
 
-  const myDept = useMemo(() => {
-    if (!myDeptRaw) return null;
-    return (
-      DEPARTMENTS.find((d) => d.id === myDeptRaw || d.nameJa === myDeptRaw || d.nameKo === myDeptRaw) ??
-      null
-    );
-  }, [myDeptRaw]);
-  const orderedDepartments = useMemo(() => {
-    if (!myDept) return DEPARTMENTS;
-    return [myDept, ...DEPARTMENTS.filter((d) => d.id !== myDept.id)];
-  }, [myDept]);
+  // 学部は学校ごと（1.1 S2）。照合・並べ替えは departments.ts に寄せた。
+  const myDept = useMemo(
+    () => matchDepartment(schoolDomain, myDeptRaw),
+    [schoolDomain, myDeptRaw]
+  );
+  const orderedDepartments = useMemo(
+    () => orderDepartments(schoolDomain, myDept),
+    [schoolDomain, myDept]
+  );
+  // 講義データが無い学校では学部チップを出さない。
+  const deptReady = hasDepartmentData(schoolDomain);
   const [deptId, setDeptId] = useState<string | null>(null);
   useEffect(() => {
     if (myDept) setDeptId((cur) => cur ?? myDept.id);
@@ -236,8 +241,11 @@ export default function TimetableWizardScreen() {
       </View>
 
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* 학부 선택 */}
+        {/* 학부 선택 — 강의 데이터가 있는 학교에서만 */}
         <Text style={styles.sectionLabel}>{t("courseSearch.departmentLabel")}</Text>
+        {!deptReady ? (
+          <Text style={styles.deptEmpty}>{t("courseSearch.schoolNotReady")}</Text>
+        ) : (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -259,6 +267,7 @@ export default function TimetableWizardScreen() {
             );
           })}
         </ScrollView>
+        )}
 
         {/* 검색 → 후보 담기 */}
         <View style={styles.searchBar}>
@@ -596,6 +605,14 @@ function makeStyles(theme: Theme) {
       paddingBottom: 6,
     },
     deptScroll: { flexGrow: 0 },
+    // 講義データ未投入の学校に出す案内（学部チップの代わり）
+    deptEmpty: {
+      fontSize: 13,
+      color: theme.textSecondary,
+      paddingHorizontal: 16,
+      paddingBottom: 10,
+      lineHeight: 19,
+    },
     deptRow: { paddingHorizontal: 12, gap: 8, paddingBottom: 4, alignItems: "center" },
     deptChip: {
       paddingHorizontal: 12,
