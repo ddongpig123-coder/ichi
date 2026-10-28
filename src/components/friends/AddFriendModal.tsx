@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert, Platform } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
@@ -150,7 +151,9 @@ export default function AddFriendModal({ visible, onClose }: Props) {
 
           <View style={styles.divider} />
           <TouchableOpacity style={styles.inviteButton} onPress={handleShareInvite}>
-            <Text style={styles.inviteText}>🔗 {t("friends.inviteShare")}</Text>
+            <Text style={styles.inviteText}>
+              <Ionicons name="link-outline" size={15} color={theme.primary} /> {t("friends.inviteShare")}
+            </Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

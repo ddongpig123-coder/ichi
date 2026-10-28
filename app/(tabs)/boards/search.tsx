@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Keyboard,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
@@ -92,7 +93,7 @@ export default function SearchScreen() {
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>{timeAgo(language, item.createdAt)}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>💬 {item.commentCount}</Text>
+                <Text style={styles.metaText}><Ionicons name="chatbubble-outline" size={12} color={theme.textSecondary} /> {item.commentCount}</Text>
               </View>
             </TouchableOpacity>
           )}

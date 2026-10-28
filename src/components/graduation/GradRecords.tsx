@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ComponentProps } from "react";
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Platform, Share } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import type { Theme } from "../../theme/themes";
 import type { TranslationKey } from "../../i18n/translations";
 import type { GradMaster } from "../../data/graduationMaster";
@@ -33,7 +34,17 @@ interface Props {
 }
 
 const STATUS_ORDER: RecordStatus[] = ["passed", "failed", "inProgress"];
-const STATUS_ICON: Record<RecordStatus, string> = { passed: "✅", failed: "❌", inProgress: "⏳" };
+// 状態アイコン（以前は ✅❌⏳ 絵文字）。色で 取得/不可/履修中 を区別する
+const STATUS_ICON: Record<RecordStatus, { name: ComponentProps<typeof Ionicons>["name"]; color: string }> = {
+  passed: { name: "checkmark-circle", color: "#2E9E5B" },
+  failed: { name: "close-circle", color: "#D9534F" },
+  inProgress: { name: "hourglass-outline", color: "#E0A500" },
+};
+// inverse=塗りつぶしボタン上（文字が白）では白抜きにしてコントラストを保つ
+function StatusIcon({ status, inverse = false }: { status: RecordStatus; inverse?: boolean }) {
+  const s = STATUS_ICON[status];
+  return <Ionicons name={s.name} size={13} color={inverse ? "#fff" : s.color} />;
+}
 
 // 修得記録セクション（時間割からの候補 → 取得/不可/履修中、記録一覧、手動追加）
 export function GradRecords(p: Props) {
@@ -223,7 +234,7 @@ export function GradRecords(p: Props) {
                         onPress={() => acceptSuggestion(s, status)}
                       >
                         <Text style={[styles.actText, status === "passed" && styles.actPassText]}>
-                          {STATUS_ICON[status]} {statusLabel[status]}
+                          <StatusIcon status={status} inverse={status === "passed"} /> {statusLabel[status]}
                         </Text>
                       </TouchableOpacity>
                     );
@@ -265,7 +276,7 @@ export function GradRecords(p: Props) {
               const on = formStatus === st;
               return (
                 <TouchableOpacity key={st} style={[styles.unitChip, on && styles.pickChipOn]} onPress={() => setFormStatus(st)}>
-                  <Text style={[styles.pickText, on && styles.pickTextOn]}>{STATUS_ICON[st]} {statusLabel[st]}</Text>
+                  <Text style={[styles.pickText, on && styles.pickTextOn]}><StatusIcon status={st} inverse={on} /> {statusLabel[st]}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -314,7 +325,12 @@ export function GradRecords(p: Props) {
               {p.canToggleOwn(r) ? (
                 <TouchableOpacity style={styles.ownToggle} onPress={() => p.onToggleOwn(r.id)}>
                   <Text style={[styles.ownToggleText, r.ownCourseManual && { color: theme.primary }]}>
-                    {r.ownCourseManual ? "☑" : "☐"} {t("grad.rec.ownSeminar")}
+                    <Ionicons
+                      name={r.ownCourseManual ? "checkbox" : "square-outline"}
+                      size={14}
+                      color={r.ownCourseManual ? theme.primary : theme.textSecondary}
+                    />{" "}
+                    {t("grad.rec.ownSeminar")}
                   </Text>
                 </TouchableOpacity>
               ) : null}
@@ -328,7 +344,7 @@ export function GradRecords(p: Props) {
                       onPress={() => p.onStatus(r.id, st)}
                     >
                       <Text style={[styles.actText, on && { color: "#fff" }]}>
-                        {STATUS_ICON[st]} {statusLabel[st]}
+                        <StatusIcon status={st} inverse={on} /> {statusLabel[st]}
                       </Text>
                     </TouchableOpacity>
                   );

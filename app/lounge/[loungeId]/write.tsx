@@ -66,7 +66,7 @@ export default function LoungeWriteScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
-        <Text style={styles.boardName}>{lounge?.icon} {lounge ? loungeLabel(lounge, language) : ""}</Text>
+        <Text style={styles.boardName}>{lounge ? loungeLabel(lounge, language) : ""}</Text>
         <Text style={styles.anon}>{t("lounge.anonNotice")}</Text>
 
         <TextInput

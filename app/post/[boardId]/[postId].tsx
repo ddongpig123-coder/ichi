@@ -439,7 +439,12 @@ export default function PostDetailScreen() {
           >
             {/* 質問板は「ナイス」(知恵袋), 他板は従来のハート */}
             <Text style={[styles.cmtActionText, likedByMe && styles.cmtLikeOn]}>
-              {isQa ? `👍 ${t("qa.nice")} ${c.likeCount}` : `${likedByMe ? "❤️" : "🤍"} ${c.likeCount}`}
+              <Ionicons
+                name={isQa ? (likedByMe ? "thumbs-up" : "thumbs-up-outline") : likedByMe ? "heart" : "heart-outline"}
+                size={13}
+                color={likedByMe ? theme.accent : theme.textSecondary}
+              />{" "}
+              {isQa ? `${t("qa.nice")} ${c.likeCount}` : c.likeCount}
             </Text>
           </TouchableOpacity>
           {/* 返信はコメント・返信の両方に表示（req 2）。返信への返信も同じスレッドにフラット追加（req 5）。 */}
@@ -523,7 +528,8 @@ export default function PostDetailScreen() {
               disabled={liking}
             >
               <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
-                {liked ? "❤️" : "🤍"} {likeCount}
+                <Ionicons name={liked ? "heart" : "heart-outline"} size={15} color={liked ? theme.accent : theme.textSecondary} />{" "}
+                {likeCount}
               </Text>
             </TouchableOpacity>
           </View>

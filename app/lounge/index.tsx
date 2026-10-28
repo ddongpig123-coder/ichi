@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, type ComponentProps } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
@@ -21,7 +22,7 @@ export default function LoungeHomeScreen() {
         style={styles.row}
         onPress={() => router.push(`/lounge/${item.id}`)}
       >
-        <Text style={styles.icon}>{item.icon}</Text>
+        <Ionicons name={item.icon as ComponentProps<typeof Ionicons>["name"]} style={styles.icon} />
         <View style={{ flex: 1 }}>
           <Text style={styles.label}>{loungeLabel(item, language)}</Text>
           <Text style={styles.desc}>{loungeDescription(item, language)}</Text>
@@ -65,7 +66,7 @@ function makeStyles(theme: Theme) {
       paddingVertical: 18,
       paddingHorizontal: 20,
     },
-    icon: { fontSize: 26 },
+    icon: { fontSize: 26, color: theme.primary },
     label: { fontSize: 16, fontWeight: "700", color: theme.textPrimary, marginBottom: 3 },
     desc: { fontSize: 13, color: theme.textSecondary },
     arrow: { fontSize: 22, color: theme.textSecondary },

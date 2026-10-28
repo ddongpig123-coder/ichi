@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
@@ -65,7 +66,7 @@ export default function MessagesInboxScreen() {
       ItemSeparatorComponent={() => <View style={styles.sep} />}
       ListEmptyComponent={
         <View style={styles.center}>
-          <Text style={styles.emptyIcon}>💬</Text>
+          <Ionicons name="chatbubbles-outline" style={styles.emptyIcon} />
           <Text style={styles.empty}>{t("messages.empty")}</Text>
           <Text style={styles.emptySub}>{t("messages.emptyHint")}</Text>
         </View>
@@ -84,7 +85,9 @@ export default function MessagesInboxScreen() {
               <Text style={styles.time}>{timeAgo(language, item.lastMessageAt)}</Text>
             </View>
             {!!item.relatedPostTitle && (
-              <Text style={styles.postRef} numberOfLines={1}>📌 {item.relatedPostTitle}</Text>
+              <Text style={styles.postRef} numberOfLines={1}>
+                <Ionicons name="document-text-outline" size={11} color={theme.primary} /> {item.relatedPostTitle}
+              </Text>
             )}
             <Text style={styles.lastMsg} numberOfLines={1}>
               {item.lastMessage || t("messages.started")}
@@ -101,7 +104,7 @@ function makeStyles(theme: Theme) {
     container: { flex: 1, backgroundColor: theme.background },
     center: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 80 },
     sep: { height: 1, backgroundColor: theme.border },
-    emptyIcon: { fontSize: 40, marginBottom: 12 },
+    emptyIcon: { fontSize: 40, marginBottom: 12, color: theme.textSecondary },
     empty: { fontSize: 15, color: theme.textSecondary, fontWeight: "600" },
     emptySub: { fontSize: 13, color: theme.textSecondary, marginTop: 6 },
     row: { flexDirection: "row", backgroundColor: theme.card, padding: 16, alignItems: "center", gap: 12 },

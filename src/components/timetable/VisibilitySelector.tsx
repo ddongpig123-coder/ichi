@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ComponentProps } from "react";
 import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
@@ -16,12 +17,12 @@ interface Props {
 
 const OPTIONS: {
   key: TimetableVisibility;
-  icon: string;
+  icon: ComponentProps<typeof Ionicons>["name"];
   label: TranslationKey;
   desc: TranslationKey;
 }[] = [
-  { key: "private", icon: "🔒", label: "timetable.visPrivate", desc: "timetable.visPrivateDesc" },
-  { key: "friends", icon: "👥", label: "timetable.visFriends", desc: "timetable.visFriendsDesc" },
+  { key: "private", icon: "lock-closed-outline", label: "timetable.visPrivate", desc: "timetable.visPrivateDesc" },
+  { key: "friends", icon: "people-outline", label: "timetable.visFriends", desc: "timetable.visFriendsDesc" },
 ];
 
 export default function VisibilitySelector({ value, onChange }: Props) {
@@ -40,7 +41,7 @@ export default function VisibilitySelector({ value, onChange }: Props) {
   return (
     <>
       <TouchableOpacity style={styles.pill} onPress={() => setOpen(true)}>
-        <Text style={styles.pillIcon}>{current.icon}</Text>
+        <Ionicons name={current.icon} style={styles.pillIcon} />
         <Text style={styles.pillText} numberOfLines={1}>
           {t(current.label)}
         </Text>
@@ -60,7 +61,7 @@ export default function VisibilitySelector({ value, onChange }: Props) {
                   style={[styles.row, active && styles.rowActive]}
                   onPress={() => select(o.key)}
                 >
-                  <Text style={styles.rowIcon}>{o.icon}</Text>
+                  <Ionicons name={o.icon} style={[styles.rowIcon, active && styles.rowIconActive]} />
                   <View style={styles.rowTexts}>
                     <Text style={[styles.rowLabel, active && styles.rowLabelActive]}>{t(o.label)}</Text>
                     <Text style={styles.rowDesc}>{t(o.desc)}</Text>
@@ -88,7 +89,7 @@ function makeStyles(theme: Theme) {
       gap: 5,
       maxWidth: 150,
     },
-    pillIcon: { fontSize: 13 },
+    pillIcon: { fontSize: 13, color: theme.textPrimary },
     pillText: { fontSize: 13, fontWeight: "700", color: theme.primary, flexShrink: 1 },
     pillArrow: { fontSize: 9, color: theme.primary },
 
@@ -122,7 +123,8 @@ function makeStyles(theme: Theme) {
       gap: 12,
     },
     rowActive: { backgroundColor: theme.primary + "14" },
-    rowIcon: { fontSize: 20 },
+    rowIcon: { fontSize: 20, color: theme.textSecondary },
+    rowIconActive: { color: theme.primary },
     rowTexts: { flex: 1 },
     rowLabel: { fontSize: 15, fontWeight: "700", color: theme.textPrimary },
     rowLabelActive: { color: theme.primary },
