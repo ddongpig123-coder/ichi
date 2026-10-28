@@ -61,8 +61,10 @@ function confirmDialog(
 export default function AccountScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, schoolDomain } = useAuth();
   const { t } = useI18n();
+  // 学校認証の案内だけは選択中の学校ドメインで例を出す（登録・ログイン欄の例は中立の gmail）
+  const schoolMailExample = schoolDomain ? `〇〇@${schoolDomain}` : "~.ac.jp";
 
   const [mode, setMode] = useState<"register" | "login">("register");
   const [nickname, setNickname] = useState("");
@@ -367,7 +369,9 @@ export default function AccountScreen() {
             {isUniEmail && !verified && (
               <>
                 <Text style={styles.label}>{t("account.verifySection")}</Text>
-                <Text style={styles.description}>{t("account.verifyDescription")}</Text>
+                <Text style={styles.description}>
+                  {t("account.verifyDescription").replace("{example}", schoolMailExample)}
+                </Text>
                 <View style={styles.verifyButtonRow}>
                   <TouchableOpacity
                     style={[styles.verifyButton, busy && styles.buttonDisabled]}
@@ -435,7 +439,7 @@ export default function AccountScreen() {
             <Text style={styles.label}>{t("account.email")}</Text>
             <TextInput
               style={styles.input}
-              placeholder="example@meiji.ac.jp"
+              placeholder="example@gmail.com"
               placeholderTextColor="#aaa"
               autoCapitalize="none"
               keyboardType="email-address"
@@ -498,7 +502,7 @@ export default function AccountScreen() {
             <Text style={styles.label}>{t("account.email")}</Text>
             <TextInput
               style={styles.input}
-              placeholder="example@meiji.ac.jp"
+              placeholder="example@gmail.com"
               placeholderTextColor="#aaa"
               autoCapitalize="none"
               keyboardType="email-address"

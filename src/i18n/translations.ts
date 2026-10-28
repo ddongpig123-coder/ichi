@@ -124,7 +124,7 @@ const ja = {
   "account.errFailed": "失敗しました",
   "account.verifySection": "学校メール認証",
   "account.verifyDescription":
-    "大学メール（~.ac.jp）の所有確認のため、認証メールのリンクを開いてください。認証されると学校認証バッジが付きます。",
+    "大学メール（{example}）の所有確認のため、認証メールのリンクを開いてください。認証されると学校認証バッジが付きます。",
   "account.sendVerification": "認証メールを送信",
   "account.verificationSent": "認証メールを送信しました",
   "account.verificationSentMessage":
@@ -715,7 +715,7 @@ const ko: Record<TranslationKey, string> = {
   "account.errFailed": "실패했습니다",
   "account.verifySection": "학교 메일 인증",
   "account.verifyDescription":
-    "대학 메일(~.ac.jp) 소유 확인을 위해 인증 메일의 링크를 열어 주세요. 인증되면 학교 인증 배지가 붙습니다.",
+    "대학 메일({example}) 소유 확인을 위해 인증 메일의 링크를 열어 주세요. 인증되면 학교 인증 배지가 붙습니다.",
   "account.sendVerification": "인증 메일 보내기",
   "account.verificationSent": "인증 메일을 보냈습니다",
   "account.verificationSentMessage":
