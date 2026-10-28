@@ -1,6 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo, type ComponentProps } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
@@ -8,6 +10,7 @@ import { LOUNGES, loungeLabel, loungeDescription, type LoungeMeta } from "../../
 
 // 全国の留学生が学校の枠を越えて交流するラウンジ。カテゴリ一覧。
 export default function LoungeHomeScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { theme } = useTheme();
   const { t, language } = useI18n();
@@ -19,7 +22,7 @@ export default function LoungeHomeScreen() {
         style={styles.row}
         onPress={() => router.push(`/lounge/${item.id}`)}
       >
-        <Text style={styles.icon}>{item.icon}</Text>
+        <Ionicons name={item.icon as ComponentProps<typeof Ionicons>["name"]} style={styles.icon} />
         <View style={{ flex: 1 }}>
           <Text style={styles.label}>{loungeLabel(item, language)}</Text>
           <Text style={styles.desc}>{loungeDescription(item, language)}</Text>
@@ -33,6 +36,7 @@ export default function LoungeHomeScreen() {
     <View style={styles.container}>
       <FlatList
         data={LOUNGES}
+        contentContainerStyle={{ paddingBottom: insets.bottom }}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         ListHeaderComponent={
@@ -62,7 +66,7 @@ function makeStyles(theme: Theme) {
       paddingVertical: 18,
       paddingHorizontal: 20,
     },
-    icon: { fontSize: 26 },
+    icon: { fontSize: 26, color: theme.primary },
     label: { fontSize: 16, fontWeight: "700", color: theme.textPrimary, marginBottom: 3 },
     desc: { fontSize: 13, color: theme.textSecondary },
     arrow: { fontSize: 22, color: theme.textSecondary },

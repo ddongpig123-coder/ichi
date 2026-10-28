@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import {
   fetchPost,
@@ -43,6 +44,22 @@ import type { Theme } from "../../../src/theme/themes";
 import { BOARDS, isQaBoard, qaTagLabel, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
 const BEST_COLOR = "#E0A500"; // ベストアンサー（金）
+
+// Alert.alert は react-native-web では何も表示されない(no-op)ため、Webでは window.alert/confirm にフォールバック
+function notify(title: string, message?: string) {
+  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
+  else Alert.alert(title, message);
+}
+function confirmDialog(title: string, okLabel: string, cancelLabel: string, onOk: () => void) {
+  if (Platform.OS === "web") {
+    if (window.confirm(title)) onOk();
+    return;
+  }
+  Alert.alert(title, undefined, [
+    { text: cancelLabel, style: "cancel" },
+    { text: okLabel, onPress: onOk },
+  ]);
+}
 
 export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
@@ -194,11 +211,25 @@ export default function PostDetailScreen() {
     }
   }
 
+  // 以前は条件不一致で黙って return していた（押しても無反応）→ 失敗理由を必ず案内する
   async function handleSendMessage(targetUid: string) {
-    if (!user || !schoolDomain || !post) return;
-    if (user.uid === targetUid) return;
-    const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, targetUid, post.title);
-    router.push(`/(tabs)/messages/${chatRoomId}`);
+    if (!user || !post) {
+      notify(t("post.dmLoading"));
+      return;
+    }
+    if (user.uid === targetUid) return; // 自分宛ては導線自体を出していない
+    if (!schoolDomain) {
+      confirmDialog(t("post.dmNeedSchool"), t("school.promptButton"), t("common.cancel"), () =>
+        router.push("/onboarding?mode=school")
+      );
+      return;
+    }
+    try {
+      const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, targetUid, post.title);
+      router.push(`/(tabs)/messages/${chatRoomId}`);
+    } catch (e: any) {
+      notify(t("post.dmFailed"), e?.message);
+    }
   }
 
   async function handleLike() {
@@ -362,10 +393,16 @@ export default function PostDetailScreen() {
         <View style={styles.commentAuthorRow}>
           {isReply && <Text style={styles.replyArrow}>↳</Text>}
           <TouchableOpacity
+            style={styles.commentAuthorBtn}
             disabled={!user || user.uid === c.authorUid}
             onPress={() => handleSendMessage(c.authorUid)}
+            accessibilityRole="button"
+            accessibilityLabel={t("post.sendMessage")}
           >
             <Text style={styles.commentAuthor}>{t("boards.anonymous")}{anonNumbers.get(c.authorUid)}</Text>
+            {user && user.uid !== c.authorUid ? (
+              <Ionicons name="chatbubble-ellipses-outline" size={13} color={theme.primary} />
+            ) : null}
           </TouchableOpacity>
           {c.authorUid === post.authorUid && (
             <View style={styles.authorTag}>
@@ -402,7 +439,12 @@ export default function PostDetailScreen() {
           >
             {/* 質問板は「ナイス」(知恵袋), 他板は従来のハート */}
             <Text style={[styles.cmtActionText, likedByMe && styles.cmtLikeOn]}>
-              {isQa ? `👍 ${t("qa.nice")} ${c.likeCount}` : `${likedByMe ? "❤️" : "🤍"} ${c.likeCount}`}
+              <Ionicons
+                name={isQa ? (likedByMe ? "thumbs-up" : "thumbs-up-outline") : likedByMe ? "heart" : "heart-outline"}
+                size={13}
+                color={likedByMe ? theme.accent : theme.textSecondary}
+              />{" "}
+              {isQa ? `${t("qa.nice")} ${c.likeCount}` : c.likeCount}
             </Text>
           </TouchableOpacity>
           {/* 返信はコメント・返信の両方に表示（req 2）。返信への返信も同じスレッドにフラット追加（req 5）。 */}
@@ -444,12 +486,21 @@ export default function PostDetailScreen() {
           </View>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
-            <TouchableOpacity
-              disabled={!user || user.uid === post.authorUid}
-              onPress={() => handleSendMessage(post.authorUid)}
-            >
+            {/* 作成者=タップでメッセージ。灰色メタ文字だとボタンに見えないのでチップにする */}
+            {user && user.uid !== post.authorUid ? (
+              <TouchableOpacity
+                style={styles.authorChip}
+                onPress={() => handleSendMessage(post.authorUid)}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                accessibilityRole="button"
+                accessibilityLabel={t("post.sendMessage")}
+              >
+                <Ionicons name="chatbubble-ellipses-outline" size={13} color={theme.primary} />
+                <Text style={styles.authorChipText}>{t("boards.anonymous")}</Text>
+              </TouchableOpacity>
+            ) : (
               <Text style={styles.meta}>{t("boards.anonymous")}</Text>
-            </TouchableOpacity>
+            )}
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(language, post.createdAt)}</Text>
             <Text style={styles.meta}>·</Text>
@@ -477,7 +528,8 @@ export default function PostDetailScreen() {
               disabled={liking}
             >
               <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
-                {liked ? "❤️" : "🤍"} {likeCount}
+                <Ionicons name={liked ? "heart" : "heart-outline"} size={15} color={liked ? theme.accent : theme.textSecondary} />{" "}
+                {likeCount}
               </Text>
             </TouchableOpacity>
           </View>
@@ -585,6 +637,16 @@ function makeStyles(theme: Theme) {
     postTitle: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 8 },
     metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
     meta: { fontSize: 12, color: theme.textSecondary },
+    authorChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 999,
+      backgroundColor: theme.primary + "1A",
+    },
+    authorChipText: { fontSize: 12, fontWeight: "600", color: theme.primary },
     moreBtn: { fontSize: 20, color: theme.textSecondary, fontWeight: "700", paddingHorizontal: 4 },
     blockedText: { fontSize: 13, color: theme.textSecondary, fontStyle: "italic" },
     divider: { height: 1, backgroundColor: theme.border, marginBottom: 16 },
@@ -617,6 +679,7 @@ function makeStyles(theme: Theme) {
     },
     replyArrow: { fontSize: 12, color: theme.textSecondary, marginRight: 2 },
     commentAuthorRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
+    commentAuthorBtn: { flexDirection: "row", alignItems: "center", gap: 3 },
     commentAuthor: { fontSize: 13, fontWeight: "600", color: theme.primary },
     authorTag: {
       paddingHorizontal: 6,

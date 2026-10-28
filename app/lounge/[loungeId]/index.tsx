@@ -10,6 +10,7 @@ import {
   RefreshControl,
   Keyboard,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
@@ -77,7 +78,7 @@ export default function LoungePostListScreen() {
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           style={{ paddingHorizontal: 8 }}
         >
-          <Text style={{ fontSize: 18, color: theme.primary }}>{searchMode ? "✕" : "🔍"}</Text>
+          <Ionicons name={searchMode ? "close" : "search"} size={20} color={theme.primary} />
         </TouchableOpacity>
       ),
     });
@@ -128,6 +129,7 @@ export default function LoungePostListScreen() {
       )}
       <FlatList
         data={searchMode ? results : posts}
+        contentContainerStyle={{ paddingBottom: insets.bottom }}
         keyExtractor={(item) => item.id}
         refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
@@ -163,9 +165,9 @@ export default function LoungePostListScreen() {
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>{timeAgo(language, item.createdAt)}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>❤️ {item.likeCount}</Text>
+                <Text style={styles.metaText}><Ionicons name="heart-outline" size={12} color={theme.textSecondary} /> {item.likeCount}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>💬 {item.commentCount}</Text>
+                <Text style={styles.metaText}><Ionicons name="chatbubble-outline" size={12} color={theme.textSecondary} /> {item.commentCount}</Text>
               </View>
             </TouchableOpacity>
           )

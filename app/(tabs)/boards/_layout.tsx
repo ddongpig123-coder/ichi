@@ -1,14 +1,16 @@
 import { Stack } from "expo-router";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 
 function SearchButton() {
   const router = useRouter();
+  const { theme } = useTheme();
   return (
     <TouchableOpacity onPress={() => router.push("/(tabs)/boards/search")} style={{ marginRight: 12 }}>
-      <Text style={{ fontSize: 20 }}>🔍</Text>
+      <Ionicons name="search" size={22} color={theme.primary} />
     </TouchableOpacity>
   );
 }

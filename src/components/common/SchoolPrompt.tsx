@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
@@ -16,7 +17,7 @@ export default function SchoolPrompt() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>🏫</Text>
+      <Ionicons name="school-outline" style={styles.icon} />
       <Text style={styles.title}>{t("school.promptTitle")}</Text>
       <Text style={styles.body}>{t("school.promptBody")}</Text>
       {/* 規約同意済みなので学校選択のみ（mode=school で規約・言語ステップをスキップ） */}
@@ -34,7 +35,7 @@ function makeStyles(theme: Theme) {
       paddingHorizontal: 32,
       paddingVertical: 40,
     },
-    icon: { fontSize: 40, marginBottom: 12 },
+    icon: { fontSize: 40, marginBottom: 12, color: theme.primary },
     title: {
       fontSize: 16,
       fontWeight: "700",

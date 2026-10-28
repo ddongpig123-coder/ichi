@@ -90,7 +90,8 @@ export default function TermsScreen() {
       >
         <Text style={styles.backIcon}>←</Text>
       </TouchableOpacity>
-      <ScrollView contentContainerStyle={styles.content}>
+      {/* 下端はホームインジケーター/ナビバー分(insets.bottom)を足す。固定値だと最終行が隠れる */}
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
         <Text style={styles.text}>{TERMS_TEXT}</Text>
       </ScrollView>
     </View>
@@ -115,7 +116,7 @@ function makeStyles(theme: Theme) {
       zIndex: 1,
     },
     backIcon: { fontSize: 18, color: theme.textPrimary },
-    content: { paddingTop: 64, paddingHorizontal: 20, paddingBottom: 40 },
+    content: { paddingTop: 64, paddingHorizontal: 20 },
     text: { fontSize: 12, lineHeight: 19, color: theme.textPrimary },
   });
 }

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
@@ -83,9 +84,9 @@ export default function BestPostsScreen() {
             </View>
             <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
             <View style={styles.meta}>
-              <Text style={styles.metaText}>❤️ {item.likeCount}</Text>
+              <Text style={styles.metaText}><Ionicons name="heart-outline" size={12} color={theme.textSecondary} /> {item.likeCount}</Text>
               <Text style={styles.metaText}>·</Text>
-              <Text style={styles.metaText}>💬 {item.commentCount}</Text>
+              <Text style={styles.metaText}><Ionicons name="chatbubble-outline" size={12} color={theme.textSecondary} /> {item.commentCount}</Text>
               <Text style={styles.metaText}>·</Text>
               <Text style={styles.metaText}>{timeAgo(language, item.createdAt)}</Text>
             </View>
