@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
@@ -21,6 +22,7 @@ import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, loungeLabel, type LoungeId } from "../../../src/types/lounge";
 
 export default function LoungeWriteScreen() {
+  const insets = useSafeAreaInsets();
   const { loungeId } = useLocalSearchParams<{ loungeId: string }>();
   const { user } = useAuth();
   const { theme } = useTheme();
@@ -63,8 +65,8 @@ export default function LoungeWriteScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text style={styles.boardName}>{lounge?.icon} {lounge ? loungeLabel(lounge, language) : ""}</Text>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
+        <Text style={styles.boardName}>{lounge ? loungeLabel(lounge, language) : ""}</Text>
         <Text style={styles.anon}>{t("lounge.anonNotice")}</Text>
 
         <TextInput

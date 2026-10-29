@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBlock } from "../src/contexts/BlockContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
@@ -16,6 +17,7 @@ import type { Theme } from "../src/theme/themes";
 // ブロックしたユーザーの一覧・解除。プロフィールから遷移。
 // 匿名性維持のためニックネームは持たず、uid の一部のみ表示する。
 export default function BlockedUsersScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { theme } = useTheme();
   const { t } = useI18n();
@@ -40,6 +42,7 @@ export default function BlockedUsersScreen() {
       ) : (
         <FlatList
           data={blockedUsers}
+          contentContainerStyle={{ paddingBottom: insets.bottom }}
           keyExtractor={(item) => item.blockedUid}
           ItemSeparatorComponent={() => <View style={styles.sep} />}
           ListEmptyComponent={

@@ -12,6 +12,7 @@ import {
   Keyboard,
   Dimensions,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
@@ -338,7 +339,8 @@ export default function LoungePostDetailScreen() {
             onPress={() => handleCommentLike(c.id)}
           >
             <Text style={[styles.cmtActionText, likedByMe && styles.cmtLikeOn]}>
-              {likedByMe ? "❤️" : "🤍"} {c.likeCount}
+              <Ionicons name={likedByMe ? "heart" : "heart-outline"} size={13} color={likedByMe ? theme.accent : theme.textSecondary} />{" "}
+              {c.likeCount}
             </Text>
           </TouchableOpacity>
           {/* 返信はコメント・返信の両方に表示（req 2）。返信への返信も同じスレッドにフラット追加（req 5）。 */}
@@ -354,7 +356,7 @@ export default function LoungePostDetailScreen() {
     <View style={{ flex: 1, paddingBottom: kbInset }}>
       <ScrollView ref={scrollRef} style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.postCard}>
-          <Text style={styles.boardTag}>{lounge?.icon} {lounge?.label}</Text>
+          <Text style={styles.boardTag}>{lounge?.label}</Text>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
             <TouchableOpacity
@@ -388,7 +390,8 @@ export default function LoungePostDetailScreen() {
               disabled={liking}
             >
               <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
-                {liked ? "❤️" : "🤍"} {likeCount}
+                <Ionicons name={liked ? "heart" : "heart-outline"} size={15} color={liked ? theme.accent : theme.textSecondary} />{" "}
+                {likeCount}
               </Text>
             </TouchableOpacity>
           </View>

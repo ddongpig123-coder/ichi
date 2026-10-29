@@ -72,7 +72,7 @@ export default function ContactScreen() {
         <View style={{ width: 30 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 20 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.desc}>{t("contact.desc")}</Text>
 
         <Text style={styles.label}>{t("contact.messageLabel")}</Text>

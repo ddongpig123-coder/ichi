@@ -9,6 +9,7 @@ import {
   Alert,
   Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { schoolNameByDomain } from "../../src/data/schools";
@@ -46,7 +47,7 @@ function SecretValue({
   return (
     <TouchableOpacity style={styles.secretRow} onPress={onToggle}>
       <Text style={styles.value}>{visible ? (value || emptyLabel) : "●●●●"}</Text>
-      <Text style={styles.eyeIcon}>{visible ? "🙈" : "👁"}</Text>
+      <Ionicons name={visible ? "eye-off-outline" : "eye-outline"} style={styles.eyeIcon} />
     </TouchableOpacity>
   );
 }
@@ -308,10 +309,12 @@ export default function ProfileScreen() {
         onPress={() => router.push("/onboarding?mode=school")}
       >
         <Text style={styles.settingText}>{t("school.changeLabel")}</Text>
-        <Text style={styles.settingText}>
-          {schoolNameByDomain(schoolDomain, language) ?? t("school.notSelected")}
-          {"  ›"}
-        </Text>
+        <View style={styles.settingValueRow}>
+          <Text style={styles.settingText}>
+            {schoolNameByDomain(schoolDomain, language) ?? t("school.notSelected")}
+          </Text>
+          <Text style={styles.settingArrow}>›</Text>
+        </View>
       </TouchableOpacity>
       <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/blocked-users")}>
         <Text style={styles.settingText}>{t("profile.blockList")}</Text>
@@ -371,7 +374,7 @@ function makeStyles(theme: Theme) {
     sectionTitle: { fontSize: 15, fontWeight: "700", color: theme.textPrimary },
     editText: { fontSize: 13, fontWeight: "700", color: theme.primary },
     secretRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-    eyeIcon: { fontSize: 14 },
+    eyeIcon: { fontSize: 16, color: theme.textSecondary },
     row: { flexDirection: "row", gap: 8 },
     themeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
     themeCard: {
@@ -412,5 +415,7 @@ function makeStyles(theme: Theme) {
     },
     settingText: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
     settingArrow: { fontSize: 20, color: theme.textSecondary },
+    // 現在値と矢印を並べる行（学校のように「値＋遷移」がある設定）
+    settingValueRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   });
 }
