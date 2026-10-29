@@ -13,6 +13,7 @@ import {
   Pressable,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
@@ -66,6 +67,7 @@ function courseToSession(course: Course, palette: string[]): ClassSession {
 }
 
 export default function CourseSearchScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user } = useAuth();
   const { theme } = useTheme();
@@ -313,6 +315,7 @@ export default function CourseSearchScreen() {
         <FlatList
           data={results}
           style={styles.list}
+          contentContainerStyle={{ paddingBottom: insets.bottom }}
           keyExtractor={(item) => item.id}
           keyboardShouldPersistTaps="handled"
           ItemSeparatorComponent={() => <View style={styles.sep} />}

@@ -11,6 +11,7 @@ import {
   RefreshControl,
   Keyboard,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
@@ -92,7 +93,7 @@ export default function PostListScreen() {
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           style={{ paddingHorizontal: 8 }}
         >
-          <Text style={{ fontSize: 18, color: theme.primary }}>{searchMode ? "✕" : "🔍"}</Text>
+          <Ionicons name={searchMode ? "close" : "search"} size={20} color={theme.primary} />
         </TouchableOpacity>
       ),
     });
@@ -270,7 +271,7 @@ export default function PostListScreen() {
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>{timeAgo(language, item.createdAt)}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>💬 {item.commentCount}</Text>
+                <Text style={styles.metaText}><Ionicons name="chatbubble-outline" size={12} color={theme.textSecondary} /> {item.commentCount}</Text>
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}>{t("boards.views")} {item.viewCount ?? 0}</Text>
               </View>

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, SectionList, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { usePinnedBoards } from "../../../src/hooks/usePinnedBoards";
 import { useBoards } from "../../../src/hooks/useBoards";
@@ -10,6 +11,8 @@ import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import SchoolPrompt from "../../../src/components/common/SchoolPrompt";
 import type { Theme } from "../../../src/theme/themes";
 import { boardLabel, boardDescription, type BoardMeta } from "../../../src/types/board";
+
+const PIN_COLOR = "#E0A500"; // お気に入り（金）
 
 export default function BoardsScreen() {
   const router = useRouter();
@@ -55,7 +58,11 @@ export default function BoardsScreen() {
           onPress={() => toggle(item.id)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Text style={styles.pinIcon}>{isPinned(item.id) ? "⭐" : "☆"}</Text>
+          <Ionicons
+            name={isPinned(item.id) ? "star" : "star-outline"}
+            size={20}
+            color={isPinned(item.id) ? PIN_COLOR : theme.textSecondary}
+          />
         </TouchableOpacity>
       </TouchableOpacity>
     );

@@ -9,6 +9,7 @@ import {
   Alert,
   Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { auth } from "../../src/config/firebase";
@@ -45,7 +46,7 @@ function SecretValue({
   return (
     <TouchableOpacity style={styles.secretRow} onPress={onToggle}>
       <Text style={styles.value}>{visible ? (value || emptyLabel) : "●●●●"}</Text>
-      <Text style={styles.eyeIcon}>{visible ? "🙈" : "👁"}</Text>
+      <Ionicons name={visible ? "eye-off-outline" : "eye-outline"} style={styles.eyeIcon} />
     </TouchableOpacity>
   );
 }
@@ -356,7 +357,7 @@ function makeStyles(theme: Theme) {
     sectionTitle: { fontSize: 15, fontWeight: "700", color: theme.textPrimary },
     editText: { fontSize: 13, fontWeight: "700", color: theme.primary },
     secretRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-    eyeIcon: { fontSize: 14 },
+    eyeIcon: { fontSize: 16, color: theme.textSecondary },
     row: { flexDirection: "row", gap: 8 },
     themeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
     themeCard: {

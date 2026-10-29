@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
@@ -67,7 +68,7 @@ export default function MyPostsScreen() {
           {item.title}
         </Text>
         <Text style={styles.meta}>
-          {timeAgo(language, item.createdAt)} · 💬 {item.commentCount ?? 0} · ❤️ {item.likeCount ?? 0}
+          {timeAgo(language, item.createdAt)} · <Ionicons name="chatbubble-outline" size={12} color={theme.textSecondary} /> {item.commentCount ?? 0} · <Ionicons name="heart-outline" size={12} color={theme.textSecondary} /> {item.likeCount ?? 0}
         </Text>
       </TouchableOpacity>
     );

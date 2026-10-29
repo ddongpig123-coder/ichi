@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ReorderableList, {
   useReorderableDrag,
   reorderItems,
@@ -82,6 +83,7 @@ function NonFrequentItem({
 
 // ── 메인 화면 ───────────────────────────────────────────────
 export default function FriendSettingsScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { theme } = useTheme();
   const { t } = useI18n();
@@ -108,7 +110,7 @@ export default function FriendSettingsScreen() {
         <Text style={styles.headerTitle}>{t("friends.settingsTitle")}</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 40 + insets.bottom }]}>
         {/* よく使う友達 */}
         <Text style={styles.sectionLabel}>{t("friends.frequentSection")} ({frequent.length}/6)</Text>
         <Text style={styles.hint}>{t("friends.dragHint")}</Text>
@@ -191,7 +193,7 @@ function makeStyles(theme: Theme) {
     backIcon: { fontSize: 18, color: theme.textPrimary },
     headerTitle: { fontSize: 16, fontWeight: "700", color: theme.textPrimary },
 
-    scrollContent: { padding: 16, paddingBottom: 40 },
+    scrollContent: { padding: 16 },
 
     sectionLabel: {
       fontSize: 12,

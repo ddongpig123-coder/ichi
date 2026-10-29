@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../src/contexts/ThemeContext";
@@ -366,16 +367,16 @@ export default function GraduationScreen() {
     const ds = diffZones(before, after);
     setRecords(next);
     if (status === "inProgress") {
-      setDelta(`⏳ ${subject}：${t("grad.rec.deltaPlanned")}`);
+      setDelta(`${subject}：${t("grad.rec.deltaPlanned")}`);
     } else if (ds.length === 0) {
-      setDelta(status === "failed" ? `❌ ${subject}：${t("grad.rec.deltaNone")}` : `✅ ${subject}：${t("grad.rec.deltaNoChange")}`);
+      setDelta(status === "failed" ? `${subject}：${t("grad.rec.deltaNone")}` : `${subject}：${t("grad.rec.deltaNoChange")}`);
     } else {
       const parts = ds.map((d) => {
         const sign = d.after > d.before ? "+" : "";
-        const met = d.after >= d.min ? ` ${t("grad.met")}✅` : "";
+        const met = d.after >= d.min ? ` ${t("grad.met")}` : "";
         return `${zoneLabel(d.zoneId)} ${sign}${d.after - d.before}（${d.before}→${d.after}/${d.min}${met}）`;
       });
-      setDelta(`${status === "passed" ? "✅" : "❌"} ${subject} → ${parts.join(" / ")}`);
+      setDelta(`${subject} → ${parts.join(" / ")}`);
     }
   }
   function addRecord(r: Omit<GradRecord, "id" | "createdAt">) {
@@ -393,7 +394,7 @@ export default function GraduationScreen() {
   function deleteRecord(id: string) {
     const target = records.find((r) => r.id === id);
     setRecords(records.filter((r) => r.id !== id));
-    if (target) setDelta(`🗑 ${target.name}：${t("grad.rec.deltaDeleted")}`);
+    if (target) setDelta(`${target.name}：${t("grad.rec.deltaDeleted")}`);
   }
 
   // 時間割の候補のうち、まだ記録していないもの（同じ学期・同じ科目名で判定）
@@ -547,7 +548,7 @@ export default function GraduationScreen() {
       {blocked ? (
         <View style={styles.content}>
           <View style={styles.soonCard}>
-            <Text style={styles.soonIcon}>🛠️</Text>
+            <Ionicons name="construct-outline" style={styles.soonIcon} />
             <Text style={styles.soonTitle}>{t("grad.soonTitle")}</Text>
             <Text style={styles.soonBody}>
               {coverage === "noschool"
@@ -566,7 +567,7 @@ export default function GraduationScreen() {
           </View>
         </View>
       ) : (
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
         {/* 学部・入学年度・学科・在籍区分セレクタ（全学部共通） */}
         {facultyChips}
         {selectorsBlock}
@@ -659,7 +660,7 @@ export default function GraduationScreen() {
           </Text>
           {projected.total > totalAcquired ? (
             <Text style={styles.summaryPlan}>
-              ⏳ {t("grad.rec.projected")}: {projected.total} / {master.totalRequired} {t("grad.unit")}
+              {t("grad.rec.projected")}: {projected.total} / {master.totalRequired} {t("grad.unit")}
             </Text>
           ) : null}
         </View>
@@ -767,7 +768,7 @@ export default function GraduationScreen() {
                 </View>
               </View>
               {r.planned > 0 ? (
-                <Text style={styles.zoneSub}>⏳ {t("grad.rec.inProgress")} +{r.planned}</Text>
+                <Text style={styles.zoneSub}>{t("grad.rec.inProgress")} +{r.planned}</Text>
               ) : null}
               {r.overflow > 0 ? (
                 <Text style={styles.zoneSub}>{t("grad.rec.overflow")} {r.overflow} {t("grad.unit")}</Text>
@@ -835,7 +836,7 @@ export default function GraduationScreen() {
           {
             text:
               `${t("grad.ruleMedia")}\n${t("grad.ruleMediaNow")}: ${calc.media} / ${MEDIA_CAP} ${t("grad.unit")}` +
-              (projected.media > calc.media ? ` ⏳ +${projected.media - calc.media}` : ""),
+              (projected.media > calc.media ? `（${t("grad.rec.inProgress")} +${projected.media - calc.media}）` : ""),
             over: calc.media > MEDIA_CAP,
           },
           { text: t("grad.ruleFree"), over: false },
@@ -895,7 +896,7 @@ function makeStyles(theme: Theme) {
     },
     expBadgeText: { fontSize: 10, fontWeight: "700", color: theme.accent },
 
-    content: { paddingHorizontal: 16, paddingBottom: 40 },
+    content: { paddingHorizontal: 16 },
     sectionLabel: { fontSize: 12, color: theme.textSecondary, fontWeight: "700", marginTop: 8, marginBottom: 6 },
     zonesIntro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 14, lineHeight: 16 },
 
@@ -1042,7 +1043,7 @@ function makeStyles(theme: Theme) {
       backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border, borderRadius: 16,
       padding: 22, marginTop: 20, alignItems: "center",
     },
-    soonIcon: { fontSize: 34, marginBottom: 10 },
+    soonIcon: { fontSize: 34, marginBottom: 10, color: theme.textSecondary },
     soonTitle: { fontSize: 16, fontWeight: "800", color: theme.textPrimary },
     soonBody: { fontSize: 13, color: theme.textSecondary, marginTop: 8, textAlign: "center", lineHeight: 19 },
     soonSupported: {

@@ -12,6 +12,7 @@ import {
   Pressable,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
@@ -73,6 +74,7 @@ function resultToSessions(result: WizardResult, palette: string[]): ClassSession
 }
 
 export default function TimetableWizardScreen() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user } = useAuth();
   const { theme } = useTheme();
@@ -240,7 +242,7 @@ export default function TimetableWizardScreen() {
         <Text style={styles.semesterBadge}>{`${year} ${semester}`}</Text>
       </View>
 
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
         {/* 학부 선택 — 강의 데이터가 있는 학교에서만 */}
         <Text style={styles.sectionLabel}>{t("courseSearch.departmentLabel")}</Text>
         {!deptReady ? (

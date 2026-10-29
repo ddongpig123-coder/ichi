@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
+import { useHeaderHeight } from "expo-router/react-navigation";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
@@ -38,6 +40,19 @@ export default function ChatRoomScreen() {
   const [sending, setSending] = useState(false);
   const [modTarget, setModTarget] = useState<{ path: string; authorUid: string } | null>(null);
   const listRef = useRef<FlatList>(null);
+  // KeyboardAvoidingView は自分の位置を「親基準」でしか知らないので、画面上端からの距離
+  // (=ヘッダー高。ステータスバー/ノッチ分の上 safe area を含む)を offset で渡す必要がある。
+  // 以前は 90 固定で、ヘッダー高が違う機種で入力欄がキーボードに隠れていた。
+  // 下側の safe area はタブバーが持つので、KAV の下端(=タブバー上端)との差分で自動的に合う。
+  const headerHeight = useHeaderHeight();
+
+  // キーボードが出たら最新メッセージまでスクロール（入力欄の直上が最新になるように）
+  useEffect(() => {
+    const sub = Keyboard.addListener("keyboardDidShow", () => {
+      setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     if (!schoolDomain || !chatId) return;
@@ -97,11 +112,10 @@ export default function ChatRoomScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={90}
-    >
+    // Android も "padding"。SDK 57 は edge-to-edge 固定で OS が画面をリサイズしないため、
+    // 以前の behavior={undefined}（OS 任せ）だと入力欄がキーボードの下に残っていた。
+    // OS がリサイズする端末でも、KAV が縮んだ枠で再計算して持ち上げ量 0 になるので二重にはならない。
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={headerHeight}>
       <FlatList
         ref={listRef}
         style={styles.list}
