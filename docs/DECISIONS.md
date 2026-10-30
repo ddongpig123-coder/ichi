@@ -86,6 +86,7 @@
 | ✅ | **콘텐츠 봇은 별도 비공개 저장소** — 공개 저장소의 Actions 실행 기록 노출 방지. 이 저장소는 스토어 방침 페이지(GitHub Pages) 때문에 공개 유지 | [CONTENT-OPS §9-3](CONTENT-OPS.md) |
 | ✅ | **승인은 앱 안 운영자 전용 화면** — 운영 계정으로 로그인했을 때만 프로필에 메뉴가 보인다 | [CONTENT-OPS §9](CONTENT-OPS.md) |
 | ✅ | **하루 2~3개, 8~24시(일본 시간) 사이 랜덤 시각** 게시 — 매일 같은 시각이면 사람 글처럼 안 보인다 | [CONTENT-OPS §3-3](CONTENT-OPS.md) |
+| ✅ | **AI 글은 Claude API 대신 Claude 구독으로 생성** — 매주 예약된 Claude Code 세션이 20개를 써서 비공개 저장소에 올리면 Actions가 대기 목록에 넣는다. **추가 비용 0원** (준희, 비용 이유). API 생성 기능은 지우지 않고 꺼 둠 | [CONTENT-OPS §9](CONTENT-OPS.md) |
 
 ---
 

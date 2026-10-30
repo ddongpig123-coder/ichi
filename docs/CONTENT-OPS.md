@@ -318,7 +318,7 @@ docs/content/
 | 운영 계정 명단 | Firestore `operators/{uid}` | **Firebase 콘솔에서만 추가**(클라이언트 쓰기 금지). 본인만 「내가 운영자인가」 조회. 등록 대상 2개: **봇 게시용 계정**(글 작성자) + **준희 본인 계정**(앱에서 승인용) | 1 |
 | 대기 목록 | Firestore `contentQueue/{itemId}` | 운영 계정만 읽기·쓰기. 타입 `src/types/contentQueue.ts` ↔ `firestore.rules`의 `isValidQueueItem()` | 1 |
 | 승인 | 앱 `app/admin/` (운영 계정만 프로필에 메뉴 표시) | 승인·거절·수정·직접 글 추가 | 3 |
-| AI 생성 | **비공개 저장소 `ddongpig123-coder/ichi-content`** `generate.mjs` | Claude API → `draft`로 적재. §4 문체 · §7 금지 소재 · 금칙어 이중 필터. **공지·일정은 준희가 준 원문에서만 요약**(날짜를 지어내지 않게) | 4 |
+| AI 생성 | **비공개 저장소 `ddongpig123-coder/ichi-content`** | **매주 예약된 Claude Code 세션**이 `WEEKLY.md` 절차대로 20개를 써서 `drafts/날짜.json`으로 올림 → Actions(`import-drafts.mjs`)가 검사 후 `draft`로 적재. §4 문체 · §7 금지 소재 · 금칙어 · 중복 검사. **공지·일정은 준희가 준 원문에서만 요약**. (Claude API로 직접 생성하는 `generate.mjs`도 남아 있지만 비용 때문에 꺼 둠) | 4 |
 | 예약 게시 | **비공개 저장소** `post-next.mjs` + GitHub Actions | 승인된 글 중 오래된 것 1개 게시 + 큐를 `posted`로 — **한 번의 원자적 쓰기**(중복 게시 방지). **하루 2~3개, 8~24시 랜덤** | 5 |
 
 > 봇 스크립트는 AGENTS.md의 「로컬 스크립트는 `scripts/`」 규칙의 **예외**다 — 생성 프롬프트(§4 문체 규칙)와
@@ -345,22 +345,22 @@ docs/content/
 ### 9-4. 비밀 정보
 | 값 | 로컬 | 자동 실행 |
 |---|---|---|
-| Claude API 키 (`ANTHROPIC_API_KEY`) | `.env` (커밋 안 됨) | GitHub Secrets |
+| Claude API 키 (`ANTHROPIC_API_KEY`) | 구독 생성(A안)이라 **지금은 불필요** | 〃 |
 | 운영 계정 이메일·비밀번호 | `.env` | GitHub Secrets |
 | Firebase 웹 설정 (`EXPO_PUBLIC_FIREBASE_*`) | `.env` | GitHub Secrets |
 | 서비스 계정 키 | **사용 안 함** | **사용 안 함** |
 
-### 9-5. 비용
-- Claude API: 기본 모델 Claude Opus 5.5 (입력 100만 토큰당 $4 / 출력 $20). 10개 생성에 약 $0.15~0.3 →
-  **월 100개 생성해도 몇 달러**. Claude 앱 구독과 별도 과금(선불 충전). 콘솔에서 월 한도를 걸 것
-- GitHub Actions · Firebase(Spark): 이 사용량이면 무료
+### 9-5. 비용 — **0원** (2026-10-30 A안)
+- 글 생성: 이미 내고 있는 Claude 구독 안에서 (주 1회 예약 세션). 구독 사용량 한도는 소모한다
+- GitHub Actions(비공개 저장소 월 2,000분 무료 중 약 1,000분) · Firebase(Spark): 무료
+- 참고(꺼 둔 API 방식): Opus 5.5면 월 1~2달러, Haiku 5.5면 월 몇 센트 + 첫 선불 충전. 필요해지면 `generate.yml`을 켜면 된다
 
-### 9-6. 운영 리듬 (주 1회)
+### 9-6. 운영 리듬
 | 언제 | 누가 | 무엇 |
 |---|---|---|
-| 주 1회 | 자동 또는 준희 버튼 | AI 생성 → 대기 목록에 draft 7~10개 |
-| 생각날 때 | 준희 | 직접 글 추가 · draft 훑고 승인/거절 |
-| 매일 | GitHub Actions | 승인된 글을 하루 N개, 사람 활동 시간대 안에서 분산 게시 |
+| 매주 일요일 저녁 | 예약된 Claude Code 세션 | 20개 생성 → 비공개 저장소 → 자동으로 대기 목록(下書き) |
+| 생각날 때 (주 1회 이상) | 준희 | 앱에서 下書き 훑고 승인/거절 · 직접 글 추가 · `neta.md`에 네타 한 줄 |
+| 매일 | GitHub Actions | 승인된 글을 하루 2~3개, 8~23:30 사이 랜덤 시각에 게시 |
 
 ---
 
