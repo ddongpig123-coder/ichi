@@ -315,10 +315,10 @@ docs/content/
 
 | 구성 | 위치 | 내용 | 단계 |
 |---|---|---|---|
-| 운영 계정 명단 | Firestore `operators/{uid}` | **Firebase 콘솔에서만 추가**(클라이언트 쓰기 금지). 본인만 「내가 운영자인가」 조회 | 1 |
+| 운영 계정 명단 | Firestore `operators/{uid}` | **Firebase 콘솔에서만 추가**(클라이언트 쓰기 금지). 본인만 「내가 운영자인가」 조회. 등록 대상 2개: **봇 게시용 계정**(글 작성자) + **준희 본인 계정**(앱에서 승인용) | 1 |
 | 대기 목록 | Firestore `contentQueue/{itemId}` | 운영 계정만 읽기·쓰기. 타입 `src/types/contentQueue.ts` ↔ `firestore.rules`의 `isValidQueueItem()` | 1 |
 | 승인 | 앱 `app/admin/` (운영 계정만 프로필에 메뉴 표시) | 승인·거절·수정·직접 글 추가 | 3 |
-| AI 생성 | **비공개 저장소** `generate.mjs` | Claude API → `draft`로 적재. §4 문체 · §7 금지 소재 · 금칙어 이중 필터. **공지·일정은 준희가 준 원문에서만 요약**(날짜를 지어내지 않게) | 4 |
+| AI 생성 | **비공개 저장소 `ddongpig123-coder/ichi-content`** `generate.mjs` | Claude API → `draft`로 적재. §4 문체 · §7 금지 소재 · 금칙어 이중 필터. **공지·일정은 준희가 준 원문에서만 요약**(날짜를 지어내지 않게) | 4 |
 | 예약 게시 | **비공개 저장소** `post-next.mjs` + GitHub Actions | 승인된 글 중 오래된 것 1개 게시 + 큐를 `posted`로 — **한 번의 원자적 쓰기**(중복 게시 방지). **하루 2~3개, 8~24시 랜덤** | 5 |
 
 > 봇 스크립트는 AGENTS.md의 「로컬 스크립트는 `scripts/`」 규칙의 **예외**다 — 생성 프롬프트(§4 문체 규칙)와
