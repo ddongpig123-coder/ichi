@@ -325,5 +325,47 @@ service cloud.firestore {
         allow write: if isSignedIn() && request.auth.uid == likeUid;
       }
     }
+
+    // ── 運営アカウント名簿（コンテンツ自動投稿・CONTENT-OPS §9） ──
+    // 登録・削除は Firebase コンソールのみ（クライアントからの自己登録を防ぐ）。
+    // 本人は「自分が運営か」だけ確認できる（承認画面の表示判定用）。一覧は誰にも見せない。
+    match /operators/{uid} {
+      allow get: if isOwner(uid);
+      allow list: if false;
+      allow write: if false;
+    }
+
+    function isOperator() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/operators/$(request.auth.uid));
+    }
+
+    // src/types/contentQueue.ts の ContentQueueItem と1:1（postedAt / postedPath は投稿後の付記なので検証しない）
+    function isValidQueueItem(d) {
+      return d.status in ['draft', 'approved', 'rejected', 'posted']
+        && d.source in ['manual', 'ai']
+        && ((d.scope == 'school' && d.schoolDomain is string && d.schoolDomain.size() > 0)
+            || (d.scope == 'lounge' && d.schoolDomain == null))
+        && d.boardId is string && d.boardId.size() > 0
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 100
+        && d.body is string && d.body.size() > 0 && d.body.size() <= 5000
+        && (d.topic == null || d.topic is string)
+        && (d.sourceUrl == null || d.sourceUrl is string)
+        && d.createdBy is string;
+    }
+
+    // ── コンテンツ投稿キュー（運営のみ・CONTENT-OPS §9） ──
+    // 一般利用者は読み書き不可。投稿済みの記録は運営投稿の追跡・一括削除に使うため物理削除禁止。
+    // 記事そのものは運営アカウントが通常の掲示板ルール（isAuthor）で投稿する（記事側に運営の印は付けない）。
+    match /contentQueue/{itemId} {
+      allow read: if isOperator();
+      allow create: if isOperator()
+        && isValidQueueItem(request.resource.data)
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if isOperator()
+        && isValidQueueItem(request.resource.data)
+        && request.resource.data.createdBy == resource.data.createdBy;
+      allow delete: if false;
+    }
   }
 }
