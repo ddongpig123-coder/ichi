@@ -19,6 +19,9 @@ export type ContentSource = "manual" | "ai";
 //   lounge: lounges/{boardId}/posts（boardId に loungeId を入れる。schoolDomain は null）
 export type ContentScope = "school" | "lounge";
 
+import { OFFICIAL_BOARDS, boardLabel } from "./board";
+import { LOUNGES, loungeLabel } from "./lounge";
+
 // 投稿画面（app/post/[boardId]/write.tsx）のタイトル上限と揃える。本文は余裕を持たせた上限。
 export const CONTENT_TITLE_MAX = 100;
 export const CONTENT_BODY_MAX = 5000;
@@ -40,4 +43,17 @@ export interface ContentQueueItem {
   // 以下は投稿後に post-next.mjs が付ける（ルールでは検証しない）
   postedAt?: number | null;
   postedPath?: string | null;    // 投稿したドキュメントのパス（追跡・一括削除用）
+}
+
+// 承認画面に出す投稿先の表示名（未知の boardId はそのまま出す）。
+export function queueTargetLabel(
+  item: Pick<ContentQueueItem, "scope" | "boardId">,
+  lang: "ja" | "ko"
+): string {
+  if (item.scope === "lounge") {
+    const l = LOUNGES.find((x) => x.id === item.boardId);
+    return l ? loungeLabel(l, lang) : item.boardId;
+  }
+  const b = OFFICIAL_BOARDS.find((x) => x.id === item.boardId);
+  return b ? boardLabel(b, lang) : item.boardId;
 }
