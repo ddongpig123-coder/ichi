@@ -545,6 +545,8 @@ const ja = {
   "courseSearch.title": "講義を検索",
   "courseSearch.entry": "＋ 講義を検索して追加",
   "courseSearch.departmentLabel": "学部",
+  // 講義データがまだ入っていない学校（1.1 S2）。対応校は順次増やす。
+  "courseSearch.schoolNotReady": "この大学の講義データはまだ準備中です。対応でき次第お知らせします。",
   "courseSearch.departmentPlaceholder": "学部を選択",
   "courseSearch.keywordPlaceholder": "講義名・教員名で検索...",
   "courseSearch.search": "検索",
@@ -1123,6 +1125,8 @@ const ko: Record<TranslationKey, string> = {
   "courseSearch.title": "강의 검색",
   "courseSearch.entry": "＋ 강의 검색해서 추가",
   "courseSearch.departmentLabel": "학부",
+  // 강의 데이터가 아직 없는 학교(1.1 S2). 대응 학교는 순차 확대.
+  "courseSearch.schoolNotReady": "이 대학의 강의 데이터는 아직 준비 중이에요. 준비되는 대로 알려드릴게요.",
   "courseSearch.departmentPlaceholder": "학부 선택",
   "courseSearch.keywordPlaceholder": "강의명·교수명으로 검색...",
   "courseSearch.search": "검색",

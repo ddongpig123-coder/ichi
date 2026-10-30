@@ -174,6 +174,19 @@ export async function updateAdmissionYear(uid: string, admissionYear: number | n
   await writePublicMirror(uid, { admissionYear });
 }
 
+// 卒業要件で選んだ学部の保存（I-9 / 1.1 S2）。
+// 端末保存（loadGradState/saveGradState）とは別に、サーバにも持たせておく。
+// 機種変更・再インストールのあとも学部を選び直さずに済ませるため。
+// 公開情報ではないので usersPublic にはミラーしない。
+// 単位の記録そのものは端末ローカル専用のまま（CREDIT-TRACKING §6-2、平文保存禁止）。
+// ここで保存するのは「どの学部の要件表を見るか」だけで、成績ではない。
+export async function updateGradFaculty(
+  uid: string,
+  gradFacultyId: string | null
+): Promise<void> {
+  await setDoc(userDoc(uid), { uid, gradFacultyId }, { merge: true });
+}
+
 // オンボーディング完了時の一括保存（規約同意日時・言語・学校）。
 // 学校は公開情報（先輩時間割の学部公開判定等に使用）なので usersPublic にもミラーする。
 export async function completeOnboarding(

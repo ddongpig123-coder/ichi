@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import { useAuth } from "../src/contexts/AuthContext";
-import { getUserProfile } from "../src/services/userService";
+import { getUserProfile, updateGradFaculty } from "../src/services/userService";
 import type { Theme } from "../src/theme/themes";
 import { GRAD_MASTERS, type GradMaster } from "../src/data/graduationMaster";
 import { COURSES_2021, YEAR3_ONLY } from "../src/data/graduationCourses2021";
@@ -103,6 +103,9 @@ export default function GraduationScreen() {
   const facultyPinnedRef = useRef(false);
   const uiRestoredRef = useRef(false);
   const skipDeptResetRef = useRef(false);
+  // サーバ(users.gradFacultyId)に入っている値。これと変わったときだけ書きに行く。
+  // undefined = プロフィール未読。読む前に書いて null で潰さないための番兵。
+  const savedGradFacultyRef = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
     if (!user) { setProfileReady(true); return; }
@@ -113,10 +116,21 @@ export default function GraduationScreen() {
         const d = p?.department ?? null;
         setDept(d);
         setAdmissionYear(p?.admissionYear ?? null);
-        // 学部をプロフィールから自動推定。商学部なら従来エンジン。
-        // ただし利用者が選んだ学部（端末に保存済み）があれば、そちらを優先する。
-        const f = facultyFromDept(d);
-        if (f && !facultyPinnedRef.current) setFacultyId(f.id);
+        savedGradFacultyRef.current = p?.gradFacultyId ?? null;
+        // 学部の決め方は「利用者が選んだ値 > 推定」。優先順は次のとおり:
+        //   ① 端末に保存した選択（facultyPinnedRef。別の effect で復元される）
+        //   ② サーバの gradFacultyId（I-9。機種変更後はこれだけが残る）
+        //   ③ プロフィールの department からの推定（facultyFromDept）
+        if (!facultyPinnedRef.current) {
+          const saved = p?.gradFacultyId ?? null;
+          if (saved) {
+            facultyPinnedRef.current = true;
+            setFacultyId(saved);
+          } else {
+            const f = facultyFromDept(d);
+            if (f) setFacultyId(f.id);
+          }
+        }
         // 入学年度が分かればマスターと学年を自動プリセット（利便性）。
         // 保存済みの選択を復元した場合は、それが利用者の意思なので触らない。
         if (p?.admissionYear != null && !uiRestoredRef.current) {
@@ -147,6 +161,19 @@ export default function GraduationScreen() {
     const depts = band.byDepartment ?? selFaculty.canDepartments;
     setDeptId(depts && depts.length > 0 ? depts[0].id : null);
   }, [facultyId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 選んだ学部をサーバにも残す（I-9 / 1.1 S2）。
+  // プロフィールを読む前・未ログイン・値が変わっていないときは書かない。
+  // 失敗しても画面は壊さない（端末保存が本体で、こちらは機種変更の保険）。
+  useEffect(() => {
+    if (!user || !profileReady) return;
+    if (savedGradFacultyRef.current === undefined) return; // プロフィール未読
+    if (savedGradFacultyRef.current === facultyId) return; // 変化なし
+    savedGradFacultyRef.current = facultyId;
+    updateGradFaculty(user.uid, facultyId).catch((e) =>
+      console.warn("updateGradFaculty failed:", e)
+    );
+  }, [user, profileReady, facultyId]);
 
   // 端末に保存した記録の読み込み（uid ごと。未ログインは guest）
   const uid = user?.uid ?? null;
