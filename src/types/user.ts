@@ -36,6 +36,13 @@ export interface UserProfile {
   // 所属学部（先輩時間割の「学部公開」判定・講義検索の既定学部に使用）
   // ※ AcademicInfo.department は表示用の自由記述、こちらは判定用の正規値
   department: string | null;
+  // 卒業要件で選んだ学部（facultyMasters の Faculty.id）。I-9 / 1.1 S2
+  // department からの推定（facultyFromDept）では当てられない人が自分で選んだ値を
+  // 端末だけでなくサーバにも持つ。機種変更・再インストールで選び直さずに済む。
+  // ※ 表示用の AcademicInfo.department・判定用の department とは別物。
+  //   卒業要件は学部の体系（Faculty）単位で、学部名の自由記述とは1:1でない。
+  // ※ 公開情報ではないので usersPublic にはミラーしない。
+  gradFacultyId?: string | null;
   // 入学年度（例: 2024）。学年は「現在の年度 − 入学年度 + 1」で派生する単一ソース。
   // 先輩時間割の学年フィルタに使用。usersPublic にミラーする（他ユーザーに公開）。
   // 学点管理(Phase 3)もこの値を再利用する — 可変の「学年」フィールドは作らない（gardrail §6-3）。

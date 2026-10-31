@@ -1,12 +1,12 @@
 # docs/content/ — 콘텐츠 운영 작업 폴더
 
-설계는 [../CONTENT-OPS.md](../CONTENT-OPS.md)를 읽을 것. 이 폴더는 실제 데이터가 쌓이는 곳이다.
+설계는 [../CONTENT-OPS.md](../CONTENT-OPS.md)를 읽을 것 (기술 구현은 §9).
 
-| 파일 | 내용 | 누가 쓰나 |
+| 무엇 | 어디 | 누가 쓰나 |
 |---|---|---|
-| `neta.md` | 준희의 날것 아이디어 | **준희** |
-| `queue.json` | 소스 감시로 모은 소재 (각색 전) | Claude |
-| `drafts/YYYY-MM.json` | 각색 완료, 게시 대기 | Claude → 준희 검수 |
-| `posted.json` | 게시 완료 기록 (중복 방지) | `scripts/content/post.mjs` |
+| 대기 목록 (draft → approved → posted / rejected) | Firestore `contentQueue` — 앱 「プロフィール → コンテンツ管理」에서 승인 | AI 생성 봇 · 준희 |
+| AI 생성·예약 게시 봇, 문체 규칙, 주제 목록 | 비공개 저장소 `ddongpig123-coder/ichi-content` | Claude · 준희 |
+| **네타장** | 비공개 저장소 `ichi-content`의 `neta.md` (2026-10-30 이동) | **준희** |
 
-⚠️ 아직 `queue.json`·`drafts/`·`posted.json`과 스크립트는 **세션 S5에서 만든다**. 지금은 `neta.md`만 있다.
+⚠️ 2026-10-30부터 **초안·게시 기록·네타는 이 공개 저장소에 두지 않는다.** 누구나 읽을 수 있기 때문이다 (CONTENT-OPS §9-2·§9-3).
+이 폴더의 `neta.md`는 더 이상 봇이 읽지 않는다.

@@ -18,6 +18,7 @@ import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { signOut, isSchoolVerified } from "../../src/services/authService";
 import { getUserProfile, updateAcademicInfo, updateAdmissionYear } from "../../src/services/userService";
+import { isOperator } from "../../src/services/contentQueueService";
 import { THEME_IDS, THEMES, themeLabel, type Theme } from "../../src/theme/themes";
 import type { AcademicInfo, UserProfile } from "../../src/types/user";
 
@@ -75,6 +76,8 @@ export default function ProfileScreen() {
   const [editingAcademic, setEditingAcademic] = useState(false);
   const [showGpa, setShowGpa] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
+  // 運営アカウント（operators/{uid} 登録済み）のときだけコンテンツ管理メニューを出す
+  const [operator, setOperator] = useState(false);
 
   // 画面フォーカス毎に再取得する。
   // linkWithCredential(アカウント連携)はuidが変わらず onAuthStateChanged が
@@ -87,8 +90,10 @@ export default function ProfileScreen() {
       setIsGuest(current?.isAnonymous ?? true);
       if (!current) {
         setProfile(null);
+        setOperator(false);
         return;
       }
+      isOperator(current.uid).then(setOperator);
       getUserProfile(current.uid)
         .then((p) => {
           setProfile(p);
@@ -333,6 +338,13 @@ export default function ProfileScreen() {
         <Text style={styles.settingText}>{t("profile.contact")}</Text>
         <Text style={styles.settingArrow}>›</Text>
       </TouchableOpacity>
+      {/* コンテンツ管理 — 運営アカウントのみ（docs/CONTENT-OPS.md §9） */}
+      {operator ? (
+        <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/admin")}>
+          <Text style={styles.settingText}>{t("admin.menu")}</Text>
+          <Text style={styles.settingArrow}>›</Text>
+        </TouchableOpacity>
+      ) : null}
 
       {/* 로그인 기능은 나중에 다시 붙일 예정 — 이메일 계정일 때만 로그아웃 노출 */}
       {user && !user.isAnonymous ? (
