@@ -303,20 +303,35 @@ service cloud.firestore {
       // ⚠️ DEPRECATED（1.1 で /chats 最上位へ移設。下の「全国チャット」を見ること）
       // 学校スコープだったため、森から他校ユーザーに送ったメッセージが
       // 相手に届かなかった（送信者の学校の下に部屋ができ、受信者は自分の学校の下だけを
-      // 購読していた）。アプリは新パスしか書かない。
-      // ここは移行スクリプト（scripts/migrate-chats-to-global.mjs）完了までの
-      // 読み取り互換のために残す。新規作成は塞いである。
-      // 移行確認後にこのブロックごと削除する。
+      // 購読していた）。新しいアプリは新パスにしか書かない。
+      //
+      // 🔴 ここを塞がない理由（規則の配備と OTA を切り離すため）:
+      //    OTA（expo-updates）は既定で「次回起動時」に適用される。配備直後に
+      //    開いているセッションは全部まだ旧バンドルで、旧パスに書きに来る。
+      //    ここを allow create: if false にすると、その人たちのメッセージ送信が
+      //    OTA が届くまで弾かれる。だから旧パスの書き込みは開けたままにする。
+      //    → 規則はいつ配備してもよく、OTA はそれと独立に出せる。
+      //
+      // 片付け手順（この順でやる。順番を守れば利用者に見える壊れ方をしない）:
+      //    ① 規則を配備（この状態。旧も新も書ける）
+      //    ② OTA を出す（新しい端末から順に新パスへ移る）
+      //    ③ scripts/migrate-chats-to-global.mjs を流す。旧端末が残っている間は
+      //       何度でも流してよい（追いつかなかった分だけを足す作りにしてある）
+      //    ④ 旧パスに新しい書き込みが来なくなったら、このブロックごと削除する
       match /chats/{chatId} {
         allow read: if isSignedIn()
           && (resource == null || request.auth.uid in resource.data.participants);
-        allow create: if false; // 移設済み。新パスへ書く
-        allow update: if false;
+        allow create: if isSignedIn()
+          && request.auth.uid in request.resource.data.participants;
+        allow update: if isSignedIn()
+          && request.auth.uid in resource.data.participants;
 
         match /messages/{messageId} {
           allow read: if isSignedIn()
             && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
-          allow create: if false;
+          allow create: if isSignedIn()
+            && request.resource.data.senderUid == request.auth.uid
+            && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
         }
       }
     }

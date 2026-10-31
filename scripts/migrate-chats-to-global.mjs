@@ -10,9 +10,12 @@
 //   이 스크립트가 기존 방을 새 경로로 복사한다.
 //
 // 성질:
-//   - 멱등하다. 같은 chatId가 이미 전국 경로에 있으면 건드리지 않는다(여러 번 돌려도 안전).
-//   - 복사만 한다. 구 경로는 지우지 않는다 — 규칙에서 읽기만 남겨둔 상태이고,
-//     문제가 생기면 되돌릴 수 있어야 하기 때문. 확인 후 별도로 정리한다.
+//   - 멱등하고 반복 실행용이다. 이미 옮긴 방은 "빠진 메시지만" 더한다.
+//     메시지 문서 id를 그대로 쓰므로 몇 번을 돌려도 중복이 안 생긴다.
+//   - 🔴 한 번만 돌리면 안 된다. OTA(expo-updates)는 다음 실행 때 적용되므로
+//     구 단말이 며칠 동안 구 경로에 계속 쓴다.
+//     「메시지 0건」이 연속으로 나올 때까지 날짜를 두고 몇 번 더 돌릴 것.
+//   - 복사만 한다. 구 경로는 지우지 않는다 — 문제가 생기면 되돌릴 수 있어야 하기 때문.
 //   - chatId는 [uid1, uid2].sort().join("_") 이라 학교와 무관하게 전역 유일하다.
 //     그래서 경로만 바꿔도 충돌이 나지 않는다.
 //   - 같은 두 사람의 방이 두 학교 아래에 있으면(양쪽에서 각각 보낸 경우) 메시지를
@@ -85,15 +88,12 @@ for (const row of legacy) {
   byId.set(row.id, list);
 }
 
-let copied = 0, skipped = 0, msgCopied = 0;
+// ── 2) 방마다: 없으면 만들고, 있으면 빠진 메시지만 더한다 ──────
+let created = 0, topped = 0, upToDate = 0, msgCopied = 0;
 
 for (const [chatId, rows] of byId) {
   const target = db.collection("chats").doc(chatId);
-  if ((await target.get()).exists) {
-    console.log(`  skip ${chatId} — 이미 전국 경로에 있음`);
-    skipped += 1;
-    continue;
-  }
+  const targetSnap = await target.get();
 
   // 방 메타는 lastMessageAt이 가장 최신인 쪽
   const primary = [...rows].sort((a, b) => ms(b.data.lastMessageAt) - ms(a.data.lastMessageAt))[0];
@@ -106,31 +106,70 @@ for (const [chatId, rows] of byId) {
   }
   msgs.sort((a, b) => ms(a.data.createdAt) - ms(b.data.createdAt));
 
-  const from = rows.map((r) => r.school).join(", ");
-  console.log(`  copy ${chatId} — ${from} / 메시지 ${msgs.length}건`);
-  if (dryRun) { copied += 1; msgCopied += msgs.length; continue; }
+  // 이미 옮긴 방이면 빠진 것만 추린다(반복 실행 대비)
+  let missing = msgs;
+  if (targetSnap.exists) {
+    const have = new Set((await target.collection("messages").get()).docs.map((d) => d.id));
+    missing = msgs.filter((m) => !have.has(m.id));
+    if (missing.length === 0) {
+      upToDate += 1;
+      continue; // 이미 최신. 조용히 넘어간다
+    }
+  }
 
-  // 방 메타 → 메시지 순. 쓰기 500건마다 커밋(Firestore 배치 한도)
+  const from = rows.map((r) => r.school).join(", ");
+  console.log(`  ${targetSnap.exists ? "따라잡기" : "복사"} ${chatId} — ${from} / 메시지 ${missing.length}건`);
+  if (dryRun) {
+    if (targetSnap.exists) topped += 1; else created += 1;
+    msgCopied += missing.length;
+    continue;
+  }
+
+  // 메시지 → 방 메타 순. 쓰기 450건마다 커밋(Firestore 배치 한도 500)
   let batch = db.batch();
   let n = 0;
   const flush = async () => { if (n > 0) { await batch.commit(); batch = db.batch(); n = 0; } };
 
-  batch.set(target, { ...primary.data, migratedFrom: from, migratedAt: new Date() });
-  n += 1;
-  for (const m of msgs) {
+  for (const m of missing) {
     batch.set(target.collection("messages").doc(m.id), m.data);
     n += 1;
     if (n >= 450) await flush();
   }
+
+  if (!targetSnap.exists) {
+    batch.set(target, { ...primary.data, migratedFrom: from, migratedAt: new Date() });
+    n += 1;
+  } else {
+    // 이미 있는 방: 참가자·기존 메시지는 건드리지 않는다.
+    // 구 경로 쪽이 더 최신일 때만, 목록 정렬에 쓰는 마지막 메시지 정보를 갱신한다.
+    const newest = missing[missing.length - 1];
+    if (ms(newest.data.createdAt) > ms(targetSnap.data().lastMessageAt)) {
+      const text = String(newest.data.text ?? "");
+      batch.set(
+        target,
+        {
+          lastMessage: text.length > 40 ? text.slice(0, 40) + "…" : text,
+          lastMessageAt: newest.data.createdAt,
+          lastSenderUid: newest.data.senderUid,
+        },
+        { merge: true }
+      );
+      n += 1;
+    }
+  }
   await flush();
 
-  copied += 1;
-  msgCopied += msgs.length;
+  if (targetSnap.exists) topped += 1; else created += 1;
+  msgCopied += missing.length;
 }
 
-console.log(`\n${dryRun ? "[dry-run] " : ""}방 ${copied}개 복사 / ${skipped}개 건너뜀 / 메시지 ${msgCopied}건`);
+console.log(
+  `\n${dryRun ? "[dry-run] " : ""}새로 옮긴 방 ${created}개 / 따라잡은 방 ${topped}개 / 이미 최신 ${upToDate}개 / 메시지 ${msgCopied}건`
+);
 if (dryRun) {
   console.log("실제 이전은 --dry-run 없이 실행하세요.");
 } else {
-  console.log("구 경로는 지우지 않았습니다. 앱에서 확인한 뒤 firestore.rules의 DEPRECATED 블록과 함께 정리하세요.");
+  console.log("구 경로는 지우지 않았습니다.");
+  console.log("구 단말이 OTA를 받을 때까지 구 경로에 계속 쓰이므로, 며칠에 걸쳐 몇 번 더 돌리세요.");
+  console.log("「메시지 0건」이 연속으로 나오면 firestore.rules의 DEPRECATED 블록과 함께 정리하면 됩니다.");
 }
