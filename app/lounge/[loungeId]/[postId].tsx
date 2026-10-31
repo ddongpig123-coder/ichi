@@ -40,6 +40,16 @@ import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
 
+// Alert はウェブでは no-op なので window.alert に逃がす（学校掲示板側と同じ形）。
+// ※ このファイルの他の Alert.alert（通報・コメント失敗）はまだ素のまま。
+//    ウェブで無反応になるので別途まとめて直す必要がある。
+function notify(title: string, message?: string) {
+  if (Platform.OS === "web") window.alert(message ? `${title}
+
+${message}` : title);
+  else Alert.alert(title, message);
+}
+
 export default function LoungePostDetailScreen() {
   const { loungeId, postId } = useLocalSearchParams<{ loungeId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
@@ -171,11 +181,22 @@ export default function LoungePostDetailScreen() {
     }
   }
 
+  // 森（全国）からのメッセージ。1.0 では学校スコープの部屋を作っていたため
+  // 他校ユーザー宛てが相手に届かなかった。1.1 で全国スコープに移設して解消。
   async function handleSendMessage(targetUid: string) {
-    if (!user || !schoolDomain || !post) return;
-    if (user.uid === targetUid) return;
-    const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, targetUid, post.title);
-    router.push(`/(tabs)/messages/${chatRoomId}`);
+    if (!user || !post) {
+      notify(t("post.dmLoading"));
+      return;
+    }
+    if (user.uid === targetUid) return; // 自分宛ては導線自体を出していない
+    // try/catch が無いと、失敗が未捕捉エラーになって赤い画面が出る
+    // （学校掲示板側は S1/QA 9 で直っていたが、森側は漏れていた）
+    try {
+      const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
+      router.push(`/(tabs)/messages/${chatRoomId}`);
+    } catch (e: any) {
+      notify(t("post.dmFailed"), e?.message);
+    }
   }
 
   async function handleLike() {

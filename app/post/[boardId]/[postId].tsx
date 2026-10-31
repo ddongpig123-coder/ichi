@@ -34,6 +34,7 @@ import { findBannedWords } from "../../../src/utils/contentFilter";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
+import { writeErrorBody } from "../../../src/utils/writeError";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
@@ -50,17 +51,6 @@ function notify(title: string, message?: string) {
   if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
   else Alert.alert(title, message);
 }
-function confirmDialog(title: string, okLabel: string, cancelLabel: string, onOk: () => void) {
-  if (Platform.OS === "web") {
-    if (window.confirm(title)) onOk();
-    return;
-  }
-  Alert.alert(title, undefined, [
-    { text: cancelLabel, style: "cancel" },
-    { text: okLabel, onPress: onOk },
-  ]);
-}
-
 export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
@@ -211,21 +201,17 @@ export default function PostDetailScreen() {
     }
   }
 
-  // 以前は条件不一致で黙って return していた（押しても無反応）→ 失敗理由を必ず案内する
+  // チャットは全国スコープ（1.1 S3）。schoolDomain は使わない。
+  // 以前は条件不一致で黙って return していた（押しても無反応）→ 失敗理由を必ず案内する（S1 / QA 9）
+  // ※ 学校未選択でもメッセージは送れるようになったので「学校を選択」分岐は不要になった
   async function handleSendMessage(targetUid: string) {
     if (!user || !post) {
       notify(t("post.dmLoading"));
       return;
     }
     if (user.uid === targetUid) return; // 自分宛ては導線自体を出していない
-    if (!schoolDomain) {
-      confirmDialog(t("post.dmNeedSchool"), t("school.promptButton"), t("common.cancel"), () =>
-        router.push("/onboarding?mode=school")
-      );
-      return;
-    }
     try {
-      const chatRoomId = await getOrCreateChat(schoolDomain, user.uid, targetUid, post.title);
+      const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
       notify(t("post.dmFailed"), e?.message);
@@ -297,7 +283,8 @@ export default function PostDetailScreen() {
       setMention(null);
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
-      Alert.alert(t("post.commentFailed"), e.message);
+      // 所属違い（ルールが弾いた）ときは理由を案内に差し替える
+      Alert.alert(t("post.commentFailed"), writeErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }

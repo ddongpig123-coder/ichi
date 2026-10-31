@@ -434,7 +434,6 @@ const ja = {
   "post.blockedComment": "ブロックしたユーザーのコメントです",
   "post.authorTag": "投稿者",
   "post.sendMessage": "メッセージを送る",
-  "post.dmNeedSchool": "メッセージを送るには学校の選択が必要です",
   "post.dmFailed": "メッセージを開始できませんでした",
   "post.dmLoading": "読み込み中です。少し待ってからもう一度お試しください",
   "qa.open": "回答受付中",
@@ -627,11 +626,19 @@ const ja = {
   "moderation.bannedEdit": "修正する",
   "moderation.bannedPostAnyway": "このまま投稿する",
 
-  // 学校未選択（schoolDomain=null）時の掲示板・メッセージ導線
+  // 学校未選択（schoolDomain=null）時の掲示板導線
+  // ※メッセージは 1.1 で全国スコープになったので学校選択なしでも使える（文面から外した）
   "school.promptTitle": "学校を選択してください",
   "school.promptBody":
-    "学校を選ぶと、あなたの大学の掲示板やメッセージが使えます。\n全国の留学生ラウンジは今すぐ利用できます。",
+    "学校を選ぶと、あなたの大学の掲示板が使えます。\n全国の留学生ラウンジとメッセージは今すぐ利用できます。",
   "school.promptButton": "学校を選択する",
+  // 所属していない学校の掲示板に書こうとしたとき（ルールが拒否した場合の案内）
+  "school.writeBlocked":
+    "この掲示板に投稿できるのは、その学校を選んだ人だけです。\nプロフィールから学校を変更できます。",
+  // プロフィールの学校変更（docs/BOARD-ACCESS.md §3-3 Q2・クールダウンなし）
+  "school.changeLabel": "学校",
+  "school.changeAction": "変更",
+  "school.notSelected": "未選択",
 } as const;
 
 const ko: Record<TranslationKey, string> = {
@@ -1051,7 +1058,6 @@ const ko: Record<TranslationKey, string> = {
   "post.blockedComment": "차단한 사용자의 댓글입니다",
   "post.authorTag": "글쓴이",
   "post.sendMessage": "쪽지 보내기",
-  "post.dmNeedSchool": "쪽지를 보내려면 학교를 선택해야 해요",
   "post.dmFailed": "쪽지를 시작하지 못했습니다",
   "post.dmLoading": "불러오는 중이에요. 잠시 후 다시 시도해주세요",
   "qa.open": "답변 받는 중",
@@ -1239,11 +1245,19 @@ const ko: Record<TranslationKey, string> = {
   "moderation.bannedEdit": "수정하기",
   "moderation.bannedPostAnyway": "이대로 등록하기",
 
-  // 학교 미선택(schoolDomain=null) 시 게시판·메시지 유도
+  // 학교 미선택(schoolDomain=null) 시 게시판 유도
+  // ※쪽지는 1.1에서 전국 스코프가 되어 학교 선택 없이도 사용 가능(문구에서 제외)
   "school.promptTitle": "학교를 선택해주세요",
   "school.promptBody":
-    "학교를 선택하면 우리 대학 게시판과 메시지를 쓸 수 있어요.\n전국 유학생 라운지는 지금 바로 이용 가능해요.",
+    "학교를 선택하면 우리 대학 게시판을 쓸 수 있어요.\n전국 유학생 라운지와 쪽지는 지금 바로 이용 가능해요.",
   "school.promptButton": "학교 선택하기",
+  // 소속되지 않은 학교 게시판에 쓰려고 했을 때(규칙이 거부한 경우 안내)
+  "school.writeBlocked":
+    "이 게시판에 글을 쓸 수 있는 사람은 그 학교를 선택한 사람뿐입니다.\n프로필에서 학교를 변경할 수 있어요.",
+  // 프로필의 학교 변경(docs/BOARD-ACCESS.md §3-3 Q2・쿨다운 없음)
+  "school.changeLabel": "학교",
+  "school.changeAction": "변경",
+  "school.notSelected": "미선택",
 };
 
 export type TranslationKey = keyof typeof ja;
