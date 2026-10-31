@@ -16,6 +16,7 @@ import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { createPost } from "../../../src/services/boardService";
+import { writeErrorBody } from "../../../src/utils/writeError";
 import { findBannedWords } from "../../../src/utils/contentFilter";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
@@ -57,7 +58,8 @@ export default function WriteScreen() {
       await createPost(schoolDomain, boardId as BoardId, user.uid, title.trim(), body.trim(), isQa ? tag : null);
       router.back();
     } catch (e: any) {
-      Alert.alert(t("post.submitFailed"), e.message);
+      // 所属違い（ルールが弾いた）ときは理由を案内に差し替える
+      Alert.alert(t("post.submitFailed"), writeErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }

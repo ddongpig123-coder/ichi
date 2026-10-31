@@ -60,24 +60,26 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   }, []);
 
   // ── ① メッセージ未読（リアルタイム購読） ──
+  // チャットは全国スコープなので schoolDomain に依存しない（1.1）。
+  // 学校未選択（その他）のユーザーもバッジが正しく出る。
   useEffect(() => {
-    if (!user || !schoolDomain) {
+    if (!user) {
       setUnreadChatCount(0);
       return;
     }
-    const unsub = subscribeToMyChats(schoolDomain, user.uid, (chats) => {
+    const unsub = subscribeToMyChats(user.uid, (chats) => {
       setUnreadChatCount(chats.filter((c) => isChatUnread(c, user.uid)).length);
     });
     return unsub;
-  }, [user, schoolDomain]);
+  }, [user]);
 
   const markChatAsRead = useCallback(
     (chatId: string) => {
-      if (!user || !schoolDomain) return;
+      if (!user) return;
       // 購読が新しい lastRead を拾ってバッジは自動で減る
-      markChatRead(schoolDomain, chatId, user.uid);
+      markChatRead(chatId, user.uid);
     },
-    [user, schoolDomain]
+    [user]
   );
 
   // ── ② 自分の投稿へのコメント ──
