@@ -153,6 +153,19 @@ export async function fetchFriendProfiles(uid: string): Promise<PublicProfile[]>
   return profiles.filter((p): p is PublicProfile => p !== null);
 }
 
+// 友達解除。承認済みの申請も消す: 残っていると、解除されたあとで古い申請を根拠に
+// friendships を作り直し、相手の「友達のみ」の時間割を読めてしまう（ルールは承認済み申請を確認する）。
+// 申請の掃除に失敗しても解除そのものは成立させる。
 export async function removeFriendship(uid: string, otherUid: string): Promise<void> {
   await deleteDoc(friendshipDoc(uid, otherUid));
+  try {
+    const [mine, theirs] = await Promise.all(
+      [[uid, otherUid], [otherUid, uid]].map(([from, to]) =>
+        getDocs(query(requestsCol(), where("fromUid", "==", from), where("toUid", "==", to), where("status", "==", "accepted")))
+      )
+    );
+    await Promise.all([...mine.docs, ...theirs.docs].map((d) => deleteDoc(d.ref)));
+  } catch (e) {
+    console.warn("accepted request cleanup failed:", e);
+  }
 }
