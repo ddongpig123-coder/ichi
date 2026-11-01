@@ -18,6 +18,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { toggleLikeDoc } from "./likeToggle";
 import type { BoardId, BoardMeta, Post, Comment } from "../types/board";
 
 // Extract school domain from email (e.g. "user@foo.ac.jp" → "foo.ac.jp")
@@ -231,19 +232,7 @@ export async function toggleLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(likesCol(schoolDomain, boardId, postId), uid);
   const postRef = doc(postsCol(schoolDomain, boardId), postId);
-  const likeSnap = await getDoc(likeRef);
-
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(postRef, { likeCount: increment(-1) });
-    const updated = await getDoc(postRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(postRef, { likeCount: increment(1) });
-    const updated = await getDoc(postRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, postRef, uid);
 }
 
 export async function checkLiked(
@@ -324,10 +313,18 @@ export async function fetchBestPosts(
     .slice(0, topN);
 }
 
+// 検索用の正規化（全角/半角・大文字小文字の違いを無視）。森の検索と共通。
+export function normalizeForSearch(text: string | null | undefined): string {
+  return (text ?? "").normalize("NFKC").toLowerCase();
+}
+
+// ⚠️ 各掲示板の最新 pageSize 件だけをクライアントで絞り込む簡易検索。
+//    件数が増えたら（目安: 1板 300件超）講義検索と同じ n-gram 索引（nameGrams）方式に移すこと。
+//    索引フィールドの追加は types / firestore.rules の変更を伴う（太熙 窓口）。
 export async function searchPosts(
   schoolDomain: string,
   keyword: string,
-  pageSize = 30,
+  pageSize = 100,
   boards?: BoardMeta[]
 ): Promise<(Post & { boardLabel: string })[]> {
   const { OFFICIAL_BOARDS } = await import("../types/board");
@@ -336,7 +333,7 @@ export async function searchPosts(
     ...(await fetchCustomBoards(schoolDomain)),
   ];
   const results: (Post & { boardLabel: string })[] = [];
-  const kw = keyword.trim().toLowerCase();
+  const kw = normalizeForSearch(keyword.trim());
   if (!kw) return results;
 
   await Promise.all(
@@ -347,8 +344,8 @@ export async function searchPosts(
         const data = d.data();
         if (data.deleted) return;
         if (
-          data.title?.toLowerCase().includes(kw) ||
-          data.body?.toLowerCase().includes(kw)
+          normalizeForSearch(data.title).includes(kw) ||
+          normalizeForSearch(data.body).includes(kw)
         ) {
           results.push({
             id: d.id,
@@ -415,18 +412,7 @@ export async function toggleCommentLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(commentLikesCol(schoolDomain, boardId, postId, commentId), uid);
   const commentRef = doc(commentsCol(schoolDomain, boardId, postId), commentId);
-  const likeSnap = await getDoc(likeRef);
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(commentRef, { likeCount: increment(-1) });
-    const updated = await getDoc(commentRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(commentRef, { likeCount: increment(1) });
-    const updated = await getDoc(commentRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, commentRef, uid);
 }
 
 // この投稿で自分がいいね済みのコメントID集合（コメント表示時に一括取得）。

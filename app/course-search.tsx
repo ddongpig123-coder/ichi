@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -35,9 +35,11 @@ import {
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
+import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
 import ReviewModal from "../src/components/course/ReviewModal";
+import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // ============================================================
 // 講義検索 → 時間割にワンタップ追加（Phase 1c / 10月3週）
@@ -94,7 +96,7 @@ export default function CourseSearchScreen() {
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const params = useLocalSearchParams<{ year?: string; semester?: string }>();
-  const year = Number(params.year) || new Date().getFullYear();
+  const year = Number(params.year) || getCurrentAcademicYear();
   const semester: Semester = params.semester === "秋" ? "秋" : "春";
   const semesterKey = `${year}-${semester}`;
 
@@ -175,6 +177,19 @@ export default function CourseSearchScreen() {
 
   const handleSearch = () => runSearch(keyword);
 
+  // 学部を選び直したら: 「先に学部を選んで」の注意は消し、入力済みの語があれば
+  // その学部で検索し直す（前の学部の結果が残ったままにならないように）。
+  const prevDeptRef = useRef(deptId);
+  useEffect(() => {
+    if (prevDeptRef.current === deptId) return;
+    prevDeptRef.current = deptId;
+    if (!deptId) return;
+    setNotice((cur) => (cur === t("courseSearch.selectDepartmentFirst") ? null : cur));
+    if (keyword.trim()) runSearch(keyword);
+    // keyword は「選び直した時点の値」を使えばよい（入力のたびに検索しない）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deptId]);
+
   // 実在確認（1人1回。confirms サブコレクションに create）
   async function handleConfirm(course: Course) {
     if (!user || confirmingId) return;
@@ -250,16 +265,7 @@ export default function CourseSearchScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("courseSearch.title")}</Text>
-        <Text style={styles.semesterBadge}>{`${year} ${semester}`}</Text>
-      </View>
+      <ScreenHeader title={t("courseSearch.title")} right={<Text style={styles.semesterBadge}>{`${year} ${semester === "春" ? t("timetable.springSemester") : t("timetable.fallSemester")}`}</Text>} />
 
       <Text style={styles.sectionLabel}>{t("courseSearch.departmentLabel")}</Text>
       {!deptReady ? (
@@ -478,20 +484,7 @@ export default function CourseSearchScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingTop: 56,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32, width: 28 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
-    semesterBadge: { fontSize: 13, color: theme.textSecondary, width: 60, textAlign: "right" },
+    semesterBadge: { fontSize: 13, color: theme.textSecondary },
     mockBanner: {
       backgroundColor: theme.accent,
       paddingVertical: 6,

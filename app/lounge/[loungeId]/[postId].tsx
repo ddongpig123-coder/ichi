@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Alert,
   Platform,
   Keyboard,
   Dimensions,
@@ -38,17 +37,12 @@ import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
+import { friendlyErrorBody } from "../../../src/utils/writeError";
+import { notify } from "../../../src/utils/dialog";
+import { COMMENT_MAX } from "../../../src/data/limits";
+import LoadError from "../../../src/components/common/LoadError";
 import { LOUNGES, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
 
-// Alert はウェブでは no-op なので window.alert に逃がす（学校掲示板側と同じ形）。
-// ※ このファイルの他の Alert.alert（通報・コメント失敗）はまだ素のまま。
-//    ウェブで無反応になるので別途まとめて直す必要がある。
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}
-
-${message}` : title);
-  else Alert.alert(title, message);
-}
 
 export default function LoungePostDetailScreen() {
   const { loungeId, postId } = useLocalSearchParams<{ loungeId: string; postId: string }>();
@@ -95,6 +89,9 @@ export default function LoungePostDetailScreen() {
   const [post, setPost] = useState<LoungePost | null>(null);
   const [comments, setComments] = useState<LoungeComment[]>([]);
   const [loading, setLoading] = useState(true);
+  // 読み込み失敗（通信）。「投稿が見つかりません」と区別して再試行を出す
+  const [loadError, setLoadError] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -159,23 +156,41 @@ export default function LoungePostDetailScreen() {
         markPostSeen("lounge", loungeId as string, postId, mine.commentCount ?? 0);
       }
     })
-      .catch((e) => console.warn("lounge post load failed:", e))
+      .catch((e) => {
+        console.warn("lounge post load failed:", e);
+        setLoadError(true);
+      })
       .finally(() => setLoading(false));
-  }, [loungeId, postId]);
+  }, [loungeId, postId, reloadNonce]);
+
+  function retryLoad() {
+    setLoadError(false);
+    setLoading(true);
+    setReloadNonce((n) => n + 1);
+  }
+
+  // コメントのいいね: 押した瞬間に見た目を切り替え、失敗したら元に戻す
+  function applyCommentLike(commentId: string, isLiked: boolean, count: number) {
+    setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: count } : c)));
+    setLikedComments((prev) => {
+      const n = new Set(prev);
+      if (isLiked) n.add(commentId); else n.delete(commentId);
+      return n;
+    });
+  }
 
   async function handleCommentLike(commentId: string) {
     if (!user || likingComment) return;
+    const prevLiked = likedComments.has(commentId);
+    const prevCount = comments.find((c) => c.id === commentId)?.likeCount ?? 0;
+    applyCommentLike(commentId, !prevLiked, Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLikingComment(commentId);
     try {
       const res = await toggleLoungeCommentLike(loungeId as LoungeId, postId, commentId, user.uid);
-      setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: res.likeCount } : c)));
-      setLikedComments((prev) => {
-        const n = new Set(prev);
-        if (res.liked) n.add(commentId); else n.delete(commentId);
-        return n;
-      });
+      applyCommentLike(commentId, res.liked, res.likeCount);
     } catch (e: any) {
-      Alert.alert(t("common.error"), e?.message ?? "");
+      applyCommentLike(commentId, prevLiked, prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
     } finally {
       setLikingComment(null);
     }
@@ -195,17 +210,30 @@ export default function LoungePostDetailScreen() {
       const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
-      notify(t("post.dmFailed"), e?.message);
+      notify(t("post.dmFailed"), friendlyErrorBody(e, t));
     }
   }
 
+  // 押した瞬間に見た目を切り替え（待たせない）、失敗したら元に戻して知らせる。
+  // 以前は失敗すると liking が true のまま残り、ボタンが二度と押せなくなっていた。
   async function handleLike() {
-    if (!user) return;
+    if (!user || liking) return;
+    const prevLiked = liked;
+    const prevCount = likeCount;
+    setLiked(!prevLiked);
+    setLikeCount(Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLiking(true);
-    const result = await toggleLoungeLike(loungeId as LoungeId, postId, user.uid);
-    setLiked(result.liked);
-    setLikeCount(result.likeCount);
-    setLiking(false);
+    try {
+      const result = await toggleLoungeLike(loungeId as LoungeId, postId, user.uid);
+      setLiked(result.liked);
+      setLikeCount(result.likeCount);
+    } catch (e: any) {
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
+    } finally {
+      setLiking(false);
+    }
   }
 
   // 自分の投稿・コメントの削除（ソフトデリート）。学校掲示板と同じ扱い。
@@ -224,7 +252,7 @@ export default function LoungePostDetailScreen() {
 
   async function handleComment() {
     if (!commentText.trim()) return;
-    if (!user) { Alert.alert(t("post.loginRequired")); return; }
+    if (!user) { notify(t("post.loginRequired")); return; }
 
     const hits = findBannedWords(commentText);
     if (hits.length) { setBannedWords(hits); return; }
@@ -246,7 +274,7 @@ export default function LoungePostDetailScreen() {
       setMention(null);
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
-      Alert.alert(t("post.commentFailed"), e.message);
+      notify(t("post.commentFailed"), friendlyErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }
@@ -254,6 +282,10 @@ export default function LoungePostDetailScreen() {
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
+  }
+
+  if (loadError) {
+    return <LoadError onRetry={retryLoad} />;
   }
 
   if (!post) {
@@ -458,6 +490,7 @@ export default function LoungePostDetailScreen() {
           placeholderTextColor={theme.textSecondary}
           value={commentText}
           onChangeText={setCommentText}
+          maxLength={COMMENT_MAX}
           onKeyPress={({ nativeEvent }) => {
             // バックスペースはメンションのみ外す。返信モードは解除しない（送信で終了）。
             if (nativeEvent.key === "Backspace" && commentText.length === 0 && mention) setMention(null);

@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -17,6 +16,10 @@ import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { createLoungePost } from "../../../src/services/loungeService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
+import { friendlyErrorBody } from "../../../src/utils/writeError";
+import { notify } from "../../../src/utils/dialog";
+import { useConfirmDiscard } from "../../../src/hooks/useConfirmDiscard";
+import { POST_BODY_MAX, POST_TITLE_MAX } from "../../../src/data/limits";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, loungeLabel, type LoungeId } from "../../../src/types/lounge";
@@ -35,11 +38,13 @@ export default function LoungeWriteScreen() {
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [bannedWords, setBannedWords] = useState<string[]>([]);
+  const canSubmit = title.trim().length > 0 && body.trim().length > 0;
+  const leave = useConfirmDiscard(title.trim().length > 0 || body.trim().length > 0);
 
   async function handleSubmit() {
-    if (!title.trim()) { Alert.alert(t("post.titleRequired")); return; }
-    if (!body.trim())  { Alert.alert(t("post.bodyRequired")); return; }
-    if (!user) { Alert.alert(t("post.loginRequired")); return; }
+    if (!title.trim()) { notify(t("post.titleRequired")); return; }
+    if (!body.trim())  { notify(t("post.bodyRequired")); return; }
+    if (!user) { notify(t("post.loginRequired")); return; }
 
     const hits = findBannedWords(title, body);
     if (hits.length) { setBannedWords(hits); return; }
@@ -52,9 +57,9 @@ export default function LoungeWriteScreen() {
     setSubmitting(true);
     try {
       await createLoungePost(loungeId as LoungeId, user.uid, title.trim(), body.trim());
-      router.back();
+      leave(() => router.back());
     } catch (e: any) {
-      Alert.alert(t("post.submitFailed"), e.message);
+      notify(t("post.submitFailed"), friendlyErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }
@@ -75,7 +80,7 @@ export default function LoungeWriteScreen() {
           placeholderTextColor={theme.textSecondary}
           value={title}
           onChangeText={setTitle}
-          maxLength={100}
+          maxLength={POST_TITLE_MAX}
         />
         <TextInput
           style={styles.bodyInput}
@@ -83,14 +88,21 @@ export default function LoungeWriteScreen() {
           placeholderTextColor={theme.textSecondary}
           value={body}
           onChangeText={setBody}
+          maxLength={POST_BODY_MAX}
           multiline
           textAlignVertical="top"
         />
+        {/* 上限に近づいたときだけ残りを出す（普段は画面を静かに保つ） */}
+        {body.length >= POST_BODY_MAX * 0.8 && (
+          <Text style={[styles.counter, body.length >= POST_BODY_MAX && styles.counterFull]}>
+            {body.length} / {POST_BODY_MAX}
+          </Text>
+        )}
 
         <TouchableOpacity
-          style={[styles.submitBtn, submitting && styles.disabled]}
+          style={[styles.submitBtn, (submitting || !canSubmit) && styles.disabled]}
           onPress={handleSubmit}
-          disabled={submitting}
+          disabled={submitting || !canSubmit}
         >
           <Text style={styles.submitText}>{submitting ? t("post.submitting") : t("post.submit")}</Text>
         </TouchableOpacity>
@@ -133,7 +145,9 @@ function makeStyles(theme: Theme) {
       paddingVertical: 14,
       alignItems: "center",
     },
-    disabled: { opacity: 0.6 },
+    disabled: { opacity: 0.4 },
+    counter: { fontSize: 12, color: theme.textSecondary, textAlign: "right", marginTop: 6 },
+    counterFull: { color: theme.accent, fontWeight: "700" },
     submitText: { color: "#fff", fontSize: 16, fontWeight: "700" },
   });
 }

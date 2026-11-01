@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Alert,
   Platform,
   Keyboard,
   Dimensions,
@@ -34,7 +33,10 @@ import { findBannedWords } from "../../../src/utils/contentFilter";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
-import { writeErrorBody } from "../../../src/utils/writeError";
+import { friendlyErrorBody, isPermissionDenied, writeErrorBody } from "../../../src/utils/writeError";
+import { notify } from "../../../src/utils/dialog";
+import { COMMENT_MAX } from "../../../src/data/limits";
+import LoadError from "../../../src/components/common/LoadError";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
@@ -42,15 +44,10 @@ import { timeAgo } from "../../../src/i18n/translations";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
-import { BOARDS, isQaBoard, qaTagLabel, type BoardId, type Post, type Comment } from "../../../src/types/board";
+import { BOARDS, boardLabel, isQaBoard, qaTagLabel, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
 const BEST_COLOR = "#E0A500"; // ベストアンサー（金）
 
-// Alert.alert は react-native-web では何も表示されない(no-op)ため、Webでは window.alert/confirm にフォールバック
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
-  else Alert.alert(title, message);
-}
 export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
@@ -108,6 +105,9 @@ export default function PostDetailScreen() {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  // 読み込み失敗（通信）。「投稿が見つかりません」と区別して再試行を出す
+  const [loadError, setLoadError] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -179,23 +179,41 @@ export default function PostDetailScreen() {
         }
       }
     })
-      .catch((e) => console.warn("post load failed:", e))
+      .catch((e) => {
+        console.warn("post load failed:", e);
+        setLoadError(true);
+      })
       .finally(() => setLoading(false));
-  }, [schoolDomain, boardId, postId]);
+  }, [schoolDomain, boardId, postId, reloadNonce]);
+
+  function retryLoad() {
+    setLoadError(false);
+    setLoading(true);
+    setReloadNonce((n) => n + 1);
+  }
+
+  // コメントのいいね: 押した瞬間に見た目を切り替え、失敗したら元に戻す
+  function applyCommentLike(commentId: string, isLiked: boolean, count: number) {
+    setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: count } : c)));
+    setLikedComments((prev) => {
+      const n = new Set(prev);
+      if (isLiked) n.add(commentId); else n.delete(commentId);
+      return n;
+    });
+  }
 
   async function handleCommentLike(commentId: string) {
     if (!user || !schoolDomain || likingComment) return;
+    const prevLiked = likedComments.has(commentId);
+    const prevCount = comments.find((c) => c.id === commentId)?.likeCount ?? 0;
+    applyCommentLike(commentId, !prevLiked, Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLikingComment(commentId);
     try {
       const res = await toggleCommentLike(schoolDomain, boardId as BoardId, postId, commentId, user.uid);
-      setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: res.likeCount } : c)));
-      setLikedComments((prev) => {
-        const n = new Set(prev);
-        if (res.liked) n.add(commentId); else n.delete(commentId);
-        return n;
-      });
+      applyCommentLike(commentId, res.liked, res.likeCount);
     } catch (e: any) {
-      Alert.alert(t("common.error"), e?.message ?? "");
+      applyCommentLike(commentId, prevLiked, prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
     } finally {
       setLikingComment(null);
     }
@@ -214,17 +232,30 @@ export default function PostDetailScreen() {
       const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
-      notify(t("post.dmFailed"), e?.message);
+      notify(t("post.dmFailed"), friendlyErrorBody(e, t));
     }
   }
 
+  // 押した瞬間に見た目を切り替え（待たせない）、失敗したら元に戻して知らせる。
+  // 以前は失敗すると liking が true のまま残り、ボタンが二度と押せなくなっていた。
   async function handleLike() {
-    if (!user || !schoolDomain) return;
+    if (!user || !schoolDomain || liking) return;
+    const prevLiked = liked;
+    const prevCount = likeCount;
+    setLiked(!prevLiked);
+    setLikeCount(Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLiking(true);
-    const result = await toggleLike(schoolDomain, boardId as BoardId, postId, user.uid);
-    setLiked(result.liked);
-    setLikeCount(result.likeCount);
-    setLiking(false);
+    try {
+      const result = await toggleLike(schoolDomain, boardId as BoardId, postId, user.uid);
+      setLiked(result.liked);
+      setLikeCount(result.likeCount);
+    } catch (e: any) {
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
+    } finally {
+      setLiking(false);
+    }
   }
 
   // ベストアンサー選択/解除（質問の作成者のみ）。選ぶと解決済みに。
@@ -238,7 +269,7 @@ export default function PostDetailScreen() {
       else await clearBestComment(schoolDomain, boardId as BoardId, postId);
       setPost({ ...post, bestCommentId: next, resolved: !!next });
     } catch (e: any) {
-      Alert.alert(t("common.error"), e?.message ?? "");
+      notify(t("common.error"), friendlyErrorBody(e, t));
     } finally {
       setBestBusy(false);
     }
@@ -261,7 +292,7 @@ export default function PostDetailScreen() {
 
   async function handleComment() {
     if (!commentText.trim()) return;
-    if (!user || !schoolDomain) { Alert.alert(t("post.loginRequired")); return; }
+    if (!user || !schoolDomain) { notify(t("post.loginRequired")); return; }
 
     const hits = findBannedWords(commentText);
     if (hits.length) { setBannedWords(hits); return; }
@@ -284,7 +315,7 @@ export default function PostDetailScreen() {
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
       // 所属違い（ルールが弾いた）ときは理由を案内に差し替える
-      Alert.alert(t("post.commentFailed"), writeErrorBody(e, t));
+      notify(t("post.commentFailed"), isPermissionDenied(e) ? writeErrorBody(e, t) : friendlyErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }
@@ -292,6 +323,10 @@ export default function PostDetailScreen() {
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
+  }
+
+  if (loadError) {
+    return <LoadError onRetry={retryLoad} />;
   }
 
   if (!post) {
@@ -457,7 +492,7 @@ export default function PostDetailScreen() {
         {/* Post */}
         <View style={styles.postCard}>
           <View style={styles.boardTagRow}>
-            <Text style={styles.boardTag}>{board?.label}</Text>
+            <Text style={styles.boardTag}>{board ? boardLabel(board, language) : ""}</Text>
             {isQa ? (
               <View style={[styles.qaBadge, post.resolved ? styles.qaBadgeResolved : styles.qaBadgeOpen]}>
                 <Text style={[styles.qaBadgeText, post.resolved ? styles.qaBadgeTextResolved : styles.qaBadgeTextOpen]}>
@@ -565,6 +600,7 @@ export default function PostDetailScreen() {
           placeholderTextColor={theme.textSecondary}
           value={commentText}
           onChangeText={setCommentText}
+          maxLength={COMMENT_MAX}
           onKeyPress={({ nativeEvent }) => {
             // バックスペースはメンションのみ外す。返信モードは解除しない（送信で終了）。
             if (nativeEvent.key === "Backspace" && commentText.length === 0 && mention) setMention(null);

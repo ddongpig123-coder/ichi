@@ -15,6 +15,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { toggleLikeDoc } from "./likeToggle";
 import type { LoungeId, LoungePost, LoungeComment } from "../types/lounge";
 
 // 留学生ラウンジ（全国単位）のデータアクセス。boardService と同じ形だが、
@@ -56,6 +57,33 @@ export async function createLoungePost(
     createdAt: serverTimestamp(),
   });
   return ref.id;
+}
+
+// 森（全国）の検索。学校掲示板の searchPosts と同じ簡易方式（各森の最新 pageSize 件を絞り込み）。
+export async function searchLoungePosts(keyword: string, pageSize = 100): Promise<LoungePost[]> {
+  const { LOUNGES } = await import("../types/lounge");
+  const { normalizeForSearch } = await import("./boardService");
+  const kw = normalizeForSearch(keyword.trim());
+  if (!kw) return [];
+  const results: LoungePost[] = [];
+  await Promise.all(
+    LOUNGES.map(async (l) => {
+      const snap = await getDocs(query(postsCol(l.id), orderBy("createdAt", "desc"), limit(pageSize)));
+      snap.docs.forEach((d) => {
+        const data = d.data();
+        if (data.deleted) return;
+        if (normalizeForSearch(data.title).includes(kw) || normalizeForSearch(data.body).includes(kw)) {
+          results.push({
+            id: d.id,
+            ...(data as Omit<LoungePost, "id">),
+            loungeId: l.id,
+            createdAt: toMs(data.createdAt),
+          });
+        }
+      });
+    })
+  );
+  return results;
 }
 
 export async function fetchLoungePosts(
@@ -183,18 +211,7 @@ export async function toggleLoungeCommentLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(commentLikesCol(loungeId, postId, commentId), uid);
   const commentRef = doc(commentsCol(loungeId, postId), commentId);
-  const likeSnap = await getDoc(likeRef);
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(commentRef, { likeCount: increment(-1) });
-    const updated = await getDoc(commentRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(commentRef, { likeCount: increment(1) });
-    const updated = await getDoc(commentRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, commentRef, uid);
 }
 
 export async function fetchLikedLoungeCommentIds(
@@ -222,19 +239,7 @@ export async function toggleLoungeLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(likesCol(loungeId, postId), uid);
   const postRef = doc(postsCol(loungeId), postId);
-  const likeSnap = await getDoc(likeRef);
-
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(postRef, { likeCount: increment(-1) });
-    const updated = await getDoc(postRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(postRef, { likeCount: increment(1) });
-    const updated = await getDoc(postRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, postRef, uid);
 }
 
 export async function checkLoungeLiked(

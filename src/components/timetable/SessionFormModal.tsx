@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   Pressable,
-  Alert,
-  Platform,
 } from "react-native";
 import { PRESET_COLORS, EXTRA_COLORS, type Day, type Period } from "../../types/timetable";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
 import { dayLabel } from "../../i18n/translations";
 import type { Theme } from "../../theme/themes";
+import { confirmDialog } from "../../utils/dialog";
 
 export interface SessionFormValue {
   name: string;
@@ -68,21 +67,15 @@ export default function SessionFormModal({
     onSubmit({ name: name.trim(), teacher: teacher.trim(), room: room.trim(), color });
   }
 
-  // 誤タップ防止: 削除は確認してから。Alert の複数ボタンは Web で動かないため window.confirm へ
+  // 誤タップ防止: 削除は確認してから
   function confirmDelete() {
     if (!onDelete) return;
-    const title = t("timetable.deleteConfirmTitle");
-    const message = t("timetable.deleteConfirmMessage");
-    if (Platform.OS === "web") {
-      if (window.confirm(`${title}
-
-${message}`)) onDelete();
-    } else {
-      Alert.alert(title, message, [
-        { text: t("common.cancel"), style: "cancel" },
-        { text: t("common.delete"), style: "destructive", onPress: onDelete },
-      ]);
-    }
+    confirmDialog(
+      t("timetable.deleteConfirmTitle"),
+      t("timetable.deleteConfirmMessage"),
+      onDelete,
+      { cancel: t("common.cancel"), ok: t("common.delete") }
+    );
   }
 
   return (

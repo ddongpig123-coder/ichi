@@ -6,30 +6,40 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert,
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { schoolNameByDomain } from "../../src/data/schools";
+import { departmentName, departmentsForSchool } from "../../src/data/departments";
+import { gradeFromAdmissionYear, getCurrentAcademicYear } from "../../src/data/semesterTimetables";
+import { NICKNAME_MAX } from "../../src/data/limits";
 import { auth } from "../../src/config/firebase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { signOut, isSchoolVerified } from "../../src/services/authService";
-import { getUserProfile, updateAcademicInfo, updateAdmissionYear } from "../../src/services/userService";
+import {
+  clearServerPrivateAcademic,
+  getUserProfile,
+  updateAdmissionYear,
+  updateDepartment,
+  updateNickname,
+} from "../../src/services/userService";
+import {
+  EMPTY_PRIVATE_ACADEMIC,
+  hasPrivateAcademic,
+  loadPrivateAcademic,
+  savePrivateAcademic,
+  type PrivateAcademic,
+} from "../../src/services/gradRecordService";
 import { isOperator } from "../../src/services/contentQueueService";
+import { findBannedWords } from "../../src/utils/contentFilter";
+import { displayNickname, isGuestNickname } from "../../src/utils/nickname";
+import { notify } from "../../src/utils/dialog";
+import { friendlyErrorBody } from "../../src/utils/writeError";
 import { THEME_IDS, THEMES, themeLabel, type Theme } from "../../src/theme/themes";
-import type { AcademicInfo, UserProfile } from "../../src/types/user";
-
-const EMPTY_ACADEMIC: AcademicInfo = {
-  department: "",
-  grade: "",
-  gpa: "",
-  earnedCredits: "",
-  requiredCredits: "",
-  courseCount: "",
-};
+import type { UserProfile } from "../../src/types/user";
 
 // 은행 잔액 숨기기 스타일: 기본은 ●●●● 로 가리고, 누르면 표시/숨김 토글
 function SecretValue({
@@ -62,6 +72,9 @@ function stubProfile(uid: string): UserProfile {
   };
 }
 
+// 入力チェック。問題があればエラー文のキーを返す（null = OK）。空欄は「未設定」として許す。
+type FieldErrors = Partial<Record<"admissionYear" | "gpa" | "credits", string>>;
+
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, schoolDomain } = useAuth();
@@ -71,13 +84,30 @@ export default function ProfileScreen() {
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isGuest, setIsGuest] = useState(true);
-  const [academicInput, setAcademicInput] = useState<AcademicInfo>(EMPTY_ACADEMIC);
-  const [admissionYearInput, setAdmissionYearInput] = useState(""); // 入学年度（学年フィルタ・学点管理の単一ソース）
-  const [editingAcademic, setEditingAcademic] = useState(false);
-  const [showGpa, setShowGpa] = useState(false);
-  const [showCredits, setShowCredits] = useState(false);
   // 運営アカウント（operators/{uid} 登録済み）のときだけコンテンツ管理メニューを出す
   const [operator, setOperator] = useState(false);
+
+  // ニックネーム（その場で編集）
+  const [editingNickname, setEditingNickname] = useState(false);
+  const [nicknameInput, setNicknameInput] = useState("");
+  const [savingNickname, setSavingNickname] = useState(false);
+
+  // 学業情報: 学部・入学年度はサーバー、GPA・単位は端末だけ（CREDIT-TRACKING §6-2）
+  const [editingAcademic, setEditingAcademic] = useState(false);
+  const [deptInput, setDeptInput] = useState("");
+  const [admissionYearInput, setAdmissionYearInput] = useState(""); // 入学年度（学年はここから計算）
+  const [privateAcademic, setPrivateAcademic] = useState<PrivateAcademic>(EMPTY_PRIVATE_ACADEMIC);
+  const [privateInput, setPrivateInput] = useState<PrivateAcademic>(EMPTY_PRIVATE_ACADEMIC);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [savingAcademic, setSavingAcademic] = useState(false);
+  const [showGpa, setShowGpa] = useState(false);
+  const [showCredits, setShowCredits] = useState(false);
+
+  // 学部の候補（講義データがある学校だけ。それ以外は自由入力）
+  const departments = useMemo(
+    () => departmentsForSchool(schoolDomain).filter((d) => Number(d.id) < 80), // 81〜は学部間共通の区分
+    [schoolDomain]
+  );
 
   // 画面フォーカス毎に再取得する。
   // linkWithCredential(アカウント連携)はuidが変わらず onAuthStateChanged が
@@ -94,11 +124,28 @@ export default function ProfileScreen() {
         return;
       }
       isOperator(current.uid).then(setOperator);
-      getUserProfile(current.uid)
-        .then((p) => {
+      Promise.all([getUserProfile(current.uid), loadPrivateAcademic(current.uid)])
+        .then(async ([p, local]) => {
           setProfile(p);
-          setAcademicInput(p?.academic ?? EMPTY_ACADEMIC);
+          setDeptInput(p?.academic?.department ?? "");
           setAdmissionYearInput(p?.admissionYear ? String(p.admissionYear) : "");
+          // 旧版がサーバーに置いた成績が残っていれば、端末へ移してからサーバー側を消す（1回きり）
+          const legacy = p?.academic;
+          let priv = local;
+          if (!priv && hasPrivateAcademic(legacy)) {
+            priv = {
+              gpa: legacy?.gpa ?? "",
+              earnedCredits: legacy?.earnedCredits ?? "",
+              requiredCredits: legacy?.requiredCredits ?? "",
+              courseCount: legacy?.courseCount ?? "",
+            };
+            await savePrivateAcademic(current.uid, priv);
+          }
+          if (hasPrivateAcademic(legacy) || legacy?.grade) {
+            clearServerPrivateAcademic(current.uid).catch((e) => console.warn("legacy academic cleanup failed:", e));
+          }
+          setPrivateAcademic(priv ?? EMPTY_PRIVATE_ACADEMIC);
+          setPrivateInput(priv ?? EMPTY_PRIVATE_ACADEMIC);
         })
         // アカウント削除直後は「削除済み → 匿名で再ログイン」の間だけ認証が切れた状態になり、
         // ここの読み取りが permission-denied で落ちる。catch が無いと未処理 Promise 拒否として
@@ -108,27 +155,145 @@ export default function ProfileScreen() {
     }, [user])
   );
 
-  async function handleSaveAcademic() {
-    if (!user) return;
-    // 入学年度は妥当な西暦のみ採用（それ以外は null 扱い）
-    const parsed = parseInt(admissionYearInput.trim(), 10);
-    const admissionYear = parsed >= 1990 && parsed <= 2100 ? parsed : null;
+  // ── ニックネーム ─────────────────────────────────────
+  function startEditNickname() {
+    setNicknameInput(isGuestNickname(profile?.nickname) ? "" : (profile?.nickname ?? ""));
+    setEditingNickname(true);
+  }
+
+  async function handleSaveNickname() {
+    if (!user || savingNickname) return;
+    const name = nicknameInput.trim();
+    if (!name) return notify(t("account.errNickname"));
+    const hits = findBannedWords(name);
+    if (hits.length) return notify(t("profile.nicknameBanned"), hits.map((w) => `「${w}」`).join(" "));
+    setSavingNickname(true);
     try {
-      await updateAcademicInfo(user.uid, academicInput);
-      await updateAdmissionYear(user.uid, admissionYear);
-      setProfile((p) => ({ ...(p ?? stubProfile(user.uid)), academic: academicInput, admissionYear }));
-      setEditingAcademic(false);
+      await updateNickname(user.uid, name);
+      setProfile((p) => ({ ...(p ?? stubProfile(user.uid)), nickname: name }));
+      setEditingNickname(false);
     } catch (e: any) {
-      Alert.alert(t("common.saveFailed"), e.message);
+      notify(t("common.saveFailed"), friendlyErrorBody(e, t));
+    } finally {
+      setSavingNickname(false);
     }
   }
 
+  // ── 学業情報 ─────────────────────────────────────────
+  function validateAcademic(): { errors: FieldErrors; admissionYear: number | null } {
+    const errors: FieldErrors = {};
+    const thisYear = getCurrentAcademicYear();
+    const minYear = thisYear - 10;
+    const maxYear = thisYear + 1; // 4月入学前（3月）に入れる人がいる
+    let admissionYear: number | null = null;
+    const y = admissionYearInput.trim();
+    if (y) {
+      const n = Number(y);
+      if (!/^\d{4}$/.test(y) || n < minYear || n > maxYear) {
+        errors.admissionYear = `${t("profile.errAdmissionYear")} (${minYear}〜${maxYear})`;
+      } else {
+        admissionYear = n;
+      }
+    }
+    const gpa = privateInput.gpa.trim();
+    if (gpa && !(/^\d(\.\d{1,2})?$/.test(gpa) && Number(gpa) <= 4.5)) {
+      errors.gpa = t("profile.errGpa");
+    }
+    const credit = (v: string) => !v.trim() || (/^\d{1,3}$/.test(v.trim()) && Number(v) <= 300);
+    if (!credit(privateInput.earnedCredits) || !credit(privateInput.requiredCredits) || !credit(privateInput.courseCount)) {
+      errors.credits = t("profile.errCredits");
+    }
+    return { errors, admissionYear };
+  }
+
+  async function handleSaveAcademic() {
+    if (!user || savingAcademic) return;
+    const { errors, admissionYear } = validateAcademic();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) return;
+    const priv: PrivateAcademic = {
+      gpa: privateInput.gpa.trim(),
+      earnedCredits: privateInput.earnedCredits.trim(),
+      requiredCredits: privateInput.requiredCredits.trim(),
+      courseCount: privateInput.courseCount.trim(),
+    };
+    setSavingAcademic(true);
+    try {
+      await updateDepartment(user.uid, deptInput);
+      await updateAdmissionYear(user.uid, admissionYear);
+      await savePrivateAcademic(user.uid, priv);
+      setProfile((p) => ({
+        ...(p ?? stubProfile(user.uid)),
+        academic: { ...(p?.academic ?? { grade: "", gpa: "", earnedCredits: "", requiredCredits: "", courseCount: "" }), department: deptInput.trim() },
+        admissionYear,
+      }));
+      setPrivateAcademic(priv);
+      setEditingAcademic(false);
+    } catch (e: any) {
+      notify(t("common.saveFailed"), friendlyErrorBody(e, t));
+    } finally {
+      setSavingAcademic(false);
+    }
+  }
+
+  function cancelEditAcademic() {
+    setDeptInput(profile?.academic?.department ?? "");
+    setAdmissionYearInput(profile?.admissionYear ? String(profile.admissionYear) : "");
+    setPrivateInput(privateAcademic);
+    setFieldErrors({});
+    setEditingAcademic(false);
+  }
+
+  // 表示用の学部名（候補から選んだものは今の言語で）
+  const savedDept = profile?.academic?.department ?? "";
+  const deptMatch = departments.find((d) => d.nameJa === savedDept || d.nameKo === savedDept || d.id === savedDept);
+  const deptLabel = deptMatch ? departmentName(deptMatch, language) : savedDept;
+  const gradeLabel = profile?.admissionYear
+    ? `${gradeFromAdmissionYear(profile.admissionYear)}${t("profile.gradeSuffix")}`
+    : null;
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.formContainer}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.formContainer} keyboardShouldPersistTaps="handled">
       {profile?.photoURL ? <Image source={{ uri: profile.photoURL }} style={styles.avatar} /> : null}
 
       <Text style={styles.label}>{t("account.nickname")}</Text>
-      <Text style={styles.value}>{profile?.nickname || t("common.guest")}</Text>
+      {editingNickname ? (
+        <>
+          <View style={styles.inlineEditRow}>
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              value={nicknameInput}
+              onChangeText={setNicknameInput}
+              placeholder={t("account.nicknamePlaceholder")}
+              placeholderTextColor={theme.textSecondary}
+              maxLength={NICKNAME_MAX}
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={handleSaveNickname}
+            />
+            <TouchableOpacity
+              style={[styles.smallButton, (!nicknameInput.trim() || savingNickname) && styles.disabled]}
+              onPress={handleSaveNickname}
+              disabled={!nicknameInput.trim() || savingNickname}
+            >
+              <Text style={styles.smallButtonText}>{t("common.save")}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.inlineMetaRow}>
+            <Text style={styles.hint}>{t("profile.nicknameHint")}</Text>
+            <Text style={styles.hint}>{nicknameInput.length}/{NICKNAME_MAX}</Text>
+          </View>
+          <TouchableOpacity onPress={() => setEditingNickname(false)} hitSlop={8}>
+            <Text style={styles.cancelText}>{t("common.cancel")}</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <TouchableOpacity style={styles.valueEditRow} onPress={startEditNickname} activeOpacity={0.6}>
+          <Text style={styles.value}>{displayNickname(profile?.nickname, t("common.guest"))}</Text>
+          <Ionicons name="pencil" size={14} color={theme.primary} />
+          <Text style={styles.editInline}>{t("common.edit")}</Text>
+        </TouchableOpacity>
+      )}
 
       {/* アカウント状態 — ゲストには登録を促し、登録済みなら管理画面へ */}
       <TouchableOpacity style={styles.accountRow} onPress={() => router.push("/account")}>
@@ -158,84 +323,121 @@ export default function ProfileScreen() {
       {/* 学業情報 — 본인만 볼 수 있는 정보. GPA/単位는 기본 숨김, 탭하면 표시 */}
       <View style={styles.sectionHeaderRow}>
         <Text style={styles.sectionTitle}>{t("profile.academicInfo")}</Text>
-        <TouchableOpacity onPress={() => (editingAcademic ? handleSaveAcademic() : setEditingAcademic(true))}>
-          <Text style={styles.editText}>{editingAcademic ? t("common.save") : t("common.edit")}</Text>
-        </TouchableOpacity>
+        {editingAcademic ? (
+          <View style={styles.headerActions}>
+            <TouchableOpacity onPress={cancelEditAcademic} hitSlop={8}>
+              <Text style={styles.cancelText}>{t("common.cancel")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSaveAcademic} disabled={savingAcademic} hitSlop={8}>
+              <Text style={[styles.editText, savingAcademic && styles.disabled]}>{t("common.save")}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity onPress={() => setEditingAcademic(true)} hitSlop={8}>
+            <Text style={styles.editText}>{t("common.edit")}</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {editingAcademic ? (
         <>
           <Text style={styles.label}>{t("profile.department")}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={t("profile.departmentPlaceholder")}
-            placeholderTextColor={theme.textSecondary}
-            value={academicInput.department}
-            onChangeText={(v) => setAcademicInput((a) => ({ ...a, department: v }))}
-          />
-          <Text style={styles.label}>{t("profile.grade")}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={t("profile.gradePlaceholder")}
-            placeholderTextColor={theme.textSecondary}
-            keyboardType="number-pad"
-            value={academicInput.grade}
-            onChangeText={(v) => setAcademicInput((a) => ({ ...a, grade: v }))}
-          />
+          {departments.length ? (
+            <View style={styles.chipWrap}>
+              {departments.map((d) => {
+                const on = d.nameJa === deptInput;
+                return (
+                  <TouchableOpacity
+                    key={d.id}
+                    style={[styles.chip, on && styles.chipOn]}
+                    onPress={() => setDeptInput(on ? "" : d.nameJa)}
+                  >
+                    <Text style={[styles.chipText, on && styles.chipTextOn]}>{departmentName(d, language)}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ) : (
+            <TextInput
+              style={styles.input}
+              placeholder={t("profile.departmentPlaceholder")}
+              placeholderTextColor={theme.textSecondary}
+              value={deptInput}
+              onChangeText={setDeptInput}
+              maxLength={40}
+            />
+          )}
           <Text style={styles.label}>{t("profile.admissionYear")}</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, fieldErrors.admissionYear && styles.inputError]}
             placeholder={t("profile.admissionYearPlaceholder")}
             placeholderTextColor={theme.textSecondary}
             keyboardType="number-pad"
+            maxLength={4}
             value={admissionYearInput}
             onChangeText={setAdmissionYearInput}
           />
-          <Text style={styles.label}>GPA</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={t("profile.gpaPlaceholder")}
-            placeholderTextColor={theme.textSecondary}
-            keyboardType="decimal-pad"
-            value={academicInput.gpa}
-            onChangeText={(v) => setAcademicInput((a) => ({ ...a, gpa: v }))}
-          />
-          <Text style={styles.label}>{t("profile.creditsLabel")}</Text>
-          <View style={styles.row}>
+          {fieldErrors.admissionYear ? (
+            <Text style={styles.errorText}>{fieldErrors.admissionYear}</Text>
+          ) : (
+            <Text style={styles.hint}>{t("profile.gradeAutoHint")}</Text>
+          )}
+
+          <View style={styles.privateBox}>
+            <View style={styles.privateHeader}>
+              <Ionicons name="phone-portrait-outline" size={14} color={theme.textSecondary} />
+              <Text style={styles.hint}>{t("profile.privateLocalNote")}</Text>
+            </View>
+            <Text style={styles.label}>GPA</Text>
             <TextInput
-              style={[styles.input, { flex: 1 }]}
-              placeholder={t("profile.earnedPlaceholder")}
+              style={[styles.input, fieldErrors.gpa && styles.inputError]}
+              placeholder={t("profile.gpaPlaceholder")}
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="decimal-pad"
+              maxLength={4}
+              value={privateInput.gpa}
+              onChangeText={(v) => setPrivateInput((a) => ({ ...a, gpa: v }))}
+            />
+            {fieldErrors.gpa ? <Text style={styles.errorText}>{fieldErrors.gpa}</Text> : null}
+            <Text style={styles.label}>{t("profile.creditsLabel")}</Text>
+            <View style={styles.row}>
+              <TextInput
+                style={[styles.input, { flex: 1 }, fieldErrors.credits && styles.inputError]}
+                placeholder={t("profile.earnedPlaceholder")}
+                placeholderTextColor={theme.textSecondary}
+                keyboardType="number-pad"
+                maxLength={3}
+                value={privateInput.earnedCredits}
+                onChangeText={(v) => setPrivateInput((a) => ({ ...a, earnedCredits: v }))}
+              />
+              <TextInput
+                style={[styles.input, { flex: 1 }, fieldErrors.credits && styles.inputError]}
+                placeholder={t("profile.requiredPlaceholder")}
+                placeholderTextColor={theme.textSecondary}
+                keyboardType="number-pad"
+                maxLength={3}
+                value={privateInput.requiredCredits}
+                onChangeText={(v) => setPrivateInput((a) => ({ ...a, requiredCredits: v }))}
+              />
+            </View>
+            <Text style={styles.label}>{t("profile.courseCount")}</Text>
+            <TextInput
+              style={[styles.input, fieldErrors.credits && styles.inputError]}
+              placeholder={t("profile.courseCountPlaceholder")}
               placeholderTextColor={theme.textSecondary}
               keyboardType="number-pad"
-              value={academicInput.earnedCredits}
-              onChangeText={(v) => setAcademicInput((a) => ({ ...a, earnedCredits: v }))}
+              maxLength={3}
+              value={privateInput.courseCount}
+              onChangeText={(v) => setPrivateInput((a) => ({ ...a, courseCount: v }))}
             />
-            <TextInput
-              style={[styles.input, { flex: 1 }]}
-              placeholder={t("profile.requiredPlaceholder")}
-              placeholderTextColor={theme.textSecondary}
-              keyboardType="number-pad"
-              value={academicInput.requiredCredits}
-              onChangeText={(v) => setAcademicInput((a) => ({ ...a, requiredCredits: v }))}
-            />
+            {fieldErrors.credits ? <Text style={styles.errorText}>{fieldErrors.credits}</Text> : null}
           </View>
-          <Text style={styles.label}>{t("profile.courseCount")}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={t("profile.courseCountPlaceholder")}
-            placeholderTextColor={theme.textSecondary}
-            keyboardType="number-pad"
-            value={academicInput.courseCount}
-            onChangeText={(v) => setAcademicInput((a) => ({ ...a, courseCount: v }))}
-          />
         </>
       ) : (
         <>
           <Text style={styles.label}>{t("profile.departmentGrade")}</Text>
           <Text style={styles.value}>
-            {profile?.academic?.department || profile?.academic?.grade
-              ? `${profile?.academic?.department ?? ""}${profile?.academic?.grade ? ` ${profile.academic.grade}${t("profile.gradeSuffix")}` : ""}`.trim()
-              : t("common.notSet")}
+            {deptLabel || gradeLabel ? [deptLabel, gradeLabel].filter(Boolean).join(" ") : t("common.notSet")}
           </Text>
           <Text style={styles.label}>{t("profile.admissionYear")}</Text>
           <Text style={styles.value}>
@@ -243,7 +445,7 @@ export default function ProfileScreen() {
           </Text>
           <Text style={styles.label}>GPA</Text>
           <SecretValue
-            value={profile?.academic?.gpa ?? ""}
+            value={privateAcademic.gpa}
             visible={showGpa}
             onToggle={() => setShowGpa((v) => !v)}
             styles={styles}
@@ -252,8 +454,8 @@ export default function ProfileScreen() {
           <Text style={styles.label}>{t("profile.earnedCredits")}</Text>
           <SecretValue
             value={
-              profile?.academic?.earnedCredits
-                ? `${profile.academic.earnedCredits}${profile.academic.requiredCredits ? ` / ${profile.academic.requiredCredits}` : ""}${t("profile.creditsSuffix")}`
+              privateAcademic.earnedCredits
+                ? `${privateAcademic.earnedCredits}${privateAcademic.requiredCredits ? ` / ${privateAcademic.requiredCredits}` : ""}${t("profile.creditsSuffix")}`
                 : ""
             }
             visible={showCredits}
@@ -263,8 +465,8 @@ export default function ProfileScreen() {
           />
           <Text style={styles.label}>{t("profile.courseCount")}</Text>
           <Text style={styles.value}>
-            {profile?.academic?.courseCount
-              ? `${profile.academic.courseCount}${t("profile.courseSuffix")}`
+            {privateAcademic.courseCount
+              ? `${privateAcademic.courseCount}${t("profile.courseSuffix")}`
               : t("common.notSet")}
           </Text>
         </>
@@ -338,6 +540,15 @@ export default function ProfileScreen() {
         <Text style={styles.settingText}>{t("profile.contact")}</Text>
         <Text style={styles.settingArrow}>›</Text>
       </TouchableOpacity>
+      {/* 規約・方針 — 同意したあとも読み返せるように（オンボーディング以外に入口が無かった） */}
+      <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/terms")}>
+        <Text style={styles.settingText}>{t("legal.termsTitle")}</Text>
+        <Text style={styles.settingArrow}>›</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/privacy")}>
+        <Text style={styles.settingText}>{t("legal.privacyTitle")}</Text>
+        <Text style={styles.settingArrow}>›</Text>
+      </TouchableOpacity>
       {/* コンテンツ管理 — 運営アカウントのみ（docs/CONTENT-OPS.md §9） */}
       {operator ? (
         <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/admin")}>
@@ -371,9 +582,20 @@ function makeStyles(theme: Theme) {
       color: theme.textPrimary,
       backgroundColor: theme.card,
     },
+    inputError: { borderColor: theme.accent },
+    errorText: { fontSize: 12, color: theme.accent },
+    hint: { fontSize: 12, color: theme.textSecondary, flexShrink: 1 },
     avatar: { width: 72, height: 72, borderRadius: 36, alignSelf: "center", marginBottom: 8 },
     label: { fontSize: 12, color: theme.textSecondary, marginTop: 8 },
     value: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
+    valueEditRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+    editInline: { fontSize: 12, fontWeight: "700", color: theme.primary },
+    inlineEditRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    inlineMetaRow: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
+    smallButton: { backgroundColor: theme.primary, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 11 },
+    smallButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+    cancelText: { fontSize: 13, fontWeight: "600", color: theme.textSecondary },
+    disabled: { opacity: 0.4 },
     sectionHeaderRow: {
       flexDirection: "row",
       justifyContent: "space-between",
@@ -383,11 +605,30 @@ function makeStyles(theme: Theme) {
       borderColor: theme.border,
       paddingTop: 16,
     },
+    headerActions: { flexDirection: "row", alignItems: "center", gap: 18 },
     sectionTitle: { fontSize: 15, fontWeight: "700", color: theme.textPrimary },
     editText: { fontSize: 13, fontWeight: "700", color: theme.primary },
     secretRow: { flexDirection: "row", alignItems: "center", gap: 8 },
     eyeIcon: { fontSize: 16, color: theme.textSecondary },
     row: { flexDirection: "row", gap: 8 },
+    chipWrap: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
+    chip: {
+      paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999,
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border,
+    },
+    chipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
+    chipText: { fontSize: 12.5, fontWeight: "700", color: theme.textSecondary },
+    chipTextOn: { color: "#fff" },
+    privateBox: {
+      marginTop: 12,
+      padding: 12,
+      gap: 6,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderStyle: "dashed",
+      borderColor: theme.border,
+    },
+    privateHeader: { flexDirection: "row", alignItems: "center", gap: 6 },
     themeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
     themeCard: {
       width: "30%",

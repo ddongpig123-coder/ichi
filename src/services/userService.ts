@@ -1,6 +1,6 @@
-import { doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, updateDoc, deleteField } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
-import type { AcademicInfo, UserProfile } from "../types/user";
+import type { UserProfile } from "../types/user";
 
 function userDoc(uid: string) {
   return doc(db, "users", uid);
@@ -157,14 +157,26 @@ export async function updatePhotoURL(uid: string, photoURL: string): Promise<voi
   await writePublicMirror(uid, { photoURL });
 }
 
-export async function updateAcademicInfo(uid: string, academic: AcademicInfo): Promise<void> {
-  await setDoc(userDoc(uid), { uid, academic }, { merge: true });
-  // 学業情報は非公開のため usersPublic には反映しない。
-  // ただし学部(department)は先輩時間割の学部公開判定に使うため正規値のみミラーする。
-  if (academic.department) {
-    await setDoc(userDoc(uid), { department: academic.department }, { merge: true });
-    await writePublicMirror(uid, { department: academic.department });
-  }
+// 学部の保存（プロフィール）。学部は公開してよい情報なので usersPublic にもミラーする。
+// ※ GPA・単位などの成績はここに書かない — 端末保存（gradRecordService の PrivateAcademic）。
+//    以前の updateAcademicInfo は academic ごとサーバーに平文で書いていた（CREDIT-TRACKING §6-2 違反）。
+export async function updateDepartment(uid: string, department: string): Promise<void> {
+  const value = department.trim();
+  await setDoc(userDoc(uid), { uid, academic: { department: value }, department: value || null }, { merge: true });
+  await writePublicMirror(uid, { department: value || null });
+}
+
+// 旧版がサーバーに平文で置いた成績（GPA・単位・履修数・学年）を消す。
+// 端末へ移し終えてから呼ぶこと（先に消すと値が失われる）。
+// 学年は入学年度から計算する値なので保存しない（§6-3: 可変の「学年」フィールドは作らない）。
+export async function clearServerPrivateAcademic(uid: string): Promise<void> {
+  await updateDoc(userDoc(uid), {
+    "academic.gpa": deleteField(),
+    "academic.earnedCredits": deleteField(),
+    "academic.requiredCredits": deleteField(),
+    "academic.courseCount": deleteField(),
+    "academic.grade": deleteField(),
+  });
 }
 
 // 入学年度の保存。学年フィルタ(先輩時間割)・学点管理(Phase 3)が使う単一ソース。

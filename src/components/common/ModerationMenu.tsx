@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
@@ -17,6 +16,8 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
 import type { TranslationKey } from "../../i18n/translations";
 import type { Theme } from "../../theme/themes";
+import { notify } from "../../utils/dialog";
+import { friendlyErrorBody } from "../../utils/writeError";
 
 // 通報理由 → 辞書キー（ラベル文字列は translations.ts 側で管理）
 const REASON_KEYS: Record<ReportReason, TranslationKey> = {
@@ -105,10 +106,10 @@ export default function ModerationMenu({
         detail,
       });
       handleClose();
-      Alert.alert(t("report.submitted"), t("report.submittedMessage"));
+      notify(t("report.submitted"), t("report.submittedMessage"));
     } catch (e: any) {
       setSubmitting(false);
-      Alert.alert(t("report.failed"), e?.message ?? "");
+      notify(t("report.failed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -120,7 +121,7 @@ export default function ModerationMenu({
       handleClose();
     } catch (e: any) {
       setSubmitting(false);
-      Alert.alert(t("moderation.deleteFailed"), e?.message ?? "");
+      notify(t("moderation.deleteFailed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -131,10 +132,10 @@ export default function ModerationMenu({
       await block(targetAuthorUid);
       handleClose();
       onBlocked?.();
-      Alert.alert(t("report.blocked"), t("report.blockedMessage"));
+      notify(t("report.blocked"), t("report.blockedMessage"));
     } catch (e: any) {
       setSubmitting(false);
-      Alert.alert(t("report.blockFailed"), e?.message ?? "");
+      notify(t("report.blockFailed"), friendlyErrorBody(e, t));
     }
   }
 

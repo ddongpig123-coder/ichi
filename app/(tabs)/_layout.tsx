@@ -7,6 +7,7 @@ import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { useNotifications } from "../../src/contexts/NotificationsContext";
 import { ONBOARDED_KEY } from "../onboarding";
+import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 import {
   HomeIcon,
   BoardIcon,
@@ -64,13 +65,13 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         tabBarShowLabel: true,
-        tabBarLabelStyle: { fontSize: 10, fontWeight: "600", marginTop: 1 },
+        tabBarLabelStyle: { fontSize: 10, lineHeight: 13, fontWeight: "600", marginTop: 1 },
         tabBarIconStyle: { marginTop: 2 },
         tabBarStyle: {
           backgroundColor: theme.tabBarBackground,
           borderTopColor: theme.border,
-          // iPhone のホームインジケータ分(inset)を足しつつ、コンテンツ高は控えめに
-          height: 54 + insets.bottom,
+          // iPhone のホームインジケータ分(inset)を足す。ラベル(10px)が欠けない最小の高さ = TAB_BAR_HEIGHT
+          height: TAB_BAR_HEIGHT + insets.bottom,
           paddingTop: 4,
           paddingBottom: insets.bottom,
         },

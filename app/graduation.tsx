@@ -33,7 +33,9 @@ import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
 } from "../src/data/facultyMasters";
-import { ENROLLMENT_YEAR } from "../src/data/semesterTimetables";
+import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTimetables";
+import { HeaderBackButton } from "../src/components/common/ScreenHeader";
+import { DEPARTMENTS_BY_SCHOOL } from "../src/data/departments";
 
 const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
@@ -57,11 +59,18 @@ function zoneCtxKey(facultyId: string, deptId: string | null, ryu: boolean): str
 // 記録は ①時間割の科目を候補に出して選ぶ ②成績表を見て手動追加 の両方。配当表で区分を自動判定。
 // 記録していない過去分は、区分別の ＋/− で成績表の合計を直接入力できる。
 // 保存は端末ローカルのみ（gradRecordService）。本格版の E2E 金庫は Phase 3（docs/CREDIT-TRACKING.md §6-2）。
+// 学部名の表示（韓国語モードでは学部マスターの韓国語名。無ければ日本語のまま）
+function facultyName(nameJa: string, language: "ja" | "ko"): string {
+  if (language !== "ko") return nameJa;
+  return Object.values(DEPARTMENTS_BY_SCHOOL).flat().find((d) => d.nameJa === nameJa)?.nameKo ?? nameJa;
+}
+
 export default function GraduationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  // 学部名だけは韓国語表記を持っている（学部マスター）。区分名は便覧の正式名称なので日本語のまま
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [masterIdx, setMasterIdx] = useState(0);
@@ -135,8 +144,7 @@ export default function GraduationScreen() {
         // 保存済みの選択を復元した場合は、それが利用者の意思なので触らない。
         if (p?.admissionYear != null && !uiRestoredRef.current) {
           setMasterIdx(GRAD_MASTERS.findIndex((m) => m.key === (p.admissionYear! <= 2022 ? "pre2023" : "from2023")));
-          const g = new Date().getFullYear() - p.admissionYear + 1;
-          setGrade(Math.min(4, Math.max(1, g)));
+          setGrade(gradeFromAdmissionYear(p.admissionYear));
         }
       })
       .catch(() => {}) // 通信失敗は fail-open
@@ -408,7 +416,7 @@ export default function GraduationScreen() {
   // ヘッダーの基準ラベル（学部×入学年度）。
   const commerceBandLabel = GRAD_MASTERS[masterIdx]?.labelJa ?? "";
   const scopeLabel = selFaculty
-    ? `明治 ${selFaculty.nameJa} · ${isCommerce ? commerceBandLabel : selBand?.labelJa ?? ""}`
+    ? `${facultyName(selFaculty.nameJa, language)} · ${isCommerce ? commerceBandLabel : selBand?.labelJa ?? ""}`
     : t("grad.scope");
 
   // 学部セレクタ（共通）。
@@ -428,7 +436,7 @@ export default function GraduationScreen() {
                 setFacultyId(f.id);
               }}
             >
-              <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{f.nameJa}</Text>
+              <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{facultyName(f.nameJa, language)}</Text>
             </TouchableOpacity>
           );
         })}
@@ -535,9 +543,7 @@ export default function GraduationScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={goBack}>
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
+        <HeaderBackButton onPress={goBack} />
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{t("grad.title")}</Text>
           <Text style={styles.subtitle}>{scopeLabel}</Text>
@@ -884,11 +890,6 @@ function makeStyles(theme: Theme) {
       paddingTop: 12,
       paddingBottom: 10,
     },
-    backButton: {
-      width: 36, height: 36, borderRadius: 18, justifyContent: "center", alignItems: "center",
-      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border,
-    },
-    backIcon: { fontSize: 18, color: theme.textPrimary },
     title: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     subtitle: { fontSize: 11, color: theme.textSecondary, marginTop: 1 },
     expBadge: {

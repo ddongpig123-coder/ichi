@@ -65,9 +65,11 @@ export default function OnboardingScreen() {
     }
   }
 
+  // 言語を先に選ぶ: 規約の要約を読める言語で見せてから同意してもらうため
+  // （以前は規約→言語の順で、韓国語話者が日本語の要約に同意する形になっていた）
   function selectLanguage(lang: UserLanguage) {
     setLanguage(lang);
-    setStep(3);
+    setStep(2);
   }
 
   // 左上の戻る。ステップ間は前のステップへ、学校のみモードは呼び出し元へ戻る。
@@ -79,11 +81,11 @@ export default function OnboardingScreen() {
     }
     if (step === 3) { setStep(2); return; }
     if (step === 2) { setStep(1); return; }
-    // step 1（初回起動の規約ステップ）は前がないので、戻れる場合のみ戻る。
+    // step 1（初回起動の言語ステップ）は前がないので、戻れる場合のみ戻る。
     if (router.canGoBack()) router.back();
   }
 
-  // 初回起動の規約ステップ（前がない）以外は戻るを表示。
+  // 初回起動の言語ステップ（前がない）以外は戻るを表示。
   const showBack = schoolOnly || step > 1 || router.canGoBack();
 
   return (
@@ -100,26 +102,9 @@ export default function OnboardingScreen() {
 
         {step === 1 && (
           <>
-            <Text style={styles.title}>{t("onboarding.termsTitle")}</Text>
-            <View style={styles.termsBox}>
-              <Text style={styles.termsText}>{t("onboarding.termsSummary")}</Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push("/terms")}>
-              <Text style={styles.linkText}>{t("onboarding.readTerms")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push("/privacy")}>
-              <Text style={styles.linkText}>{t("onboarding.readPrivacy")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.primaryButton} onPress={() => setStep(2)}>
-              <Text style={styles.primaryButtonText}>{t("onboarding.agree")}</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <Text style={styles.title}>{t("onboarding.languageTitle")}</Text>
-            <Text style={styles.subtitle}>{t("onboarding.languageSubtitle")}</Text>
+            {/* まだ言語を選んでいないので、見出しは両言語で出す */}
+            <Text style={styles.title}>言語を選択 / 언어 선택</Text>
+            <Text style={styles.subtitle}>後で変更できます / 나중에 바꿀 수 있어요</Text>
             <TouchableOpacity
               style={[styles.choiceButton, language === "ja" && styles.choiceButtonActive]}
               onPress={() => selectLanguage("ja")}
@@ -131,6 +116,24 @@ export default function OnboardingScreen() {
               onPress={() => selectLanguage("ko")}
             >
               <Text style={styles.choiceText}>한국어</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <Text style={styles.title}>{t("onboarding.termsTitle")}</Text>
+            <View style={styles.termsBox}>
+              <Text style={styles.termsText}>{t("onboarding.termsSummary")}</Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push("/terms")}>
+              <Text style={styles.linkText}>{t("onboarding.readTerms")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/privacy")}>
+              <Text style={styles.linkText}>{t("onboarding.readPrivacy")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.primaryButton} onPress={() => setStep(3)}>
+              <Text style={styles.primaryButtonText}>{t("onboarding.agree")}</Text>
             </TouchableOpacity>
           </>
         )}

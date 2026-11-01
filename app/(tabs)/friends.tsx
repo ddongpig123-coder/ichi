@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import type { Theme } from "../../src/theme/themes";
 import TimeTable from "../../src/components/timetable/TimeTable";
@@ -23,32 +23,14 @@ import type { ClassSession } from "../../src/types/timetable";
 import {
   type Semester,
   type SemesterKey,
+  getCurrentAcademicYear,
   getCurrentSemester,
   isSemesterAvailable,
 } from "../../src/data/semesterTimetables";
+import { notify, confirmDialog } from "../../src/utils/dialog";
+import { friendlyErrorBody } from "../../src/utils/writeError";
 
 const CELL_HEIGHT = 42;
-
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
-  else Alert.alert(title, message);
-}
-
-function confirmDialog(
-  title: string,
-  message: string,
-  onConfirm: () => void,
-  labels: { cancel: string; ok: string }
-) {
-  if (Platform.OS === "web") {
-    if (window.confirm(`${title}\n\n${message}`)) onConfirm();
-  } else {
-    Alert.alert(title, message, [
-      { text: labels.cancel, style: "cancel" },
-      { text: labels.ok, style: "destructive", onPress: onConfirm },
-    ]);
-  }
-}
 
 // 友達の時間割ロード結果: null=読み込み中 / "private"=非公開(権限なし) / 配列=表示
 type FriendSessions = ClassSession[] | "private" | null;
@@ -67,7 +49,21 @@ export default function FriendsScreen() {
   const effectiveId = selectedId ?? orderedAll[0]?.id ?? null;
   const [addModalVisible, setAddModalVisible] = useState(false);
 
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  // ホームの友達欄からの遷移: ?friend=uid でその友達の時間割を開く / ?add=1 で追加モーダルを開く。
+  // タブ画面は params が残り続けるので、処理したら消す（戻ってきたときに再発火させない）。
+  const params = useLocalSearchParams<{ friend?: string; add?: string }>();
+  useEffect(() => {
+    if (params.friend) {
+      setSelectedId(params.friend);
+      router.setParams({ friend: undefined });
+    }
+    if (params.add === "1") {
+      setAddModalVisible(true);
+      router.setParams({ add: undefined });
+    }
+  }, [params.friend, params.add, router]);
+
+  const [selectedYear, setSelectedYear] = useState(getCurrentAcademicYear);
   const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());
   const semesterKey: SemesterKey = `${selectedYear}-${selectedSemester}`;
 
@@ -103,7 +99,7 @@ export default function FriendsScreen() {
         `${req.sender?.nickname ?? t("friends.defaultPartner")}${t("friends.becameFriendsSuffix")}`
       );
     } catch (e: any) {
-      notify(t("friends.acceptFailed"), e.message ?? String(e));
+      notify(t("friends.acceptFailed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -112,7 +108,7 @@ export default function FriendsScreen() {
       await rejectFriendRequest(req.id);
       setRequests((prev) => prev.filter((r) => r.id !== req.id));
     } catch (e: any) {
-      notify(t("friends.actionFailed"), e.message ?? String(e));
+      notify(t("friends.actionFailed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -124,7 +120,7 @@ export default function FriendsScreen() {
       const chatRoomId = await getOrCreateChat(user.uid, friendId, "");
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
-      notify(t("friends.actionFailed"), e.message ?? String(e));
+      notify(t("friends.actionFailed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -161,7 +157,7 @@ export default function FriendsScreen() {
           await removeFriend(friendId);
           if (selectedId === friendId) setSelectedId(null);
         } catch (e: any) {
-          notify(t("friends.deleteFailed"), e.message ?? String(e));
+          notify(t("friends.deleteFailed"), friendlyErrorBody(e, t));
         }
       },
       { cancel: t("common.cancel"), ok: t("common.ok") }

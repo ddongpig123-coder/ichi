@@ -16,10 +16,21 @@ import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { searchPosts } from "../../../src/services/boardService";
+import { searchLoungePosts } from "../../../src/services/loungeService";
+import { friendlyErrorBody } from "../../../src/utils/writeError";
 import type { Theme } from "../../../src/theme/themes";
-import type { Post } from "../../../src/types/board";
+import { BOARDS, boardLabel } from "../../../src/types/board";
+import { LOUNGES, loungeLabel } from "../../../src/types/lounge";
 
-type SearchResult = Post & { boardLabel: string };
+// 学校掲示板と森（全国）の結果を同じ形にそろえる
+interface SearchResult {
+  key: string;
+  href: string;
+  label: string;
+  title: string;
+  createdAt: number;
+  commentCount: number;
+}
 
 export default function SearchScreen() {
   const { schoolDomain } = useAuth();
@@ -31,16 +42,52 @@ export default function SearchScreen() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<TextInput>(null);
 
+  // 学校を選んでいない人も森は検索できる（以前は学校未選択だと押しても何も起きなかった）
   async function handleSearch() {
-    if (!keyword.trim() || !schoolDomain) return;
+    if (!keyword.trim()) return;
     Keyboard.dismiss();
     setLoading(true);
     setSearched(true);
-    const res = await searchPosts(schoolDomain, keyword);
-    setResults(res);
-    setLoading(false);
+    setError(null);
+    try {
+      const [boardPosts, loungePosts] = await Promise.all([
+        schoolDomain ? searchPosts(schoolDomain, keyword) : Promise.resolve([]),
+        searchLoungePosts(keyword),
+      ]);
+      const merged: SearchResult[] = [
+        ...boardPosts.map((p) => {
+          const meta = BOARDS.find((b) => b.id === p.boardId);
+          return {
+            key: `b/${p.boardId}/${p.id}`,
+            href: `/post/${p.boardId}/${p.id}`,
+            label: meta ? boardLabel(meta, language) : p.boardLabel,
+            title: p.title,
+            createdAt: p.createdAt,
+            commentCount: p.commentCount ?? 0,
+          };
+        }),
+        ...loungePosts.map((p) => {
+          const meta = LOUNGES.find((l) => l.id === p.loungeId);
+          return {
+            key: `l/${p.loungeId}/${p.id}`,
+            href: `/lounge/${p.loungeId}/${p.id}`,
+            label: meta ? loungeLabel(meta, language) : "",
+            title: p.title,
+            createdAt: p.createdAt,
+            commentCount: p.commentCount ?? 0,
+          };
+        }),
+      ];
+      setResults(merged.sort((a, b) => b.createdAt - a.createdAt));
+    } catch (e) {
+      setResults([]);
+      setError(friendlyErrorBody(e, t));
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -69,23 +116,23 @@ export default function SearchScreen() {
       ) : (
         <FlatList
           data={results}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.key}
           keyboardShouldPersistTaps="handled"
           ItemSeparatorComponent={() => <View style={styles.sep} />}
           ListEmptyComponent={
             searched ? (
               <View style={styles.center}>
-                <Text style={styles.empty}>「{keyword}」{t("boards.noResultsSuffix")}</Text>
+                <Text style={styles.empty}>{error ?? `「${keyword}」${t("boards.noResultsSuffix")}`}</Text>
               </View>
             ) : null
           }
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.row}
-              onPress={() => router.push(`/post/${item.boardId}/${item.id}`)}
+              onPress={() => router.push(item.href as any)}
             >
               <View style={styles.boardTag}>
-                <Text style={styles.boardTagText}>{item.boardLabel}</Text>
+                <Text style={styles.boardTagText}>{item.label}</Text>
               </View>
               <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
               <View style={styles.meta}>

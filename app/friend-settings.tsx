@@ -12,6 +12,7 @@ import { useFriends, type Friend } from "../src/contexts/FriendsContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
+import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // ── 자주 찾는 친구 행 ──────────────────────────────────────
 function FrequentItem({
@@ -100,15 +101,7 @@ export default function FriendSettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-        >
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("friends.settingsTitle")}</Text>
-      </View>
+      <ScreenHeader title={t("friends.settingsTitle")} />
 
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 40 + insets.bottom }]}>
         {/* よく使う友達 */}
@@ -169,29 +162,6 @@ function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
 
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: 12,
-      paddingTop: 52,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.border,
-      gap: 10,
-    },
-    backButton: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: theme.background,
-      borderWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 18, color: theme.textPrimary },
-    headerTitle: { fontSize: 16, fontWeight: "700", color: theme.textPrimary },
 
     scrollContent: { padding: 16 },
 

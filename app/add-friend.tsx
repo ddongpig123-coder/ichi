@@ -1,25 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Platform, Image,
+  View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
 import { getPublicProfile, type PublicProfile } from "../src/services/userService";
 import { sendFriendRequest } from "../src/services/friendRequestService";
-
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
-  else Alert.alert(title, message);
-}
+import { notify } from "../src/utils/dialog";
+import ScreenHeader from "../src/components/common/ScreenHeader";
+import { friendlyErrorBody } from "../src/utils/writeError";
 
 // 招待リンク（/add-friend?u=<uid>）の受け口。相手のプロフィールを表示し、友達申請を送る。
 export default function AddFriendScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const { theme } = useTheme();
   const { t } = useI18n();
@@ -76,17 +72,15 @@ export default function AddFriendScreen() {
           break;
       }
     } catch (e: any) {
-      notify(t("friends.sendFailed"), e?.message ?? String(e));
+      notify(t("friends.sendFailed"), friendlyErrorBody(e, t));
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <TouchableOpacity style={styles.backButton} onPress={goFriends}>
-        <Text style={styles.backIcon}>←</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <ScreenHeader title={t("friends.addTitle")} onBack={goFriends} />
 
       <View style={styles.content}>
         {loading ? (
@@ -144,12 +138,6 @@ export default function AddFriendScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    backButton: {
-      position: "absolute", top: 16, left: 16, width: 36, height: 36, borderRadius: 18,
-      justifyContent: "center", alignItems: "center", backgroundColor: theme.card,
-      borderWidth: 1, borderColor: theme.border, zIndex: 1,
-    },
-    backIcon: { fontSize: 18, color: theme.textPrimary },
     content: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 32, gap: 14 },
     avatar: { width: 88, height: 88, borderRadius: 44 },
     avatarFallback: { backgroundColor: theme.primary, justifyContent: "center", alignItems: "center" },

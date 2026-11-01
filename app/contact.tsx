@@ -7,8 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  Alert,
-  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -17,6 +15,9 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import { submitInquiry } from "../src/services/inquiryService";
 import type { Theme } from "../src/theme/themes";
+import ScreenHeader from "../src/components/common/ScreenHeader";
+import { notify } from "../src/utils/dialog";
+import { friendlyErrorBody } from "../src/utils/writeError";
 
 // お問い合わせフォーム。内容（必須）+ 返信先（任意）を inquiries に保存。
 export default function ContactScreen() {
@@ -30,11 +31,6 @@ export default function ContactScreen() {
   const [message, setMessage] = useState("");
   const [contact, setContact] = useState("");
   const [busy, setBusy] = useState(false);
-
-  function notify(msg: string) {
-    if (Platform.OS === "web") window.alert(msg);
-    else Alert.alert(msg);
-  }
 
   async function handleSubmit() {
     if (!message.trim()) {
@@ -53,24 +49,15 @@ export default function ContactScreen() {
       notify(t("contact.sent"));
       if (router.canGoBack()) router.back();
     } catch (e: any) {
-      notify(`${t("contact.failed")}${e?.message ? `\n${e.message}` : ""}`);
+      notify(t("contact.failed"), friendlyErrorBody(e, t));
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/profile"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("contact.title")}</Text>
-        <View style={{ width: 30 }} />
-      </View>
+    <View style={styles.container}>
+      <ScreenHeader title={t("contact.title")} fallback="/(tabs)/profile" />
 
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 20 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.desc}>{t("contact.desc")}</Text>
@@ -118,18 +105,6 @@ export default function ContactScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 12,
-      height: 48,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 32, color: theme.primary, lineHeight: 34, width: 30 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     content: { padding: 20, gap: 8 },
     desc: { fontSize: 13, color: theme.textSecondary, lineHeight: 20, marginBottom: 8 },
     label: { fontSize: 12, color: theme.textSecondary, marginTop: 8 },
