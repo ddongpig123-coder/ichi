@@ -1,7 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { useAuth } from "./AuthContext";
 import { fetchFriendProfiles, removeFriendship } from "../services/friendRequestService";
 import { getUserProfile, saveFriendOrders } from "../services/userService";
+import { useI18n } from "./I18nContext";
+import { displayNickname } from "../utils/nickname";
 
 export interface Friend {
   id: string; // = 상대방 uid
@@ -30,7 +32,13 @@ const FriendsContext = createContext<FriendsContextValue | null>(null);
 
 export function FriendsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [allFriends, setAllFriends] = useState<Friend[]>([]);
+  const { t } = useI18n();
+  const [rawFriends, setAllFriends] = useState<Friend[]>([]);
+  // 表示用: 「ゲスト」のままの友達は今の言語のゲスト表記に（韓国語モードで日本語が出ないように）
+  const allFriends = useMemo(
+    () => rawFriends.map((f) => ({ ...f, nickname: displayNickname(f.nickname, t("common.guest")) })),
+    [rawFriends, t]
+  );
   const [loading, setLoading] = useState(true);
   const [frequentIds, setFrequentIds] = useState<string[]>([]);
   const [nonFrequentIds, setNonFrequentIds] = useState<string[]>([]);
@@ -55,7 +63,7 @@ export function FriendsProvider({ children }: { children: ReactNode }) {
       ]);
       const friends: Friend[] = profiles.map((p) => ({
         id: p.uid,
-        nickname: p.nickname || "ゲスト",
+        nickname: p.nickname || "",
         photoURL: p.photoURL,
       }));
       setAllFriends(friends);
