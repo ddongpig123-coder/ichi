@@ -22,6 +22,7 @@ import type { ClassSession, Day, Period } from "../../src/types/timetable";
 import {
   type Semester,
   type SemesterKey,
+  getCurrentAcademicYear,
   getCurrentSemester,
   isSemesterAvailable,
 } from "../../src/data/semesterTimetables";
@@ -41,7 +42,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(getCurrentAcademicYear);
   const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());
 
   const { user } = useAuth();

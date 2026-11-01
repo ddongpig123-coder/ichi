@@ -23,6 +23,7 @@ import type { ClassSession } from "../../src/types/timetable";
 import {
   type Semester,
   type SemesterKey,
+  getCurrentAcademicYear,
   getCurrentSemester,
   isSemesterAvailable,
 } from "../../src/data/semesterTimetables";
@@ -67,7 +68,7 @@ export default function FriendsScreen() {
   const effectiveId = selectedId ?? orderedAll[0]?.id ?? null;
   const [addModalVisible, setAddModalVisible] = useState(false);
 
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(getCurrentAcademicYear);
   const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());
   const semesterKey: SemesterKey = `${selectedYear}-${selectedSemester}`;
 

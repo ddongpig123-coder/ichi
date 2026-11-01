@@ -13,6 +13,7 @@ import {
   type CourseLoc, type CourseReviewWithUid, type ReviewAggregate,
 } from "../src/services/courseService";
 import { REVIEW_TAGS, type Course, type ReviewTag, type Semester } from "../src/types/course";
+import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { timeAgo } from "../src/i18n/translations";
 import StarRating from "../src/components/course/StarRating";
 import ReviewModal from "../src/components/course/ReviewModal";
@@ -40,7 +41,7 @@ export default function CourseDetailScreen() {
   const schoolDomain = params.schoolDomain ?? "";
   const deptId = params.deptId ?? "";
   const courseId = params.courseId ?? "";
-  const year = Number(params.year) || new Date().getFullYear();
+  const year = Number(params.year) || getCurrentAcademicYear();
   const semester: Semester = params.semester === "秋" ? "秋" : "春";
   const loc: CourseLoc = { schoolDomain, deptId, courseId };
 

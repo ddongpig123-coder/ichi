@@ -33,7 +33,7 @@ import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
 } from "../src/data/facultyMasters";
-import { ENROLLMENT_YEAR } from "../src/data/semesterTimetables";
+import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTimetables";
 
 const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
@@ -135,8 +135,7 @@ export default function GraduationScreen() {
         // 保存済みの選択を復元した場合は、それが利用者の意思なので触らない。
         if (p?.admissionYear != null && !uiRestoredRef.current) {
           setMasterIdx(GRAD_MASTERS.findIndex((m) => m.key === (p.admissionYear! <= 2022 ? "pre2023" : "from2023")));
-          const g = new Date().getFullYear() - p.admissionYear + 1;
-          setGrade(Math.min(4, Math.max(1, g)));
+          setGrade(gradeFromAdmissionYear(p.admissionYear));
         }
       })
       .catch(() => {}) // 通信失敗は fail-open
