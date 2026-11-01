@@ -18,6 +18,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { toggleLikeDoc } from "./likeToggle";
 import type { BoardId, BoardMeta, Post, Comment } from "../types/board";
 
 // Extract school domain from email (e.g. "user@foo.ac.jp" → "foo.ac.jp")
@@ -231,19 +232,7 @@ export async function toggleLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(likesCol(schoolDomain, boardId, postId), uid);
   const postRef = doc(postsCol(schoolDomain, boardId), postId);
-  const likeSnap = await getDoc(likeRef);
-
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(postRef, { likeCount: increment(-1) });
-    const updated = await getDoc(postRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(postRef, { likeCount: increment(1) });
-    const updated = await getDoc(postRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, postRef, uid);
 }
 
 export async function checkLiked(
@@ -415,18 +404,7 @@ export async function toggleCommentLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(commentLikesCol(schoolDomain, boardId, postId, commentId), uid);
   const commentRef = doc(commentsCol(schoolDomain, boardId, postId), commentId);
-  const likeSnap = await getDoc(likeRef);
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(commentRef, { likeCount: increment(-1) });
-    const updated = await getDoc(commentRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(commentRef, { likeCount: increment(1) });
-    const updated = await getDoc(commentRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, commentRef, uid);
 }
 
 // この投稿で自分がいいね済みのコメントID集合（コメント表示時に一括取得）。

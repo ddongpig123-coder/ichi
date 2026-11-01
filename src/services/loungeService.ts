@@ -15,6 +15,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
+import { toggleLikeDoc } from "./likeToggle";
 import type { LoungeId, LoungePost, LoungeComment } from "../types/lounge";
 
 // 留学生ラウンジ（全国単位）のデータアクセス。boardService と同じ形だが、
@@ -183,18 +184,7 @@ export async function toggleLoungeCommentLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(commentLikesCol(loungeId, postId, commentId), uid);
   const commentRef = doc(commentsCol(loungeId, postId), commentId);
-  const likeSnap = await getDoc(likeRef);
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(commentRef, { likeCount: increment(-1) });
-    const updated = await getDoc(commentRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(commentRef, { likeCount: increment(1) });
-    const updated = await getDoc(commentRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, commentRef, uid);
 }
 
 export async function fetchLikedLoungeCommentIds(
@@ -222,19 +212,7 @@ export async function toggleLoungeLike(
 ): Promise<{ liked: boolean; likeCount: number }> {
   const likeRef = doc(likesCol(loungeId, postId), uid);
   const postRef = doc(postsCol(loungeId), postId);
-  const likeSnap = await getDoc(likeRef);
-
-  if (likeSnap.exists()) {
-    await deleteDoc(likeRef);
-    await updateDoc(postRef, { likeCount: increment(-1) });
-    const updated = await getDoc(postRef);
-    return { liked: false, likeCount: (updated.data()?.likeCount ?? 0) as number };
-  } else {
-    await setDoc(likeRef, { uid, createdAt: serverTimestamp() });
-    await updateDoc(postRef, { likeCount: increment(1) });
-    const updated = await getDoc(postRef);
-    return { liked: true, likeCount: (updated.data()?.likeCount ?? 1) as number };
-  }
+  return toggleLikeDoc(likeRef, postRef, uid);
 }
 
 export async function checkLoungeLiked(
