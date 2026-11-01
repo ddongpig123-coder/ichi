@@ -36,7 +36,7 @@ run("Web ビルド (expo export)", ["expo", "export", "--platform", "web"]);
 const legalSrc = join(root, "docs", "legal");
 const legalDst = join(dist, "legal");
 mkdirSync(legalDst, { recursive: true });
-for (const f of ["terms.html", "privacy.html"]) {
+for (const f of ["terms.html", "privacy.html", "delete-account.html"]) {
   const src = join(legalSrc, f);
   if (!existsSync(src)) {
     console.error(`✖ 見つかりません: docs/legal/${f}`);
@@ -44,7 +44,7 @@ for (const f of ["terms.html", "privacy.html"]) {
   }
   copyFileSync(src, join(legalDst, f));
 }
-console.log("✔ 法的文書をコピー: /legal/terms.html, /legal/privacy.html");
+console.log("✔ 法的文書をコピー: /legal/terms.html, /legal/privacy.html, /legal/delete-account.html");
 
 // 3) robots.txt（リリース前は全面ブロック。公開時はこの行を外す）
 writeFileSync(
