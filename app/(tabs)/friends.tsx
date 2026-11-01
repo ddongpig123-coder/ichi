@@ -28,6 +28,7 @@ import {
   isSemesterAvailable,
 } from "../../src/data/semesterTimetables";
 import { notify, confirmDialog } from "../../src/utils/dialog";
+import { friendlyErrorBody } from "../../src/utils/writeError";
 
 const CELL_HEIGHT = 42;
 
@@ -98,7 +99,7 @@ export default function FriendsScreen() {
         `${req.sender?.nickname ?? t("friends.defaultPartner")}${t("friends.becameFriendsSuffix")}`
       );
     } catch (e: any) {
-      notify(t("friends.acceptFailed"), e.message ?? String(e));
+      notify(t("friends.acceptFailed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -107,7 +108,7 @@ export default function FriendsScreen() {
       await rejectFriendRequest(req.id);
       setRequests((prev) => prev.filter((r) => r.id !== req.id));
     } catch (e: any) {
-      notify(t("friends.actionFailed"), e.message ?? String(e));
+      notify(t("friends.actionFailed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -119,7 +120,7 @@ export default function FriendsScreen() {
       const chatRoomId = await getOrCreateChat(user.uid, friendId, "");
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
-      notify(t("friends.actionFailed"), e.message ?? String(e));
+      notify(t("friends.actionFailed"), friendlyErrorBody(e, t));
     }
   }
 
@@ -156,7 +157,7 @@ export default function FriendsScreen() {
           await removeFriend(friendId);
           if (selectedId === friendId) setSelectedId(null);
         } catch (e: any) {
-          notify(t("friends.deleteFailed"), e.message ?? String(e));
+          notify(t("friends.deleteFailed"), friendlyErrorBody(e, t));
         }
       },
       { cancel: t("common.cancel"), ok: t("common.ok") }

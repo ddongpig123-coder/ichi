@@ -90,7 +90,7 @@ export default function AccountScreen() {
       } else if (e.code === "auth/invalid-email") {
         notify(t("account.errCannotRegister"), t("account.errInvalidEmail"));
       } else {
-        notify(t("account.errRegisterFailed"), e.message ?? String(e));
+        notify(t("account.errRegisterFailed"), friendlyErrorBody(e, t));
       }
     } finally {
       setBusy(false);
@@ -261,7 +261,7 @@ export default function AccountScreen() {
       await sendSchoolVerificationEmail();
       notify(t("account.verificationSent"), t("account.verificationSentMessage"));
     } catch (e: any) {
-      notify(t("account.sendFailed"), e.message ?? String(e));
+      notify(t("account.sendFailed"), friendlyErrorBody(e, t));
     } finally {
       setBusy(false);
     }

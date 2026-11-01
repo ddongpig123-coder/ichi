@@ -7,8 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  Alert,
-  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -18,6 +16,8 @@ import { useI18n } from "../src/contexts/I18nContext";
 import { submitInquiry } from "../src/services/inquiryService";
 import type { Theme } from "../src/theme/themes";
 import ScreenHeader from "../src/components/common/ScreenHeader";
+import { notify } from "../src/utils/dialog";
+import { friendlyErrorBody } from "../src/utils/writeError";
 
 // お問い合わせフォーム。内容（必須）+ 返信先（任意）を inquiries に保存。
 export default function ContactScreen() {
@@ -31,11 +31,6 @@ export default function ContactScreen() {
   const [message, setMessage] = useState("");
   const [contact, setContact] = useState("");
   const [busy, setBusy] = useState(false);
-
-  function notify(msg: string) {
-    if (Platform.OS === "web") window.alert(msg);
-    else Alert.alert(msg);
-  }
 
   async function handleSubmit() {
     if (!message.trim()) {
@@ -54,7 +49,7 @@ export default function ContactScreen() {
       notify(t("contact.sent"));
       if (router.canGoBack()) router.back();
     } catch (e: any) {
-      notify(`${t("contact.failed")}${e?.message ? `\n${e.message}` : ""}`);
+      notify(t("contact.failed"), friendlyErrorBody(e, t));
     } finally {
       setBusy(false);
     }

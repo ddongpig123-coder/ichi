@@ -11,6 +11,7 @@ import { getPublicProfile, type PublicProfile } from "../src/services/userServic
 import { sendFriendRequest } from "../src/services/friendRequestService";
 import { notify } from "../src/utils/dialog";
 import ScreenHeader from "../src/components/common/ScreenHeader";
+import { friendlyErrorBody } from "../src/utils/writeError";
 
 // 招待リンク（/add-friend?u=<uid>）の受け口。相手のプロフィールを表示し、友達申請を送る。
 export default function AddFriendScreen() {
@@ -71,7 +72,7 @@ export default function AddFriendScreen() {
           break;
       }
     } catch (e: any) {
-      notify(t("friends.sendFailed"), e?.message ?? String(e));
+      notify(t("friends.sendFailed"), friendlyErrorBody(e, t));
     } finally {
       setBusy(false);
     }

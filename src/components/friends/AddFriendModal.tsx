@@ -9,6 +9,7 @@ import { findUserByEmail, sendFriendRequest } from "../../services/friendRequest
 import { shareInvite } from "../../services/friendInvite";
 import type { PublicProfile } from "../../services/userService";
 import { notify } from "../../utils/dialog";
+import { friendlyErrorBody } from "../../utils/writeError";
 
 interface Props {
   visible: boolean;
@@ -93,7 +94,7 @@ export default function AddFriendModal({ visible, onClose }: Props) {
           break;
       }
     } catch (e: any) {
-      notify(t("friends.sendFailed"), e.message ?? String(e));
+      notify(t("friends.sendFailed"), friendlyErrorBody(e, t));
     } finally {
       setBusy(false);
     }
