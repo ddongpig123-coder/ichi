@@ -11,6 +11,7 @@ import {
   linkAnonymousWithMicrosoft,
   linkAnonymousWithSocial,
   signInWithEmail,
+  sendPasswordReset,
   signInWithMicrosoft,
   signInWithSocial,
   signOut,
@@ -29,6 +30,7 @@ import {
 import { auth } from "../src/config/firebase";
 import { updateMicrosoftAccountInfo } from "../src/services/userService";
 import { notify, confirmDialog } from "../src/utils/dialog";
+import { friendlyErrorBody } from "../src/utils/writeError";
 import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
 import ScreenHeader from "../src/components/common/ScreenHeader";
@@ -40,7 +42,7 @@ export default function AccountScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { user, schoolDomain } = useAuth();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   // 学校認証の案内だけは選択中の学校ドメインで例を出す（登録・ログイン欄の例は中立の gmail）
@@ -103,6 +105,23 @@ export default function AccountScreen() {
       goBack();
     } catch (e: any) {
       notify(t("account.errLoginFailed"), t("account.errLoginCheck"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // パスワードを忘れた: ログイン欄のメールに再設定メールを送る
+  async function handleForgotPassword() {
+    const target = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(target)) {
+      return notify(t("account.resetTitle"), t("account.resetNeedEmail"));
+    }
+    setBusy(true);
+    try {
+      await sendPasswordReset(target, language);
+      notify(t("account.resetSentTitle"), `${target}\n\n${t("account.resetSentMessage")}`);
+    } catch (e: any) {
+      notify(t("account.resetFailed"), friendlyErrorBody(e, t));
     } finally {
       setBusy(false);
     }
@@ -501,6 +520,9 @@ export default function AccountScreen() {
               returnKeyType="go"
               onSubmitEditing={() => { if (!busy) handleLogin(); }}
             />
+            <TouchableOpacity onPress={handleForgotPassword} disabled={busy} style={styles.forgotRow} hitSlop={8}>
+              <Text style={styles.forgotText}>{t("account.forgotPassword")}</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.primaryButton, busy && styles.buttonDisabled]}
@@ -593,6 +615,9 @@ function makeStyles(theme: Theme) {
       marginTop: 16,
       textDecorationLine: "underline",
     },
+
+    forgotRow: { alignSelf: "flex-end", marginTop: 10 },
+    forgotText: { fontSize: 13, color: theme.primary, fontWeight: "600" },
 
     dividerText: { textAlign: "center", color: theme.textSecondary, fontSize: 12, marginVertical: 12 },
 

@@ -58,6 +58,12 @@ const ja = {
   // アカウント
   "account.title": "アカウント",
   "account.registerTitle": "アカウント登録",
+  "account.forgotPassword": "パスワードを忘れた方",
+  "account.resetTitle": "パスワードの再設定",
+  "account.resetNeedEmail": "上のメールアドレス欄に、登録したメールアドレスを入力してから押してください",
+  "account.resetSentTitle": "再設定メールを送りました",
+  "account.resetSentMessage": "登録されているアドレスであれば、パスワード再設定のメールが届きます。届かない場合は迷惑メールフォルダも確認してください。",
+  "account.resetFailed": "再設定メールを送れませんでした",
   "account.registerDescription":
     "登録すると、機種変更やアプリ再インストール後もデータを引き継げます。いま使っている時間割・友達はそのまま残ります。",
   "account.nickname": "ニックネーム",
@@ -704,6 +710,12 @@ const ko: Record<TranslationKey, string> = {
 
   "account.title": "계정",
   "account.registerTitle": "계정 등록",
+  "account.forgotPassword": "비밀번호를 잊으셨나요?",
+  "account.resetTitle": "비밀번호 재설정",
+  "account.resetNeedEmail": "위 이메일 칸에 가입한 이메일 주소를 입력한 뒤 눌러 주세요",
+  "account.resetSentTitle": "재설정 메일을 보냈어요",
+  "account.resetSentMessage": "가입된 주소라면 비밀번호 재설정 메일이 도착해요. 메일이 안 보이면 스팸함도 확인해 주세요.",
+  "account.resetFailed": "재설정 메일을 보내지 못했어요",
   "account.registerDescription":
     "등록하면 기기 변경이나 앱 재설치 후에도 데이터를 이어받을 수 있습니다. 지금 사용 중인 시간표·친구는 그대로 유지됩니다.",
   "account.nickname": "닉네임",
