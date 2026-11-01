@@ -17,6 +17,7 @@ npm test
 |---|---|
 | `content-and-boards.test.mjs` | 운영 계정 명단(`operators`)·대기 목록(`contentQueue`) 권한과 필드 검증, 학교 게시판·라운지 쓰기, **S3 학교 일치**(타교 게시판 거부) |
 | `chats.test.mjs` | 쪽지 — 구 경로 `schools/{sd}/chats`(현재 배포된 앱)와 신 경로 `chats/`(S3) 쓰기, 남의 방·남의 이름 거부 |
-| `posts-hardening.test.mjs` | 글·댓글 — 좋아요 수는 ±1만, `authorUid` 등 변경 금지, 글자 수 상한, 시작 카운터 0. **옛날 앱(따로 쓰기)과 새 앱(batch) 둘 다** 통과해야 한다 |
+| `posts-hardening.test.mjs` | 글·댓글 — 좋아요 수는 ±1만, `authorUid` 등 변경 금지, 글자 수 상한, 시작 카운터 0. 좋아요는 batch만 통과 (옛날 앱은 거부) |
+| `friends.test.mjs` | 친구 관계 — 수락된 신청 없이 생성 불가, 남의 신청·자기 자신 신청 재사용 불가, 친구 공개 시간표 보호 |
 
 새 규칙을 넣으면 여기에 케이스를 같이 추가할 것 (S5 · 2026-10-30 작성, 2026-10-31 저장소에 추가).

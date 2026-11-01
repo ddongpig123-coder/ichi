@@ -1,6 +1,5 @@
 // firestore.rules 검증: 게시글·댓글 쓰기 강화 (좋아요 수 조작 / authorUid 변경 / 글자 수)
-// 🔴 「옛날 앱」과 「새 앱」의 쓰기 방식을 둘 다 시험한다. 규칙 배포와 OTA는 순서가 정해져 있지 않으므로
-//    규칙을 배포한 순간 아직 업데이트하지 않은 앱이 깨지면 안 된다.
+// 🔴 이 규칙은 새 앱(batch)만 통과시킨다. 1.1 OTA가 퍼진 뒤에 배포할 것 (firestore.rules 주석)
 // 실행: scripts/rules-test 에서 `npm test` (README.md)
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -44,13 +43,11 @@ async function t(name, p) {
   catch (e) { results.push(["FAIL", name + " :: " + e.message.split("\n")[0]]); }
 }
 
-// ── 좋아요: 옛날 앱 (좋아요 문서 → 카운터를 따로 쓴다) ──
-for (const [label, post] of [["학교", BOARD_POST], ["숲", LOUNGE_POST]]) {
-  await t(`${label} 옛날앱: 좋아요 문서 생성`, assertSucceeds(setDoc(doc(reader, `${post}/likes/reader`), { uid: "reader" })));
-  await t(`${label} 옛날앱: 카운터 +1`, assertSucceeds(updateDoc(doc(reader, post), { likeCount: increment(1) })));
-  await t(`${label} 옛날앱: 좋아요 문서 삭제`, assertSucceeds(deleteDoc(doc(reader, `${post}/likes/reader`))));
-  await t(`${label} 옛날앱: 카운터 -1`, assertSucceeds(updateDoc(doc(reader, post), { likeCount: increment(-1) })));
-}
+// ── 좋아요: 옛날 앱 (따로 쓰기) 는 더 이상 통과하지 못한다 ──
+await t("옛날앱: 좋아요 문서 생성", assertSucceeds(setDoc(doc(reader, `${BOARD_POST}/likes/reader`), { uid: "reader" })));
+await t("옛날앱: 그 뒤 카운터 +1 → 거부 (문서를 가진 채 +1 반복 방지)", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(1) })));
+await t("옛날앱: 좋아요 문서 삭제", assertSucceeds(deleteDoc(doc(reader, `${BOARD_POST}/likes/reader`))));
+await t("옛날앱: 그 뒤 카운터 -1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(-1) })));
 
 // ── 좋아요: 새 앱 (batch) ──
 for (const [label, post] of [["학교", BOARD_POST], ["숲", LOUNGE_POST]]) {
@@ -82,8 +79,11 @@ await t("조작: 남의 글 제목 변경 → 거부", assertFails(updateDoc(doc
 
 // ── 댓글 좋아요 ──
 const commentPath = `${BOARD_POST}/comments/c1`;
-await t("댓글 옛날앱: 좋아요 문서", assertSucceeds(setDoc(doc(reader, `${commentPath}/likes/reader`), { uid: "reader" })));
-await t("댓글 옛날앱: +1", assertSucceeds(updateDoc(doc(reader, commentPath), { likeCount: increment(1) })));
+const commentLike = writeBatch(reader);
+commentLike.set(doc(reader, `${commentPath}/likes/reader`), { uid: "reader" });
+commentLike.update(doc(reader, commentPath), { likeCount: increment(1) });
+await t("댓글 새앱: 좋아요 batch", assertSucceeds(commentLike.commit()));
+await t("댓글 조작: 좋아요 문서를 가진 채 또 +1 → 거부", assertFails(updateDoc(doc(reader, commentPath), { likeCount: increment(1) })));
 await t("댓글 조작: 임의 값 → 거부", assertFails(updateDoc(doc(reader, commentPath), { likeCount: 77 })));
 await t("댓글 조작: 남의 댓글 삭제 → 거부", assertFails(updateDoc(doc(reader, commentPath), { deleted: true })));
 

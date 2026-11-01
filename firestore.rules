@@ -140,6 +140,8 @@ service cloud.firestore {
             || resource.data.toUid == request.auth.uid);
       allow create: if canWriteContent()
         && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid is string
+        && request.resource.data.toUid != request.auth.uid
         && request.resource.data.status == 'pending';
       // 状態変更（承認/拒否）は受信者のみ。statusフィールド以外は変更不可。
       allow update: if isSignedIn()
@@ -153,8 +155,19 @@ service cloud.firestore {
 
     // ── 友達関係（確定済み） ──────────────────────────────
     // ドキュメントID: pairId(uid1, uid2)。participants: [uid1, uid2]
-    // TODO(server): 作成はCloud Functionsに移し、accepted済みの
-    // friendRequestが存在する場合のみ許可するのが理想。
+    // 作成は「相手からの申請を自分が承認した」ときだけ。以前は片方の操作だけで作れたので、
+    // 承認なしに友達になって「友達のみ」の時間割を読めてしまった。
+    // 申請の承認と同じバッチで作るので getAfter で見る（friendRequestService.acceptFriendRequest）。
+    // requestId が無い・申請が無いと get がエラー＝拒否（fail closed）。
+    // ⚠️ 旧アプリは requestId を送らないので、1.1 の OTA が行き渡ってから配備すること。
+    function isAcceptedFriendship(d) {
+      let req = getAfter(/databases/$(database)/documents/friendRequests/$(d.requestId)).data;
+      return req.status == 'accepted'
+        && req.toUid == request.auth.uid
+        && d.participants.size() == 2
+        && d.participants.toSet() == [req.fromUid, req.toUid].toSet();
+    }
+
     match /friendships/{pairDocId} {
       // resource == null は「まだ友達でない」確認のためのget（存在チェック）を許可
       allow read: if isSignedIn()
@@ -162,7 +175,8 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && request.auth.uid in request.resource.data.participants
         && pairDocId == pairId(request.resource.data.participants[0],
-                               request.resource.data.participants[1]);
+                               request.resource.data.participants[1])
+        && isAcceptedFriendship(request.resource.data);
       allow delete: if isSignedIn()
         && request.auth.uid in resource.data.participants;
     }
@@ -269,17 +283,16 @@ service cloud.firestore {
       return after == before + 1 || after == before - 1;
     }
 
-    // いいね数: +1 は自分のいいね文書があるときだけ、-1 は無いときだけ。
-    // existsAfter を使うので、旧アプリ（いいね文書→カウンターの順に別々に書く）でも
-    // 新アプリ（バッチで同時に書く）でも通る。規則の配備と OTA は順不同でよい。
-    // 🔑 旧アプリが消えたら「+1 は !exists(likePath) && existsAfter(likePath)」に締めること
-    //    （今は いいね文書を持ったまま +1 を繰り返す直接呼び出しを防げない）。
+    // いいね数: +1 は「この書き込みで自分のいいね文書ができる」とき、-1 は「消える」ときだけ。
+    // いいね文書とカウンターを同じバッチで書く必要がある（likeToggle.ts）。
+    // 1人1回を構造で保証する: 文書を持ったまま +1 を繰り返すことはできない。
+    // ⚠️ 旧アプリ（別々に書く）は通らないので、1.1 の OTA が行き渡ってから配備すること。
     function isValidLikeCountChange(likePath) {
       let before = resource.data.get('likeCount', 0);
       let after = request.resource.data.get('likeCount', 0);
       return changedOnly('likeCount') && (
-        (after == before + 1 && existsAfter(likePath))
-        || (after == before - 1 && !existsAfter(likePath))
+        (after == before + 1 && !exists(likePath) && existsAfter(likePath))
+        || (after == before - 1 && exists(likePath) && !existsAfter(likePath))
       );
     }
 
