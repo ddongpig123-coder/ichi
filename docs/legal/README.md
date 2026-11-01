@@ -32,10 +32,11 @@ README 위쪽 안내(= `/docs` 폴더 공개)와 달리, 실제로는 **`gh-page
 |---|---|
 | `https://ddongpig123-coder.github.io/ichi/privacy.html` | `gh-pages:privacy.html` ← `docs/legal/privacy.html` 복사본 |
 | `https://ddongpig123-coder.github.io/ichi/terms.html` | `gh-pages:terms.html` ← `docs/legal/terms.html` 복사본 |
+| `https://ddongpig123-coder.github.io/ichi/delete-account.html` | `gh-pages:delete-account.html` ← `docs/legal/delete-account.html` 복사본. **Google Play 「계정 삭제」 요건용** (2026-11-01 추가, gh-pages 복사 대기) |
 | `https://ddongpig123-coder.github.io/ichi/index.html` | `gh-pages:index.html` — **master에 원본 없음. gh-pages에서 직접 관리** |
 | `https://ddongpig123-coder.github.io/ichi/support.html` | `gh-pages:support.html` — **master에 원본 없음. gh-pages에서 직접 관리** |
 
-`web.app`(Firebase Hosting)에도 같은 문서가 `/legal/terms.html`·`/legal/privacy.html`로 나갑니다.
+`web.app`(Firebase Hosting)에도 같은 문서가 `/legal/terms.html`·`/legal/privacy.html`·`/legal/delete-account.html`로 나갑니다.
 `scripts/deploy-web.mjs`가 `docs/legal/*.html`을 `dist/legal/`로 복사하므로, **`npm run deploy:web` 한 번이면 그쪽은 갱신**됩니다.
 
 ### 이 폴더의 HTML을 고친 뒤 할 일

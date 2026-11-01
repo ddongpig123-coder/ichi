@@ -32,7 +32,11 @@
 - [ ] **Android 사용자 12명 이상**을 `testers-1`에 등록 → 웹 참여 링크로 참여 + **Android 폰에 설치·가끔 사용**
       (아이폰 사용자는 웹 참여만 가능, 참여도 0이라 12명 계산에서 제외. 참여도 부족은 프로덕션 거절 사유)
 - [ ] 12번째 참여일부터 14일 → 프로덕션 액세스 신청 (설문: 테스트에서 받은 피드백과 수정 내역 — 피드백 모아둘 것)
-- [ ] 계정 삭제 전용 안내 페이지 `delete-account.html` (Play 요건: 앱 이름·삭제 단계·삭제/보관 데이터 명시). 현재는 방침 URL로 임시 등록
+- [~] 계정 삭제 전용 안내 페이지 — **페이지 작성 완료**(`docs/legal/delete-account.html`, 2026-11-01).
+      앱 이름·삭제 단계(프로필→계정→삭제)·삭제/보관 데이터(최장 6개월·연결 해제)·문의처 기재. 코드에서 실제 동선과
+      `deleteSelfData` 삭제 대상을 확인해 작성. **남은 것(준희)**: ① `gh-pages` 루트에 복사 push
+      ② Play Console 앱 콘텐츠 → 계정 삭제 URL을 방침 URL에서 `.../ichi/delete-account.html`로 교체
+      (`web.app` 쪽은 `npm run deploy:web` 한 번이면 반영 — 복사 목록에 등록해 둠)
 - [ ] 다음 안드로이드 빌드: `android.blockedPermissions`에 `com.google.android.gms.permission.AD_ID` / R8 코드 최적화 켜기(기한 2027-02) /
       대형 화면 방향 제한·Android 15 edge-to-edge API 경고는 Expo 업데이트 때 재확인
 
