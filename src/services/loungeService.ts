@@ -59,6 +59,33 @@ export async function createLoungePost(
   return ref.id;
 }
 
+// 森（全国）の検索。学校掲示板の searchPosts と同じ簡易方式（各森の最新 pageSize 件を絞り込み）。
+export async function searchLoungePosts(keyword: string, pageSize = 100): Promise<LoungePost[]> {
+  const { LOUNGES } = await import("../types/lounge");
+  const { normalizeForSearch } = await import("./boardService");
+  const kw = normalizeForSearch(keyword.trim());
+  if (!kw) return [];
+  const results: LoungePost[] = [];
+  await Promise.all(
+    LOUNGES.map(async (l) => {
+      const snap = await getDocs(query(postsCol(l.id), orderBy("createdAt", "desc"), limit(pageSize)));
+      snap.docs.forEach((d) => {
+        const data = d.data();
+        if (data.deleted) return;
+        if (normalizeForSearch(data.title).includes(kw) || normalizeForSearch(data.body).includes(kw)) {
+          results.push({
+            id: d.id,
+            ...(data as Omit<LoungePost, "id">),
+            loungeId: l.id,
+            createdAt: toMs(data.createdAt),
+          });
+        }
+      });
+    })
+  );
+  return results;
+}
+
 export async function fetchLoungePosts(
   loungeId: LoungeId,
   pageSize = 20
