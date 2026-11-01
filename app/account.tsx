@@ -34,6 +34,7 @@ import { friendlyErrorBody } from "../src/utils/writeError";
 import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
 import ScreenHeader from "../src/components/common/ScreenHeader";
+import { NICKNAME_MAX } from "../src/data/limits";
 
 // アカウント登録・ログイン画面
 // ゲスト(匿名)ユーザー: メール登録(=アカウント連携。uidを維持しデータが残る) or 既存アカウントへログイン
@@ -430,6 +431,7 @@ export default function AccountScreen() {
               style={styles.input}
               placeholder={t("account.nicknamePlaceholder")}
               placeholderTextColor={theme.textSecondary}
+              maxLength={NICKNAME_MAX}
               value={nickname}
               onChangeText={setNickname}
             />

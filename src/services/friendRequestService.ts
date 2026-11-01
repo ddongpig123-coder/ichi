@@ -6,9 +6,9 @@ import {
   getDoc,
   getDocs,
   query,
-  setDoc,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { getPublicProfile, lookupUidByEmail, type PublicProfile } from "./userService";
@@ -117,13 +117,18 @@ export async function fetchReceivedRequests(uid: string): Promise<FriendRequestW
   return withSender.sort((a, b) => b.createdAt - a.createdAt);
 }
 
-// 承認: status更新(toUid本人のみ・ルール強制) → friendships作成
+// 承認: status更新(toUid本人のみ・ルール強制) と friendships作成を1つのバッチで行う。
+// requestId はルールが「本当に承認された申請か」を確かめるために必要
+// （これが無いと、相手の承認なしに friendships を作って友達限定の時間割を読めてしまう）。
 export async function acceptFriendRequest(request: FriendRequest): Promise<void> {
-  await updateDoc(doc(db, "friendRequests", request.id), { status: "accepted" });
-  await setDoc(friendshipDoc(request.fromUid, request.toUid), {
+  const batch = writeBatch(db);
+  batch.update(doc(db, "friendRequests", request.id), { status: "accepted" });
+  batch.set(friendshipDoc(request.fromUid, request.toUid), {
     participants: [request.fromUid, request.toUid].sort(),
+    requestId: request.id,
     createdAt: Date.now(),
   });
+  await batch.commit();
 }
 
 export async function rejectFriendRequest(requestId: string): Promise<void> {
