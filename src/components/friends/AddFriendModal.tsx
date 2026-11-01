@@ -20,7 +20,10 @@ interface Props {
   onClose: () => void;
 }
 
-type LookupState = "idle" | "checking" | "found" | "notfound";
+type LookupState = "idle" | "invalid" | "checking" | "found" | "notfound" | "error";
+
+// 形式チェックだけ（存在確認はサーバー）。打ちかけの「abc」で「存在しない」と言わないため
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function AddFriendModal({ visible, onClose }: Props) {
   const { user } = useAuth();
@@ -48,19 +51,27 @@ export default function AddFriendModal({ visible, onClose }: Props) {
       setFoundUser(null);
       return;
     }
+    setFoundUser(null);
+    if (!EMAIL_RE.test(trimmed)) {
+      setLookupState("invalid");
+      return;
+    }
     setLookupState("checking");
+    // 入力が変わったら古い問い合わせの結果は捨てる（遅れて届いた結果で上書きしない）
+    let stale = false;
     const timer = setTimeout(async () => {
       try {
         const result = await findUserByEmail(trimmed);
+        if (stale) return;
         setFoundUser(result);
         setLookupState(result ? "found" : "notfound");
       } catch (e) {
         console.warn("email lookup failed:", e);
-        setFoundUser(null);
-        setLookupState("notfound");
+        if (stale) return;
+        setLookupState("error");
       }
     }, 400);
-    return () => clearTimeout(timer);
+    return () => { stale = true; clearTimeout(timer); };
   }, [email]);
 
   async function handleAdd() {
@@ -130,10 +141,27 @@ export default function AddFriendModal({ visible, onClose }: Props) {
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
+            autoCorrect={false}
+            autoFocus
             keyboardType="email-address"
           />
+          {/* 入力の下に今の状態を1行で返す（打ちかけの間は何も言わない） */}
+          {lookupState === "invalid" && email.includes("@") && (
+            <Text style={styles.hintText}>{t("friends.emailInvalid")}</Text>
+          )}
+          {lookupState === "checking" && (
+            <Text style={styles.hintText}>{t("friends.lookupChecking")}</Text>
+          )}
+          {lookupState === "found" && foundUser && (
+            <Text style={styles.foundText}>
+              {foundUser.nickname}{t("friends.lookupFoundSuffix")}
+            </Text>
+          )}
           {lookupState === "notfound" && (
             <Text style={styles.errorText}>{t("friends.userNotFound")}</Text>
+          )}
+          {lookupState === "error" && (
+            <Text style={styles.errorText}>{t("friends.lookupFailed")}</Text>
           )}
 
           <View style={styles.buttonRow}>
@@ -201,6 +229,8 @@ function makeStyles(theme: Theme) {
       color: theme.accent,
       marginTop: 6,
     },
+    hintText: { fontSize: 12, color: theme.textSecondary, marginTop: 6 },
+    foundText: { fontSize: 12, color: theme.primary, fontWeight: "700", marginTop: 6 },
     buttonRow: {
       flexDirection: "row",
       gap: 10,

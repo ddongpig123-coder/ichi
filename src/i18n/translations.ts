@@ -140,7 +140,11 @@ const ja = {
   "friends.add": "+ 追加",
   "friends.addTitle": "友達追加",
   "friends.emailPlaceholder": "メールアドレスを入力",
-  "friends.userNotFound": "存在しないユーザーです",
+  "friends.userNotFound": "このメールアドレスのユーザーは見つかりません",
+  "friends.emailInvalid": "メールアドレスの形式で入力してください",
+  "friends.lookupChecking": "確認中…",
+  "friends.lookupFoundSuffix": " さんが見つかりました",
+  "friends.lookupFailed": "確認できませんでした。通信環境を確認してください",
   "friends.requestsTitle": "フレンド申請",
   "friends.accept": "承認",
   "friends.reject": "拒否",
@@ -574,7 +578,7 @@ const ja = {
 
   // 講義検索（Phase 1c）
   "courseSearch.title": "講義を検索",
-  "courseSearch.entry": "＋ 講義を検索して追加",
+  "courseSearch.entry": "講義検索",
   "courseSearch.departmentLabel": "学部",
   // 講義データがまだ入っていない学校（1.1 S2）。対応校は順次増やす。
   "courseSearch.schoolNotReady": "この大学の講義データはまだ準備中です。対応でき次第お知らせします。",
@@ -771,7 +775,11 @@ const ko: Record<TranslationKey, string> = {
   "friends.add": "+ 추가",
   "friends.addTitle": "친구 추가",
   "friends.emailPlaceholder": "이메일 주소 입력",
-  "friends.userNotFound": "존재하지 않는 사용자입니다",
+  "friends.userNotFound": "이 이메일로 가입한 사용자를 찾을 수 없어요",
+  "friends.emailInvalid": "이메일 형식으로 입력해 주세요",
+  "friends.lookupChecking": "확인 중…",
+  "friends.lookupFoundSuffix": " 님을 찾았어요",
+  "friends.lookupFailed": "확인하지 못했어요. 인터넷 연결을 확인해 주세요",
   "friends.requestsTitle": "친구 신청",
   "friends.accept": "승인",
   "friends.reject": "거부",
@@ -1193,7 +1201,7 @@ const ko: Record<TranslationKey, string> = {
 
   // 강의 검색 (Phase 1c)
   "courseSearch.title": "강의 검색",
-  "courseSearch.entry": "＋ 강의 검색해서 추가",
+  "courseSearch.entry": "강의 검색",
   "courseSearch.departmentLabel": "학부",
   // 강의 데이터가 아직 없는 학교(1.1 S2). 대응 학교는 순차 확대.
   "courseSearch.schoolNotReady": "이 대학의 강의 데이터는 아직 준비 중이에요. 준비되는 대로 알려드릴게요.",

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import type { Theme } from "../../src/theme/themes";
 import TimeTable from "../../src/components/timetable/TimeTable";
@@ -67,6 +67,20 @@ export default function FriendsScreen() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const effectiveId = selectedId ?? orderedAll[0]?.id ?? null;
   const [addModalVisible, setAddModalVisible] = useState(false);
+
+  // ホームの友達欄からの遷移: ?friend=uid でその友達の時間割を開く / ?add=1 で追加モーダルを開く。
+  // タブ画面は params が残り続けるので、処理したら消す（戻ってきたときに再発火させない）。
+  const params = useLocalSearchParams<{ friend?: string; add?: string }>();
+  useEffect(() => {
+    if (params.friend) {
+      setSelectedId(params.friend);
+      router.setParams({ friend: undefined });
+    }
+    if (params.add === "1") {
+      setAddModalVisible(true);
+      router.setParams({ add: undefined });
+    }
+  }, [params.friend, params.add, router]);
 
   const [selectedYear, setSelectedYear] = useState(getCurrentAcademicYear);
   const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());

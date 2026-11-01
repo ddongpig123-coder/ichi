@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
@@ -30,7 +32,7 @@ import {
 const TIMETABLE_HEADER_H = 24;
 const PERIODS_COUNT = 7;
 const NAV_HEADER_BASE = 44;
-const TAB_BAR_BASE = 49;
+const TAB_BAR_BASE = TAB_BAR_HEIGHT;
 const FRIENDS_SECTION_H = 185;
 const COURSE_SEARCH_ROW_H = 44; // 講義検索への導線ぶんの高さ
 
@@ -181,6 +183,7 @@ export default function HomeScreen() {
             router.push(`/course-search?year=${selectedYear}&semester=${selectedSemester}`)
           }
         >
+          <Ionicons name="search-outline" size={15} color={theme.primary} />
           <Text style={styles.actionText} numberOfLines={1}>{t("courseSearch.entry")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -189,12 +192,14 @@ export default function HomeScreen() {
             router.push(`/timetable-wizard?year=${selectedYear}&semester=${selectedSemester}`)
           }
         >
+          <Ionicons name="sparkles-outline" size={15} color={theme.primary} />
           <Text style={styles.actionText} numberOfLines={1}>{t("wizard.entry")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.actionBtn}
           onPress={() => router.push("/graduation")}
         >
+          <Ionicons name="school-outline" size={15} color={theme.primary} />
           <Text style={styles.actionText} numberOfLines={1}>{t("grad.entry")}</Text>
         </TouchableOpacity>
       </View>
@@ -226,6 +231,9 @@ function makeStyles(theme: Theme) {
     },
     actionBtn: {
       flex: 1,
+      flexDirection: "row",
+      gap: 4,
+      paddingHorizontal: 4,
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 8,
@@ -233,6 +241,6 @@ function makeStyles(theme: Theme) {
       borderStyle: "dashed",
       borderColor: theme.primary,
     },
-    actionText: { color: theme.primary, fontSize: 13, fontWeight: "600" },
+    actionText: { color: theme.primary, fontSize: 13, fontWeight: "600", flexShrink: 1 },
   });
 }
