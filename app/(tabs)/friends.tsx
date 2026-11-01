@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
@@ -27,29 +27,9 @@ import {
   getCurrentSemester,
   isSemesterAvailable,
 } from "../../src/data/semesterTimetables";
+import { notify, confirmDialog } from "../../src/utils/dialog";
 
 const CELL_HEIGHT = 42;
-
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
-  else Alert.alert(title, message);
-}
-
-function confirmDialog(
-  title: string,
-  message: string,
-  onConfirm: () => void,
-  labels: { cancel: string; ok: string }
-) {
-  if (Platform.OS === "web") {
-    if (window.confirm(`${title}\n\n${message}`)) onConfirm();
-  } else {
-    Alert.alert(title, message, [
-      { text: labels.cancel, style: "cancel" },
-      { text: labels.ok, style: "destructive", onPress: onConfirm },
-    ]);
-  }
-}
 
 // 友達の時間割ロード結果: null=読み込み中 / "private"=非公開(権限なし) / 配列=表示
 type FriendSessions = ClassSession[] | "private" | null;

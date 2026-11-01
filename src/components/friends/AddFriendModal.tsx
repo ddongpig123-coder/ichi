@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet, Alert, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -8,12 +8,7 @@ import type { Theme } from "../../theme/themes";
 import { findUserByEmail, sendFriendRequest } from "../../services/friendRequestService";
 import { shareInvite } from "../../services/friendInvite";
 import type { PublicProfile } from "../../services/userService";
-
-// Alert.alert は react-native-web では no-op のため Web では window.alert へ
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
-  else Alert.alert(title, message);
-}
+import { notify } from "../../utils/dialog";
 
 interface Props {
   visible: boolean;

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert, Platform,
+  View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -28,32 +28,7 @@ import {
 } from "../src/services/authService";
 import { auth } from "../src/config/firebase";
 import { updateMicrosoftAccountInfo } from "../src/services/userService";
-
-// Alert.alert は react-native-web では何も表示されない(no-op)ため、
-// Webでは window.alert / window.confirm にフォールバックする
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") {
-    window.alert(message ? `${title}\n\n${message}` : title);
-  } else {
-    Alert.alert(title, message);
-  }
-}
-
-function confirmDialog(
-  title: string,
-  message: string,
-  onConfirm: () => void,
-  labels: { cancel: string; ok: string }
-) {
-  if (Platform.OS === "web") {
-    if (window.confirm(`${title}\n\n${message}`)) onConfirm();
-  } else {
-    Alert.alert(title, message, [
-      { text: labels.cancel, style: "cancel" },
-      { text: labels.ok, style: "destructive", onPress: onConfirm },
-    ]);
-  }
-}
+import { notify, confirmDialog } from "../src/utils/dialog";
 
 // アカウント登録・ログイン画面
 // ゲスト(匿名)ユーザー: メール登録(=アカウント連携。uidを維持しデータが残る) or 既存アカウントへログイン

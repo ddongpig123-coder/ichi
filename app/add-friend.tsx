@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Platform, Image,
+  View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,11 +10,7 @@ import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
 import { getPublicProfile, type PublicProfile } from "../src/services/userService";
 import { sendFriendRequest } from "../src/services/friendRequestService";
-
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
-  else Alert.alert(title, message);
-}
+import { notify } from "../src/utils/dialog";
 
 // 招待リンク（/add-friend?u=<uid>）の受け口。相手のプロフィールを表示し、友達申請を送る。
 export default function AddFriendScreen() {
