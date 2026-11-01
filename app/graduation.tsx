@@ -35,6 +35,7 @@ import {
 } from "../src/data/facultyMasters";
 import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTimetables";
 import { HeaderBackButton } from "../src/components/common/ScreenHeader";
+import { DEPARTMENTS_BY_SCHOOL } from "../src/data/departments";
 
 const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
@@ -58,11 +59,18 @@ function zoneCtxKey(facultyId: string, deptId: string | null, ryu: boolean): str
 // 記録は ①時間割の科目を候補に出して選ぶ ②成績表を見て手動追加 の両方。配当表で区分を自動判定。
 // 記録していない過去分は、区分別の ＋/− で成績表の合計を直接入力できる。
 // 保存は端末ローカルのみ（gradRecordService）。本格版の E2E 金庫は Phase 3（docs/CREDIT-TRACKING.md §6-2）。
+// 学部名の表示（韓国語モードでは学部マスターの韓国語名。無ければ日本語のまま）
+function facultyName(nameJa: string, language: "ja" | "ko"): string {
+  if (language !== "ko") return nameJa;
+  return Object.values(DEPARTMENTS_BY_SCHOOL).flat().find((d) => d.nameJa === nameJa)?.nameKo ?? nameJa;
+}
+
 export default function GraduationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  // 学部名だけは韓国語表記を持っている（学部マスター）。区分名は便覧の正式名称なので日本語のまま
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [masterIdx, setMasterIdx] = useState(0);
@@ -408,7 +416,7 @@ export default function GraduationScreen() {
   // ヘッダーの基準ラベル（学部×入学年度）。
   const commerceBandLabel = GRAD_MASTERS[masterIdx]?.labelJa ?? "";
   const scopeLabel = selFaculty
-    ? `明治 ${selFaculty.nameJa} · ${isCommerce ? commerceBandLabel : selBand?.labelJa ?? ""}`
+    ? `${facultyName(selFaculty.nameJa, language)} · ${isCommerce ? commerceBandLabel : selBand?.labelJa ?? ""}`
     : t("grad.scope");
 
   // 学部セレクタ（共通）。
@@ -428,7 +436,7 @@ export default function GraduationScreen() {
                 setFacultyId(f.id);
               }}
             >
-              <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{f.nameJa}</Text>
+              <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{facultyName(f.nameJa, language)}</Text>
             </TouchableOpacity>
           );
         })}

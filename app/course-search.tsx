@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -176,6 +176,19 @@ export default function CourseSearchScreen() {
   }
 
   const handleSearch = () => runSearch(keyword);
+
+  // 学部を選び直したら: 「先に学部を選んで」の注意は消し、入力済みの語があれば
+  // その学部で検索し直す（前の学部の結果が残ったままにならないように）。
+  const prevDeptRef = useRef(deptId);
+  useEffect(() => {
+    if (prevDeptRef.current === deptId) return;
+    prevDeptRef.current = deptId;
+    if (!deptId) return;
+    setNotice((cur) => (cur === t("courseSearch.selectDepartmentFirst") ? null : cur));
+    if (keyword.trim()) runSearch(keyword);
+    // keyword は「選び直した時点の値」を使えばよい（入力のたびに検索しない）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deptId]);
 
   // 実在確認（1人1回。confirms サブコレクションに create）
   async function handleConfirm(course: Course) {
