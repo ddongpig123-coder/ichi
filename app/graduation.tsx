@@ -34,6 +34,7 @@ import {
   MEIJI, type Faculty, type FBand,
 } from "../src/data/facultyMasters";
 import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTimetables";
+import { HeaderBackButton } from "../src/components/common/ScreenHeader";
 
 const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
@@ -534,9 +535,7 @@ export default function GraduationScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={goBack}>
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
+        <HeaderBackButton onPress={goBack} />
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{t("grad.title")}</Text>
           <Text style={styles.subtitle}>{scopeLabel}</Text>
@@ -883,11 +882,6 @@ function makeStyles(theme: Theme) {
       paddingTop: 12,
       paddingBottom: 10,
     },
-    backButton: {
-      width: 36, height: 36, borderRadius: 18, justifyContent: "center", alignItems: "center",
-      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border,
-    },
-    backIcon: { fontSize: 18, color: theme.textPrimary },
     title: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     subtitle: { fontSize: 11, color: theme.textSecondary, marginTop: 1 },
     expBadge: {

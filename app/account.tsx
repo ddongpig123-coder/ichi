@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet,
 } from "react-native";
@@ -29,6 +29,9 @@ import {
 import { auth } from "../src/config/firebase";
 import { updateMicrosoftAccountInfo } from "../src/services/userService";
 import { notify, confirmDialog } from "../src/utils/dialog";
+import { useTheme } from "../src/contexts/ThemeContext";
+import type { Theme } from "../src/theme/themes";
+import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // アカウント登録・ログイン画面
 // ゲスト(匿名)ユーザー: メール登録(=アカウント連携。uidを維持しデータが残る) or 既存アカウントへログイン
@@ -38,6 +41,8 @@ export default function AccountScreen() {
   const router = useRouter();
   const { user, schoolDomain } = useAuth();
   const { t } = useI18n();
+  const { theme } = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   // 学校認証の案内だけは選択中の学校ドメインで例を出す（登録・ログイン欄の例は中立の gmail）
   const schoolMailExample = schoolDomain ? `〇〇@${schoolDomain}` : "~.ac.jp";
 
@@ -323,9 +328,7 @@ export default function AccountScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={goBack}>
-        <Text style={styles.backIcon}>←</Text>
-      </TouchableOpacity>
+      <ScreenHeader title={t("account.title")} onBack={goBack} />
 
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         {!isGuest ? (
@@ -380,7 +383,7 @@ export default function AccountScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder={t("account.deletePasswordPlaceholder")}
-                  placeholderTextColor="#aaa"
+                  placeholderTextColor={theme.textSecondary}
                   secureTextEntry
                   value={deletePassword}
                   onChangeText={setDeletePassword}
@@ -407,7 +410,7 @@ export default function AccountScreen() {
             <TextInput
               style={styles.input}
               placeholder={t("account.nicknamePlaceholder")}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               value={nickname}
               onChangeText={setNickname}
             />
@@ -415,7 +418,7 @@ export default function AccountScreen() {
             <TextInput
               style={styles.input}
               placeholder="example@gmail.com"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               autoCapitalize="none"
               keyboardType="email-address"
               value={email}
@@ -425,7 +428,7 @@ export default function AccountScreen() {
             <TextInput
               style={styles.input}
               placeholder="••••••"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -434,7 +437,7 @@ export default function AccountScreen() {
             <TextInput
               style={styles.input}
               placeholder="••••••"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               secureTextEntry
               value={passwordConfirm}
               onChangeText={setPasswordConfirm}
@@ -478,7 +481,7 @@ export default function AccountScreen() {
             <TextInput
               style={styles.input}
               placeholder="example@gmail.com"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               autoCapitalize="none"
               keyboardType="email-address"
               value={email}
@@ -491,7 +494,7 @@ export default function AccountScreen() {
               ref={passwordRef}
               style={styles.input}
               placeholder="••••••"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.textSecondary}
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -533,128 +536,115 @@ export default function AccountScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F7FA" },
-  backButton: {
-    position: "absolute",
-    top: 16,
-    left: 16,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    zIndex: 1,
-  },
-  backIcon: { fontSize: 18, color: "#333" },
-  content: { paddingTop: 72, paddingHorizontal: 24 },
+function makeStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: theme.background },
+    content: { paddingTop: 20, paddingHorizontal: 24 },
 
-  title: { fontSize: 20, fontWeight: "700", color: "#1A1A2E", marginBottom: 12 },
-  description: { fontSize: 13, color: "#666", lineHeight: 19, marginBottom: 16 },
-  warningText: { fontSize: 12, color: "#E2574C", lineHeight: 18, marginBottom: 16 },
+    title: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 12 },
+    description: { fontSize: 13, color: theme.textSecondary, lineHeight: 19, marginBottom: 16 },
+    warningText: { fontSize: 12, color: "#E2574C", lineHeight: 18, marginBottom: 16 },
 
-  label: { fontSize: 12, color: "#888", marginTop: 12, marginBottom: 4 },
-  value: { fontSize: 15, color: "#1A1A2E", fontWeight: "600" },
-  input: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#D0D8E8",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: "#333",
-  },
+    label: { fontSize: 12, color: theme.textSecondary, marginTop: 12, marginBottom: 4 },
+    value: { fontSize: 15, color: theme.textPrimary, fontWeight: "600" },
+    input: {
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 14,
+      color: theme.textPrimary,
+    },
 
-  primaryButton: {
-    backgroundColor: "#2F6AD9",
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
-    marginTop: 24,
-  },
-  primaryButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
-  buttonDisabled: { opacity: 0.5 },
+    primaryButton: {
+      backgroundColor: theme.primary,
+      borderRadius: 8,
+      paddingVertical: 12,
+      alignItems: "center",
+      marginTop: 24,
+    },
+    primaryButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+    buttonDisabled: { opacity: 0.5 },
 
-  dangerButton: {
-    backgroundColor: "#E2574C",
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
-    marginTop: 32,
-  },
-  dangerButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+    dangerButton: {
+      backgroundColor: "#E2574C",
+      borderRadius: 8,
+      paddingVertical: 12,
+      alignItems: "center",
+      marginTop: 32,
+    },
+    dangerButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
 
-  deleteSection: { marginTop: 36, borderTopWidth: 1, borderTopColor: "#E8D5D2", paddingTop: 20 },
-  deleteTitle: { fontSize: 14, fontWeight: "700", color: "#C0392B", marginBottom: 6 },
-  deleteWarn: { fontSize: 12, color: "#888", lineHeight: 18, marginBottom: 12 },
-  deleteButton: {
-    borderRadius: 8, paddingVertical: 11, alignItems: "center", marginTop: 12,
-    borderWidth: 1, borderColor: "#C0392B", backgroundColor: "#fff",
-  },
-  deleteButtonText: { color: "#C0392B", fontSize: 14, fontWeight: "700" },
+    deleteSection: { marginTop: 36, borderTopWidth: 1, borderTopColor: theme.border, paddingTop: 20 },
+    deleteTitle: { fontSize: 14, fontWeight: "700", color: "#C0392B", marginBottom: 6 },
+    deleteWarn: { fontSize: 12, color: theme.textSecondary, lineHeight: 18, marginBottom: 12 },
+    deleteButton: {
+      borderRadius: 8, paddingVertical: 11, alignItems: "center", marginTop: 12,
+      borderWidth: 1, borderColor: "#C0392B", backgroundColor: theme.card,
+    },
+    deleteButtonText: { color: "#C0392B", fontSize: 14, fontWeight: "700" },
 
-  switchText: {
-    color: "#2F6AD9",
-    fontSize: 13,
-    textAlign: "center",
-    marginTop: 16,
-    textDecorationLine: "underline",
-  },
+    switchText: {
+      color: theme.primary,
+      fontSize: 13,
+      textAlign: "center",
+      marginTop: 16,
+      textDecorationLine: "underline",
+    },
 
-  dividerText: { textAlign: "center", color: "#999", fontSize: 12, marginVertical: 12 },
+    dividerText: { textAlign: "center", color: theme.textSecondary, fontSize: 12, marginVertical: 12 },
 
-  verifiedBadge: {
-    alignSelf: "flex-start",
-    backgroundColor: "#E8F5E9",
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginTop: 12,
-  },
-  verifiedBadgeText: { color: "#2E7D32", fontSize: 13, fontWeight: "700" },
-  verifyButtonRow: { flexDirection: "row", gap: 10, marginTop: 12 },
-  verifyButton: {
-    flex: 1,
-    backgroundColor: "#2F6AD9",
-    borderRadius: 8,
-    paddingVertical: 11,
-    alignItems: "center",
-  },
-  verifyButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
-  verifyButtonSecondary: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#2F6AD9",
-    borderRadius: 8,
-    paddingVertical: 11,
-    alignItems: "center",
-  },
-  verifyButtonSecondaryText: { color: "#2F6AD9", fontSize: 13, fontWeight: "700" },
-  microsoftButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#2F2F2F",
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  microsoftButtonText: { color: "#2F2F2F", fontSize: 14, fontWeight: "700" },
+    verifiedBadge: {
+      alignSelf: "flex-start",
+      backgroundColor: "#E8F5E9",
+      borderRadius: 6,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      marginTop: 12,
+    },
+    verifiedBadgeText: { color: "#2E7D32", fontSize: 13, fontWeight: "700" },
+    verifyButtonRow: { flexDirection: "row", gap: 10, marginTop: 12 },
+    verifyButton: {
+      flex: 1,
+      backgroundColor: theme.primary,
+      borderRadius: 8,
+      paddingVertical: 11,
+      alignItems: "center",
+    },
+    verifyButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
+    verifyButtonSecondary: {
+      flex: 1,
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: theme.primary,
+      borderRadius: 8,
+      paddingVertical: 11,
+      alignItems: "center",
+    },
+    verifyButtonSecondaryText: { color: theme.primary, fontSize: 13, fontWeight: "700" },
+    microsoftButton: {
+      backgroundColor: "#fff",
+      borderWidth: 1,
+      borderColor: "#2F2F2F",
+      borderRadius: 8,
+      paddingVertical: 12,
+      alignItems: "center",
+    },
+    microsoftButtonText: { color: "#2F2F2F", fontSize: 14, fontWeight: "700" },
 
-  socialButton: {
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  socialButtonText: { color: "#2F2F2F", fontSize: 14, fontWeight: "700" },
-  googleButton: { backgroundColor: "#fff", borderWidth: 1, borderColor: "#DADCE0" },
-  xButton: { backgroundColor: "#000" },
-  xButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
-  lineButton: { backgroundColor: "#06C755" },
-  lineButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
-});
+    socialButton: {
+      borderRadius: 8,
+      paddingVertical: 12,
+      alignItems: "center",
+      marginTop: 10,
+    },
+    socialButtonText: { color: "#2F2F2F", fontSize: 14, fontWeight: "700" },
+    googleButton: { backgroundColor: "#fff", borderWidth: 1, borderColor: "#DADCE0" },
+    xButton: { backgroundColor: "#000" },
+    xButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+    lineButton: { backgroundColor: "#06C755" },
+    lineButtonText: { color: "#fff", fontSize: 14, fontWeight: "700" },
+  });
+}

@@ -39,6 +39,7 @@ import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
 import ReviewModal from "../src/components/course/ReviewModal";
+import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // ============================================================
 // 講義検索 → 時間割にワンタップ追加（Phase 1c / 10月3週）
@@ -251,16 +252,7 @@ export default function CourseSearchScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("courseSearch.title")}</Text>
-        <Text style={styles.semesterBadge}>{`${year} ${semester}`}</Text>
-      </View>
+      <ScreenHeader title={t("courseSearch.title")} right={<Text style={styles.semesterBadge}>{`${year} ${semester === "春" ? t("timetable.springSemester") : t("timetable.fallSemester")}`}</Text>} />
 
       <Text style={styles.sectionLabel}>{t("courseSearch.departmentLabel")}</Text>
       {!deptReady ? (
@@ -479,20 +471,7 @@ export default function CourseSearchScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingTop: 56,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32, width: 28 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
-    semesterBadge: { fontSize: 13, color: theme.textSecondary, width: 60, textAlign: "right" },
+    semesterBadge: { fontSize: 13, color: theme.textSecondary },
     mockBanner: {
       backgroundColor: theme.accent,
       paddingVertical: 6,

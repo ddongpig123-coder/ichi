@@ -37,6 +37,7 @@ import {
   type WizardOutcome,
   type WizardResult,
 } from "../src/utils/timetableWizard";
+import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // ============================================================
 // 時間割メーカー（自動作成 / 시간표 마법사）
@@ -232,16 +233,7 @@ export default function TimetableWizardScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("wizard.title")}</Text>
-        <Text style={styles.semesterBadge}>{`${year} ${semester}`}</Text>
-      </View>
+      <ScreenHeader title={t("wizard.title")} right={<Text style={styles.semesterBadge}>{`${year} ${semester === "春" ? t("timetable.springSemester") : t("timetable.fallSemester")}`}</Text>} />
 
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
         {/* 학부 선택 — 강의 데이터가 있는 학교에서만 */}
@@ -585,20 +577,7 @@ function ResultCard({
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingTop: 56,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32, width: 28 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
-    semesterBadge: { fontSize: 13, color: theme.textSecondary, width: 60, textAlign: "right" },
+    semesterBadge: { fontSize: 13, color: theme.textSecondary },
 
     sectionLabel: {
       fontSize: 12,

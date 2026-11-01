@@ -26,6 +26,8 @@ const ja = {
   "common.retry": "再読み込み",
   "common.loadFailed": "読み込めませんでした",
   "common.discard": "破棄する",
+  "legal.termsTitle": "利用規約",
+  "legal.privacyTitle": "プライバシーポリシー",
   "post.discardTitle": "書きかけの内容を破棄しますか？",
   "post.discardMessage": "このまま戻ると、入力した内容は消えます",
   "post.bodyTooLong": "本文が長すぎます",
@@ -540,7 +542,6 @@ const ja = {
   "profile.blockList": "ブロックリスト",
   "profile.languageRow": "言語",
   "profile.contact": "お問い合わせ",
-  "profile.settingsPreparing": "プロフィール設定（準備中）",
   "contact.title": "お問い合わせ",
   "contact.desc": "ご意見・ご要望・不具合の報告などをお送りください。運営が内容を確認します。",
   "contact.messageLabel": "内容",
@@ -674,6 +675,8 @@ const ko: Record<TranslationKey, string> = {
   "common.retry": "다시 불러오기",
   "common.loadFailed": "불러오지 못했어요",
   "common.discard": "버리기",
+  "legal.termsTitle": "이용약관",
+  "legal.privacyTitle": "개인정보처리방침",
   "post.discardTitle": "작성 중인 글을 버릴까요?",
   "post.discardMessage": "이대로 나가면 입력한 내용이 사라져요",
   "post.bodyTooLong": "본문이 너무 길어요",
@@ -1215,7 +1218,6 @@ const ko: Record<TranslationKey, string> = {
   "admin.required": "제목과 본문을 입력해 주세요.",
   "admin.bannedWarning": "금칙어가 들어 있어요: ",
   "admin.notFound": "찾을 수 없어요.",
-  "profile.settingsPreparing": "프로필 설정 (준비 중)",
 
   // 강의 검색 (Phase 1c)
   "courseSearch.title": "강의 검색",

@@ -34,6 +34,7 @@ import { OFFICIAL_BOARDS, boardLabel } from "../../src/types/board";
 import { LOUNGES, loungeLabel } from "../../src/types/lounge";
 import { findBannedWords } from "../../src/utils/contentFilter";
 import type { Theme } from "../../src/theme/themes";
+import ScreenHeader from "../../src/components/common/ScreenHeader";
 
 // 投稿キューの確認・修正・承認（運営アカウント専用・docs/CONTENT-OPS.md §9）。
 // id なし = 手書きの新規作成。posted は読み取り専用。
@@ -130,19 +131,11 @@ export default function ContentEditScreen() {
     }
   }
 
-  const header = (
-    <View style={styles.header}>
-      <TouchableOpacity onPress={goBack} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-        <Text style={styles.backIcon}>‹</Text>
-      </TouchableOpacity>
-      <Text style={styles.headerTitle}>{t(id ? "admin.editTitle" : "admin.new")}</Text>
-      <View style={{ width: 30 }} />
-    </View>
-  );
+  const header = <ScreenHeader title={t(id ? "admin.editTitle" : "admin.new")} onBack={goBack} />;
 
   if (allowed === null || (id && !item && !notFound && allowed)) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         {header}
         <ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} />
       </View>
@@ -150,7 +143,7 @@ export default function ContentEditScreen() {
   }
   if (!allowed || notFound) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         {header}
         <Text style={styles.empty}>{t(!allowed ? "admin.noPermission" : "admin.notFound")}</Text>
       </View>
@@ -176,7 +169,7 @@ export default function ContentEditScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       {header}
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: 24 + insets.bottom }]}
@@ -320,18 +313,6 @@ function ActionButton({
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 12,
-      height: 48,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 32, color: theme.primary, lineHeight: 34, width: 30 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     content: { padding: 16, gap: 6 },
     empty: { textAlign: "center", color: theme.textSecondary, marginTop: 40, fontSize: 14 },
     meta: { fontSize: 12, color: theme.textSecondary },

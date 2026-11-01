@@ -16,6 +16,7 @@ import { isOperator, listQueue } from "../../src/services/contentQueueService";
 import { queueTargetLabel, type ContentQueueItem, type ContentQueueStatus } from "../../src/types/contentQueue";
 import { timeAgo, type TranslationKey } from "../../src/i18n/translations";
 import type { Theme } from "../../src/theme/themes";
+import ScreenHeader from "../../src/components/common/ScreenHeader";
 
 // コンテンツ管理（運営アカウント専用・docs/CONTENT-OPS.md §9）。
 // 下書き → 承認 → GitHub Actions が予約投稿。ここでは一覧と新規作成への導線だけを持つ。
@@ -67,27 +68,22 @@ export default function ContentQueueScreen() {
   );
 
   const header = (
-    <View style={styles.header}>
-      <TouchableOpacity
-        onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/profile"))}
-        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-      >
-        <Text style={styles.backIcon}>‹</Text>
-      </TouchableOpacity>
-      <Text style={styles.headerTitle}>{t("admin.menu")}</Text>
-      {allowed ? (
-        <TouchableOpacity onPress={() => router.push("/admin/edit")} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-          <Text style={styles.headerAction}>{t("admin.new")}</Text>
-        </TouchableOpacity>
-      ) : (
-        <View style={{ width: 30 }} />
-      )}
-    </View>
+    <ScreenHeader
+      title={t("admin.menu")}
+      fallback="/(tabs)/profile"
+      right={
+        allowed ? (
+            <TouchableOpacity onPress={() => router.push("/admin/edit")} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
+              <Text style={styles.headerAction}>{t("admin.new")}</Text>
+            </TouchableOpacity>
+        ) : undefined
+      }
+    />
   );
 
   if (allowed === null) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         {header}
         <ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} />
       </View>
@@ -95,7 +91,7 @@ export default function ContentQueueScreen() {
   }
   if (!allowed) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         {header}
         <Text style={styles.empty}>{t("admin.noPermission")}</Text>
       </View>
@@ -103,7 +99,7 @@ export default function ContentQueueScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       {header}
       <View style={styles.tabs}>
         {TABS.map((tab) => (
@@ -156,18 +152,6 @@ export default function ContentQueueScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 12,
-      height: 48,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 32, color: theme.primary, lineHeight: 34, width: 30 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     headerAction: { fontSize: 14, fontWeight: "700", color: theme.primary },
     tabs: {
       flexDirection: "row",

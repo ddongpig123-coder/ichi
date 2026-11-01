@@ -1,9 +1,10 @@
 import { useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
+import ScreenHeader from "../src/components/common/ScreenHeader";
+import { useI18n } from "../src/contexts/I18nContext";
 
 // プライバシーポリシー（全文・日本語正本）。docs/legal/PRIVACY.md と同期して管理すること。
 const PRIVACY_TEXT = `プライバシーポリシー
@@ -73,19 +74,14 @@ Lee Junhee(以下「運営者」)は、アプリケーション「大学の森�
 ddongpig123@gmail.com`;
 
 export default function PrivacyScreen() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => (router.canGoBack() ? router.back() : router.replace("/onboarding"))}
-      >
-        <Text style={styles.backIcon}>←</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <ScreenHeader title={t("legal.privacyTitle")} fallback="/onboarding" />
       {/* 下端はホームインジケーター/ナビバー分(insets.bottom)を足す。固定値だと最終行が隠れる */}
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
         <Text style={styles.text}>{PRIVACY_TEXT}</Text>
@@ -97,22 +93,7 @@ export default function PrivacyScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    backButton: {
-      position: "absolute",
-      top: 16,
-      left: 16,
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: theme.card,
-      borderWidth: 1,
-      borderColor: theme.border,
-      zIndex: 1,
-    },
-    backIcon: { fontSize: 18, color: theme.textPrimary },
-    content: { paddingTop: 64, paddingHorizontal: 20 },
+    content: { paddingTop: 16, paddingHorizontal: 20 },
     text: { fontSize: 12, lineHeight: 19, color: theme.textPrimary },
   });
 }
