@@ -21,6 +21,7 @@ import { timeAgo } from "../../../src/i18n/translations";
 import { fetchLoungePosts, fetchLoungeSearchCandidates } from "../../../src/services/loungeService";
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, loungeLabel, type LoungeId, type LoungePost } from "../../../src/types/lounge";
+import LoadError from "../../../src/components/common/LoadError";
 
 export default function LoungePostListScreen() {
   const { loungeId } = useLocalSearchParams<{ loungeId: string }>();
@@ -37,6 +38,7 @@ export default function LoungePostListScreen() {
 
   const [posts, setPosts] = useState<LoungePost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   // ラウンジ内検索（ヘッダーの🔍でトグル）。
@@ -88,8 +90,15 @@ export default function LoungePostListScreen() {
 
   const load = useCallback(async () => {
     if (!loungeId) return;
-    const p = await fetchLoungePosts(loungeId as LoungeId);
-    setPosts(p);
+    try {
+      const p = await fetchLoungePosts(loungeId as LoungeId);
+      setPosts(p);
+      setLoadError(false);
+    } catch (e) {
+      // 失敗を「まだ投稿がありません」に見せない
+      console.warn("lounge posts load failed:", e);
+      setLoadError(true);
+    }
   }, [loungeId]);
 
   useFocusEffect(
@@ -110,6 +119,18 @@ export default function LoungePostListScreen() {
       <View style={styles.center}>
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
+    );
+  }
+
+  // 1件も無い状態で失敗した時だけ全面エラー。前回分が残っていればそれを見せ続ける。
+  if (loadError && posts.length === 0) {
+    return (
+      <LoadError
+        onRetry={() => {
+          setLoading(true);
+          load().finally(() => setLoading(false));
+        }}
+      />
     );
   }
 

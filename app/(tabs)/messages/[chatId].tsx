@@ -21,6 +21,8 @@ import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import { sendMessage, subscribeToMessages } from "../../../src/services/chatService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
+import { notify } from "../../../src/utils/dialog";
+import { friendlyErrorBody } from "../../../src/utils/writeError";
 import type { Theme } from "../../../src/theme/themes";
 import type { ChatMessage } from "../../../src/types/chat";
 
@@ -77,8 +79,16 @@ export default function ChatRoomScreen() {
     if (hits.length) { setBannedWords(hits); return; }
     setSending(true);
     setText("");
-    await sendMessage(chatId, user.uid, trimmed);
-    setSending(false);
+    try {
+      await sendMessage(chatId, user.uid, trimmed);
+    } catch (e) {
+      // 失敗したら本文を入力欄に戻す（打ち直しさせない）。送信中に続きを打っていたらその前に戻す。
+      setText((cur) => (cur.trim() ? `${trimmed}\n${cur}` : trimmed));
+      notify(t("messages.sendFailed"), friendlyErrorBody(e, t));
+    } finally {
+      // 以前は失敗時に sending が true のまま残り、送信ボタンが二度と押せなかった
+      setSending(false);
+    }
   }
 
   function renderMessage({ item }: { item: ChatMessage }) {
