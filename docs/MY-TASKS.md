@@ -10,7 +10,7 @@
 
 ## 📍 현재 상태 (2026-11-02) — 태희·준희 공유용. 다른 세션은 이 블록을 먼저 읽을 것
 
-> **지금 위치: 빌드 5 재제출 완료(2026-11-02 밤 JST) → iOS 심사 대기 중.**
+> **지금 위치: 빌드 5 재제출 완료(2026-11-03 01:19 JST, 2차 제출) → iOS 심사 대기 중(최대 48시간).**
 > 10/25 제출(빌드 4) → **10/31 리젝**(Guideline 1.2 익명 UGC "proper precautions") → 11/02 대응 머지 →
 > **11/02 콘솔 작업 전부 완료**(규칙 배포 · 18+ · 빌드 5 업로드 · 심사 노트 교체 · 리젝 스레드 답장 · Submit for Review ·
 > `reports` 정리 · Play 계정 삭제 URL 교체). 결과 메일은 `ddongpig123@naver.com`.
@@ -23,6 +23,10 @@
 > [APP-REVIEW-REPLY §2](APP-REVIEW-REPLY.md)로 교체 ⑤ 리젝 스레드(Submission 8837b86f)에 §1 영어 답장 ⑥ **앱 심사에 다시 제출**
 > ⑦ Firebase `reports` 4건(7월 개발 중 자기 글 신고 테스트 3건 + 11/02 테스트 1건) 전부 `dismissed`
 > ⑧ Play Console 데이터 보안 → 계정 삭제 URL을 `delete-account.html`로 교체 → 검토 제출.
+> ⑨ **제출 취소 → 재제출(11/03 01:19)**: 23:15 제출의 메모·답장이 #57(쪽지는 ⋯가 아니라 아바타 탭) 반영 **전** 판이었다.
+> 취소된 제출은 읽기 전용이라 스레드 답장 정정은 불가 → 메모만 #57 반영판(979자)으로 재교체하고 버전 페이지에서
+> 「심사에 추가 → 심사를 위해 제출」. Apple에 간 답장(11/02 23:04)에는 4번 "direct message … ⋯ menu" 오기가 남아 있음.
+> 📌 **교훈**: ASC에 문안을 붙이기 전에 `git log origin/master -- docs/APP-REVIEW-REPLY.md`와 열린 PR을 먼저 본다.
 >
 > **2026-11-02에 끝난 것** — PR 정리(#38·#44·#47·#51·#52 머지, #35는 근본 수정과 모순돼 사유 남기고 닫음,
 > #50은 Draft 보류) · 합쳐진 master `tsc --noEmit` 통과 · **gh-pages 재배포 완료**(약관 리젝 대응분 +
@@ -83,8 +87,9 @@
        `privacy.html`은 master와 동일해 변경 없음
 4. [x] **빌드 5** (2026-11-02 완료): EAS 빌드 `78321824-5c93-4804-a5e6-ed7b7106224c`(커밋 `6ba8c4b`, runtimeVersion 1.0.0)
        → `eas submit --platform ios --profile production --id …` → ASC 처리 완료 → 버전 1.0에 **1.0.0 (5)** 연결
-5. [x] **App Review Notes(심사 노트) 교체** (2026-11-02 완료, §2 899자. 데모 계정은 그대로)
-6. [x] **App Review 페이지에서 답장** (2026-11-02 완료. Submission 8837b86f 스레드에 §1 영어 문안) → **앱 심사에 다시 제출** 완료
+5. [x] **App Review Notes(심사 노트) 교체** (2026-11-02 899자 → 11/03 01시 #57 반영판 **979자**로 재교체. 데모 계정은 그대로)
+6. [x] **App Review 페이지에서 답장** (2026-11-02 23:04, Submission 8837b86f 스레드에 §1 영어 문안 — #57 반영 전 판) →
+       23:15 재제출 → **취소** → 메모 교체 → **2026-11-03 01:19 재제출(2차)** 완료. 심사 대기 중
 7. [~] 재제출 후 **반드시 24시간 내 신고 처리 체계 가동** (Firebase 콘솔 `reports` 매일 확인). 약관에 약속한 내용.
        2026-11-02 첫 점검: 4건(전부 개발 중 테스트) → `dismissed`. **이후 매일 `status == "pending"` 확인**.
        바로 가기: `https://console.firebase.google.com/project/ichi-6b8f7/firestore/databases/-default-/data/~2Freports`
