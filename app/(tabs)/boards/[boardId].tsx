@@ -23,6 +23,7 @@ import { fetchPosts, fetchBoardSearchCandidates } from "../../../src/services/bo
 import type { Theme } from "../../../src/theme/themes";
 import { boardLabel, isQaBoard, qaTagLabel, QA_TAGS, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
+import LoadError from "../../../src/components/common/LoadError";
 
 export default function PostListScreen() {
   const { boardId } = useLocalSearchParams<{ boardId: string }>();
@@ -40,6 +41,7 @@ export default function PostListScreen() {
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   // 質問板のカテゴリ絞り込み（クライアント側）。null=すべて。
   const isQa = isQaBoard(boardId as string);
@@ -103,10 +105,17 @@ export default function PostListScreen() {
 
   const load = useCallback(async () => {
     if (!schoolDomain || !boardId) return;
-    const { posts: p, lastDoc, hasMore: more } = await fetchPosts(schoolDomain, boardId as BoardId);
-    lastDocRef.current = lastDoc;
-    setHasMore(more);
-    setPosts(p);
+    try {
+      const { posts: p, lastDoc, hasMore: more } = await fetchPosts(schoolDomain, boardId as BoardId);
+      lastDocRef.current = lastDoc;
+      setHasMore(more);
+      setPosts(p);
+      setLoadError(false);
+    } catch (e) {
+      // 失敗を「まだ投稿がありません」に見せない（通信が戻ったらその場で再読み込みできる）
+      console.warn("posts load failed:", e);
+      setLoadError(true);
+    }
   }, [schoolDomain, boardId]);
 
   // 次ページを追記。重複 id は弾く（焦点復帰と追記が重なった場合の保険）。
@@ -175,6 +184,18 @@ export default function PostListScreen() {
       <View style={styles.center}>
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
+    );
+  }
+
+  // 1件も無い状態で失敗した時だけ全面エラー。前回分が残っていればそれを見せ続ける。
+  if (loadError && posts.length === 0) {
+    return (
+      <LoadError
+        onRetry={() => {
+          setLoading(true);
+          load().finally(() => setLoading(false));
+        }}
+      />
     );
   }
 

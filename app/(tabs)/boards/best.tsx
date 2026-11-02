@@ -18,6 +18,7 @@ import { timeAgo } from "../../../src/i18n/translations";
 import { fetchBestPosts } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import type { Post } from "../../../src/types/board";
+import LoadError from "../../../src/components/common/LoadError";
 
 type BestPost = Post & { boardLabel: string };
 
@@ -30,12 +31,20 @@ export default function BestPostsScreen() {
   const router = useRouter();
   const [posts, setPosts] = useState<BestPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   async function load() {
     if (!schoolDomain) return;
-    const res = await fetchBestPosts(schoolDomain);
-    setPosts(res);
+    try {
+      const res = await fetchBestPosts(schoolDomain);
+      setPosts(res);
+      setLoadError(false);
+    } catch (e) {
+      // 失敗を「ベスト投稿なし」に見せない
+      console.warn("best posts load failed:", e);
+      setLoadError(true);
+    }
   }
 
   useEffect(() => {
@@ -50,6 +59,18 @@ export default function BestPostsScreen() {
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
+  }
+
+  // 1件も無い状態で失敗した時だけ全面エラー。前回分が残っていればそれを見せ続ける。
+  if (loadError && posts.length === 0) {
+    return (
+      <LoadError
+        onRetry={() => {
+          setLoading(true);
+          load().finally(() => setLoading(false));
+        }}
+      />
+    );
   }
 
   return (

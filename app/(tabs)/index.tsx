@@ -20,6 +20,8 @@ import {
   type TimetableVisibility,
 } from "../../src/services/timetableService";
 import { useFriendOverlaps } from "../../src/hooks/useFriendOverlaps";
+import { notify } from "../../src/utils/dialog";
+import { friendlyErrorBody } from "../../src/utils/writeError";
 import type { ClassSession, Day, Period } from "../../src/types/timetable";
 import {
   type Semester,
@@ -124,14 +126,20 @@ export default function HomeScreen() {
 
   const [target, setTarget] = useState<{ day: Day; period: Period; session?: ClassSession } | null>(null);
 
-  // ローカル更新 + Firestore保存（保存失敗はログのみ — 次の保存で全量上書きされる）
+  // ローカル更新 + Firestore保存。失敗したら元に戻して知らせる
+  // （以前はログのみで、画面上は保存できたように見え、次回起動で「消えた」になっていた）
   function persistSessions(next: ClassSession[]) {
-    setSessionsMap((prev) => ({ ...prev, [semesterKey]: next }));
+    const prev = sessionsMap[semesterKey] ?? [];
+    setSessionsMap((m) => ({ ...m, [semesterKey]: next }));
     if (!user) return;
     const isNew = missingDocKeys.current.has(semesterKey);
     saveTimetableSessions(user.uid, semesterKey, next, { initVisibility: isNew })
       .then(() => missingDocKeys.current.delete(semesterKey))
-      .catch((e) => console.warn("timetable save failed:", e));
+      .catch((e) => {
+        // その後に別の保存が済んでいたら触らない（参照が next のままの時だけ戻す）
+        setSessionsMap((m) => (m[semesterKey] === next ? { ...m, [semesterKey]: prev } : m));
+        notify(t("common.saveFailed"), friendlyErrorBody(e, t));
+      });
   }
 
   const headerH = NAV_HEADER_BASE + insets.top;

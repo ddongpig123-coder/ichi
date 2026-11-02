@@ -519,6 +519,7 @@ const ja = {
   "messages.blockedMessage": "ブロックしたユーザーのメッセージです",
   "messages.emptyRoom": "メッセージを送ってみましょう",
   "messages.inputPlaceholder": "メッセージを入力...",
+  "messages.sendFailed": "送信に失敗しました",
 
   // ブロックリスト
   "blocked.title": "ブロックリスト",
@@ -1173,6 +1174,7 @@ const ko: Record<TranslationKey, string> = {
   "messages.blockedMessage": "차단한 사용자의 쪽지입니다",
   "messages.emptyRoom": "쪽지를 보내 보세요",
   "messages.inputPlaceholder": "메시지 입력...",
+  "messages.sendFailed": "전송에 실패했습니다",
 
   "blocked.title": "차단 목록",
   "blocked.empty": "차단한 사용자가 없습니다",
