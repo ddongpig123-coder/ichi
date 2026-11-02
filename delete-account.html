@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大学の森 アカウント削除の方法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --ground: #FBFCFE;
+    --surface: #FFFFFF;
+    --surface-sunken: #F3F6FC;
+    --ink: #1A1F2E;
+    --muted: #5B6472;
+    --faint: #8A93A3;
+    --accent: #2F6AD9;
+    --accent-soft: #E8F0FD;
+    --hairline: #E4E9F2;
+    --flag-bg: #FFF6E5;
+    --flag-border: #F0C868;
+    --flag-ink: #7A5B10;
+    --font-ja: "Noto Sans JP", system-ui, -apple-system, sans-serif;
+    --font-ko: "Noto Sans KR", "Noto Sans JP", system-ui, sans-serif;
+    --font-display: "Zen Kaku Gothic New", "Noto Sans JP", system-ui, sans-serif;
+    --measure: 68ch;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0F131A;
+      --surface: #161C26;
+      --surface-sunken: #1B222E;
+      --ink: #E7EBF3;
+      --muted: #9AA4B4;
+      --faint: #6C7686;
+      --accent: #7BA6F2;
+      --accent-soft: #1B2740;
+      --hairline: #28303D;
+      --flag-bg: #2A2410;
+      --flag-border: #6E5A22;
+      --flag-ink: #E7C976;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0F131A;
+    --surface: #161C26;
+    --surface-sunken: #1B222E;
+    --ink: #E7EBF3;
+    --muted: #9AA4B4;
+    --faint: #6C7686;
+    --accent: #7BA6F2;
+    --accent-soft: #1B2740;
+    --hairline: #28303D;
+    --flag-bg: #2A2410;
+    --flag-border: #6E5A22;
+    --flag-ink: #E7C976;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-ja);
+    font-size: 16px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.01em;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Header ── */
+  header.site {
+    border-bottom: 1px solid var(--hairline);
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .site-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 14px 24px; max-width: 760px; margin: 0 auto;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .brand .mark {
+    font-family: var(--font-display); font-weight: 700; font-size: 22px;
+    color: var(--accent); letter-spacing: 0.02em;
+  }
+  .brand .doc {
+    font-size: 13px; color: var(--muted); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .langtabs { display: flex; gap: 2px; background: var(--surface-sunken);
+    border: 1px solid var(--hairline); border-radius: 999px; padding: 3px; flex-shrink: 0; }
+  .langtabs button {
+    font-family: var(--font-ja); font-size: 12px; font-weight: 700;
+    border: 0; background: transparent; color: var(--muted);
+    padding: 5px 14px; border-radius: 999px; cursor: pointer; letter-spacing: 0.04em;
+  }
+  .langtabs button[aria-selected="true"] { background: var(--surface); color: var(--accent);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .langtabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── Title block ── */
+  .titleblock { padding: 52px 0 28px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 6vw, 44px);
+    line-height: 1.2; margin: 0 0 16px; text-wrap: balance; letter-spacing: 0.01em;
+  }
+  .meta { font-size: 13px; color: var(--faint); margin: 0; }
+
+  /* ── Draft banner (editorial note — remove before hosting) ── */
+  .draftnote {
+    background: var(--flag-bg); border: 1px solid var(--flag-border);
+    border-radius: 14px; padding: 18px 20px; margin: 8px 0 40px;
+    font-family: var(--font-ko);
+  }
+  .draftnote h2 { font-size: 14px; font-weight: 700; margin: 0 0 8px; color: var(--flag-ink);
+    letter-spacing: 0.02em; }
+  .draftnote p { font-size: 13.5px; line-height: 1.7; margin: 0 0 10px; color: var(--flag-ink); }
+  .draftnote ul { margin: 0; padding-left: 18px; }
+  .draftnote li { font-size: 13.5px; line-height: 1.7; color: var(--flag-ink); }
+  .draftnote code {
+    font-family: var(--font-ja); background: color-mix(in srgb, var(--flag-ink) 12%, transparent);
+    padding: 1px 6px; border-radius: 5px; font-size: 12.5px; font-weight: 700;
+  }
+
+  /* ── Sections ── */
+  main { padding-bottom: 40px; }
+  section.clause { padding: 22px 0; border-top: 1px solid var(--hairline); }
+  section.clause:first-of-type { border-top: 0; }
+  .clause h3 {
+    display: flex; align-items: baseline; gap: 12px;
+    font-family: var(--font-display); font-weight: 700; font-size: 19px;
+    margin: 0 0 12px; letter-spacing: 0.01em; text-wrap: balance;
+  }
+  .clause .num {
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    color: var(--accent); background: var(--accent-soft);
+    min-width: 30px; height: 24px; padding: 0 8px; border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-variant-numeric: tabular-nums; transform: translateY(-1px);
+  }
+  .clause p, .clause li { max-width: var(--measure); }
+  .clause p { margin: 0 0 12px; color: var(--ink); }
+  .clause .lead { color: var(--muted); }
+  .subhead {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--accent); margin: 16px 0 8px;
+  }
+  ul.tick { list-style: none; margin: 0 0 12px; padding: 0; }
+  ul.tick li { position: relative; padding-left: 22px; margin-bottom: 7px; color: var(--ink); }
+  ul.tick li::before {
+    content: ""; position: absolute; left: 4px; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  ol.legal { margin: 0 0 12px; padding-left: 22px; }
+  ol.legal li { margin-bottom: 7px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+
+  .fill {
+    font-family: var(--font-ja); font-weight: 700; color: var(--flag-ink);
+    background: var(--flag-bg); border: 1px dashed var(--flag-border);
+    padding: 0 7px; border-radius: 6px; font-size: 0.92em; white-space: nowrap;
+  }
+
+  .callout {
+    background: var(--surface-sunken); border: 1px solid var(--hairline);
+    border-radius: 12px; padding: 16px 18px; margin: 4px 0 12px;
+  }
+  .callout p { margin: 0; font-size: 14.5px; color: var(--muted); }
+  .callout .contact { font-family: var(--font-display); font-size: 16px; color: var(--ink); font-weight: 500; }
+
+  /* ── KO reference ── */
+  .ko { font-family: var(--font-ko); }
+  .ko .clause h3 { font-family: var(--font-ko); }
+
+  footer.site {
+    border-top: 1px solid var(--hairline); padding: 32px 0 56px; margin-top: 8px;
+    color: var(--faint); font-size: 12.5px;
+  }
+  footer.site .wrap { display: flex; flex-direction: column; gap: 6px; }
+  footer .mark { font-family: var(--font-display); color: var(--accent); font-weight: 700; }
+
+  /* language visibility */
+  body[data-lang="ja"] .lang-ko { display: none; }
+  body[data-lang="ko"] .lang-ja { display: none; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="site-inner">
+    <div class="brand">
+      <span class="mark">大学の森</span>
+      <span class="doc lang-ja">アカウント削除</span>
+      <span class="doc lang-ko">계정 삭제</span>
+    </div>
+    <div class="langtabs" role="tablist" aria-label="言語 / 언어">
+      <button role="tab" id="tab-ja" aria-selected="true" onclick="setLang('ja')">日本語</button>
+      <button role="tab" id="tab-ko" aria-selected="false" onclick="setLang('ko')">한국어</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="titleblock">
+    <p class="eyebrow lang-ja">Account Deletion · アカウントとデータの削除について</p>
+    <p class="eyebrow lang-ko">Account Deletion · 계정과 데이터 삭제 안내</p>
+    <h1 class="lang-ja">アカウント削除の方法</h1>
+    <h1 class="lang-ko">계정 삭제 방법</h1>
+    <p class="meta lang-ja">対象アプリ「大学の森 - 大学生の時間割・卒業単位」（jp.timetable.app）／ 運営者: Lee Junhee</p>
+    <p class="meta lang-ko">대상 앱 「大学の森 - 大学生の時間割・卒業単位」(jp.timetable.app) ／ 운영자: Lee Junhee · 본 한국어본은 참고 번역이며 일본어 정본이 우선합니다.</p>
+  </div>
+</div>
+
+<main class="wrap">
+  <!-- ───────────── JA (정본) ───────────── -->
+  <div class="lang-ja">
+    <section class="clause">
+      <p class="lead">本ページは、アプリ「大学の森 - 大学生の時間割・卒業単位」におけるアカウント削除の手順と、削除されるデータ・削除後も一定期間保存されるデータについての案内です。アカウントの削除は<strong>アプリ内からいつでも</strong>行えます。</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">1</span>アプリ内での削除手順</h3>
+      <ul class="tick">
+        <li>① アプリ下部の「プロフィール」タブを開く</li>
+        <li>② アカウントの行をタップして「アカウント」画面へ進む</li>
+        <li>③ 「アカウント削除」の項目まで画面を下にたどる</li>
+        <li>④ メールアドレスとパスワードで登録した場合は、本人確認のためパスワードを入力（ソーシャルログインの場合は再認証の画面が開きます）</li>
+        <li>⑤ 「アカウントを削除する」をタップ</li>
+        <li>⑥ 確認メッセージで同意すると削除が実行されます</li>
+      </ul>
+      <p class="subhead">補足</p>
+      <ul class="tick">
+        <li>削除は<strong>取り消せません</strong>。</li>
+        <li>削除は<strong>アプリ内でのみ</strong>行えます。ウェブサイトからは削除できません。</li>
+        <li>削除後もゲスト（匿名）としてそのままアプリを使い続けられます。</li>
+        <li>通信状態により中断した場合、アカウントは削除されずに残ります。画面の案内に従ってもう一度お試しください。</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">2</span>削除されるデータ</h3>
+      <ul class="tick">
+        <li>認証アカウント（ログイン情報）</li>
+        <li>プロフィール（メールアドレス、ニックネーム、プロフィール画像、所属学校・学部、入学年度）</li>
+        <li>他の利用者に表示される公開プロフィール</li>
+        <li>メールアドレスとアカウントの対応情報</li>
+        <li>保存した時間割（全学期分）</li>
+        <li>端末内に保存していた成績・単位の記録（成績はサーバーへ送信せず端末内のみに保存しています）</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">3</span>削除後も保存されるデータと期間</h3>
+      <p>投稿・コメント・講義レビュー・メッセージは、法令遵守および紛争対応のため、<strong>最長6ヶ月間</strong>、非公開の状態で記録として保存されることがあります。これらは<strong>アカウントとの紐付けを解除</strong>し、投稿者を特定できない状態で扱います。保存期間の経過後は消去されます。</p>
+      <div class="callout">
+        <p>詳細は<a href="privacy.html">プライバシーポリシー</a>第6項・第7項をご確認ください。</p>
+      </div>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">4</span>お問い合わせ</h3>
+      <p>削除がうまくいかない場合、または削除に関するご請求は下記までご連絡ください。本人確認の上で対応します。</p>
+      <div class="callout">
+        <p class="contact"><a href="mailto:ddongpig123@gmail.com">ddongpig123@gmail.com</a></p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ───────────── KO (참고 번역) ───────────── -->
+  <div class="lang-ko ko">
+    <section class="clause">
+      <p class="lead">이 페이지는 앱 「大学の森 - 大学生の時間割・卒業単位」의 계정 삭제 방법과, 삭제되는 데이터·삭제 후에도 일정 기간 보관되는 데이터를 안내합니다. 계정 삭제는 <strong>앱 안에서 언제든지</strong> 할 수 있습니다.</p>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">1</span>앱에서 삭제하는 순서</h3>
+      <ul class="tick">
+        <li>① 앱 하단의 「프로필」 탭을 엽니다</li>
+        <li>② 계정 줄을 눌러 「계정」 화면으로 들어갑니다</li>
+        <li>③ 「계정 삭제」 항목까지 화면을 내립니다</li>
+        <li>④ 이메일·비밀번호로 가입한 경우 본인 확인을 위해 비밀번호를 입력합니다 (소셜 로그인은 재인증 화면이 열립니다)</li>
+        <li>⑤ 「계정을 삭제」 버튼을 누릅니다</li>
+        <li>⑥ 확인 메시지에 동의하면 삭제가 실행됩니다</li>
+      </ul>
+      <p class="subhead">참고</p>
+      <ul class="tick">
+        <li>삭제는 <strong>되돌릴 수 없습니다</strong>.</li>
+        <li>삭제는 <strong>앱에서만</strong> 가능하며 웹사이트에서는 할 수 없습니다.</li>
+        <li>삭제 후에도 게스트(익명)로 앱을 계속 쓸 수 있습니다.</li>
+        <li>통신 상태로 중단된 경우 계정은 삭제되지 않고 남습니다. 화면 안내에 따라 다시 시도해 주세요.</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">2</span>삭제되는 데이터</h3>
+      <ul class="tick">
+        <li>인증 계정(로그인 정보)</li>
+        <li>프로필(이메일, 닉네임, 프로필 이미지, 소속 학교·학부, 입학연도)</li>
+        <li>다른 이용자에게 보이는 공개 프로필</li>
+        <li>이메일과 계정의 대응 정보</li>
+        <li>저장한 시간표(전 학기분)</li>
+        <li>기기에 저장돼 있던 성적·학점 기록 (성적은 서버로 보내지 않고 기기에만 저장합니다)</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">3</span>삭제 후에도 보관되는 데이터와 기간</h3>
+      <p>게시글·댓글·강의평·쪽지는 법령 준수 및 분쟁 대응을 위해 <strong>최장 6개월간</strong> 비공개 상태로 기록이 보관될 수 있습니다. 이때 <strong>계정과의 연결은 해제</strong>되어 작성자를 특정할 수 없는 상태로 취급합니다. 보관 기간이 지나면 소거됩니다.</p>
+      <div class="callout">
+        <p>자세한 내용은 <a href="privacy.html">개인정보처리방침</a> 제6항·제7항을 확인해 주세요.</p>
+      </div>
+    </section>
+
+    <section class="clause">
+      <h3><span class="num">4</span>문의</h3>
+      <p>삭제가 잘 되지 않거나 삭제 관련 청구가 있으시면 아래로 연락해 주세요. 본인 확인 후 대응합니다.</p>
+      <div class="callout">
+        <p class="contact"><a href="mailto:ddongpig123@gmail.com">ddongpig123@gmail.com</a></p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div><span class="mark">大学の森</span> — 日本の大学生・留学生コミュニティ</div>
+    <div class="lang-ja">日本語を正本とし、韓国語は参考訳です。</div>
+    <div class="lang-ko">일본어를 정본으로 하며 한국어는 참고 번역입니다.</div>
+  </div>
+</footer>
+
+<script>
+  function setLang(lang) {
+    document.body.setAttribute("data-lang", lang);
+    document.getElementById("tab-ja").setAttribute("aria-selected", String(lang === "ja"));
+    document.getElementById("tab-ko").setAttribute("aria-selected", String(lang === "ko"));
+    try { localStorage.setItem("ichi-privacy-lang", lang); } catch (e) {}
+  }
+  (function () {
+    var saved = "ja";
+    try { saved = localStorage.getItem("ichi-privacy-lang") || "ja"; } catch (e) {}
+    setLang(saved === "ko" ? "ko" : "ja");
+  })();
+</script>
+
+</body>
+</html>
