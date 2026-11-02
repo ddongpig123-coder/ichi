@@ -151,6 +151,9 @@ function parseCourses(html, { nendo, idCount }) {
     // 상세 URL: <a data="/syllabus/syllabusView?syllabusYear=...&kougicd=..."> 속성에서 추출
     const detailPath = el.querySelector("a.link-txt")?.getAttribute("data") ?? null;
     const sourceUrl = detailPath ? BASE + detailPath.replace(/&amp;/g, "&") : null;
+    // 講義コード(kougicd) — 분반을 구별하는 유일한 값. 과목명·교원·요일교시·캠퍼스·
+    // 과목번호가 전부 같은 분반이 2~4건씩 나오는데, 다른 건 이것뿐이다(2026-11-02 실측).
+    const lectureCode = sourceUrl?.match(/[?&]kougicd=([^&]+)/)?.[1] ?? null;
 
     const dp = parseDayPeriod(dayRaw);
     if (!name || !dp || !semesters) {
@@ -178,6 +181,7 @@ function parseCourses(html, { nendo, idCount }) {
         semester,
         year: Number(nendo),
         campus,
+        lectureCode,
         courseNumber,
         credits: null,      // --details 옵션 시 상세페이지에서 채움
         sourceUrl,          // 시라버스 상세페이지 URL (리스트에서 추출)

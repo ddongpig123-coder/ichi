@@ -114,6 +114,7 @@ export async function contributeCourse(
     year: params.year,
     campus: null,
     courseNumber: null,
+    lectureCode: null, // ユーザー登録講義にシラバスの講義コードは無い
     credits: null,
     sourceUrl: null,
     addedBy: params.uid,
