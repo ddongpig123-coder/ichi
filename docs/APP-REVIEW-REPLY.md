@@ -31,8 +31,9 @@ the updated metadata contain the following:
    them. (In the previous build the filter only warned; it now blocks.)
 
 4. Flagging objectionable content
-   Every post, comment, direct message and course review has a "⋯" menu with "通報する"
-   (Report). The user selects one of six reasons (spam, harassment, defamation, privacy,
+   Every post, comment and course review has a "⋯" menu with "通報する" (Report). In direct
+   messages, tapping the other user's avatar ("匿") next to a message opens the same menu.
+   The user selects one of six reasons (spam, harassment, defamation, privacy,
    illegal/inappropriate, other) and may add details. Reports are stored server-side and are
    only readable by the operator.
 
@@ -62,6 +63,8 @@ How to verify (demo account in App Review Information):
   right of the post or next to a comment → 通報する / 非表示にする / ブロックする.
 - To test the filter, create a post containing a word such as "fuck" or "死ね": the app shows
   "不適切な表現が含まれています" and the post cannot be submitted.
+- In a direct message (メッセージ tab → a conversation), tap the "匿" avatar next to the other
+  user's message → 通報する / ブロックする.
 - Profile tab (プロフィール) → お問い合わせ shows the contact e-mail; → 利用規約 shows the
   zero-tolerance Terms; → ブロックリスト manages blocked users.
 
@@ -80,8 +83,9 @@ Developer, 大学の森
 This app is a university community app with anonymous boards. Moderation features
 (Guideline 1.2):
 - First launch: Language → Terms agreement (mandatory, zero-tolerance policy) → School.
-- Any post/comment/message/review: tap "⋯" → 通報する (Report, 6 reasons) /
+- Any post/comment/review: tap "⋯" → 通報する (Report, 6 reasons) /
   非表示にする (Hide from feed immediately) / ブロックする (Block user).
+- Direct messages: tap the "匿" avatar next to the other user's message → 通報する / ブロックする.
 - Reported content disappears from the reporter's feed immediately.
 - Banned-word filter (JA/KO/EN) blocks posting; try a post containing "fuck" or "死ね".
 - Profile → お問い合わせ: operator e-mail (ddongpig123@gmail.com) + contact form.
