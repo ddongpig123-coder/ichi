@@ -44,3 +44,31 @@ export function matchesQuery(name: string, query: string): boolean {
   const q = normalizeForSearch(query);
   return q.length > 0 && n.includes(q);
 }
+
+// ============================================================
+// 投稿（掲示板・森）の検索索引
+//
+// 掲示板は「最新N件を取ってクライアントで絞る」方式だったため、N件より古い投稿は
+// 検索に出てこなかった。投稿にも2-gramを持たせて array-contains で引く。
+//
+// ⚠️ grams は投稿本体ではなく **別文書**（postIndex/{postId}）に置く。
+//    本体に持たせると一覧取得（orderBy createdAt の20件ページ）のたびに
+//    数百個の2-gramまで毎回ダウンロードしてしまう。
+// ============================================================
+
+// 本文は先頭この文字数だけを索引に入れる。全文を入れると2-gramが数千個になり、
+// 索引文書が肥大して検索自体が重くなる（本文末尾の一致は拾えなくなる = 既知の割り切り）。
+export const POST_INDEX_BODY_CHARS = 400;
+
+// 索引配列の上限（array-contains の索引エントリ数を抑える）。
+export const POST_GRAMS_MAX = 400;
+
+// タイトルと本文冒頭から2-gram集合を作る。タイトルと本文は別々に gram 化して
+// 束ねる（連結すると境界に実在しない2-gramができる）。
+export function makePostGrams(title: string, body: string): string[] {
+  const set = new Set<string>([
+    ...makeBigrams(title ?? ""),
+    ...makeBigrams((body ?? "").slice(0, POST_INDEX_BODY_CHARS)),
+  ]);
+  return [...set].slice(0, POST_GRAMS_MAX);
+}

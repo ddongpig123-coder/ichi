@@ -13,9 +13,18 @@ import {
   increment,
   updateDoc,
   Timestamp,
+  type DocumentData,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { toggleLikeDoc } from "./likeToggle";
+import {
+  buildPostIndex,
+  commitPostWithIndex,
+  fetchByIndexHits,
+  loungePostIndexCol,
+  loungePostIndexDoc,
+  searchPostIndex,
+} from "./postIndexService";
 import type { LoungeId, LoungePost, LoungeComment } from "../types/lounge";
 
 // 留学生ラウンジ（全国単位）のデータアクセス。boardService と同じ形だが、
@@ -47,43 +56,78 @@ export async function createLoungePost(
   title: string,
   body: string
 ): Promise<string> {
-  const ref = await addDoc(postsCol(loungeId), {
-    loungeId,
-    title,
-    body,
-    authorUid,
-    commentCount: 0,
-    likeCount: 0,
-    createdAt: serverTimestamp(),
-  });
+  // 本体と検索索引を1つのバッチで書く（掲示板の createPost と同じ）。
+  const ref = doc(postsCol(loungeId));
+  await commitPostWithIndex(
+    ref,
+    {
+      loungeId,
+      title,
+      body,
+      authorUid,
+      commentCount: 0,
+      likeCount: 0,
+      createdAt: serverTimestamp(),
+    },
+    loungePostIndexDoc(loungeId, ref.id),
+    buildPostIndex(loungeId, authorUid, title, body)
+  );
   return ref.id;
 }
 
-// 森（全国）の検索。学校掲示板の searchPosts と同じ簡易方式（各森の最新 pageSize 件を絞り込み）。
+// 森（全国）の検索。学校掲示板の searchPosts と同じ2段構成:
+//   ① 検索索引(postIndex)の2-gram → 最新N件より古い投稿も拾う
+//   ② 各森の最新 pageSize 件の走査 → 索引を持たない投稿と1文字検索のため
+// 森は数が固定（5件）なので①も森ごとに引く。
 export async function searchLoungePosts(keyword: string, pageSize = 100): Promise<LoungePost[]> {
   const { LOUNGES } = await import("../types/lounge");
   const { normalizeForSearch } = await import("./boardService");
   const kw = normalizeForSearch(keyword.trim());
   if (!kw) return [];
-  const results: LoungePost[] = [];
-  await Promise.all(
-    LOUNGES.map(async (l) => {
-      const snap = await getDocs(query(postsCol(l.id), orderBy("createdAt", "desc"), limit(pageSize)));
-      snap.docs.forEach((d) => {
-        const data = d.data();
-        if (data.deleted) return;
-        if (normalizeForSearch(data.title).includes(kw) || normalizeForSearch(data.body).includes(kw)) {
-          results.push({
-            id: d.id,
-            ...(data as Omit<LoungePost, "id">),
-            loungeId: l.id,
-            createdAt: toMs(data.createdAt),
-          });
-        }
+  const loungeIds = new Set<string>(LOUNGES.map((l) => l.id as string));
+  const found = new Map<string, LoungePost>();
+  // 2-gram は候補を絞るだけなので、最終判定はここで行う。
+  const take = (loungeId: string, id: string, data: DocumentData) => {
+    if (!loungeIds.has(loungeId) || data.deleted) return null;
+    if (
+      !normalizeForSearch(data.title).includes(kw) &&
+      !normalizeForSearch(data.body).includes(kw)
+    ) {
+      return null;
+    }
+    if (!found.has(id)) {
+      found.set(id, {
+        id,
+        ...(data as Omit<LoungePost, "id">),
+        loungeId: loungeId as LoungeId,
+        createdAt: toMs(data.createdAt),
       });
-    })
+    }
+    return null;
+  };
+
+  await Promise.all(
+    LOUNGES.flatMap((l) => [
+      // 索引が失敗しても最新走査の結果は返す（boardService.searchPosts と同じ理由）。
+      (async () => {
+        try {
+          const hits = await searchPostIndex(loungePostIndexCol(l.id), keyword);
+          if (!hits) return;
+          await fetchByIndexHits(hits, (lid) => (loungeIds.has(lid) ? postsCol(lid as LoungeId) : null), take);
+        } catch (e) {
+          console.warn("lounge index search failed (falling back to recent scan):", e);
+        }
+      })(),
+      (async () => {
+        const snap = await getDocs(
+          query(postsCol(l.id), orderBy("createdAt", "desc"), limit(pageSize))
+        );
+        snap.docs.forEach((d) => take(l.id, d.id, d.data()));
+      })(),
+    ])
   );
-  return results;
+
+  return [...found.values()].sort((a, b) => b.createdAt - a.createdAt);
 }
 
 export async function fetchLoungePosts(

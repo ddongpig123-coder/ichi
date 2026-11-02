@@ -251,6 +251,14 @@ service cloud.firestore {
         && d.get('deleted', false) == false;
     }
 
+    // 検索索引(postIndex)の検証。grams は makePostGrams（src/utils/ngram.ts）が作る。
+    function isValidPostIndex() {
+      let d = request.resource.data;
+      return d.boardId is string && d.boardId.size() > 0 && d.boardId.size() <= 64
+        && d.authorUid == request.auth.uid
+        && d.grams is list && d.grams.size() > 0 && d.grams.size() <= 400;
+    }
+
     function isValidNewComment() {
       let d = request.resource.data;
       return d.body is string && d.body.size() > 0 && d.body.size() <= 1000
@@ -361,6 +369,20 @@ service cloud.firestore {
         }
       }
 
+      // ── 投稿検索の索引（1.1） ──────────────────────────
+      // 投稿本体と同じIDの別文書。本体に grams を持たせると一覧取得のたびに
+      // 2-gram を数百個ダウンロードしてしまうため分離した（src/types/postIndex.ts）。
+      // 投稿と同じバッチで作る。作成のみ許可し、更新・削除は禁止する
+      // ＝索引が本体と食い違わない。論理削除は本体の deleted で判定する。
+      // 既存投稿の索引は Admin SDK で補充（scripts/backfill-post-index.mjs）。
+      match /postIndex/{postId} {
+        allow read: if isSignedIn();
+        allow create: if canWriteContent()
+          && belongsToSchool(schoolDomain)
+          && isValidPostIndex();
+        allow update, delete: if false;
+      }
+
       // 学部別・カスタム掲示板のメタ情報
       match /boardMetas/{boardMetaId} {
         allow read: if isSignedIn();
@@ -431,6 +453,13 @@ service cloud.firestore {
           && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
         allow update, delete: if false; // 送信済みメッセージは改変・物理削除不可
       }
+    }
+
+    // 森の投稿検索の索引（学校掲示板と同じ構造。所属は見ない＝森と同じ条件）。
+    match /lounges/{loungeId}/postIndex/{postId} {
+      allow read: if isSignedIn();
+      allow create: if canWriteContent() && isValidPostIndex();
+      allow update, delete: if false;
     }
 
     // ── 留学生ラウンジ（全国単位の掲示板・Phase 1） ────────

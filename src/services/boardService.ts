@@ -19,6 +19,14 @@ import {
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { toggleLikeDoc } from "./likeToggle";
+import {
+  buildPostIndex,
+  commitPostWithIndex,
+  fetchByIndexHits,
+  schoolPostIndexCol,
+  schoolPostIndexDoc,
+  searchPostIndex,
+} from "./postIndexService";
 import type { BoardId, BoardMeta, Post, Comment } from "../types/board";
 
 // Extract school domain from email (e.g. "user@foo.ac.jp" → "foo.ac.jp")
@@ -59,16 +67,23 @@ export async function createPost(
   body: string,
   tag: string | null = null
 ): Promise<string> {
-  const ref = await addDoc(postsCol(schoolDomain, boardId), {
-    boardId,
-    schoolDomain,
-    title,
-    body,
-    authorUid,
-    commentCount: 0,
-    createdAt: serverTimestamp(),
-    ...(tag ? { tag } : {}),
-  });
+  // 本体と検索索引を1つのバッチで書く（片方だけ残ることがない）。
+  const ref = doc(postsCol(schoolDomain, boardId));
+  await commitPostWithIndex(
+    ref,
+    {
+      boardId,
+      schoolDomain,
+      title,
+      body,
+      authorUid,
+      commentCount: 0,
+      createdAt: serverTimestamp(),
+      ...(tag ? { tag } : {}),
+    },
+    schoolPostIndexDoc(schoolDomain, ref.id),
+    buildPostIndex(boardId, authorUid, title, body)
+  );
   return ref.id;
 }
 
@@ -332,33 +347,63 @@ export async function searchPosts(
     ...OFFICIAL_BOARDS,
     ...(await fetchCustomBoards(schoolDomain)),
   ];
-  const results: (Post & { boardLabel: string })[] = [];
   const kw = normalizeForSearch(keyword.trim());
-  if (!kw) return results;
+  if (!kw) return [];
 
-  await Promise.all(
-    allBoards.map(async (board) => {
-      const q = query(postsCol(schoolDomain, board.id), orderBy("createdAt", "desc"), limit(pageSize));
-      const snap = await getDocs(q);
-      snap.docs.forEach((d) => {
-        const data = d.data();
-        if (data.deleted) return;
-        if (
-          normalizeForSearch(data.title).includes(kw) ||
-          normalizeForSearch(data.body).includes(kw)
-        ) {
-          results.push({
-            id: d.id,
-            ...(data as Omit<Post, "id">),
-            createdAt: toMs(data.createdAt),
-            boardLabel: board.label,
-          });
-        }
+  const labelOf = new Map(allBoards.map((b) => [b.id as string, b.label]));
+  // postId で重複排除する（索引ヒットと最新走査は重なる）
+  const found = new Map<string, Post & { boardLabel: string }>();
+  // 2-gram は候補を絞るだけなので、キーワードを実際に含むかの最終判定はここで行う。
+  const take = (boardId: string, id: string, data: DocumentData) => {
+    const label = labelOf.get(boardId);
+    if (!label || data.deleted) return null;
+    if (
+      !normalizeForSearch(data.title).includes(kw) &&
+      !normalizeForSearch(data.body).includes(kw)
+    ) {
+      return null;
+    }
+    if (!found.has(id)) {
+      found.set(id, {
+        id,
+        ...(data as Omit<Post, "id">),
+        createdAt: toMs(data.createdAt),
+        boardLabel: label,
       });
-    })
-  );
+    }
+    return null;
+  };
 
-  return results.sort((a, b) => b.createdAt - a.createdAt);
+  await Promise.all([
+    // ① 検索索引。学校ぶんは1コレクションなので掲示板をまたいで1クエリ。
+    //    最新N件より古い投稿も、本文（冒頭）の一致も拾える。
+    //
+    //    失敗しても②の結果は返す。索引の規則がまだ配備されていない端末では
+    //    ここが permission-denied になるが、それで検索全体が落ちてはいけない。
+    (async () => {
+      try {
+        const hits = await searchPostIndex(schoolPostIndexCol(schoolDomain), keyword);
+        if (!hits) return;
+        await fetchByIndexHits(
+          hits,
+          (boardId) => (labelOf.has(boardId) ? postsCol(schoolDomain, boardId as BoardId) : null),
+          take
+        );
+      } catch (e) {
+        console.warn("post index search failed (falling back to recent scan):", e);
+      }
+    })(),
+    // ② 各掲示板の最新 pageSize 件の走査。索引を持たない投稿（索引導入前・補充前）と、
+    //    2-gramにならない1文字検索のために残す。
+    ...allBoards.map(async (board) => {
+      const snap = await getDocs(
+        query(postsCol(schoolDomain, board.id), orderBy("createdAt", "desc"), limit(pageSize))
+      );
+      snap.docs.forEach((d) => take(board.id, d.id, d.data()));
+    }),
+  ]);
+
+  return [...found.values()].sort((a, b) => b.createdAt - a.createdAt);
 }
 
 // 単一掲示板内検索の「候補」を取得（各掲示板ヘッダーの🔍から）。
