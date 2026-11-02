@@ -24,7 +24,10 @@ export interface Course {
   semester: Semester;
   year: number;             // 開講年度（例: 2026）
   campus: string | null;    // キャンパス（例: 駿河台）
-  courseNumber: string | null; // 科目ナンバー（例: (CO)CMM311J）
+  courseNumber: string | null; // 科目ナンバー（例: (CO)CMM311J）※分反どうしでは同じ値
+  // 講義コード（シラバスの kougicd。例: 81E00120）。**分反を見分けられる唯一の値**。
+  // 2026-07 適載ぶんには無いので null になる → src/utils/courseCode.ts が sourceUrl から補う。
+  lectureCode: string | null;
   credits: number | null;   // 単位数
   sourceUrl: string | null; // シラバス詳細ページURL
   addedBy: CourseSource;

@@ -55,6 +55,7 @@ function validateCourse(c, i) {
   if (typeof c.year !== "number") errs.push("year 타입 오류");
   if (c.campus !== null && typeof c.campus !== "string") errs.push("campus 타입 오류");
   if (c.courseNumber !== null && typeof c.courseNumber !== "string") errs.push("courseNumber 타입 오류");
+  if (c.lectureCode !== undefined && c.lectureCode !== null && typeof c.lectureCode !== "string") errs.push("lectureCode 타입 오류");
   if (c.credits !== null && typeof c.credits !== "number") errs.push("credits 타입 오류");
   if (c.sourceUrl !== null && typeof c.sourceUrl !== "string") errs.push("sourceUrl 타입 오류");
   if (c.addedBy !== "official") errs.push(`addedBy는 "official"이어야 함: ${c.addedBy}`);

@@ -394,6 +394,9 @@ const ja = {
   "courseDetail.syllabus": "シラバス情報",
   "courseDetail.openSyllabus": "シラバスを開く ↗",
   "courseDetail.courseNumber": "科目ナンバー",
+  // 検索結果で分反（同じ曜限・同じ名前でクラスだけ違う講義）を区別するラベル。
+  // 履修登録で使う講義コードと同じ値なので、学生はこれで見分けられる。
+  "courseSearch.lectureCode": "講義コード",
   "courseDetail.writeReview": "レビューを書く",
   "courseDetail.editReview": "自分のレビューを編集",
   "courseDetail.reviewsHeader": "レビュー",
@@ -1045,6 +1048,9 @@ const ko: Record<TranslationKey, string> = {
   "courseDetail.syllabus": "시라버스 정보",
   "courseDetail.openSyllabus": "시라버스 열기 ↗",
   "courseDetail.courseNumber": "과목 번호",
+  // 검색 결과에서 분반(같은 요일·교시·이름이고 클래스만 다른 강의)을 구분하는 라벨.
+  // 수강신청에서 쓰는 강의코드와 같은 값이라 학생이 이걸로 구별할 수 있다.
+  "courseSearch.lectureCode": "강의코드",
   "courseDetail.writeReview": "리뷰 쓰기",
   "courseDetail.editReview": "내 리뷰 편집",
   "courseDetail.reviewsHeader": "리뷰",

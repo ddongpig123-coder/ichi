@@ -35,6 +35,7 @@ import {
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
+import { lectureCodeOf } from "../src/utils/courseCode";
 import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
@@ -48,6 +49,12 @@ import ScreenHeader from "../src/components/common/ScreenHeader";
 // - 講義データ未投入の間は courseService がモックを返す（画面側は同じ形なので変更不要）。
 // - 見つからない講義は従来どおり時間割のマスを直接タップして手入力する（フォールバック）。
 // ============================================================
+
+// 「同じ枠の講義」を見分けるキー。科目ナンバー（クラス）は**入れない** —
+// 名前・教員・曜限まで同じで科目ナンバーだけ違う＝分反、を見つけるためのキーだから。
+function slotKey(c: Course): string {
+  return `${c.name}@@${c.teacher}@@${c.day}${c.period}`;
+}
 
 // 同じ講義が毎回同じ色になるよう、講義名から決定的に色を選ぶ。
 function colorFor(name: string, palette: string[]): string {
@@ -120,6 +127,19 @@ export default function CourseSearchScreen() {
   }, [myDept]);
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<Course[]>([]);
+
+  // 共通外国語などは同じ講義名・教員・曜限で**クラス（分反）だけが違う**講義が並ぶ。
+  // そのままだと検索結果が同じ行の重複に見えるので（COLLAB-DATA-TAEHUI §4-6）、
+  // 「この結果の中で区別がつかない行」にだけ講義コードを出す。
+  // 常に出すと、重複していない大多数の行にコードが増えるだけになる。
+  const ambiguousSlots = useMemo(() => {
+    const count = new Map<string, number>();
+    for (const c of results) {
+      const k = slotKey(c);
+      count.set(k, (count.get(k) ?? 0) + 1);
+    }
+    return new Set([...count].filter(([, n]) => n > 1).map(([k]) => k));
+  }, [results]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   // 追加済みの講義ID（ボタン表示の切り替え用）と、追加処理中のID
@@ -366,6 +386,13 @@ export default function CourseSearchScreen() {
                     {item.campus ? ` · ${item.campus}` : ""}
                     {item.credits !== null ? ` · ${item.credits}${t("courseSearch.credits")}` : ""}
                   </Text>
+                  {/* 曜限まで同じ分反が並ぶときだけ、講義コードで区別できるようにする。
+                      科目ナンバーは分反どうしで同じなので使えない（src/utils/courseCode.ts） */}
+                  {ambiguousSlots.has(slotKey(item)) && lectureCodeOf(item) ? (
+                    <Text style={styles.courseSection}>
+                      {t("courseSearch.lectureCode")}: {lectureCodeOf(item)}
+                    </Text>
+                  ) : null}
                   </TouchableOpacity>
                   {/* 未確認講義: 確認数 + 確認ボタン（自分が未確認のときだけ押せる） */}
                   {!item.verified && (
@@ -567,6 +594,8 @@ function makeStyles(theme: Theme) {
     },
     courseName: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
     courseMeta: { fontSize: 12, color: theme.textSecondary, marginTop: 4 },
+    // 分反の区別（曜限まで同じ行が並ぶときだけ出る）。メタ行より一段弱く見せる。
+    courseSection: { fontSize: 11, color: theme.textSecondary, opacity: 0.8, marginTop: 2 },
     addBtn: {
       minWidth: 88,
       height: 34,
