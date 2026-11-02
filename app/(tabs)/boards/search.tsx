@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
@@ -25,6 +26,7 @@ import { LOUNGES, loungeLabel } from "../../../src/types/lounge";
 // 学校掲示板と森（全国）の結果を同じ形にそろえる
 interface SearchResult {
   key: string;
+  id: string;
   href: string;
   label: string;
   title: string;
@@ -34,6 +36,7 @@ interface SearchResult {
 
 export default function SearchScreen() {
   const { schoolDomain } = useAuth();
+  const { isHidden } = useHidden();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -62,6 +65,7 @@ export default function SearchScreen() {
           const meta = BOARDS.find((b) => b.id === p.boardId);
           return {
             key: `b/${p.boardId}/${p.id}`,
+            id: p.id,
             href: `/post/${p.boardId}/${p.id}`,
             label: meta ? boardLabel(meta, language) : p.boardLabel,
             title: p.title,
@@ -73,6 +77,7 @@ export default function SearchScreen() {
           const meta = LOUNGES.find((l) => l.id === p.loungeId);
           return {
             key: `l/${p.loungeId}/${p.id}`,
+            id: p.id,
             href: `/lounge/${p.loungeId}/${p.id}`,
             label: meta ? loungeLabel(meta, language) : "",
             title: p.title,
@@ -115,7 +120,7 @@ export default function SearchScreen() {
         </View>
       ) : (
         <FlatList
-          data={results}
+          data={results.filter((r) => !isHidden(r.id))}
           keyExtractor={(item) => item.key}
           keyboardShouldPersistTaps="handled"
           ItemSeparatorComponent={() => <View style={styles.sep} />}

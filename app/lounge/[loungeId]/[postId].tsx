@@ -17,6 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import {
   fetchLoungePost,
   fetchLoungeComments,
@@ -50,6 +51,7 @@ export default function LoungePostDetailScreen() {
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -331,6 +333,8 @@ export default function LoungePostDetailScreen() {
 
   // コメント/返信カード。isReply=返信スタイル（インデント＋左アクセント）。メンションは @匿名N。
   const renderCommentCard = (c: LoungeComment, isReply: boolean) => {
+    // 非表示にしたコメント（通報済み含む）はフィードから完全に消す
+    if (isHidden(c.id)) return null;
     if (c.deleted) {
       return (
         <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard]}>
@@ -514,6 +518,12 @@ export default function LoungePostDetailScreen() {
           targetPath={modTarget.targetPath}
           targetAuthorUid={modTarget.targetAuthorUid}
           onDelete={handleDelete}
+          onHidden={() => {
+            if (modTarget.targetType === "post") {
+              if (router.canGoBack()) router.back();
+              else router.replace(`/lounge/${loungeId}` as any);
+            }
+          }}
         />
       )}
 
@@ -521,7 +531,6 @@ export default function LoungePostDetailScreen() {
         visible={bannedWords.length > 0}
         words={bannedWords}
         onEdit={() => setBannedWords([])}
-        onProceed={submitComment}
       />
     </View>
   );

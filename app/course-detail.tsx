@@ -8,6 +8,7 @@ import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import { useBlock } from "../src/contexts/BlockContext";
+import { useHidden } from "../src/contexts/HiddenContext";
 import {
   fetchCourse, fetchCourseReviews, aggregateReviews, deleteCourseReview,
   type CourseLoc, type CourseReviewWithUid, type ReviewAggregate,
@@ -34,6 +35,7 @@ export default function CourseDetailScreen() {
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const params = useLocalSearchParams<{
@@ -82,8 +84,8 @@ export default function CourseDetailScreen() {
   }, [user, schoolDomain, deptId, courseId]);
 
   const visibleReviews = useMemo(
-    () => reviews.filter((r) => !isBlocked(r.uid)),
-    [reviews, isBlocked]
+    () => reviews.filter((r) => !isBlocked(r.uid) && !isHidden(r.uid)),
+    [reviews, isBlocked, isHidden]
   );
   const hasMine = !!agg?.mine;
 

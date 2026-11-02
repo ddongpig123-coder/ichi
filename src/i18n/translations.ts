@@ -45,7 +45,7 @@ const ja = {
   "onboarding.subtitle": "日本の大学生活を、もっとつながりやすく",
   "onboarding.termsTitle": "利用規約への同意",
   "onboarding.termsSummary":
-    "大学の森を利用するには、利用規約とプライバシーポリシーへの同意が必要です。\n\n・掲示板はニックネーム・匿名で利用できますが、運営者は法令に基づき投稿者を特定できる情報を保持します\n・誹謗中傷・個人情報の無断公開などの禁止行為には、投稿削除・利用停止などの措置を行います\n・詳細は全文をご確認ください",
+    "大学の森を利用するには、利用規約とプライバシーポリシーへの同意が必要です。\n\n・掲示板はニックネーム・匿名で利用できますが、運営者は法令に基づき投稿者を特定できる情報を保持します\n・誹謗中傷・差別・わいせつ・個人情報の無断公開などの不適切なコンテンツや迷惑行為は一切容認しません（ゼロトレランス）。該当する投稿は削除し、投稿者は利用停止（追放）します\n・不適切な投稿は通報・非表示・ブロックでき、運営が24時間以内に対応します\n・詳細は全文をご確認ください",
   "onboarding.readTerms": "利用規約の全文を読む",
   "onboarding.readPrivacy": "プライバシーポリシーの全文を読む",
   "onboarding.agree": "同意して始める",
@@ -490,7 +490,8 @@ const ja = {
   "report.reasonOther": "その他",
   "report.detailPlaceholder": "詳細（任意）",
   "report.submitted": "通報を受け付けました",
-  "report.submittedMessage": "ご協力ありがとうございます。運営が確認します。",
+  "report.submittedMessage":
+    "ご協力ありがとうございます。通報した内容はあなたの画面から非表示になりました。運営が24時間以内に確認し、違反があれば投稿の削除・投稿者の利用停止を行います。",
   "report.failed": "通報に失敗しました",
   "report.blockTitle": "このユーザーをブロック",
   "report.blockDesc":
@@ -553,7 +554,10 @@ const ja = {
   "profile.languageRow": "言語",
   "profile.contact": "お問い合わせ",
   "contact.title": "お問い合わせ",
-  "contact.desc": "ご意見・ご要望・不具合の報告などをお送りください。運営が内容を確認します。",
+  "contact.desc":
+    "ご意見・ご要望・不具合の報告、不適切な投稿やユーザーの報告などをお送りください。運営（Lee Junhee）が内容を確認し、通報は24時間以内に対応します。",
+  "contact.emailLabel": "運営の連絡先",
+  "contact.emailHint": "メールでのお問い合わせ・削除依頼・開示請求はこちら（タップでメールアプリが開きます）",
   "contact.messageLabel": "内容",
   "contact.messagePlaceholder": "お問い合わせ内容を入力...",
   "contact.contactLabel": "返信先（任意）",
@@ -646,9 +650,11 @@ const ja = {
   "moderation.deletedComment": "削除されたコメントです",
   "moderation.bannedTitle": "不適切な表現が含まれています",
   "moderation.bannedDesc":
-    "次の表現が含まれています。誹謗中傷は利用規約で禁止されており、通報の対象になります。",
+    "次の表現が含まれているため投稿できません。誹謗中傷・不適切な表現は利用規約で禁止されています。表現を直してから再度お試しください。",
   "moderation.bannedEdit": "修正する",
-  "moderation.bannedPostAnyway": "このまま投稿する",
+  "moderation.menuHide": "非表示にする",
+  "moderation.hidden": "非表示にしました",
+  "moderation.hiddenMessage": "この投稿はあなたの画面に表示されなくなります。",
 
   // 学校未選択（schoolDomain=null）時の掲示板導線
   // ※メッセージは 1.1 で全国スコープになったので学校選択なしでも使える（文面から外した）
@@ -702,7 +708,7 @@ const ko: Record<TranslationKey, string> = {
   "onboarding.subtitle": "일본 대학 생활을, 더 가깝게",
   "onboarding.termsTitle": "이용약관 동의",
   "onboarding.termsSummary":
-    "대학의 숲을 이용하려면 이용약관과 개인정보처리방침에 대한 동의가 필요합니다.\n\n・게시판은 닉네임·익명으로 이용할 수 있지만, 운영자는 법령에 따라 투고자를 특정할 수 있는 정보를 보유합니다\n・비방·개인정보 무단 공개 등 금지행위에는 투고 삭제·이용 정지 등의 조치가 취해집니다\n・자세한 내용은 전문을 확인해 주세요",
+    "대학의 숲을 이용하려면 이용약관과 개인정보처리방침에 대한 동의가 필요합니다.\n\n・게시판은 닉네임·익명으로 이용할 수 있지만, 운영자는 법령에 따라 투고자를 특정할 수 있는 정보를 보유합니다\n・비방·차별·음란물·개인정보 무단 공개 등 부적절한 콘텐츠와 악의적 행위는 일절 용인하지 않습니다(무관용). 해당 글은 삭제하고 작성자는 이용 정지(추방)합니다\n・부적절한 글은 신고·숨기기·차단할 수 있고, 운영자가 24시간 이내에 대응합니다\n・자세한 내용은 전문을 확인해 주세요",
   "onboarding.readTerms": "이용약관 전문 보기",
   "onboarding.readPrivacy": "개인정보처리방침 전문 보기",
   "onboarding.agree": "동의하고 시작하기",
@@ -1137,7 +1143,8 @@ const ko: Record<TranslationKey, string> = {
   "report.reasonOther": "기타",
   "report.detailPlaceholder": "상세 내용 (선택)",
   "report.submitted": "신고가 접수되었습니다",
-  "report.submittedMessage": "협조해 주셔서 감사합니다. 운영진이 확인합니다.",
+  "report.submittedMessage":
+    "협조해 주셔서 감사합니다. 신고한 내용은 내 화면에서 숨겨졌습니다. 운영진이 24시간 이내에 확인하고, 위반이 있으면 글 삭제·작성자 이용 정지 조치를 합니다.",
   "report.failed": "신고에 실패했습니다",
   "report.blockTitle": "이 사용자를 차단",
   "report.blockDesc":
@@ -1196,7 +1203,10 @@ const ko: Record<TranslationKey, string> = {
   "profile.languageRow": "언어",
   "profile.contact": "문의하기",
   "contact.title": "문의하기",
-  "contact.desc": "의견·요청·버그 제보 등을 보내주세요. 운영자가 내용을 확인합니다.",
+  "contact.desc":
+    "의견·요청·버그 제보, 부적절한 글이나 사용자 신고 등을 보내주세요. 운영자(Lee Junhee)가 내용을 확인하며, 신고는 24시간 이내에 대응합니다.",
+  "contact.emailLabel": "운영자 연락처",
+  "contact.emailHint": "메일 문의·삭제 요청·정보 개시 청구는 이쪽으로 (탭하면 메일 앱이 열립니다)",
   "contact.messageLabel": "내용",
   "contact.messagePlaceholder": "문의 내용을 입력...",
   "contact.contactLabel": "회신 연락처 (선택)",
@@ -1289,9 +1299,11 @@ const ko: Record<TranslationKey, string> = {
   "moderation.deletedComment": "삭제된 댓글입니다",
   "moderation.bannedTitle": "부적절한 표현이 포함되어 있습니다",
   "moderation.bannedDesc":
-    "다음 표현이 포함되어 있습니다. 비방·욕설은 이용약관에서 금지되며 신고 대상이 됩니다.",
+    "다음 표현이 포함되어 있어 등록할 수 없습니다. 비방·욕설 등 부적절한 표현은 이용약관에서 금지됩니다. 표현을 고친 뒤 다시 시도해 주세요.",
   "moderation.bannedEdit": "수정하기",
-  "moderation.bannedPostAnyway": "이대로 등록하기",
+  "moderation.menuHide": "숨기기",
+  "moderation.hidden": "숨겼습니다",
+  "moderation.hiddenMessage": "이 글은 내 화면에 더 이상 표시되지 않습니다.",
 
   // 학교 미선택(schoolDomain=null) 시 게시판 유도
   // ※쪽지는 1.1에서 전국 스코프가 되어 학교 선택 없이도 사용 가능(문구에서 제외)

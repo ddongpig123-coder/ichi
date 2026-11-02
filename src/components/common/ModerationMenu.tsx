@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../contexts/AuthContext";
 import { useBlock } from "../../contexts/BlockContext";
+import { useHidden, hiddenIdFromPath } from "../../contexts/HiddenContext";
 import { createReport } from "../../services/reportService";
 import { REPORT_REASONS, type ReportReason, type ReportTargetType } from "../../types/moderation";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -30,7 +31,9 @@ const REASON_KEYS: Record<ReportReason, TranslationKey> = {
 };
 
 // 投稿・コメント・メッセージ共通の「⋯」メニュー。
-// menu → 通報(理由選択) / ブロック(確認) / 削除(確認) の2段構成。
+// menu → 通報(理由選択) / 非表示 / ブロック(確認) / 削除(確認) の2段構成。
+// App Store 審査指針 1.2（UGC）: 通報・ブロック・「フィードから即時に消す」手段を
+// 1つのメニューに集約している。通報した投稿は運営の確認を待たず即座に非表示になる。
 // Alert の複数ボタンは Web で不安定なため、確認はモーダル内で完結させる。
 interface Props {
   visible: boolean;
@@ -44,6 +47,8 @@ interface Props {
   // 実際の削除処理は呼び出し側が渡す（このメニューはサービス層を知らない）。
   // 渡された かつ 自分の投稿 のときだけ「削除」が出る。
   onDelete?: () => Promise<void>;
+  // 非表示（通報による自動非表示を含む）になったとき。詳細画面は一覧へ戻るのに使う。
+  onHidden?: () => void;
 }
 
 type Mode = "menu" | "report" | "confirmBlock" | "confirmDelete";
@@ -57,9 +62,11 @@ export default function ModerationMenu({
   canBlock = true,
   onBlocked,
   onDelete,
+  onHidden,
 }: Props) {
   const { user } = useAuth();
   const { block } = useBlock();
+  const { hide } = useHidden();
   const { theme } = useTheme();
   const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -73,6 +80,8 @@ export default function ModerationMenu({
   const showReport = !isSelf; // 自分自身の通報は無意味
   const showBlock = canBlock && !isSelf;
   const showDelete = isSelf && !!onDelete;
+  // 1:1 メッセージは「非表示」の単位にならない（ブロックで相手ごと消す）
+  const canHide = !isSelf && targetType !== "message";
 
   // 削除確認の文言は対象種別ごと（投稿/コメント/レビュー）
   const deleteTitleKey: TranslationKey =
@@ -105,8 +114,13 @@ export default function ModerationMenu({
         reason,
         detail,
       });
+      // 通報した内容は本人のフィードから即時に消す（審査指針 1.2 の要件）
+      if (canHide) {
+        await hide(hiddenIdFromPath(targetPath));
+      }
       handleClose();
       notify(t("report.submitted"), t("report.submittedMessage"));
+      if (canHide) onHidden?.();
     } catch (e: any) {
       setSubmitting(false);
       notify(t("report.failed"), friendlyErrorBody(e, t));
@@ -123,6 +137,13 @@ export default function ModerationMenu({
       setSubmitting(false);
       notify(t("moderation.deleteFailed"), friendlyErrorBody(e, t));
     }
+  }
+
+  async function handleHide() {
+    await hide(hiddenIdFromPath(targetPath));
+    handleClose();
+    notify(t("moderation.hidden"), t("moderation.hiddenMessage"));
+    onHidden?.();
   }
 
   async function handleConfirmBlock() {
@@ -151,6 +172,11 @@ export default function ModerationMenu({
               {showReport && (
                 <TouchableOpacity style={styles.menuItem} onPress={() => setMode("report")}>
                   <Text style={styles.menuText}>{t("report.menuReport")}</Text>
+                </TouchableOpacity>
+              )}
+              {canHide && (
+                <TouchableOpacity style={styles.menuItem} onPress={handleHide}>
+                  <Text style={styles.menuText}>{t("moderation.menuHide")}</Text>
                 </TouchableOpacity>
               )}
               {showBlock && (

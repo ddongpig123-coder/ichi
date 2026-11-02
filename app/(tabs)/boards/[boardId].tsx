@@ -16,6 +16,7 @@ import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchPosts, fetchBoardSearchCandidates } from "../../../src/services/boardService";
@@ -29,6 +30,7 @@ export default function PostListScreen() {
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const navigation = useNavigation();
@@ -147,11 +149,15 @@ export default function PostListScreen() {
   }
 
   // 表示対象（検索中は検索結果、質問板で絞り込み中はタグ一致のみ）。
+  // 非表示にした投稿（通報済み含む）は一覧から即時に除く（審査指針 1.2）。
   const visiblePosts = useMemo(() => {
-    if (searchMode) return results;
-    if (isQa && tagFilter) return posts.filter((p) => p.tag === tagFilter);
-    return posts;
-  }, [searchMode, results, isQa, tagFilter, posts]);
+    const base = searchMode
+      ? results
+      : isQa && tagFilter
+        ? posts.filter((p) => p.tag === tagFilter)
+        : posts;
+    return base.filter((p) => !isHidden(p.id));
+  }, [searchMode, results, isQa, tagFilter, posts, isHidden]);
 
   // 絞り込み中に表示が足りなければ次ページを読む（最後まで読んだら止まる）。
   useEffect(() => {

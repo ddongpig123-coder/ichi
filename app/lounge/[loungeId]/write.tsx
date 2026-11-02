@@ -112,7 +112,6 @@ export default function LoungeWriteScreen() {
         visible={bannedWords.length > 0}
         words={bannedWords}
         onEdit={() => setBannedWords([])}
-        onProceed={submitPost}
       />
     </KeyboardAvoidingView>
   );

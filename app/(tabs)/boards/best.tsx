@@ -11,6 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
@@ -22,6 +23,7 @@ type BestPost = Post & { boardLabel: string };
 
 export default function BestPostsScreen() {
   const { schoolDomain } = useAuth();
+  const { isHidden } = useHidden();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -53,7 +55,7 @@ export default function BestPostsScreen() {
   return (
     <FlatList
       style={styles.container}
-      data={posts}
+      data={posts.filter((p) => !isHidden(p.id))}
       keyExtractor={(item) => item.id}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       ItemSeparatorComponent={() => <View style={styles.sep} />}
