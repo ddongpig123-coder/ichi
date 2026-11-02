@@ -135,7 +135,6 @@ export default function WriteScreen() {
         visible={bannedWords.length > 0}
         words={bannedWords}
         onEdit={() => setBannedWords([])}
-        onProceed={submitPost}
       />
     </KeyboardAvoidingView>
   );

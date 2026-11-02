@@ -2,6 +2,7 @@ import { Stack, ThemeProvider as NavThemeProvider, DefaultTheme, DarkTheme } fro
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { BlockProvider } from "../src/contexts/BlockContext";
+import { HiddenProvider } from "../src/contexts/HiddenContext";
 import { FriendsProvider } from "../src/contexts/FriendsContext";
 import { NotificationsProvider } from "../src/contexts/NotificationsContext";
 import { I18nProvider } from "../src/contexts/I18nContext";
@@ -38,11 +39,13 @@ export default function RootLayout() {
         <ThemeProvider>
           <AuthProvider>
             <BlockProvider>
-              <FriendsProvider>
-                <NotificationsProvider>
-                  <ThemedStack />
-                </NotificationsProvider>
-              </FriendsProvider>
+              <HiddenProvider>
+                <FriendsProvider>
+                  <NotificationsProvider>
+                    <ThemedStack />
+                  </NotificationsProvider>
+                </FriendsProvider>
+              </HiddenProvider>
             </BlockProvider>
           </AuthProvider>
         </ThemeProvider>

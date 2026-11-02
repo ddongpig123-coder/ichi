@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -18,6 +19,10 @@ import type { Theme } from "../src/theme/themes";
 import ScreenHeader from "../src/components/common/ScreenHeader";
 import { notify } from "../src/utils/dialog";
 import { friendlyErrorBody } from "../src/utils/writeError";
+
+// 運営者の連絡先（利用規約・プライバシーポリシーと同一）。App Store 指針 1.2 により
+// 「アプリ内で連絡先を提示し、不適切な活動を報告できること」が必須。
+export const OPERATOR_CONTACT_EMAIL = "ddongpig123@gmail.com";
 
 // お問い合わせフォーム。内容（必須）+ 返信先（任意）を inquiries に保存。
 export default function ContactScreen() {
@@ -61,6 +66,15 @@ export default function ContactScreen() {
 
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 20 + insets.bottom }]} keyboardShouldPersistTaps="handled">
         <Text style={styles.desc}>{t("contact.desc")}</Text>
+
+        <Text style={styles.label}>{t("contact.emailLabel")}</Text>
+        <TouchableOpacity
+          style={styles.emailRow}
+          onPress={() => Linking.openURL(`mailto:${OPERATOR_CONTACT_EMAIL}`).catch(() => {})}
+        >
+          <Text style={styles.emailText}>{OPERATOR_CONTACT_EMAIL}</Text>
+        </TouchableOpacity>
+        <Text style={styles.hint}>{t("contact.emailHint")}</Text>
 
         <Text style={styles.label}>{t("contact.messageLabel")}</Text>
         <TextInput
@@ -108,6 +122,16 @@ function makeStyles(theme: Theme) {
     content: { padding: 20, gap: 8 },
     desc: { fontSize: 13, color: theme.textSecondary, lineHeight: 20, marginBottom: 8 },
     label: { fontSize: 12, color: theme.textSecondary, marginTop: 8 },
+    emailRow: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      backgroundColor: theme.card,
+    },
+    emailText: { fontSize: 15, fontWeight: "700", color: theme.primary },
+    hint: { fontSize: 12, color: theme.textSecondary, lineHeight: 18 },
     input: {
       borderWidth: 1,
       borderColor: theme.border,

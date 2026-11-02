@@ -36,6 +36,19 @@
 - [ ] 다음 안드로이드 빌드: `android.blockedPermissions`에 `com.google.android.gms.permission.AD_ID` / R8 코드 최적화 켜기(기한 2027-02) /
       대형 화면 방향 제한·Android 15 edge-to-edge API 경고는 Expo 업데이트 때 재확인
 
+### 🔴 iOS 리젹 대응 (2026-10-31 Guideline 1.2 익명 UGC) — 준희가 할 것, 순서대로
+코드 측 수정은 완료(브랜치 `claude/quirky-galileo-mztupj`, 상세 [MODERATION §7](MODERATION.md)).
+1. [ ] **PR 머지** → `master` 최신화
+2. [ ] **ASC → 앱 정보 → 연령 등급 → 18+로 상향** (설문 하단 "더 높은 등급 선택"). 설문 회답은 그대로 둔다
+3. [ ] **gh-pages 약관 페이지 재배포** — `docs/legal/terms.html`을 gh-pages 브랜치 `terms.html`로 복사·push
+       (ASC의 EULA URL과 앱 내 약관 문구를 일치시키기 위해)
+4. [ ] **빌드 5**: `eas build --platform ios --profile production` → 완료되면 ASC에 빌드 5 선택
+5. [ ] **App Review Notes(심사 노트) 교체** — [APP-REVIEW-REPLY.md](APP-REVIEW-REPLY.md) §2 내용으로. 데모 계정은 그대로
+6. [ ] **App Review 페이지에서 답장** — [APP-REVIEW-REPLY.md](APP-REVIEW-REPLY.md) §1 영어 문안 붙이기 → **Submit for Review**
+7. [ ] 재제출 후 **반드시 24시간 내 신고 처리 체계 가동** (Firebase 콘솔 `reports` 매일 확인). 약관에 약속한 내용
+- 안드로이드: 같은 수정이 `alpha` 트랙에도 가야 한다. 비공개 테스트 중에도 새 AAB 업로드·OTA 둘 다 가능하고
+  **14일·12명 카운트는 리셋되지 않는다**(테스터 수 기준이지 빌드 기준이 아님). 급하지 않으니 iOS 재제출 먼저
+
 ### ⏳ 심사 대기 중 할 것
 - [ ] 아이폰에 App Store Connect 앱 설치 + 알림 켜기 / 네이버 메일 확인 (Apple 메일은 네이버로 옴)
 - [ ] 리젝 시: 사유 화면을 Claude에 → 메타데이터 수정이면 ASC에서 고쳐 재제출, 코드면 빌드 5

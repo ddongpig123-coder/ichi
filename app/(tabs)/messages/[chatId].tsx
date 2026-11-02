@@ -19,6 +19,8 @@ import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import { sendMessage, subscribeToMessages } from "../../../src/services/chatService";
+import { findBannedWords } from "../../../src/utils/contentFilter";
+import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
 import type { ChatMessage } from "../../../src/types/chat";
 
@@ -65,9 +67,14 @@ export default function ChatRoomScreen() {
     return unsub;
   }, [chatId]);
 
+  // 禁止語を含むメッセージは送れない（2026-11-02、App Store 指針 1.2 対応で掲示板と同じ扱いに統一）
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
+
   async function handleSend() {
     const trimmed = text.trim();
     if (!trimmed || !user) return;
+    const hits = findBannedWords(trimmed);
+    if (hits.length) { setBannedWords(hits); return; }
     setSending(true);
     setText("");
     await sendMessage(chatId, user.uid, trimmed);
@@ -158,6 +165,11 @@ export default function ChatRoomScreen() {
           targetAuthorUid={modTarget.authorUid}
         />
       )}
+      <BannedWordWarning
+        visible={bannedWords.length > 0}
+        words={bannedWords}
+        onEdit={() => setBannedWords([])}
+      />
     </KeyboardAvoidingView>
   );
 }

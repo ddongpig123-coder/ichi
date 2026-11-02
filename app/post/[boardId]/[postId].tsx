@@ -39,6 +39,7 @@ import { COMMENT_MAX } from "../../../src/data/limits";
 import LoadError from "../../../src/components/common/LoadError";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
@@ -54,6 +55,7 @@ export default function PostDetailScreen() {
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -388,6 +390,8 @@ export default function PostDetailScreen() {
 
   // コメント/返信カード。isReply=返信スタイル（インデント＋左アクセント）。メンションは @匿名N。
   const renderCommentCard = (c: Comment, isReply: boolean) => {
+    // 非表示にしたコメント（通報済み含む）はフィードから完全に消す
+    if (isHidden(c.id)) return null;
     if (c.deleted) {
       return (
         <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard]}>
@@ -624,6 +628,13 @@ export default function PostDetailScreen() {
           targetPath={modTarget.targetPath}
           targetAuthorUid={modTarget.targetAuthorUid}
           onDelete={handleDelete}
+          onHidden={() => {
+            // 投稿本体を非表示にしたら一覧へ戻る（戻った一覧からも即時に消えている）
+            if (modTarget.targetType === "post") {
+              if (router.canGoBack()) router.back();
+              else router.replace(`/(tabs)/boards/${boardId}` as any);
+            }
+          }}
         />
       )}
 
@@ -631,7 +642,6 @@ export default function PostDetailScreen() {
         visible={bannedWords.length > 0}
         words={bannedWords}
         onEdit={() => setBannedWords([])}
-        onProceed={submitComment}
       />
     </View>
   );
