@@ -348,6 +348,10 @@ export default function GraduationScreen() {
   const calc = commerceCalc?.calc ?? null;
   const projected = commerceCalc?.projected ?? null;
 
+  // 超過分の受け皿になる区分の名前。i18n の "grad.rec.overflow" は PR #23 以降「超過分 →」までしか
+  // 持たず、行き先の名前は呼ぶ側が付ける（ZoneDiagnosis と同じ作り）。区分名は便覧の正式名称なので日本語のまま。
+  const freeZoneNameJa = master.zones.find((z) => /freezone|jiyu/i.test(z.id))?.nameJa ?? "";
+
   // 区分ごとの判定（不足分 diff・充足 met）。acq = 区分に算入された単位（超過分はフリーゾーンへ）。
   const zoneRows = master.zones.map((z) => {
     const zc = calc?.zones[z.id];
@@ -777,7 +781,12 @@ export default function GraduationScreen() {
                 <Text style={styles.zoneSub}>{t("grad.rec.inProgress")} +{r.planned}</Text>
               ) : null}
               {r.overflow > 0 ? (
-                <Text style={styles.zoneSub}>{t("grad.rec.overflow")} {r.overflow} {t("grad.unit")}</Text>
+                <Text style={styles.zoneSub}>
+                  {freeZoneNameJa
+                    ? `${t("grad.rec.overflow")} ${freeZoneNameJa}`
+                    : t("grad.rec.overflowNoFree")}{" "}
+                  {r.overflow} {t("grad.unit")}
+                </Text>
               ) : null}
               {z.id === "kikan" ? (
                 <Text style={styles.zoneSub}>
