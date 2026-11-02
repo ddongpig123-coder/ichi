@@ -320,7 +320,11 @@ export default function LoungePostDetailScreen() {
       repliesByParent.set(c.parentId, arr);
     }
   }
-  const visibleCommentCount = comments.filter((c) => !c.deleted).length;
+  // 「コメント N」は実際に見える数。非表示（通報済み）・ブロック中の相手の分は数えない
+  // （以前は deleted だけ除いていて、N=3 なのに 2 件しか並ばないことがあった）
+  const visibleCommentCount = comments.filter(
+    (c) => !c.deleted && !isHidden(c.id) && !isBlocked(c.authorUid)
+  ).length;
 
   // 返信開始: スレッド root にぶら下げ、返信先の人をメンション。
   // フォーカスはタップのジェスチャ内で同期呼び出し（= 入力欄を直接タップしたのと同じ。setTimeout で
@@ -414,12 +418,22 @@ export default function LoungePostDetailScreen() {
           <Text style={styles.boardTag}>{lounge?.label}</Text>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
-            <TouchableOpacity
-              disabled={!user || user.uid === post.authorUid}
-              onPress={() => handleSendMessage(post.authorUid)}
-            >
+            {/* 作成者=タップでメッセージ。学校掲示板と同じチップ（灰色文字だとボタンに見えない）。
+                QA 9 では S3（チャット全国化）まで保留していたが、S3 完了で適用 */}
+            {user && user.uid !== post.authorUid ? (
+              <TouchableOpacity
+                style={styles.authorChip}
+                onPress={() => handleSendMessage(post.authorUid)}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                accessibilityRole="button"
+                accessibilityLabel={t("post.sendMessage")}
+              >
+                <Ionicons name="chatbubble-ellipses-outline" size={13} color={theme.primary} />
+                <Text style={styles.authorChipText}>{t("boards.anonymous")}</Text>
+              </TouchableOpacity>
+            ) : (
               <Text style={styles.meta}>{t("boards.anonymous")}</Text>
-            </TouchableOpacity>
+            )}
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(language, post.createdAt)}</Text>
             <View style={{ flex: 1 }} />
@@ -545,6 +559,16 @@ function makeStyles(theme: Theme) {
     postTitle: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 8 },
     metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
     meta: { fontSize: 12, color: theme.textSecondary },
+    authorChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 999,
+      backgroundColor: theme.primary + "1A",
+    },
+    authorChipText: { fontSize: 12, fontWeight: "600", color: theme.primary },
     moreBtn: { fontSize: 20, color: theme.textSecondary, fontWeight: "700", paddingHorizontal: 4 },
     blockedText: { fontSize: 13, color: theme.textSecondary, fontStyle: "italic" },
     divider: { height: 1, backgroundColor: theme.border, marginBottom: 16 },

@@ -407,6 +407,9 @@ const ja = {
   "time.minutesAgo": "分前",
   "time.hoursAgo": "時間前",
   "time.daysAgo": "日前",
+  "time.yearSuffix": "年",
+  "time.monthSuffix": "月",
+  "time.daySuffix": "日",
 
   // 掲示板
   "boards.searchTitle": "検索",
@@ -515,6 +518,8 @@ const ja = {
   "messages.emptyHint": "投稿から著者にDMを送れます",
   "messages.anonUser": "匿名ユーザー",
   "messages.anonChar": "匿",
+  "messages.today": "今日",
+  "messages.yesterday": "昨日",
   "messages.started": "メッセージを開始しました",
   "messages.blockedMessage": "ブロックしたユーザーのメッセージです",
   "messages.emptyRoom": "メッセージを送ってみましょう",
@@ -1066,6 +1071,9 @@ const ko: Record<TranslationKey, string> = {
   "time.minutesAgo": "분 전",
   "time.hoursAgo": "시간 전",
   "time.daysAgo": "일 전",
+  "time.yearSuffix": "년",
+  "time.monthSuffix": "월",
+  "time.daySuffix": "일",
 
   "boards.searchTitle": "검색",
   "boards.bestScreenTitle": "베스트 글",
@@ -1169,6 +1177,8 @@ const ko: Record<TranslationKey, string> = {
   "messages.emptyHint": "글에서 작성자에게 쪽지를 보낼 수 있어요",
   "messages.anonUser": "익명 사용자",
   "messages.anonChar": "익",
+  "messages.today": "오늘",
+  "messages.yesterday": "어제",
   "messages.started": "대화를 시작했습니다",
   "messages.blockedMessage": "차단한 사용자의 쪽지입니다",
   "messages.emptyRoom": "쪽지를 보내 보세요",

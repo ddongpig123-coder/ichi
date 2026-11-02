@@ -41,6 +41,7 @@ import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/
 import type { Theme } from "../src/theme/themes";
 import ReviewModal from "../src/components/course/ReviewModal";
 import ScreenHeader from "../src/components/common/ScreenHeader";
+import SchoolPrompt from "../src/components/common/SchoolPrompt";
 
 // ============================================================
 // 講義検索 → 時間割にワンタップ追加（Phase 1c / 10月3週）
@@ -78,15 +79,14 @@ function courseToSession(course: Course, palette: string[]): ClassSession {
 export default function CourseSearchScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, schoolDomain: mySchool, schoolReady } = useAuth();
   const { theme } = useTheme();
 
-  // 講義データは学校別スコープ(schools/{schoolDomain}/...)で適載されている。
-  // AuthContext.schoolDomain は暫定で "global" 固定のため、ここではユーザーの
-  // 実際の所属校(users.schoolDomain、オンボーディングで保存)を使う。
-  // 未設定(「その他」選択)なら現状の対応校 meiji.ac.jp にフォールバック。
-  // TODO(app全体): schoolDomain の "global" 固定を解消し、掲示板含め実校スコープへ統一。
-  const [schoolDomain, setSchoolDomain] = useState("meiji.ac.jp");
+  // 講義データは学校別スコープ(schools/{schoolDomain}/...)。AuthContext の実校ドメインを使う。
+  // 以前は meiji.ac.jp にフォールバックしていて、学校未選択（その他）の人にも明治の学部が見えていた。
+  // 未選択なら掲示板と同じく「学校を選択」導線を出す（下の早期 return）。
+  const noSchool = schoolReady && !mySchool;
+  const schoolDomain = mySchool ?? "";
   // ユーザーの所属学部（プロフィールの department）。学部チップの既定選択＆先頭並びに使う。
   // ※ department はプロフィールの自由入力なので、DEPARTMENTS とは id か名称(ja/ko)で照合する。
   const [myDeptRaw, setMyDeptRaw] = useState<string | null>(null);
@@ -94,7 +94,6 @@ export default function CourseSearchScreen() {
     if (!user) return;
     getUserProfile(user.uid)
       .then((p) => {
-        if (p?.schoolDomain) setSchoolDomain(p.schoolDomain);
         if (p?.department) setMyDeptRaw(p.department);
       })
       .catch(() => {});
@@ -281,6 +280,16 @@ export default function CourseSearchScreen() {
     } finally {
       setAddingId(null);
     }
+  }
+
+  // 学校が未確定（読み込み中）／未選択の間は本体を出さない。hooks は全て上で呼び終えている。
+  if (!schoolReady || noSchool) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title={t("courseSearch.title")} />
+        {noSchool ? <SchoolPrompt /> : <ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} />}
+      </View>
+    );
   }
 
   return (

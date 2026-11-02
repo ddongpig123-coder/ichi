@@ -364,7 +364,11 @@ export default function PostDetailScreen() {
       repliesByParent.set(c.parentId, arr);
     }
   }
-  const visibleCommentCount = comments.filter((c) => !c.deleted).length;
+  // 「コメント N」は実際に見える数。非表示（通報済み）・ブロック中の相手の分は数えない
+  // （以前は deleted だけ除いていて、N=3 なのに 2 件しか並ばないことがあった）
+  const visibleCommentCount = comments.filter(
+    (c) => !c.deleted && !isHidden(c.id) && !isBlocked(c.authorUid)
+  ).length;
 
   // 質問掲示板（知恵袋化）の状態。ベストアンサーは作成者が回答(トップレベルコメント)から選ぶ。
   const isQa = isQaBoard(boardId as string);

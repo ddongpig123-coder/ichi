@@ -1,4 +1,5 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "./AuthContext";
 import { isChatUnread, markChatRead, subscribeToMyChats } from "../services/chatService";
@@ -23,7 +24,8 @@ interface NotificationsValue {
   myPosts: MyPostItem[];
   newCommentKeys: Set<string>;   // コメントが増えた投稿のキー
   newCommentCount: number;
-  refreshMyPosts: () => Promise<void>;
+  // minIntervalMs を渡すと、その間隔内の再取得はスキップ（タブ切替などの頻繁な呼び出し用）
+  refreshMyPosts: (opts?: { minIntervalMs?: number }) => Promise<void>;
   markPostSeen: (kind: "board" | "lounge", boardId: string, postId: string, commentCount: number) => void;
 }
 
@@ -83,8 +85,13 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   );
 
   // ── ② 自分の投稿へのコメント ──
-  const refreshMyPosts = useCallback(async () => {
+  // 直近に取得した時刻。タブ切替・フォアグラウンド復帰のたびに掲示板数ぶんのクエリを出さないよう、
+  // 呼び出し側が minIntervalMs を渡した時はその間隔内なら何もしない（引数なしは常に取得）。
+  const lastRefreshAt = useRef(0);
+  const refreshMyPosts = useCallback(async (opts?: { minIntervalMs?: number }) => {
     if (!user || !schoolReady) return;
+    if (opts?.minIntervalMs && Date.now() - lastRefreshAt.current < opts.minIntervalMs) return;
+    lastRefreshAt.current = Date.now();
     const posts = await fetchMyPosts(schoolDomain, user.uid).catch((e) => {
       console.warn("my posts load failed:", e);
       return null;
@@ -108,6 +115,15 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     refreshMyPosts();
+  }, [refreshMyPosts]);
+
+  // バックグラウンドから戻った時も新着を拾う。
+  // 以前は起動時と「自分の投稿」を開いた時だけで、赤丸が付くのはアプリを立ち上げ直した時だった。
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") refreshMyPosts({ minIntervalMs: 30_000 });
+    });
+    return () => sub.remove();
   }, [refreshMyPosts]);
 
   const markPostSeen = useCallback(
