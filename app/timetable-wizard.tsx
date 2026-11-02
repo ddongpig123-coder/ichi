@@ -38,6 +38,7 @@ import {
   type WizardResult,
 } from "../src/utils/timetableWizard";
 import ScreenHeader from "../src/components/common/ScreenHeader";
+import SchoolPrompt from "../src/components/common/SchoolPrompt";
 
 // ============================================================
 // 時間割メーカー（自動作成 / 시간표 마법사）
@@ -78,7 +79,7 @@ function resultToSessions(result: WizardResult, palette: string[]): ClassSession
 export default function TimetableWizardScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, schoolDomain: mySchool, schoolReady } = useAuth();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
@@ -88,14 +89,15 @@ export default function TimetableWizardScreen() {
   const semester: Semester = params.semester === "秋" ? "秋" : "春";
   const semesterKey = `${year}-${semester}`;
 
-  // 講義データは学校別スコープ。schoolDomain は course-search と同じくプロフィール値を使う。
-  const [schoolDomain, setSchoolDomain] = useState("meiji.ac.jp");
+  // 講義データは学校別スコープ。course-search と同じく AuthContext の実校ドメインを使う
+  // （以前の meiji.ac.jp フォールバックは学校未選択の人に明治の学部を見せていた）。
+  const noSchool = schoolReady && !mySchool;
+  const schoolDomain = mySchool ?? "";
   const [myDeptRaw, setMyDeptRaw] = useState<string | null>(null);
   useEffect(() => {
     if (!user) return;
     getUserProfile(user.uid)
       .then((p) => {
-        if (p?.schoolDomain) setSchoolDomain(p.schoolDomain);
         if (p?.department) setMyDeptRaw(p.department);
       })
       .catch(() => {});
@@ -229,6 +231,16 @@ export default function TimetableWizardScreen() {
     } finally {
       setSaving(false);
     }
+  }
+
+  // 学校が未確定（読み込み中）／未選択の間は本体を出さない。hooks は全て上で呼び終えている。
+  if (!schoolReady || noSchool) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title={t("wizard.title")} />
+        {noSchool ? <SchoolPrompt /> : <ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} />}
+      </View>
+    );
   }
 
   return (
