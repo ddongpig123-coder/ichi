@@ -154,7 +154,7 @@ function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
     myPostsTitleRow: { flexDirection: "row", alignItems: "center" },
-    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E2574C", marginLeft: 6 },
+    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.danger, marginLeft: 6 },
     bestBanner: {
       flexDirection: "row",
       alignItems: "center",

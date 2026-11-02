@@ -166,7 +166,7 @@ export default function LoungePostListScreen() {
                 {searchMode
                   ? keyword.trim()
                     ? `「${keyword}」${t("boards.noResultsSuffix")}`
-                    : t("boards.searchPlaceholder")
+                    : t("boards.searchHint")
                   : t("boards.noPosts")}
               </Text>
             )}

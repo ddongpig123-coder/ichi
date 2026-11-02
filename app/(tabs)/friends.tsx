@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import type { Theme } from "../../src/theme/themes";
 import TimeTable from "../../src/components/timetable/TimeTable";
@@ -36,7 +35,6 @@ const CELL_HEIGHT = 42;
 type FriendSessions = ClassSession[] | "private" | null;
 
 export default function FriendsScreen() {
-  const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { user, schoolDomain } = useAuth();
@@ -164,15 +162,21 @@ export default function FriendsScreen() {
     );
   }
 
-  return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.titleRow}>
-        <Text style={styles.titleText}>{t("friends.title")}</Text>
+  // ヘッダーは他タブと同じナビゲーションヘッダーに統一（以前はここだけ独自の太字タイトル行だった）。
+  // 「+ 追加」は headerRight に置く。
+  const navigation = useNavigation();
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
         <TouchableOpacity style={styles.addButton} onPress={() => setAddModalVisible(true)}>
           <Text style={styles.addButtonText}>{t("friends.add")}</Text>
         </TouchableOpacity>
-      </View>
+      ),
+    });
+  }, [navigation, styles, t]);
 
+  return (
+    <View style={styles.container}>
       <AddFriendModal visible={addModalVisible} onClose={() => { setAddModalVisible(false); loadRequests(); }} />
 
       {/* 受信箱: 保留中の申請があるときだけ表示 */}
@@ -262,22 +266,12 @@ function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
 
-    titleRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 14,
-      paddingVertical: 10,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.border,
-    },
-    titleText: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     addButton: {
       backgroundColor: theme.primary,
       borderRadius: 8,
       paddingHorizontal: 12,
       paddingVertical: 6,
+      marginRight: 12,
     },
     addButtonText: { color: "#fff", fontSize: 13, fontWeight: "700" },
 

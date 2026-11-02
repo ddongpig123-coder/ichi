@@ -262,7 +262,7 @@ export default function PostListScreen() {
                 {searchMode
                   ? keyword.trim()
                     ? `「${keyword}」${t("boards.noResultsSuffix")}`
-                    : t("boards.searchPlaceholder")
+                    : t("boards.searchHint")
                   : t("boards.noPosts")}
               </Text>
             )}
@@ -300,7 +300,7 @@ export default function PostListScreen() {
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}><Ionicons name="chatbubble-outline" size={12} color={theme.textSecondary} /> {item.commentCount}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>{t("boards.views")} {item.viewCount ?? 0}</Text>
+                <Text style={styles.metaText}><Ionicons name="eye-outline" size={12} color={theme.textSecondary} /> {item.viewCount ?? 0}</Text>
               </View>
             </TouchableOpacity>
           )
@@ -344,11 +344,11 @@ function makeStyles(theme: Theme) {
     titleRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 6 },
     title: { flex: 1, fontSize: 15, fontWeight: "600", color: theme.textPrimary },
     qaBadge: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
-    qaBadgeOpen: { backgroundColor: "#F3A43722" },
-    qaBadgeResolved: { backgroundColor: "#1F9D6B22" },
+    qaBadgeOpen: { backgroundColor: theme.warning + "22" },
+    qaBadgeResolved: { backgroundColor: theme.success + "22" },
     qaBadgeText: { fontSize: 10, fontWeight: "800" },
-    qaBadgeTextOpen: { color: "#C77A10" },
-    qaBadgeTextResolved: { color: "#1F9D6B" },
+    qaBadgeTextOpen: { color: theme.warning },
+    qaBadgeTextResolved: { color: theme.success },
     tagChip: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2, backgroundColor: theme.primary + "14" },
     tagChipText: { fontSize: 10, fontWeight: "700", color: theme.primary },
     filterBar: {

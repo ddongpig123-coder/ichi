@@ -176,13 +176,25 @@ export default function HomeScreen() {
         rightSlot={<VisibilitySelector value={visibility} onChange={handleChangeVisibility} />}
       />
 
-      <TimeTable
-        sessions={sessions}
-        onPressEmptyCell={(day, period) => setTarget({ day, period })}
-        onPressSession={(session) => setTarget({ day: session.day, period: session.period, session })}
-        cellHeight={cellHeight}
-        friendOverlaps={friendOverlaps}
-      />
+      <View>
+        <TimeTable
+          sessions={sessions}
+          onPressEmptyCell={(day, period) => setTarget({ day, period })}
+          onPressSession={(session) => setTarget({ day: session.day, period: session.period, session })}
+          cellHeight={cellHeight}
+          friendOverlaps={friendOverlaps}
+        />
+        {/* 初めての人は空の格子だけでは何をすればいいか分からない → 読み込み後に0件なら1行だけ重ねる。
+            タップは下のマスに通す（pointerEvents="none"） */}
+        {semesterKey in sessionsMap && sessions.length === 0 && (
+          <View style={styles.emptyHint} pointerEvents="none">
+            <View style={styles.emptyHintPill}>
+              <Ionicons name="hand-left-outline" size={14} color={theme.textSecondary} />
+              <Text style={styles.emptyHintText}>{t("home.emptyHint")}</Text>
+            </View>
+          </View>
+        )}
+      </View>
 
       <View style={styles.actionRow}>
         <TouchableOpacity
@@ -230,6 +242,27 @@ export default function HomeScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
+    emptyHint: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    emptyHintPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+    },
+    emptyHintText: { fontSize: 13, color: theme.textSecondary },
     actionRow: {
       height: COURSE_SEARCH_ROW_H,
       flexDirection: "row",

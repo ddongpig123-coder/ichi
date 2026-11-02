@@ -26,10 +26,25 @@ function icon(
   Cmp: (p: { color: ColorValue; size?: number }) => ReactElement,
   dot = false
 ): TabIcon {
-  return ({ color }) => (
+  return ({ color }) => <TabIconWithDot Cmp={Cmp} color={color} dot={dot} />;
+}
+
+// 赤丸の色はテーマの danger（以前は固定色）。tabBarIcon は関数として呼ばれるので
+// hooks を直接は使えず、コンポーネントに分けてここで useTheme する。
+function TabIconWithDot({
+  Cmp,
+  color,
+  dot,
+}: {
+  Cmp: (p: { color: ColorValue; size?: number }) => ReactElement;
+  color: ColorValue;
+  dot: boolean;
+}) {
+  const { theme } = useTheme();
+  return (
     <View>
       <Cmp color={color} size={22} />
-      {dot && <View style={NEW_DOT} />}
+      {dot && <View style={[NEW_DOT, { backgroundColor: theme.danger }]} />}
     </View>
   );
 }
@@ -41,7 +56,6 @@ const NEW_DOT = {
   width: 9,
   height: 9,
   borderRadius: 4.5,
-  backgroundColor: "#E2574C",
 };
 
 export default function TabsLayout() {
@@ -91,7 +105,7 @@ export default function TabsLayout() {
           tabBarIcon: icon(BoardIcon, newCommentCount > 0),
         }}
       />
-      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false, tabBarIcon: icon(FriendsIcon) }} />
+      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), tabBarIcon: icon(FriendsIcon) }} />
       <Tabs.Screen
         name="messages"
         options={{

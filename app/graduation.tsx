@@ -37,7 +37,6 @@ import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTim
 import { HeaderBackButton } from "../src/components/common/ScreenHeader";
 import { DEPARTMENTS_BY_SCHOOL } from "../src/data/departments";
 
-const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
 const MEIJI_DOMAIN = MEIJI;
 
@@ -760,7 +759,7 @@ export default function GraduationScreen() {
                 <View
                   style={[
                     styles.zoneBarFill,
-                    { width: `${w}%`, backgroundColor: r.met ? MET_COLOR : theme.accent },
+                    { width: `${w}%`, backgroundColor: r.met ? theme.success : theme.accent },
                   ]}
                 />
               </View>
@@ -953,10 +952,10 @@ function makeStyles(theme: Theme) {
 
     // 全区分達成
     allMet: {
-      backgroundColor: MET_COLOR + "16", borderWidth: 1, borderColor: MET_COLOR + "44",
+      backgroundColor: theme.success + "16", borderWidth: 1, borderColor: theme.success + "44",
       borderRadius: 14, padding: 16, marginTop: 14, alignItems: "center",
     },
-    allMetText: { fontSize: 13.5, fontWeight: "800", color: MET_COLOR, textAlign: "center" },
+    allMetText: { fontSize: 13.5, fontWeight: "800", color: theme.success, textAlign: "center" },
 
     inputHeading: { fontSize: 13, color: theme.textPrimary, fontWeight: "800", marginTop: 22 },
     stepHint: { fontSize: 11, color: theme.textSecondary, marginTop: 4, marginBottom: 6 },
@@ -968,10 +967,10 @@ function makeStyles(theme: Theme) {
     zoneTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
     zoneName: { fontSize: 13.5, fontWeight: "700", color: theme.textPrimary, flex: 1 },
     chip: { borderRadius: 999, paddingHorizontal: 9, paddingVertical: 2 },
-    chipOk: { backgroundColor: MET_COLOR + "22" },
+    chipOk: { backgroundColor: theme.success + "22" },
     chipShort: { backgroundColor: theme.accent + "22" },
     chipText: { fontSize: 10.5, fontWeight: "700" },
-    chipTextOk: { color: MET_COLOR },
+    chipTextOk: { color: theme.success },
     chipTextShort: { color: theme.accent },
     zoneBar: { height: 8, borderRadius: 5, backgroundColor: theme.border, overflow: "hidden" },
     zoneBarFill: { position: "absolute", left: 0, top: 0, bottom: 0 },

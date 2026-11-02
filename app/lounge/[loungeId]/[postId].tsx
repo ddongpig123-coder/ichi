@@ -467,6 +467,8 @@ export default function LoungePostDetailScreen() {
         </View>
 
         <Text style={styles.commentHeader}>{t("post.commentsHeader")} {visibleCommentCount}</Text>
+        {/* 「コメント 0」の下が大きな空白だったので、最初の一言を促す */}
+        {visibleCommentCount === 0 && <Text style={styles.commentEmpty}>{t("post.noCommentsHint")}</Text>}
         {topLevelComments.map((c) => {
           const replies = repliesByParent.get(c.id) ?? [];
           const aliveReplies = replies.filter((r) => !r.deleted);
@@ -590,6 +592,7 @@ function makeStyles(theme: Theme) {
     likeBtnText: { fontSize: 14, color: theme.textSecondary, fontWeight: "600" },
     likeBtnTextActive: { color: theme.accent },
     commentHeader: { fontSize: 14, fontWeight: "700", color: theme.textSecondary, padding: 16, paddingBottom: 8 },
+    commentEmpty: { fontSize: 13, color: theme.textSecondary, paddingHorizontal: 16, paddingBottom: 24 },
     commentCard: { backgroundColor: theme.card, padding: 16, marginBottom: 1 },
     // 返信（대댓글）: インデント＋左アクセント＋薄い背景で通常コメントと区別
     replyCard: {

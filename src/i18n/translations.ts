@@ -329,6 +329,7 @@ const ja = {
   // ホーム・時間割
   "home.friendsSection": "友達",
   "home.overlapPopupTitle": "一緒に受けている友達",
+  "home.emptyHint": "マスをタップするか、講義検索から追加",
   "timetable.addTitle": "講義を追加",
   "timetable.name": "講義名",
   "timetable.teacher": "担当教授",
@@ -449,6 +450,7 @@ const ja = {
   "boards.createSubmit": "掲示板を作成",
   "boards.searchPlaceholder": "キーワードを入力...",
   "boards.noResultsSuffix": "の結果が見つかりません",
+  "boards.searchHint": "タイトル・本文から探せます",
 
   // 投稿詳細・作成
   "post.screenTitle": "投稿",
@@ -461,6 +463,7 @@ const ja = {
   "post.authorTag": "投稿者",
   "post.sendMessage": "メッセージを送る",
   "post.dmFailed": "メッセージを開始できませんでした",
+  "post.noCommentsHint": "最初のコメントを書いてみよう",
   "post.dmLoading": "読み込み中です。少し待ってからもう一度お試しください",
   "qa.open": "回答受付中",
   "qa.resolved": "解決済み",
@@ -620,6 +623,7 @@ const ja = {
   "courseSearch.search": "検索",
   "courseSearch.selectDepartmentFirst": "まず学部を選んでください",
   "courseSearch.noResults": "該当する講義がありません",
+  "courseSearch.searchHint": "学部を選んで、講義名か教員名を入力",
   "courseSearch.tooShort": "2文字以上で検索してください（1文字では探せません）",
   "courseSearch.prefixHint": "講義名の一部でも検索できます",
   "courseSearch.mockNotice": "サンプルデータ表示中（講義データの投入待ち）",
@@ -998,6 +1002,7 @@ const ko: Record<TranslationKey, string> = {
 
   "home.friendsSection": "친구",
   "home.overlapPopupTitle": "같이 듣는 친구",
+  "home.emptyHint": "칸을 누르거나 강의검색에서 추가하세요",
   "timetable.addTitle": "강의 추가",
   "timetable.name": "강의명",
   "timetable.teacher": "담당 교수",
@@ -1113,6 +1118,7 @@ const ko: Record<TranslationKey, string> = {
   "boards.createSubmit": "게시판 만들기",
   "boards.searchPlaceholder": "키워드 입력...",
   "boards.noResultsSuffix": "에 대한 결과가 없습니다",
+  "boards.searchHint": "제목·본문에서 찾을 수 있어요",
 
   "post.screenTitle": "글",
   "post.writeScreenTitle": "새 글 작성",
@@ -1124,6 +1130,7 @@ const ko: Record<TranslationKey, string> = {
   "post.authorTag": "글쓴이",
   "post.sendMessage": "쪽지 보내기",
   "post.dmFailed": "쪽지를 시작하지 못했습니다",
+  "post.noCommentsHint": "첫 댓글을 남겨 보세요",
   "post.dmLoading": "불러오는 중이에요. 잠시 후 다시 시도해주세요",
   "qa.open": "답변 받는 중",
   "qa.resolved": "해결됨",
@@ -1278,6 +1285,7 @@ const ko: Record<TranslationKey, string> = {
   "courseSearch.search": "검색",
   "courseSearch.selectDepartmentFirst": "먼저 학부를 선택하세요",
   "courseSearch.noResults": "해당하는 강의가 없습니다",
+  "courseSearch.searchHint": "학부를 고르고 강의명이나 교수명을 입력하세요",
   "courseSearch.tooShort": "2글자 이상으로 검색해 주세요(1글자로는 찾을 수 없습니다)",
   "courseSearch.prefixHint": "강의명 일부만 입력해도 검색됩니다",
   "courseSearch.mockNotice": "샘플 데이터 표시 중 (강의 데이터 적재 대기)",
