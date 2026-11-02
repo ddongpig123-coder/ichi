@@ -39,7 +39,7 @@ export default function WriteScreen() {
   const [body, setBody] = useState("");
   const [tag, setTag] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  // 禁止語が見つかったら警告を挟む。無視して投稿することもできる（警告であって制限ではない）
+  // 禁止語が見つかったら投稿を止めて警告を出す（2026-11-02 から制限。言い換えてもらう）
   const [bannedWords, setBannedWords] = useState<string[]>([]);
   const canSubmit = title.trim().length > 0 && body.trim().length > 0;
   const leave = useConfirmDiscard(title.trim().length > 0 || body.trim().length > 0);

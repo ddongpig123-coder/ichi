@@ -534,7 +534,7 @@ export default function PostDetailScreen() {
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(language, post.createdAt)}</Text>
             <Text style={styles.meta}>·</Text>
-            <Text style={styles.meta}>{t("boards.views")} {post.viewCount ?? 0}</Text>
+            <Text style={styles.meta}><Ionicons name="eye-outline" size={12} color={theme.textSecondary} /> {post.viewCount ?? 0}</Text>
             <View style={{ flex: 1 }} />
             <TouchableOpacity
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -567,6 +567,8 @@ export default function PostDetailScreen() {
 
         {/* Comments (質問板は「回答」表記) */}
         <Text style={styles.commentHeader}>{isQa ? t("qa.answersHeader") : t("post.commentsHeader")} {visibleCommentCount}</Text>
+        {/* 「コメント 0」の下が大きな空白だったので、最初の一言を促す */}
+        {visibleCommentCount === 0 && <Text style={styles.commentEmpty}>{t("post.noCommentsHint")}</Text>}
         {orderedTopLevel.map((c) => {
           const replies = repliesByParent.get(c.id) ?? [];
           const aliveReplies = replies.filter((r) => !r.deleted);
@@ -659,11 +661,11 @@ function makeStyles(theme: Theme) {
     boardTagRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
     boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600" },
     qaBadge: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2 },
-    qaBadgeOpen: { backgroundColor: "#F3A43722" },
-    qaBadgeResolved: { backgroundColor: "#1F9D6B22" },
+    qaBadgeOpen: { backgroundColor: theme.warning + "22" },
+    qaBadgeResolved: { backgroundColor: theme.success + "22" },
     qaBadgeText: { fontSize: 11, fontWeight: "800" },
-    qaBadgeTextOpen: { color: "#C77A10" },
-    qaBadgeTextResolved: { color: "#1F9D6B" },
+    qaBadgeTextOpen: { color: theme.warning },
+    qaBadgeTextResolved: { color: theme.success },
     tagChip: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2, backgroundColor: theme.primary + "14" },
     tagChipText: { fontSize: 11, fontWeight: "700", color: theme.primary },
     // ベストアンサー: 金色のアクセント
@@ -705,6 +707,7 @@ function makeStyles(theme: Theme) {
     likeBtnText: { fontSize: 14, color: theme.textSecondary, fontWeight: "600" },
     likeBtnTextActive: { color: theme.accent },
     commentHeader: { fontSize: 14, fontWeight: "700", color: theme.textSecondary, padding: 16, paddingBottom: 8 },
+    commentEmpty: { fontSize: 13, color: theme.textSecondary, paddingHorizontal: 16, paddingBottom: 24 },
     commentCard: { backgroundColor: theme.card, padding: 16, marginBottom: 1 },
     // 返信（대댓글）: インデント＋左アクセント＋薄い背景で通常コメントと区別
     replyCard: {

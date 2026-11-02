@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
   useWindowDimensions, Modal, Pressable,
@@ -39,8 +39,6 @@ function SessionCard({
   onPress?: () => void;
   onShowFriendList: (friends: Friend[]) => void;
 }) {
-  const [tooltip, setTooltip] = useState<string | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { allFriends } = useFriends();
@@ -61,16 +59,10 @@ function SessionCard({
   return (
     <TouchableOpacity
       style={[styles.cell, { height: cellHeight }]}
-      activeOpacity={1}
+      activeOpacity={0.7}
       onPress={onPress}
     >
       <View style={[styles.sessionCard, { backgroundColor: `${session.color}22`, borderLeftColor: session.color }]}>
-        {tooltip && (
-          <View style={styles.tooltip} pointerEvents="none">
-            <Text style={styles.tooltipText} numberOfLines={1}>{tooltip}</Text>
-          </View>
-        )}
-
         <View style={firstFriend ? styles.textAreaWithAvatar : undefined}>
           <Text style={styles.sessionName} numberOfLines={2}>{session.name}</Text>
           <Text style={styles.sessionTeacher} numberOfLines={1}>{session.teacher}</Text>
@@ -209,9 +201,10 @@ function makeStyles(theme: Theme) {
       borderBottomWidth: 1,
       borderColor: theme.border,
     },
-    timeStart: { fontSize: 7, color: theme.textSecondary },
+    // 7px は実機でほぼ読めなかった → 9px（7限×48px のマスでも3行が収まる）
+    timeStart: { fontSize: 9, color: theme.textSecondary },
     periodText: { fontSize: 10, color: theme.textPrimary, fontWeight: "600", marginVertical: 1 },
-    timeEnd: { fontSize: 7, color: theme.textSecondary },
+    timeEnd: { fontSize: 9, color: theme.textSecondary },
     cell: {
       borderRightWidth: 1,
       borderBottomWidth: 1,
@@ -248,18 +241,6 @@ function makeStyles(theme: Theme) {
     plusText: { fontSize: 8, color: "#fff", fontWeight: "700", lineHeight: 10 },
 
     textAreaWithAvatar: { paddingRight: 20 },
-    tooltip: {
-      position: "absolute",
-      top: 2,
-      left: 2,
-      right: 2,
-      backgroundColor: "rgba(0,0,0,0.65)",
-      borderRadius: 4,
-      paddingHorizontal: 4,
-      paddingVertical: 2,
-      zIndex: 10,
-    },
-    tooltipText: { fontSize: 9, color: "#fff", fontWeight: "600", textAlign: "center" },
 
     modalOverlay: {
       flex: 1,

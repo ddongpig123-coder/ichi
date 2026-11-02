@@ -39,7 +39,6 @@ import { lectureCodeOf } from "../src/utils/courseCode";
 import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
-import ReviewModal from "../src/components/course/ReviewModal";
 import ScreenHeader from "../src/components/common/ScreenHeader";
 import SchoolPrompt from "../src/components/common/SchoolPrompt";
 
@@ -154,7 +153,6 @@ export default function CourseSearchScreen() {
   const [regDay, setRegDay] = useState<Day>("月");
   const [regPeriod, setRegPeriod] = useState<Period>(1);
   const [registering, setRegistering] = useState(false);
-  const [reviewCourse, setReviewCourse] = useState<Course | null>(null); // レビューモーダル対象
 
   // keyword state を使わず引数で検索できる版（登録直後の即時再検索に使う）
   async function runSearch(kw: string) {
@@ -370,7 +368,12 @@ export default function CourseSearchScreen() {
                   </TouchableOpacity>
                 ) : null}
               </View>
-            ) : null
+            ) : (
+              // 検索前は空白だったので、何をすればいいか1行だけ案内する
+              <View style={styles.center}>
+                <Text style={styles.hint}>{t("courseSearch.searchHint")}</Text>
+              </View>
+            )
           }
           renderItem={({ item }) => {
             const added = addedIds.has(item.id);
@@ -428,9 +431,7 @@ export default function CourseSearchScreen() {
                   )}
                 </View>
                 <View style={styles.rowActions}>
-                  <TouchableOpacity style={styles.reviewBtn} onPress={() => setReviewCourse(item)}>
-                    <Text style={styles.reviewBtnText}>★ {t("review.short")}</Text>
-                  </TouchableOpacity>
+                  {/* 行は「追加」だけ。レビューは講義詳細から書く（ボタン2段は行が重かった） */}
                   <TouchableOpacity
                     style={[styles.addBtn, added && styles.addBtnDone]}
                     disabled={added || addingId !== null}
@@ -502,17 +503,6 @@ export default function CourseSearchScreen() {
           </Pressable>
         </Pressable>
       </Modal>
-
-      {/* 講義レビュー モーダル（Phase 2 3週目） */}
-      <ReviewModal
-        visible={reviewCourse !== null}
-        loc={reviewCourse ? { schoolDomain, deptId: deptId ?? "", courseId: reviewCourse.id } : null}
-        courseName={reviewCourse?.name ?? ""}
-        year={year}
-        semester={semester}
-        uid={user?.uid ?? null}
-        onClose={() => setReviewCourse(null)}
-      />
     </View>
   );
 }
@@ -521,12 +511,6 @@ function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
     semesterBadge: { fontSize: 13, color: theme.textSecondary },
-    mockBanner: {
-      backgroundColor: theme.accent,
-      paddingVertical: 6,
-      paddingHorizontal: 16,
-    },
-    mockBannerText: { color: "#FFFFFF", fontSize: 12, textAlign: "center" },
     sectionLabel: {
       fontSize: 12,
       color: theme.textSecondary,
@@ -616,16 +600,6 @@ function makeStyles(theme: Theme) {
     addBtnDone: { backgroundColor: theme.textSecondary },
     addBtnText: { color: "#FFFFFF", fontSize: 13, fontWeight: "600" },
     rowActions: { gap: 6, alignItems: "stretch" },
-    reviewBtn: {
-      minWidth: 88,
-      height: 30,
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.primary,
-    },
-    reviewBtnText: { color: theme.primary, fontSize: 12.5, fontWeight: "600" },
     center: { alignItems: "center", paddingTop: 40, paddingHorizontal: 24, gap: 8 },
     empty: { color: theme.textSecondary, fontSize: 14 },
     hint: { color: theme.textSecondary, fontSize: 12, textAlign: "center" },
@@ -641,12 +615,12 @@ function makeStyles(theme: Theme) {
       backgroundColor: theme.border, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
     },
     badgeCrowd: {
-      fontSize: 10, fontWeight: "700", color: "#2FA84F",
-      backgroundColor: "#2FA84F1A", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
+      fontSize: 10, fontWeight: "700", color: theme.success,
+      backgroundColor: theme.success + "1A", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
     },
     confirmRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 6 },
     confirmCount: { fontSize: 12, color: theme.textSecondary },
-    confirmedMine: { fontSize: 12, color: "#2FA84F", fontWeight: "600" },
+    confirmedMine: { fontSize: 12, color: theme.success, fontWeight: "600" },
     confirmBtn: {
       paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
       borderWidth: 1, borderColor: theme.primary,

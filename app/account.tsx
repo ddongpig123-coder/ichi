@@ -567,7 +567,7 @@ function makeStyles(theme: Theme) {
 
     title: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 12 },
     description: { fontSize: 13, color: theme.textSecondary, lineHeight: 19, marginBottom: 16 },
-    warningText: { fontSize: 12, color: "#E2574C", lineHeight: 18, marginBottom: 16 },
+    warningText: { fontSize: 12, color: theme.danger, lineHeight: 18, marginBottom: 16 },
 
     label: { fontSize: 12, color: theme.textSecondary, marginTop: 12, marginBottom: 4 },
     value: { fontSize: 15, color: theme.textPrimary, fontWeight: "600" },
@@ -593,7 +593,7 @@ function makeStyles(theme: Theme) {
     buttonDisabled: { opacity: 0.5 },
 
     dangerButton: {
-      backgroundColor: "#E2574C",
+      backgroundColor: theme.danger,
       borderRadius: 8,
       paddingVertical: 12,
       alignItems: "center",
@@ -602,13 +602,13 @@ function makeStyles(theme: Theme) {
     dangerButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
 
     deleteSection: { marginTop: 36, borderTopWidth: 1, borderTopColor: theme.border, paddingTop: 20 },
-    deleteTitle: { fontSize: 14, fontWeight: "700", color: "#C0392B", marginBottom: 6 },
+    deleteTitle: { fontSize: 14, fontWeight: "700", color: theme.danger, marginBottom: 6 },
     deleteWarn: { fontSize: 12, color: theme.textSecondary, lineHeight: 18, marginBottom: 12 },
     deleteButton: {
       borderRadius: 8, paddingVertical: 11, alignItems: "center", marginTop: 12,
-      borderWidth: 1, borderColor: "#C0392B", backgroundColor: theme.card,
+      borderWidth: 1, borderColor: theme.danger, backgroundColor: theme.card,
     },
-    deleteButtonText: { color: "#C0392B", fontSize: 14, fontWeight: "700" },
+    deleteButtonText: { color: theme.danger, fontSize: 14, fontWeight: "700" },
 
     switchText: {
       color: theme.primary,
@@ -625,13 +625,13 @@ function makeStyles(theme: Theme) {
 
     verifiedBadge: {
       alignSelf: "flex-start",
-      backgroundColor: "#E8F5E9",
+      backgroundColor: theme.success + "1A", // 固定の薄緑はダークテーマで浮くので透過に
       borderRadius: 6,
       paddingHorizontal: 10,
       paddingVertical: 5,
       marginTop: 12,
     },
-    verifiedBadgeText: { color: "#2E7D32", fontSize: 13, fontWeight: "700" },
+    verifiedBadgeText: { color: theme.success, fontSize: 13, fontWeight: "700" },
     verifyButtonRow: { flexDirection: "row", gap: 10, marginTop: 12 },
     verifyButton: {
       flex: 1,

@@ -14,6 +14,9 @@ export interface Theme {
   textSecondary: string;
   border: string;
   accent: string;        // 좋아요·알림 강조색
+  success: string;       // 완료·해결됨·확인됨 (녹색)
+  warning: string;       // 미해결·주의 (주황)
+  danger: string;        // 삭제·오류·새 알림 빨간 점 (빨강)
   tabBarBackground: string;
   tabBarActive: string;
   tabBarInactive: string;
@@ -42,6 +45,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     textSecondary: "#888888",
     border: "#E8E8E8",
     accent: "#E8334A",
+    success: "#1F9D6B",
+    warning: "#C77A10",
+    danger: "#E2574C",
     tabBarBackground: "#FFFFFF",
     tabBarActive: "#2F6AD9",
     tabBarInactive: "#8E8E93",
@@ -58,6 +64,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     textSecondary: "#8B857A",
     border: "#E7E2D8",
     accent: "#C45B4D",
+    success: "#1F9D6B",
+    warning: "#C77A10",
+    danger: "#E2574C",
     tabBarBackground: "#FBFAF6",
     tabBarActive: "#26231E",
     tabBarInactive: "#A39C8E",
@@ -74,6 +83,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     textSecondary: "#7FA097",
     border: "#EAF4EF",
     accent: "#FF6B6B",
+    success: "#1F9D6B",
+    warning: "#C77A10",
+    danger: "#E2574C",
     tabBarBackground: "#FFFFFF",
     tabBarActive: "#0FAF95",
     tabBarInactive: "#9DB8AF",
@@ -90,6 +102,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     textSecondary: "#93897B",
     border: "#EAE3D9",
     accent: "#D9432F",
+    success: "#1F9D6B",
+    warning: "#C77A10",
+    danger: "#E2574C",
     tabBarBackground: "#FFFFFF",
     tabBarActive: "#D9432F",
     tabBarInactive: "#ABA294",
@@ -106,6 +121,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     textSecondary: "#8E9094",
     border: "#2C2F34",
     accent: "#E36B5C",
+    success: "#3DBE7A",
+    warning: "#E8A94A",
+    danger: "#F26D5B",
     tabBarBackground: "#1A1C20",
     tabBarActive: "#E3A857",
     tabBarInactive: "#6B6E74",
@@ -122,6 +140,9 @@ export const THEMES: Record<ThemeId, Theme> = {
     textSecondary: "#8B87A0",
     border: "#E9E5F2",
     accent: "#E0567A",
+    success: "#1F9D6B",
+    warning: "#C77A10",
+    danger: "#E2574C",
     tabBarBackground: "#FFFFFF",
     tabBarActive: "#7C6BC9",
     tabBarInactive: "#A8A4BC",

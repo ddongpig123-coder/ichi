@@ -8,7 +8,6 @@ import type { ZoneId } from "../../data/gradAllocationMeijiCommerce";
 import type { GradRecord, RecordStatus } from "../../utils/gradCalc";
 import type { TimetableSubject } from "../../services/gradRecordService";
 
-const MET_COLOR = "#1F9D6B";
 const FAIL_COLOR = "#D9534F";
 const UNIT_CHOICES = [1, 2, 4];
 
@@ -436,7 +435,7 @@ function makeStyles(theme: Theme) {
     backupBtnText: { fontSize: 12, fontWeight: "700", color: theme.textPrimary },
     backupBox: { marginTop: 10, gap: 8 },
     backupHint: { fontSize: 11, color: theme.textSecondary, lineHeight: 16 },
-    backupWarn: { fontSize: 11, color: "#E2574C", lineHeight: 16 },
+    backupWarn: { fontSize: 11, color: theme.danger, lineHeight: 16 },
     backupArea: {
       minHeight: 96, maxHeight: 180, borderWidth: 1, borderColor: theme.border, borderRadius: 8,
       padding: 8, fontSize: 11, color: theme.textPrimary, backgroundColor: theme.background,
@@ -444,13 +443,13 @@ function makeStyles(theme: Theme) {
     },
     backupClose: { fontSize: 12, color: theme.textSecondary, paddingVertical: 7 },
     backupOk: { fontSize: 11.5, color: theme.textPrimary },
-    backupFail: { fontSize: 11.5, color: "#E2574C", lineHeight: 16 },
+    backupFail: { fontSize: 11.5, color: theme.danger, lineHeight: 16 },
     intro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 4, lineHeight: 16 },
     delta: {
-      backgroundColor: MET_COLOR + "16", borderWidth: 1, borderColor: MET_COLOR + "44",
+      backgroundColor: theme.success + "16", borderWidth: 1, borderColor: theme.success + "44",
       borderRadius: 10, padding: 10, marginTop: 10,
     },
-    deltaText: { fontSize: 12.5, fontWeight: "700", color: MET_COLOR, lineHeight: 18 },
+    deltaText: { fontSize: 12.5, fontWeight: "700", color: theme.success, lineHeight: 18 },
     card: {
       backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border, borderRadius: 14,
       padding: 12, marginTop: 10,
@@ -468,7 +467,7 @@ function makeStyles(theme: Theme) {
       borderWidth: 1, borderColor: theme.border, backgroundColor: theme.background,
     },
     actText: { fontSize: 11.5, fontWeight: "700", color: theme.textSecondary },
-    actPass: { backgroundColor: MET_COLOR, borderColor: MET_COLOR },
+    actPass: { backgroundColor: theme.success, borderColor: theme.success },
     actPassText: { color: "#fff" },
     actFail: { backgroundColor: FAIL_COLOR, borderColor: FAIL_COLOR },
     actProg: { backgroundColor: theme.primary, borderColor: theme.primary },
@@ -491,7 +490,7 @@ function makeStyles(theme: Theme) {
       borderWidth: 1, borderColor: theme.border, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10,
       fontSize: 14, color: theme.textPrimary, backgroundColor: theme.background, marginTop: 6,
     },
-    autoOk: { fontSize: 12, fontWeight: "700", color: MET_COLOR, marginTop: 8 },
+    autoOk: { fontSize: 12, fontWeight: "700", color: theme.success, marginTop: 8 },
     formBtns: { flexDirection: "row", justifyContent: "flex-end", gap: 8, marginTop: 14 },
     cancelBtn: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 10, borderWidth: 1, borderColor: theme.border },
     cancelText: { fontSize: 12.5, fontWeight: "700", color: theme.textSecondary },

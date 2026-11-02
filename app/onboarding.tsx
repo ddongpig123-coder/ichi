@@ -160,16 +160,6 @@ export default function OnboardingScreen() {
               <Text style={styles.choiceText}>{t("onboarding.schoolOther")}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.primaryButton,
-                (schoolDomain === undefined || busy) && styles.buttonDisabled,
-              ]}
-              onPress={handleStart}
-              disabled={schoolDomain === undefined || busy}
-            >
-              <Text style={styles.primaryButtonText}>{t("onboarding.start")}</Text>
-            </TouchableOpacity>
           </>
         )}
 
@@ -182,6 +172,23 @@ export default function OnboardingScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* 学校を選んだ後の「始める」が画面外（要スクロール）だったので、下に固定する */}
+      {step === 3 && (
+        <View style={[styles.footer, { paddingBottom: 12 + insets.bottom }]}>
+          <TouchableOpacity
+            style={[
+              styles.primaryButton,
+              styles.footerButton,
+              (schoolDomain === undefined || busy) && styles.buttonDisabled,
+            ]}
+            onPress={handleStart}
+            disabled={schoolDomain === undefined || busy}
+          >
+            <Text style={styles.primaryButtonText}>{t("onboarding.start")}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -227,7 +234,7 @@ function makeStyles(theme: Theme) {
       paddingHorizontal: 16,
       marginBottom: 10,
     },
-    choiceButtonActive: { borderColor: theme.primary, borderWidth: 2 },
+    choiceButtonActive: { borderColor: theme.primary, borderWidth: 2, backgroundColor: theme.primary + "14" },
     choiceText: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
 
     primaryButton: {
@@ -239,6 +246,14 @@ function makeStyles(theme: Theme) {
     },
     primaryButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
     buttonDisabled: { opacity: 0.4 },
+    footer: {
+      paddingHorizontal: 28,
+      paddingTop: 10,
+      backgroundColor: theme.background,
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
+    },
+    footerButton: { marginTop: 0 },
 
     dots: { flexDirection: "row", justifyContent: "center", gap: 8, marginTop: 28 },
     dot: {
