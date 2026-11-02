@@ -92,11 +92,11 @@ Most content can be browsed as a guest; posting requires the (anonymous) account
 automatically on first launch. Demo account below has sample posts and comments.
 ```
 
-## 3. 재제출 체크리스트 (준희)
+## 3. 재제출 체크리스트 (준희) — **2026-11-02 전부 완료, 심사 대기 중**
 
-- [ ] PR 머지 → master
-- [ ] ASC 연령 등급 18+
-- [ ] gh-pages `terms.html` 재배포 (`docs/legal/terms.html` 복사)
-- [ ] `eas build --platform ios --profile production` → 빌드 5
-- [ ] ASC: 빌드 5 선택, Notes 교체(§2), 답장(§1) → Submit for Review
-- [ ] 제출 후 매일 Firebase 콘솔 `reports` 확인 (24시간 약속)
+- [x] PR 머지 → master (2026-11-02)
+- [x] ASC 연령 등급 18+ (2026-11-02)
+- [x] gh-pages `terms.html` 재배포 (2026-11-02, 최종갱신일 2026年11月2日)
+- [x] `eas build --platform ios --profile production` → 빌드 5 (`78321824…`, 커밋 `6ba8c4b`) → `eas submit` (2026-11-02)
+- [x] ASC: 빌드 5 선택, Notes 교체(§2), 답장(§1) → 앱 심사에 다시 제출 (2026-11-02, Submission 8837b86f)
+- [~] 제출 후 매일 Firebase 콘솔 `reports` 확인 (24시간 약속) — 11/02 첫 점검: 테스트 4건 `dismissed`, `pending` 0건
