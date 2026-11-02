@@ -371,7 +371,28 @@ docs/content/
   - 🟢 **(권장) 그때 봇 계정의 `schoolDomain`을 바꿔가며 돌린다** — 규칙 변경 없음
   - `belongsToSchool`에 `|| isOperator()` 한 줄 추가 — 간단하지만 쓰기 게이트가 넓어지고 쓰기마다 읽기 1회가 늘어난다
 - → **필요해질 때까지 규칙은 바꾸지 않는다** (태희 판단, 준희 동의)
-- 규칙을 바꿀 때는 `scripts/rules-test`에서 `npm test` (운영 계정·대기 목록·학교 게시판·쪽지 38개 케이스)
+- 규칙을 바꿀 때는 `scripts/rules-test`에서 `npm test`
+
+### 9-8. 🔴 봇도 검색 색인(postIndex)을 같이 써야 한다 (2026-11-02 태희)
+1.1에서 게시판 검색이 2-gram 색인 방식으로 바뀌었다. 투고를 만들 때 **색인 문서를 같은 배치로** 만든다.
+
+| 무엇 | 경로 |
+|---|---|
+| 학교 게시판 | `schools/{schoolDomain}/postIndex/{postId}` |
+| 숲(라운지) | `lounges/{loungeId}/postIndex/{postId}` |
+
+문서 내용 = `{ boardId, authorUid, grams, createdAt }`. `grams`는 **제목 + 본문 앞 400자**의 2-gram
+(`src/utils/ngram.ts`의 `makePostGrams`와 **완전히 같아야** 한다).
+문서 id는 **투고와 같은 id**다. 규칙은 작성만 허용하고 수정·삭제는 막는다.
+
+- 🔴 **봇(`post-next.mjs`, 비공개 저장소 `ichi-content`)도 고쳐야 한다.**
+  색인을 안 쓰면 봇 글은 **각 게시판 최신 100건을 벗어나는 순간 검색에서 사라진다.**
+  봇 글이 주 20건이라 몇 주면 그렇게 된다
+- 봇을 고치기 전까지의 보완책: `node scripts/backfill-post-index.mjs` 를 주기적으로 돌린다
+  (멱등·반복 실행용. 색인 없는 글만 만든다)
+- ⚠️ 투고와 색인은 한 배치로 쓴다(배치는 전부 또는 전무). 앱은 색인 쓰기가 `permission-denied`면
+  **본체만으로 다시 쓴다** — 규칙 배포 순서가 틀어져도 글쓰기가 막히지 않게 한 안전장치다.
+  **봇에도 같은 폴백을 넣을 것.** 안 넣으면 규칙 배포 전에 봇이 글을 하나도 못 올린다
 
 ---
 
