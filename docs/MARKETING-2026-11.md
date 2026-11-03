@@ -23,7 +23,7 @@
 
 | # | 항목 | 🟢 권장 | 비고 |
 |---|---|---|---|
-| 1 | **SNS 아이디** | `daigakunomori` (막히면 `daigaku_no_mori` → `daigakunomori_jp`) | MARKETING §2-1. 11/01 기한 지남. **오늘 코워크로 가용성 확인 → 내일까지 개설** |
+| ~~1~~ | ~~**SNS 아이디**~~ | ✅ **`daigakunomori` 확정** (11-03 준희) | 개설은 11/04까지. 코워크 §7-1로 가용성 확인 → 선점돼 있으면 `daigaku_no_mori` → `daigakunomori_jp` |
 | 2 | **카드 만드는 방법** | **자체 생성기**(`scripts/cardnews/`, 이번 세션에 v0 완성) — Canva 안 씀 | DECISIONS 미결 #7(Canva 직접/외주)이 **없어진다.** JSON에 글만 쓰면 IG·X 크기로 PNG가 나온다 |
 | 3 | **주간 게시 요일** | **월·수·금 3회**, IG·X 동시. 수요일 = 「究極の2択」(밸런스 게임) 고정 시리즈 | 같은 요일·같은 코너가 있어야 팔로워가 기억한다 |
 
@@ -122,8 +122,8 @@ node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size
 
 ## 7. 코워크 복붙용 프롬프트
 
-> 코워크 세션을 열고 **이 저장소 폴더**(`ichi`)를 작업 폴더로 고른 뒤 아래를 그대로 붙여넣는다.
-> `@daigakunomori` 자리는 정해진 아이디로 바꾼다.
+> **쓰는 법**: Claude 데스크톱 앱 → 코워크(Cowork) 탭 → 작업 폴더로 **PC에 clone해 둔 `ichi` 폴더**를 고른다 → 아래 회색 상자 안 글을 통째로 복사해 첫 메시지로 붙여넣는다.
+> 아이디는 `daigakunomori`로 확정(11-03)이라 그대로 쓰면 된다. 계정 운영 규칙은 [MARKETING §9](MARKETING.md).
 
 ### 7-1. 아이디 가용성 확인 + 계정 개설 준비 (W1, 20분)
 ```
