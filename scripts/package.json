@@ -5,10 +5,14 @@
   "type": "module",
   "description": "ichi 데이터 수집·적재 로컬 스크립트 (앱 번들과 분리). 크롤러 출력은 반드시 src/types/course.ts의 Course 타입을 따를 것.",
   "scripts": {
-    "crawl": "node crawl-syllabus.mjs"
+    "crawl": "node crawl-syllabus.mjs",
+    "cardnews": "node cardnews/render.mjs"
   },
   "dependencies": {
     "firebase-admin": "^14.2.0",
     "node-html-parser": "^7.0.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
   }
 }
