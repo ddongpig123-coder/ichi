@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -35,9 +35,12 @@ import {
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
+import { lectureCodeOf } from "../src/utils/courseCode";
+import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
-import ReviewModal from "../src/components/course/ReviewModal";
+import ScreenHeader from "../src/components/common/ScreenHeader";
+import SchoolPrompt from "../src/components/common/SchoolPrompt";
 
 // ============================================================
 // 講義検索 → 時間割にワンタップ追加（Phase 1c / 10月3週）
@@ -46,6 +49,12 @@ import ReviewModal from "../src/components/course/ReviewModal";
 // - 講義データ未投入の間は courseService がモックを返す（画面側は同じ形なので変更不要）。
 // - 見つからない講義は従来どおり時間割のマスを直接タップして手入力する（フォールバック）。
 // ============================================================
+
+// 「同じ枠の講義」を見分けるキー。科目ナンバー（クラス）は**入れない** —
+// 名前・教員・曜限まで同じで科目ナンバーだけ違う＝分反、を見つけるためのキーだから。
+function slotKey(c: Course): string {
+  return `${c.name}@@${c.teacher}@@${c.day}${c.period}`;
+}
 
 // 同じ講義が毎回同じ色になるよう、講義名から決定的に色を選ぶ。
 function colorFor(name: string, palette: string[]): string {
@@ -69,15 +78,14 @@ function courseToSession(course: Course, palette: string[]): ClassSession {
 export default function CourseSearchScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, schoolDomain: mySchool, schoolReady } = useAuth();
   const { theme } = useTheme();
 
-  // 講義データは学校別スコープ(schools/{schoolDomain}/...)で適載されている。
-  // AuthContext.schoolDomain は暫定で "global" 固定のため、ここではユーザーの
-  // 実際の所属校(users.schoolDomain、オンボーディングで保存)を使う。
-  // 未設定(「その他」選択)なら現状の対応校 meiji.ac.jp にフォールバック。
-  // TODO(app全体): schoolDomain の "global" 固定を解消し、掲示板含め実校スコープへ統一。
-  const [schoolDomain, setSchoolDomain] = useState("meiji.ac.jp");
+  // 講義データは学校別スコープ(schools/{schoolDomain}/...)。AuthContext の実校ドメインを使う。
+  // 以前は meiji.ac.jp にフォールバックしていて、学校未選択（その他）の人にも明治の学部が見えていた。
+  // 未選択なら掲示板と同じく「学校を選択」導線を出す（下の早期 return）。
+  const noSchool = schoolReady && !mySchool;
+  const schoolDomain = mySchool ?? "";
   // ユーザーの所属学部（プロフィールの department）。学部チップの既定選択＆先頭並びに使う。
   // ※ department はプロフィールの自由入力なので、DEPARTMENTS とは id か名称(ja/ko)で照合する。
   const [myDeptRaw, setMyDeptRaw] = useState<string | null>(null);
@@ -85,7 +93,6 @@ export default function CourseSearchScreen() {
     if (!user) return;
     getUserProfile(user.uid)
       .then((p) => {
-        if (p?.schoolDomain) setSchoolDomain(p.schoolDomain);
         if (p?.department) setMyDeptRaw(p.department);
       })
       .catch(() => {});
@@ -94,7 +101,7 @@ export default function CourseSearchScreen() {
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const params = useLocalSearchParams<{ year?: string; semester?: string }>();
-  const year = Number(params.year) || new Date().getFullYear();
+  const year = Number(params.year) || getCurrentAcademicYear();
   const semester: Semester = params.semester === "秋" ? "秋" : "春";
   const semesterKey = `${year}-${semester}`;
 
@@ -118,6 +125,19 @@ export default function CourseSearchScreen() {
   }, [myDept]);
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<Course[]>([]);
+
+  // 共通外国語などは同じ講義名・教員・曜限で**クラス（分反）だけが違う**講義が並ぶ。
+  // そのままだと検索結果が同じ行の重複に見えるので（COLLAB-DATA-TAEHUI §4-6）、
+  // 「この結果の中で区別がつかない行」にだけ講義コードを出す。
+  // 常に出すと、重複していない大多数の行にコードが増えるだけになる。
+  const ambiguousSlots = useMemo(() => {
+    const count = new Map<string, number>();
+    for (const c of results) {
+      const k = slotKey(c);
+      count.set(k, (count.get(k) ?? 0) + 1);
+    }
+    return new Set([...count].filter(([, n]) => n > 1).map(([k]) => k));
+  }, [results]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   // 追加済みの講義ID（ボタン表示の切り替え用）と、追加処理中のID
@@ -133,7 +153,6 @@ export default function CourseSearchScreen() {
   const [regDay, setRegDay] = useState<Day>("月");
   const [regPeriod, setRegPeriod] = useState<Period>(1);
   const [registering, setRegistering] = useState(false);
-  const [reviewCourse, setReviewCourse] = useState<Course | null>(null); // レビューモーダル対象
 
   // keyword state を使わず引数で検索できる版（登録直後の即時再検索に使う）
   async function runSearch(kw: string) {
@@ -174,6 +193,19 @@ export default function CourseSearchScreen() {
   }
 
   const handleSearch = () => runSearch(keyword);
+
+  // 学部を選び直したら: 「先に学部を選んで」の注意は消し、入力済みの語があれば
+  // その学部で検索し直す（前の学部の結果が残ったままにならないように）。
+  const prevDeptRef = useRef(deptId);
+  useEffect(() => {
+    if (prevDeptRef.current === deptId) return;
+    prevDeptRef.current = deptId;
+    if (!deptId) return;
+    setNotice((cur) => (cur === t("courseSearch.selectDepartmentFirst") ? null : cur));
+    if (keyword.trim()) runSearch(keyword);
+    // keyword は「選び直した時点の値」を使えばよい（入力のたびに検索しない）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deptId]);
 
   // 実在確認（1人1回。confirms サブコレクションに create）
   async function handleConfirm(course: Course) {
@@ -248,18 +280,19 @@ export default function CourseSearchScreen() {
     }
   }
 
+  // 学校が未確定（読み込み中）／未選択の間は本体を出さない。hooks は全て上で呼び終えている。
+  if (!schoolReady || noSchool) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title={t("courseSearch.title")} />
+        {noSchool ? <SchoolPrompt /> : <ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} />}
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("courseSearch.title")}</Text>
-        <Text style={styles.semesterBadge}>{`${year} ${semester}`}</Text>
-      </View>
+      <ScreenHeader title={t("courseSearch.title")} right={<Text style={styles.semesterBadge}>{`${year} ${semester === "春" ? t("timetable.springSemester") : t("timetable.fallSemester")}`}</Text>} />
 
       <Text style={styles.sectionLabel}>{t("courseSearch.departmentLabel")}</Text>
       {!deptReady ? (
@@ -335,7 +368,12 @@ export default function CourseSearchScreen() {
                   </TouchableOpacity>
                 ) : null}
               </View>
-            ) : null
+            ) : (
+              // 検索前は空白だったので、何をすればいいか1行だけ案内する
+              <View style={styles.center}>
+                <Text style={styles.hint}>{t("courseSearch.searchHint")}</Text>
+              </View>
+            )
           }
           renderItem={({ item }) => {
             const added = addedIds.has(item.id);
@@ -360,6 +398,13 @@ export default function CourseSearchScreen() {
                     {item.campus ? ` · ${item.campus}` : ""}
                     {item.credits !== null ? ` · ${item.credits}${t("courseSearch.credits")}` : ""}
                   </Text>
+                  {/* 曜限まで同じ分反が並ぶときだけ、講義コードで区別できるようにする。
+                      科目ナンバーは分反どうしで同じなので使えない（src/utils/courseCode.ts） */}
+                  {ambiguousSlots.has(slotKey(item)) && lectureCodeOf(item) ? (
+                    <Text style={styles.courseSection}>
+                      {t("courseSearch.lectureCode")}: {lectureCodeOf(item)}
+                    </Text>
+                  ) : null}
                   </TouchableOpacity>
                   {/* 未確認講義: 確認数 + 確認ボタン（自分が未確認のときだけ押せる） */}
                   {!item.verified && (
@@ -386,9 +431,7 @@ export default function CourseSearchScreen() {
                   )}
                 </View>
                 <View style={styles.rowActions}>
-                  <TouchableOpacity style={styles.reviewBtn} onPress={() => setReviewCourse(item)}>
-                    <Text style={styles.reviewBtnText}>★ {t("review.short")}</Text>
-                  </TouchableOpacity>
+                  {/* 行は「追加」だけ。レビューは講義詳細から書く（ボタン2段は行が重かった） */}
                   <TouchableOpacity
                     style={[styles.addBtn, added && styles.addBtnDone]}
                     disabled={added || addingId !== null}
@@ -460,17 +503,6 @@ export default function CourseSearchScreen() {
           </Pressable>
         </Pressable>
       </Modal>
-
-      {/* 講義レビュー モーダル（Phase 2 3週目） */}
-      <ReviewModal
-        visible={reviewCourse !== null}
-        loc={reviewCourse ? { schoolDomain, deptId: deptId ?? "", courseId: reviewCourse.id } : null}
-        courseName={reviewCourse?.name ?? ""}
-        year={year}
-        semester={semester}
-        uid={user?.uid ?? null}
-        onClose={() => setReviewCourse(null)}
-      />
     </View>
   );
 }
@@ -478,26 +510,7 @@ export default function CourseSearchScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingTop: 56,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32, width: 28 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
-    semesterBadge: { fontSize: 13, color: theme.textSecondary, width: 60, textAlign: "right" },
-    mockBanner: {
-      backgroundColor: theme.accent,
-      paddingVertical: 6,
-      paddingHorizontal: 16,
-    },
-    mockBannerText: { color: "#FFFFFF", fontSize: 12, textAlign: "center" },
+    semesterBadge: { fontSize: 13, color: theme.textSecondary },
     sectionLabel: {
       fontSize: 12,
       color: theme.textSecondary,
@@ -574,6 +587,8 @@ function makeStyles(theme: Theme) {
     },
     courseName: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
     courseMeta: { fontSize: 12, color: theme.textSecondary, marginTop: 4 },
+    // 分反の区別（曜限まで同じ行が並ぶときだけ出る）。メタ行より一段弱く見せる。
+    courseSection: { fontSize: 11, color: theme.textSecondary, opacity: 0.8, marginTop: 2 },
     addBtn: {
       minWidth: 88,
       height: 34,
@@ -585,16 +600,6 @@ function makeStyles(theme: Theme) {
     addBtnDone: { backgroundColor: theme.textSecondary },
     addBtnText: { color: "#FFFFFF", fontSize: 13, fontWeight: "600" },
     rowActions: { gap: 6, alignItems: "stretch" },
-    reviewBtn: {
-      minWidth: 88,
-      height: 30,
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.primary,
-    },
-    reviewBtnText: { color: theme.primary, fontSize: 12.5, fontWeight: "600" },
     center: { alignItems: "center", paddingTop: 40, paddingHorizontal: 24, gap: 8 },
     empty: { color: theme.textSecondary, fontSize: 14 },
     hint: { color: theme.textSecondary, fontSize: 12, textAlign: "center" },
@@ -610,12 +615,12 @@ function makeStyles(theme: Theme) {
       backgroundColor: theme.border, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
     },
     badgeCrowd: {
-      fontSize: 10, fontWeight: "700", color: "#2FA84F",
-      backgroundColor: "#2FA84F1A", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
+      fontSize: 10, fontWeight: "700", color: theme.success,
+      backgroundColor: theme.success + "1A", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,
     },
     confirmRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 6 },
     confirmCount: { fontSize: 12, color: theme.textSecondary },
-    confirmedMine: { fontSize: 12, color: "#2FA84F", fontWeight: "600" },
+    confirmedMine: { fontSize: 12, color: theme.success, fontWeight: "600" },
     confirmBtn: {
       paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6,
       borderWidth: 1, borderColor: theme.primary,

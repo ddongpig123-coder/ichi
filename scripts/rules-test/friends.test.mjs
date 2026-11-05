@@ -1,4 +1,5 @@
-// firestore.rules 검증: 친구 관계는 수락된 신청이 있어야 만들어진다 (QA-B4)
+// firestore.rules 검증: 친구 관계는 (a) 수락된 신청 또는 (b) 초대 링크로만 만들어진다
+// (a) QA-B4 / (b) docs/INVITE-LINK.md §3
 // 실행: scripts/rules-test 에서 `npm test` (README.md)
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -17,6 +18,9 @@ const env = await initializeTestEnvironment({
 // 앱과 같은 규칙으로 정렬한 pairId
 const pairId = (a, b) => (a < b ? `${a}_${b}` : `${b}_${a}`);
 const ids = (a, b) => [a, b].sort();
+// 실제 토큰은 expo-crypto UUID 에서 하이픈을 뺀 32자
+const ERIN_TOKEN = "a".repeat(32);
+const MALLORY_TOKEN = "m".repeat(32);
 
 await env.withSecurityRulesDisabled(async (ctx) => {
   const db = ctx.firestore();
@@ -26,11 +30,17 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(db, "friendRequests/r-self"), { fromUid: "mallory", toUid: "mallory", status: "accepted" });
   // 피해자의 친구 공개 시간표
   await setDoc(doc(db, "users/victim/timetables/2026-秋"), { visibility: "friends", sessions: [] });
+  // 초대 링크: 토큰은 users/{uid}(본인만 읽음)에 있다. 규칙의 get() 만 읽을 수 있다
+  await setDoc(doc(db, "users/erin"), { uid: "erin", inviteToken: ERIN_TOKEN });
+  await setDoc(doc(db, "users/mallory"), { uid: "mallory", inviteToken: MALLORY_TOKEN });
+  // 아직 링크를 한 번도 공유하지 않은 사람 — 토큰 필드가 없다
+  await setDoc(doc(db, "users/victim"), { uid: "victim" });
 });
 
 const bob = env.authenticatedContext("bob").firestore();
 const alice = env.authenticatedContext("alice").firestore();
 const mallory = env.authenticatedContext("mallory").firestore();
+const frank = env.authenticatedContext("frank").firestore();
 
 const results = [];
 async function t(name, p) {
@@ -67,6 +77,48 @@ await t("정상: 친구 관계를 읽을 수 있음", assertSucceeds(getDoc(doc(
 await t("정상: 친구 끊기", assertSucceeds(deleteDoc(doc(alice, `friendships/${pairId("alice", "bob")}`))));
 await t("정상: 수락된 신청 기록 삭제 (친구 끊을 때 앱이 함께 지움)", assertSucceeds(deleteDoc(doc(alice, "friendRequests/r-pending"))));
 await t("재공격: 기록이 지워지면 옛 번호로 다시 친구 → 거부", assertFails(friendship(bob, "alice", "bob", "r-pending")));
+
+// ── 초대 링크 (b) ────────────────────────────────────────────
+// 링크를 연 쪽이 friendships 를 직접 만든다. requestId 는 보내지 않는다
+const invite = (db, me, inviter, token, extra = {}) =>
+  setDoc(doc(db, `friendships/${pairId(me, inviter)}`), {
+    participants: ids(me, inviter), createdAt: 1, via: "invite", inviteToken: token, ...extra,
+  });
+
+// 🔑 이게 통과해야 한다. (a) 의 getAfter 는 requestId 가 없으면 에러가 나는데,
+//    그 에러에 초대 경로까지 휩쓸리면 초대 링크가 전부 permission-denied 로 죽는다
+await t("정상: 초대 링크로 친구 (requestId 없음)", assertSucceeds(invite(frank, "frank", "erin", ERIN_TOKEN)));
+await t("정상: 만들어진 관계를 읽을 수 있음", assertSucceeds(getDoc(doc(frank, `friendships/${pairId("frank", "erin")}`))));
+await t("정상: 초대로 맺은 관계도 끊을 수 있음", assertSucceeds(deleteDoc(doc(frank, `friendships/${pairId("frank", "erin")}`))));
+// 문서화된 한계(INVITE-LINK §6): 토큰을 재발급하지 않으면 같은 링크로 다시 친구가 된다
+await t("한계: 끊은 뒤 같은 링크로 다시 친구 (의도된 동작)", assertSucceeds(invite(frank, "frank", "erin", ERIN_TOKEN)));
+
+await t("공격: 토큰이 틀리면 → 거부", assertFails(invite(mallory, "mallory", "erin", "z".repeat(32))));
+await t("공격: via 없이 토큰만 → 거부",
+  assertFails(setDoc(doc(mallory, `friendships/${pairId("mallory", "erin")}`),
+    { participants: ids("mallory", "erin"), createdAt: 1, inviteToken: ERIN_TOKEN })));
+await t("공격: via 만 있고 토큰 없음 → 거부",
+  assertFails(setDoc(doc(mallory, `friendships/${pairId("mallory", "erin")}`),
+    { participants: ids("mallory", "erin"), createdAt: 1, via: "invite" })));
+await t("공격: 짧은 토큰(15자) → 거부", assertFails(invite(mallory, "mallory", "erin", "a".repeat(15))));
+await t("공격: 토큰이 문자열이 아님 → 거부", assertFails(invite(mallory, "mallory", "erin", 12345678901234567890)));
+// 토큰이 없는 사람(users 에 필드 없음)을 빈 문자열로 통과시키려는 시도
+await t("공격: 토큰을 만든 적 없는 사람에게 빈 문자열 → 거부", assertFails(invite(mallory, "mallory", "victim", "")));
+await t("공격: 토큰을 만든 적 없는 사람에게 32자 → 거부", assertFails(invite(mallory, "mallory", "victim", "a".repeat(32))));
+// 링크를 받아 토큰을 아는 사람은 그 토큰으로 「발급자」와만 친구가 될 수 있다
+await t("공격: 받은 토큰으로 제3자와 친구 → 거부", assertFails(invite(frank, "frank", "victim", ERIN_TOKEN)));
+// 🔴 자기 자신과 친구: 자기 토큰은 자기가 아니까 participants:[me,me] 가 통과해버린다
+await t("공격: 자기 토큰으로 자기 자신과 친구 → 거부",
+  assertFails(setDoc(doc(mallory, "friendships/mallory_mallory"),
+    { participants: ["mallory", "mallory"], createdAt: 1, via: "invite", inviteToken: MALLORY_TOKEN })));
+await t("공격: participants 가 1명 → 거부",
+  assertFails(setDoc(doc(mallory, `friendships/${pairId("mallory", "erin")}`),
+    { participants: ["mallory"], createdAt: 1, via: "invite", inviteToken: ERIN_TOKEN })));
+await t("공격: 자기가 안 든 쌍을 초대로 생성 → 거부",
+  assertFails(setDoc(doc(mallory, `friendships/${pairId("bob", "erin")}`),
+    { participants: ids("bob", "erin"), createdAt: 1, via: "invite", inviteToken: ERIN_TOKEN })));
+await t("공격: 초대 토큰으로 남의 친구 공개 시간표 읽기 → 거부",
+  assertFails(getDoc(doc(mallory, "users/victim/timetables/2026-秋"))));
 
 await env.cleanup();
 for (const [s, n] of results) console.log(s, n);

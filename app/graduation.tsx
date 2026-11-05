@@ -29,13 +29,15 @@ import { LAW_ALLOCATION } from "../src/data/allocationLaw";
 import { POLITICALECONOMICS_ALLOCATION } from "../src/data/allocationPoliticalEconomics";
 import { GLOBAL_JAPANESE_ALLOCATION } from "../src/data/allocationGlobalJapanese";
 import { LITERATURE_ALLOCATION } from "../src/data/allocationLiterature";
+import { INFO_COMMUNICATION_ALLOCATION, INFO_COMMUNICATION_CAN_EXTRA_ZONES } from "../src/data/allocationInfoCommunication";
 import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
 } from "../src/data/facultyMasters";
-import { ENROLLMENT_YEAR } from "../src/data/semesterTimetables";
+import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTimetables";
+import { HeaderBackButton } from "../src/components/common/ScreenHeader";
+import { DEPARTMENTS_BY_SCHOOL } from "../src/data/departments";
 
-const MET_COLOR = "#1F9D6B";
 const GRADES = [1, 2, 3, 4];
 const MEIJI_DOMAIN = MEIJI;
 
@@ -57,11 +59,18 @@ function zoneCtxKey(facultyId: string, deptId: string | null, ryu: boolean): str
 // 記録は ①時間割の科目を候補に出して選ぶ ②成績表を見て手動追加 の両方。配当表で区分を自動判定。
 // 記録していない過去分は、区分別の ＋/− で成績表の合計を直接入力できる。
 // 保存は端末ローカルのみ（gradRecordService）。本格版の E2E 金庫は Phase 3（docs/CREDIT-TRACKING.md §6-2）。
+// 学部名の表示（韓国語モードでは学部マスターの韓国語名。無ければ日本語のまま）
+function facultyName(nameJa: string, language: "ja" | "ko"): string {
+  if (language !== "ko") return nameJa;
+  return Object.values(DEPARTMENTS_BY_SCHOOL).flat().find((d) => d.nameJa === nameJa)?.nameKo ?? nameJa;
+}
+
 export default function GraduationScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  // 学部名だけは韓国語表記を持っている（学部マスター）。区分名は便覧の正式名称なので日本語のまま
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const [masterIdx, setMasterIdx] = useState(0);
@@ -135,8 +144,7 @@ export default function GraduationScreen() {
         // 保存済みの選択を復元した場合は、それが利用者の意思なので触らない。
         if (p?.admissionYear != null && !uiRestoredRef.current) {
           setMasterIdx(GRAD_MASTERS.findIndex((m) => m.key === (p.admissionYear! <= 2022 ? "pre2023" : "from2023")));
-          const g = new Date().getFullYear() - p.admissionYear + 1;
-          setGrade(Math.min(4, Math.max(1, g)));
+          setGrade(gradeFromAdmissionYear(p.admissionYear));
         }
       })
       .catch(() => {}) // 通信失敗は fail-open
@@ -266,7 +274,7 @@ export default function GraduationScreen() {
     ? resolveZones(selBand, deptId, isRyugakusei)
     : null;
   const zoneBaseline = zoneCtx ? (zoneBaselines[zoneCtx] ?? {}) : {};
-  // 科目配当表（CAN）: 総合数理・経営・農・法・政治経済・国際日本・文 が整備済み。
+  // 科目配当表（CAN）: 総合数理・経営・農・法・政治経済・国際日本・文・情報コミュニケーション が整備済み（理工のみ未整備）。
   const allocCourses = selFaculty?.id === "interdisciplinary-math" && deptId
     ? INTERDISCIPLINARY_MATH_ALLOCATION[deptId] ?? null
     : selFaculty?.id === "agriculture" && deptId
@@ -281,6 +289,8 @@ export default function GraduationScreen() {
     ? LAW_ALLOCATION
     : selFaculty?.id === "management"
     ? MANAGEMENT_ALLOCATION
+    : selFaculty?.id === "info-communication"
+    ? INFO_COMMUNICATION_ALLOCATION
     : null;
   // 経営・法は学科/コースで専門科目を絞る（canDepartments を deptId で選択）。
   const gakkaFilter = selFaculty?.id === "management" || selFaculty?.id === "law" ? deptId : null;
@@ -291,6 +301,8 @@ export default function GraduationScreen() {
       .map((z) => ({ id: z.id, nameJa: z.nameJa }));
     const extra = selFaculty?.id === "agriculture" && deptId
       ? AGRICULTURE_CAN_EXTRA_ZONES[deptId] ?? []
+      : selFaculty?.id === "info-communication"
+      ? INFO_COMMUNICATION_CAN_EXTRA_ZONES // 自由選択に入るゼミ・留学・ウェルネス等を表示用に
       : [];
     return [...base, ...extra];
   }, [resolvedZones, selFaculty, deptId]);
@@ -339,6 +351,10 @@ export default function GraduationScreen() {
   );
   const calc = commerceCalc?.calc ?? null;
   const projected = commerceCalc?.projected ?? null;
+
+  // 超過分の受け皿になる区分の名前。i18n の "grad.rec.overflow" は PR #23 以降「超過分 →」までしか
+  // 持たず、行き先の名前は呼ぶ側が付ける（ZoneDiagnosis と同じ作り）。区分名は便覧の正式名称なので日本語のまま。
+  const freeZoneNameJa = master.zones.find((z) => /freezone|jiyu/i.test(z.id))?.nameJa ?? "";
 
   // 区分ごとの判定（不足分 diff・充足 met）。acq = 区分に算入された単位（超過分はフリーゾーンへ）。
   const zoneRows = master.zones.map((z) => {
@@ -408,7 +424,7 @@ export default function GraduationScreen() {
   // ヘッダーの基準ラベル（学部×入学年度）。
   const commerceBandLabel = GRAD_MASTERS[masterIdx]?.labelJa ?? "";
   const scopeLabel = selFaculty
-    ? `明治 ${selFaculty.nameJa} · ${isCommerce ? commerceBandLabel : selBand?.labelJa ?? ""}`
+    ? `${facultyName(selFaculty.nameJa, language)} · ${isCommerce ? commerceBandLabel : selBand?.labelJa ?? ""}`
     : t("grad.scope");
 
   // 学部セレクタ（共通）。
@@ -428,7 +444,7 @@ export default function GraduationScreen() {
                 setFacultyId(f.id);
               }}
             >
-              <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{f.nameJa}</Text>
+              <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{facultyName(f.nameJa, language)}</Text>
             </TouchableOpacity>
           );
         })}
@@ -535,9 +551,7 @@ export default function GraduationScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={goBack}>
-          <Text style={styles.backIcon}>←</Text>
-        </TouchableOpacity>
+        <HeaderBackButton onPress={goBack} />
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{t("grad.title")}</Text>
           <Text style={styles.subtitle}>{scopeLabel}</Text>
@@ -750,7 +764,7 @@ export default function GraduationScreen() {
                 <View
                   style={[
                     styles.zoneBarFill,
-                    { width: `${w}%`, backgroundColor: r.met ? MET_COLOR : theme.accent },
+                    { width: `${w}%`, backgroundColor: r.met ? theme.success : theme.accent },
                   ]}
                 />
               </View>
@@ -771,7 +785,12 @@ export default function GraduationScreen() {
                 <Text style={styles.zoneSub}>{t("grad.rec.inProgress")} +{r.planned}</Text>
               ) : null}
               {r.overflow > 0 ? (
-                <Text style={styles.zoneSub}>{t("grad.rec.overflow")} {r.overflow} {t("grad.unit")}</Text>
+                <Text style={styles.zoneSub}>
+                  {freeZoneNameJa
+                    ? `${t("grad.rec.overflow")} ${freeZoneNameJa}`
+                    : t("grad.rec.overflowNoFree")}{" "}
+                  {r.overflow} {t("grad.unit")}
+                </Text>
               ) : null}
               {z.id === "kikan" ? (
                 <Text style={styles.zoneSub}>
@@ -884,11 +903,6 @@ function makeStyles(theme: Theme) {
       paddingTop: 12,
       paddingBottom: 10,
     },
-    backButton: {
-      width: 36, height: 36, borderRadius: 18, justifyContent: "center", alignItems: "center",
-      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border,
-    },
-    backIcon: { fontSize: 18, color: theme.textPrimary },
     title: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     subtitle: { fontSize: 11, color: theme.textSecondary, marginTop: 1 },
     expBadge: {
@@ -943,10 +957,10 @@ function makeStyles(theme: Theme) {
 
     // 全区分達成
     allMet: {
-      backgroundColor: MET_COLOR + "16", borderWidth: 1, borderColor: MET_COLOR + "44",
+      backgroundColor: theme.success + "16", borderWidth: 1, borderColor: theme.success + "44",
       borderRadius: 14, padding: 16, marginTop: 14, alignItems: "center",
     },
-    allMetText: { fontSize: 13.5, fontWeight: "800", color: MET_COLOR, textAlign: "center" },
+    allMetText: { fontSize: 13.5, fontWeight: "800", color: theme.success, textAlign: "center" },
 
     inputHeading: { fontSize: 13, color: theme.textPrimary, fontWeight: "800", marginTop: 22 },
     stepHint: { fontSize: 11, color: theme.textSecondary, marginTop: 4, marginBottom: 6 },
@@ -958,10 +972,10 @@ function makeStyles(theme: Theme) {
     zoneTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
     zoneName: { fontSize: 13.5, fontWeight: "700", color: theme.textPrimary, flex: 1 },
     chip: { borderRadius: 999, paddingHorizontal: 9, paddingVertical: 2 },
-    chipOk: { backgroundColor: MET_COLOR + "22" },
+    chipOk: { backgroundColor: theme.success + "22" },
     chipShort: { backgroundColor: theme.accent + "22" },
     chipText: { fontSize: 10.5, fontWeight: "700" },
-    chipTextOk: { color: MET_COLOR },
+    chipTextOk: { color: theme.success },
     chipTextShort: { color: theme.accent },
     zoneBar: { height: 8, borderRadius: 5, backgroundColor: theme.border, overflow: "hidden" },
     zoneBarFill: { position: "absolute", left: 0, top: 0, bottom: 0 },

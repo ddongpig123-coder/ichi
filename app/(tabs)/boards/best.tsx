@@ -11,29 +11,40 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchBestPosts } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import type { Post } from "../../../src/types/board";
+import LoadError from "../../../src/components/common/LoadError";
 
 type BestPost = Post & { boardLabel: string };
 
 export default function BestPostsScreen() {
   const { schoolDomain } = useAuth();
+  const { isHidden } = useHidden();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const [posts, setPosts] = useState<BestPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   async function load() {
     if (!schoolDomain) return;
-    const res = await fetchBestPosts(schoolDomain);
-    setPosts(res);
+    try {
+      const res = await fetchBestPosts(schoolDomain);
+      setPosts(res);
+      setLoadError(false);
+    } catch (e) {
+      // 失敗を「ベスト投稿なし」に見せない
+      console.warn("best posts load failed:", e);
+      setLoadError(true);
+    }
   }
 
   useEffect(() => {
@@ -50,10 +61,22 @@ export default function BestPostsScreen() {
     return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
   }
 
+  // 1件も無い状態で失敗した時だけ全面エラー。前回分が残っていればそれを見せ続ける。
+  if (loadError && posts.length === 0) {
+    return (
+      <LoadError
+        onRetry={() => {
+          setLoading(true);
+          load().finally(() => setLoading(false));
+        }}
+      />
+    );
+  }
+
   return (
     <FlatList
       style={styles.container}
-      data={posts}
+      data={posts.filter((p) => !isHidden(p.id))}
       keyExtractor={(item) => item.id}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       ItemSeparatorComponent={() => <View style={styles.sep} />}

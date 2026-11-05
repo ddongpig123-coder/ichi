@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Alert,
   Platform,
   Keyboard,
   Dimensions,
@@ -18,6 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import {
   fetchLoungePost,
   fetchLoungeComments,
@@ -38,17 +38,12 @@ import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
+import { friendlyErrorBody } from "../../../src/utils/writeError";
+import { notify } from "../../../src/utils/dialog";
+import { COMMENT_MAX } from "../../../src/data/limits";
+import LoadError from "../../../src/components/common/LoadError";
 import { LOUNGES, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
 
-// Alert はウェブでは no-op なので window.alert に逃がす（学校掲示板側と同じ形）。
-// ※ このファイルの他の Alert.alert（通報・コメント失敗）はまだ素のまま。
-//    ウェブで無反応になるので別途まとめて直す必要がある。
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}
-
-${message}` : title);
-  else Alert.alert(title, message);
-}
 
 export default function LoungePostDetailScreen() {
   const { loungeId, postId } = useLocalSearchParams<{ loungeId: string; postId: string }>();
@@ -56,6 +51,7 @@ export default function LoungePostDetailScreen() {
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -95,6 +91,9 @@ export default function LoungePostDetailScreen() {
   const [post, setPost] = useState<LoungePost | null>(null);
   const [comments, setComments] = useState<LoungeComment[]>([]);
   const [loading, setLoading] = useState(true);
+  // 読み込み失敗（通信）。「投稿が見つかりません」と区別して再試行を出す
+  const [loadError, setLoadError] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -159,23 +158,41 @@ export default function LoungePostDetailScreen() {
         markPostSeen("lounge", loungeId as string, postId, mine.commentCount ?? 0);
       }
     })
-      .catch((e) => console.warn("lounge post load failed:", e))
+      .catch((e) => {
+        console.warn("lounge post load failed:", e);
+        setLoadError(true);
+      })
       .finally(() => setLoading(false));
-  }, [loungeId, postId]);
+  }, [loungeId, postId, reloadNonce]);
+
+  function retryLoad() {
+    setLoadError(false);
+    setLoading(true);
+    setReloadNonce((n) => n + 1);
+  }
+
+  // コメントのいいね: 押した瞬間に見た目を切り替え、失敗したら元に戻す
+  function applyCommentLike(commentId: string, isLiked: boolean, count: number) {
+    setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: count } : c)));
+    setLikedComments((prev) => {
+      const n = new Set(prev);
+      if (isLiked) n.add(commentId); else n.delete(commentId);
+      return n;
+    });
+  }
 
   async function handleCommentLike(commentId: string) {
     if (!user || likingComment) return;
+    const prevLiked = likedComments.has(commentId);
+    const prevCount = comments.find((c) => c.id === commentId)?.likeCount ?? 0;
+    applyCommentLike(commentId, !prevLiked, Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLikingComment(commentId);
     try {
       const res = await toggleLoungeCommentLike(loungeId as LoungeId, postId, commentId, user.uid);
-      setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: res.likeCount } : c)));
-      setLikedComments((prev) => {
-        const n = new Set(prev);
-        if (res.liked) n.add(commentId); else n.delete(commentId);
-        return n;
-      });
+      applyCommentLike(commentId, res.liked, res.likeCount);
     } catch (e: any) {
-      Alert.alert(t("common.error"), e?.message ?? "");
+      applyCommentLike(commentId, prevLiked, prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
     } finally {
       setLikingComment(null);
     }
@@ -195,17 +212,30 @@ export default function LoungePostDetailScreen() {
       const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
-      notify(t("post.dmFailed"), e?.message);
+      notify(t("post.dmFailed"), friendlyErrorBody(e, t));
     }
   }
 
+  // 押した瞬間に見た目を切り替え（待たせない）、失敗したら元に戻して知らせる。
+  // 以前は失敗すると liking が true のまま残り、ボタンが二度と押せなくなっていた。
   async function handleLike() {
-    if (!user) return;
+    if (!user || liking) return;
+    const prevLiked = liked;
+    const prevCount = likeCount;
+    setLiked(!prevLiked);
+    setLikeCount(Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLiking(true);
-    const result = await toggleLoungeLike(loungeId as LoungeId, postId, user.uid);
-    setLiked(result.liked);
-    setLikeCount(result.likeCount);
-    setLiking(false);
+    try {
+      const result = await toggleLoungeLike(loungeId as LoungeId, postId, user.uid);
+      setLiked(result.liked);
+      setLikeCount(result.likeCount);
+    } catch (e: any) {
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
+    } finally {
+      setLiking(false);
+    }
   }
 
   // 自分の投稿・コメントの削除（ソフトデリート）。学校掲示板と同じ扱い。
@@ -224,7 +254,7 @@ export default function LoungePostDetailScreen() {
 
   async function handleComment() {
     if (!commentText.trim()) return;
-    if (!user) { Alert.alert(t("post.loginRequired")); return; }
+    if (!user) { notify(t("post.loginRequired")); return; }
 
     const hits = findBannedWords(commentText);
     if (hits.length) { setBannedWords(hits); return; }
@@ -246,7 +276,7 @@ export default function LoungePostDetailScreen() {
       setMention(null);
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
-      Alert.alert(t("post.commentFailed"), e.message);
+      notify(t("post.commentFailed"), friendlyErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }
@@ -254,6 +284,10 @@ export default function LoungePostDetailScreen() {
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
+  }
+
+  if (loadError) {
+    return <LoadError onRetry={retryLoad} />;
   }
 
   if (!post) {
@@ -286,7 +320,11 @@ export default function LoungePostDetailScreen() {
       repliesByParent.set(c.parentId, arr);
     }
   }
-  const visibleCommentCount = comments.filter((c) => !c.deleted).length;
+  // 「コメント N」は実際に見える数。非表示（通報済み）・ブロック中の相手の分は数えない
+  // （以前は deleted だけ除いていて、N=3 なのに 2 件しか並ばないことがあった）
+  const visibleCommentCount = comments.filter(
+    (c) => !c.deleted && !isHidden(c.id) && !isBlocked(c.authorUid)
+  ).length;
 
   // 返信開始: スレッド root にぶら下げ、返信先の人をメンション。
   // フォーカスはタップのジェスチャ内で同期呼び出し（= 入力欄を直接タップしたのと同じ。setTimeout で
@@ -299,6 +337,8 @@ export default function LoungePostDetailScreen() {
 
   // コメント/返信カード。isReply=返信スタイル（インデント＋左アクセント）。メンションは @匿名N。
   const renderCommentCard = (c: LoungeComment, isReply: boolean) => {
+    // 非表示にしたコメント（通報済み含む）はフィードから完全に消す
+    if (isHidden(c.id)) return null;
     if (c.deleted) {
       return (
         <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard]}>
@@ -378,12 +418,22 @@ export default function LoungePostDetailScreen() {
           <Text style={styles.boardTag}>{lounge?.label}</Text>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
-            <TouchableOpacity
-              disabled={!user || user.uid === post.authorUid}
-              onPress={() => handleSendMessage(post.authorUid)}
-            >
+            {/* 作成者=タップでメッセージ。学校掲示板と同じチップ（灰色文字だとボタンに見えない）。
+                QA 9 では S3（チャット全国化）まで保留していたが、S3 完了で適用 */}
+            {user && user.uid !== post.authorUid ? (
+              <TouchableOpacity
+                style={styles.authorChip}
+                onPress={() => handleSendMessage(post.authorUid)}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                accessibilityRole="button"
+                accessibilityLabel={t("post.sendMessage")}
+              >
+                <Ionicons name="chatbubble-ellipses-outline" size={13} color={theme.primary} />
+                <Text style={styles.authorChipText}>{t("boards.anonymous")}</Text>
+              </TouchableOpacity>
+            ) : (
               <Text style={styles.meta}>{t("boards.anonymous")}</Text>
-            </TouchableOpacity>
+            )}
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(language, post.createdAt)}</Text>
             <View style={{ flex: 1 }} />
@@ -417,6 +467,8 @@ export default function LoungePostDetailScreen() {
         </View>
 
         <Text style={styles.commentHeader}>{t("post.commentsHeader")} {visibleCommentCount}</Text>
+        {/* 「コメント 0」の下が大きな空白だったので、最初の一言を促す */}
+        {visibleCommentCount === 0 && <Text style={styles.commentEmpty}>{t("post.noCommentsHint")}</Text>}
         {topLevelComments.map((c) => {
           const replies = repliesByParent.get(c.id) ?? [];
           const aliveReplies = replies.filter((r) => !r.deleted);
@@ -458,6 +510,7 @@ export default function LoungePostDetailScreen() {
           placeholderTextColor={theme.textSecondary}
           value={commentText}
           onChangeText={setCommentText}
+          maxLength={COMMENT_MAX}
           onKeyPress={({ nativeEvent }) => {
             // バックスペースはメンションのみ外す。返信モードは解除しない（送信で終了）。
             if (nativeEvent.key === "Backspace" && commentText.length === 0 && mention) setMention(null);
@@ -481,6 +534,12 @@ export default function LoungePostDetailScreen() {
           targetPath={modTarget.targetPath}
           targetAuthorUid={modTarget.targetAuthorUid}
           onDelete={handleDelete}
+          onHidden={() => {
+            if (modTarget.targetType === "post") {
+              if (router.canGoBack()) router.back();
+              else router.replace(`/lounge/${loungeId}` as any);
+            }
+          }}
         />
       )}
 
@@ -488,7 +547,6 @@ export default function LoungePostDetailScreen() {
         visible={bannedWords.length > 0}
         words={bannedWords}
         onEdit={() => setBannedWords([])}
-        onProceed={submitComment}
       />
     </View>
   );
@@ -503,6 +561,16 @@ function makeStyles(theme: Theme) {
     postTitle: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 8 },
     metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
     meta: { fontSize: 12, color: theme.textSecondary },
+    authorChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 999,
+      backgroundColor: theme.primary + "1A",
+    },
+    authorChipText: { fontSize: 12, fontWeight: "600", color: theme.primary },
     moreBtn: { fontSize: 20, color: theme.textSecondary, fontWeight: "700", paddingHorizontal: 4 },
     blockedText: { fontSize: 13, color: theme.textSecondary, fontStyle: "italic" },
     divider: { height: 1, backgroundColor: theme.border, marginBottom: 16 },
@@ -524,6 +592,7 @@ function makeStyles(theme: Theme) {
     likeBtnText: { fontSize: 14, color: theme.textSecondary, fontWeight: "600" },
     likeBtnTextActive: { color: theme.accent },
     commentHeader: { fontSize: 14, fontWeight: "700", color: theme.textSecondary, padding: 16, paddingBottom: 8 },
+    commentEmpty: { fontSize: 13, color: theme.textSecondary, paddingHorizontal: 16, paddingBottom: 24 },
     commentCard: { backgroundColor: theme.card, padding: 16, marginBottom: 1 },
     // 返信（대댓글）: インデント＋左アクセント＋薄い背景で通常コメントと区別
     replyCard: {

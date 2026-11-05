@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,6 +15,10 @@ import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { createBoard } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
+import { notify } from "../../../src/utils/dialog";
+import { friendlyErrorBody } from "../../../src/utils/writeError";
+import { findBannedWords } from "../../../src/utils/contentFilter";
+import { BOARD_NAME_MAX } from "../../../src/data/limits";
 import type { BoardMeta } from "../../../src/types/board";
 
 export default function CreateBoardScreen() {
@@ -34,14 +37,20 @@ export default function CreateBoardScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit() {
-    if (!label.trim()) { Alert.alert(t("boards.nameRequired")); return; }
+    if (!label.trim()) { notify(t("boards.nameRequired")); return; }
     if (!user || !schoolDomain) return;
+    // 掲示板名・説明は全員に見え続ける「場所の名前」なので、投稿と違い禁止語は通さない
+    const hits = findBannedWords(label, description);
+    if (hits.length) {
+      notify(t("boards.nameBanned"), hits.map((w) => `「${w}」`).join(" "));
+      return;
+    }
     setSubmitting(true);
     try {
       await createBoard(schoolDomain, label.trim(), description.trim(), category, user.uid);
       router.back();
     } catch (e: any) {
-      Alert.alert(t("boards.createFailed"), e.message);
+      notify(t("boards.createFailed"), friendlyErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }
@@ -78,9 +87,9 @@ export default function CreateBoardScreen() {
           placeholderTextColor={theme.textSecondary}
           value={label}
           onChangeText={setLabel}
-          maxLength={30}
+          maxLength={BOARD_NAME_MAX}
         />
-        <Text style={styles.charCount}>{label.length}/30</Text>
+        <Text style={styles.charCount}>{label.length}/{BOARD_NAME_MAX}</Text>
 
         <Text style={styles.sectionLabel}>{t("boards.descLabel")}</Text>
         <TextInput

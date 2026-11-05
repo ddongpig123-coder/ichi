@@ -9,6 +9,7 @@ import {
   setDoc,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { getPublicProfile, lookupUidByEmail, type PublicProfile } from "./userService";
@@ -117,17 +118,64 @@ export async function fetchReceivedRequests(uid: string): Promise<FriendRequestW
   return withSender.sort((a, b) => b.createdAt - a.createdAt);
 }
 
-// 承認: status更新(toUid本人のみ・ルール強制) → friendships作成
+// 承認: status更新(toUid本人のみ・ルール強制) と friendships作成を1つのバッチで行う。
+// requestId はルールが「本当に承認された申請か」を確かめるために必要
+// （これが無いと、相手の承認なしに friendships を作って友達限定の時間割を読めてしまう）。
 export async function acceptFriendRequest(request: FriendRequest): Promise<void> {
-  await updateDoc(doc(db, "friendRequests", request.id), { status: "accepted" });
-  await setDoc(friendshipDoc(request.fromUid, request.toUid), {
+  const batch = writeBatch(db);
+  batch.update(doc(db, "friendRequests", request.id), { status: "accepted" });
+  batch.set(friendshipDoc(request.fromUid, request.toUid), {
     participants: [request.fromUid, request.toUid].sort(),
+    requestId: request.id,
     createdAt: Date.now(),
   });
+  await batch.commit();
 }
 
 export async function rejectFriendRequest(requestId: string): Promise<void> {
   await updateDoc(doc(db, "friendRequests", requestId), { status: "rejected" });
+}
+
+// ── 招待リンクで友達追加（承認なし） ──────────────────────
+// 招待リンク（docs/INVITE-LINK.md）を開いた側が friendships を直接作る。
+// リンクを配った本人の意思表示とみなし、相手の承認は取らない（2026-11-05 準熙決定）。
+// inviteToken はリンクに載っていた値。現行ルールは participants と pairId しか見ないが、
+// #50 以降は users/{inviter}.inviteToken との照合を入れる想定。照合に落ちれば
+// permission-denied → "invalid"（古いリンク・改ざん）。
+export type InviteAddResult = "added" | "already-friends" | "self" | "invalid";
+
+export async function addFriendByInvite(
+  uid: string,
+  inviterUid: string,
+  inviteToken: string
+): Promise<InviteAddResult> {
+  if (uid === inviterUid) return "self";
+  if (!inviteToken) return "invalid";
+  const ref = friendshipDoc(uid, inviterUid);
+  const existing = await getDoc(ref);
+  if (existing.exists()) return "already-friends";
+  try {
+    await setDoc(ref, {
+      participants: [uid, inviterUid].sort(),
+      createdAt: Date.now(),
+      via: "invite",
+      inviteToken,
+    });
+  } catch (e: any) {
+    if (e?.code === "permission-denied") return "invalid";
+    throw e;
+  }
+  // 相手から自分宛てに pending の申請が残っていれば片付ける
+  // （status を変えられるのは受信者だけなので、自分が送った分は触らない。失敗しても追加は成立）
+  try {
+    const snap = await getDocs(
+      query(requestsCol(), where("fromUid", "==", inviterUid), where("toUid", "==", uid), where("status", "==", "pending"))
+    );
+    await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { status: "accepted" })));
+  } catch (e) {
+    console.warn("invite: pending request cleanup failed:", e);
+  }
+  return "added";
 }
 
 // ── 友達一覧 ──────────────────────────────────────────────
@@ -148,6 +196,19 @@ export async function fetchFriendProfiles(uid: string): Promise<PublicProfile[]>
   return profiles.filter((p): p is PublicProfile => p !== null);
 }
 
+// 友達解除。承認済みの申請も消す: 残っていると、解除されたあとで古い申請を根拠に
+// friendships を作り直し、相手の「友達のみ」の時間割を読めてしまう（ルールは承認済み申請を確認する）。
+// 申請の掃除に失敗しても解除そのものは成立させる。
 export async function removeFriendship(uid: string, otherUid: string): Promise<void> {
   await deleteDoc(friendshipDoc(uid, otherUid));
+  try {
+    const [mine, theirs] = await Promise.all(
+      [[uid, otherUid], [otherUid, uid]].map(([from, to]) =>
+        getDocs(query(requestsCol(), where("fromUid", "==", from), where("toUid", "==", to), where("status", "==", "accepted")))
+      )
+    );
+    await Promise.all([...mine.docs, ...theirs.docs].map((d) => deleteDoc(d.ref)));
+  } catch (e) {
+    console.warn("accepted request cleanup failed:", e);
+  }
 }

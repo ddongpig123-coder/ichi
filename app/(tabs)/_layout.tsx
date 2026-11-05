@@ -7,6 +7,7 @@ import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { useNotifications } from "../../src/contexts/NotificationsContext";
 import { ONBOARDED_KEY } from "../onboarding";
+import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 import {
   HomeIcon,
   BoardIcon,
@@ -25,10 +26,25 @@ function icon(
   Cmp: (p: { color: ColorValue; size?: number }) => ReactElement,
   dot = false
 ): TabIcon {
-  return ({ color }) => (
+  return ({ color }) => <TabIconWithDot Cmp={Cmp} color={color} dot={dot} />;
+}
+
+// 赤丸の色はテーマの danger（以前は固定色）。tabBarIcon は関数として呼ばれるので
+// hooks を直接は使えず、コンポーネントに分けてここで useTheme する。
+function TabIconWithDot({
+  Cmp,
+  color,
+  dot,
+}: {
+  Cmp: (p: { color: ColorValue; size?: number }) => ReactElement;
+  color: ColorValue;
+  dot: boolean;
+}) {
+  const { theme } = useTheme();
+  return (
     <View>
       <Cmp color={color} size={22} />
-      {dot && <View style={NEW_DOT} />}
+      {dot && <View style={[NEW_DOT, { backgroundColor: theme.danger }]} />}
     </View>
   );
 }
@@ -40,7 +56,6 @@ const NEW_DOT = {
   width: 9,
   height: 9,
   borderRadius: 4.5,
-  backgroundColor: "#E2574C",
 };
 
 export default function TabsLayout() {
@@ -64,13 +79,13 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         tabBarShowLabel: true,
-        tabBarLabelStyle: { fontSize: 10, fontWeight: "600", marginTop: 1 },
+        tabBarLabelStyle: { fontSize: 10, lineHeight: 13, fontWeight: "600", marginTop: 1 },
         tabBarIconStyle: { marginTop: 2 },
         tabBarStyle: {
           backgroundColor: theme.tabBarBackground,
           borderTopColor: theme.border,
-          // iPhone のホームインジケータ分(inset)を足しつつ、コンテンツ高は控えめに
-          height: 54 + insets.bottom,
+          // iPhone のホームインジケータ分(inset)を足す。ラベル(10px)が欠けない最小の高さ = TAB_BAR_HEIGHT
+          height: TAB_BAR_HEIGHT + insets.bottom,
           paddingTop: 4,
           paddingBottom: insets.bottom,
         },
@@ -90,7 +105,7 @@ export default function TabsLayout() {
           tabBarIcon: icon(BoardIcon, newCommentCount > 0),
         }}
       />
-      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), headerShown: false, tabBarIcon: icon(FriendsIcon) }} />
+      <Tabs.Screen name="friends" options={{ title: t("tabs.friends"), tabBarIcon: icon(FriendsIcon) }} />
       <Tabs.Screen
         name="messages"
         options={{

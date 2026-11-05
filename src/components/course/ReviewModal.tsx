@@ -11,6 +11,8 @@ import {
 } from "../../services/courseService";
 import { timeAgo } from "../../i18n/translations";
 import StarRating from "./StarRating";
+import { findBannedWords } from "../../utils/contentFilter";
+import { REVIEW_COMMENT_MAX } from "../../data/limits";
 import type { Theme } from "../../theme/themes";
 
 // 講義レビュー モーダル（Phase 2 3週目、4週目の講義詳細でも再利用予定）
@@ -93,6 +95,12 @@ export default function ReviewModal({ visible, loc, courseName, year, semester, 
     if (!loc || !uid) return;
     if (rating < 1) {
       setNotice(t("review.ratingRequired"));
+      return;
+    }
+    // レビューは先生の名前と結びつくので、投稿と違い禁止語は通さない（名誉毀損のリスク）
+    const hits = findBannedWords(text);
+    if (hits.length) {
+      setNotice(`${t("review.bannedWords")} ${hits.map((w) => `「${w}」`).join(" ")}`);
       return;
     }
     setSaving(true);
@@ -201,8 +209,12 @@ export default function ReviewModal({ visible, loc, courseName, year, semester, 
                 placeholderTextColor={theme.textSecondary}
                 value={text}
                 onChangeText={setText}
+                maxLength={REVIEW_COMMENT_MAX}
                 multiline
               />
+              {text.length >= REVIEW_COMMENT_MAX * 0.8 && (
+                <Text style={styles.counter}>{text.length} / {REVIEW_COMMENT_MAX}</Text>
+              )}
 
               {notice && <Text style={styles.notice}>{notice}</Text>}
 
@@ -290,6 +302,7 @@ function makeStyles(theme: Theme) {
       textAlignVertical: "top",
     },
     notice: { fontSize: 12.5, color: theme.primary, marginTop: 10, fontWeight: "600" },
+    counter: { fontSize: 12, color: theme.textSecondary, textAlign: "right", marginTop: 4 },
     saveBtn: {
       marginTop: 14,
       backgroundColor: theme.primary,

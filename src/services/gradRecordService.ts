@@ -131,9 +131,48 @@ export function parseGradBackup(text: string): GradState | null {
 export async function clearGradState(uid: string | null): Promise<void> {
   try {
     await AsyncStorage.removeItem(storageKey(uid));
+    await AsyncStorage.removeItem(privateAcademicKey(uid));
   } catch {
     // 消せなくても致命的ではない
   }
+}
+
+// ── プロフィールの非公開学業情報（GPA・単位・履修数） ────────────
+// 以前は users/{uid}.academic にサーバー平文で保存していた。§6-2 の方針どおり端末に移す。
+// （学部・入学年度は成績ではないのでサーバーのまま。userService 側）
+export interface PrivateAcademic {
+  gpa: string;
+  earnedCredits: string;
+  requiredCredits: string;
+  courseCount: string;
+}
+
+export const EMPTY_PRIVATE_ACADEMIC: PrivateAcademic = {
+  gpa: "", earnedCredits: "", requiredCredits: "", courseCount: "",
+};
+
+function privateAcademicKey(uid: string | null) {
+  return `ichi:privateAcademic:${uid ?? "guest"}`;
+}
+
+export function hasPrivateAcademic(v: Partial<PrivateAcademic> | null | undefined): boolean {
+  return !!v && !!(v.gpa || v.earnedCredits || v.requiredCredits || v.courseCount);
+}
+
+export async function loadPrivateAcademic(uid: string | null): Promise<PrivateAcademic | null> {
+  try {
+    const raw = await AsyncStorage.getItem(privateAcademicKey(uid));
+    if (!raw) return null;
+    const v = JSON.parse(raw);
+    const str = (x: unknown) => (typeof x === "string" ? x : "");
+    return { gpa: str(v.gpa), earnedCredits: str(v.earnedCredits), requiredCredits: str(v.requiredCredits), courseCount: str(v.courseCount) };
+  } catch {
+    return null;
+  }
+}
+
+export async function savePrivateAcademic(uid: string | null, v: PrivateAcademic): Promise<void> {
+  await AsyncStorage.setItem(privateAcademicKey(uid), JSON.stringify(v));
 }
 
 // ── 時間割からの候補 ────────────────────────────────────

@@ -155,11 +155,15 @@ service cloud.firestore {
 
     // ── 友達関係（確定済み） ──────────────────────────────
     // ドキュメントID: pairId(uid1, uid2)。participants: [uid1, uid2]
-    // 作成は「相手からの申請を自分が承認した」ときだけ。以前は片方の操作だけで作れたので、
-    // 承認なしに友達になって「友達のみ」の時間割を読めてしまった。
-    // 申請の承認と同じバッチで作るので getAfter で見る（friendRequestService.acceptFriendRequest）。
-    // requestId が無い・申請が無いと get がエラー＝拒否（fail closed）。
-    // ⚠️ 旧アプリは requestId を送らないので、1.1 の OTA が行き渡ってから配備すること。
+    // 以前は片方の操作だけで作れたので、承認なしに友達になって「友達のみ」の時間割を読めてしまった。
+    // いまは次の2つのどちらかだけ:
+    //   (a) 相手からの申請を自分が承認した … isAcceptedFriendship
+    //   (b) 相手の招待リンクを自分が開いた … isInviteFriendship（docs/INVITE-LINK.md §3）
+    // ⚠️ 旧アプリは requestId も招待トークンも送らないので、1.1 の OTA が
+    //    行き渡ってから配備すること。
+    //
+    // (a) 申請の承認と同じバッチで作るので getAfter で見る（friendRequestService.acceptFriendRequest）。
+    //     requestId が無い・申請が無いと getAfter が null になり .data でエラー＝拒否（fail closed）。
     function isAcceptedFriendship(d) {
       let req = getAfter(/databases/$(database)/documents/friendRequests/$(d.requestId)).data;
       return req.status == 'accepted'
@@ -168,15 +172,42 @@ service cloud.firestore {
         && d.participants.toSet() == [req.fromUid, req.toUid].toSet();
     }
 
+    // 相手のuid。participants が2人・重複なしであることは呼ぶ側で確認済み。
+    function otherOf(me, parts) {
+      return parts[0] == me ? parts[1] : parts[0];
+    }
+
+    // (b) 招待リンク（docs/INVITE-LINK.md）。リンクの k= が「招待した本人」の
+    //     users/{uid}.inviteToken と一致するときだけ通す。承認は要らない
+    //     （リンクを自分で配ったことが本人の意思表示 — INVITE-LINK §0 の決定）。
+    //     users は本人しか読めないが規則の get() は読める。トークンはクライアントに漏れない。
+    //
+    // 🔑 (a) より先に評価すること。(a) の getAfter は requestId が無いとエラーになり、
+    //    招待リンク（requestId を送らない）がそのエラーに巻き込まれるのを避けるため。
+    // 🔑 フィールドの有無で分岐するので必ず d.get(…, 既定値) で読む。無いフィールドに
+    //    直接触るとエラー＝拒否になり、via を送らない承認フロー(a)まで落ちる。
+    function isInviteFriendship(d) {
+      let token = d.get('inviteToken', '');
+      return d.get('via', '') == 'invite'
+        && token is string
+        && token.size() >= 16
+        && token == get(/databases/$(database)/documents/users/$(otherOf(request.auth.uid, d.participants))).data.get('inviteToken', '');
+    }
+
     match /friendships/{pairDocId} {
       // resource == null は「まだ友達でない」確認のためのget（存在チェック）を許可
       allow read: if isSignedIn()
         && (resource == null || request.auth.uid in resource.data.participants);
       allow create: if isSignedIn()
+        && request.resource.data.participants.size() == 2
         && request.auth.uid in request.resource.data.participants
+        // 自分と自分の関係を作らせない（participants: [me, me]）。招待リンクは
+        // 自分のトークンを自分が知っているので、これが無いと (b) を素通りしてしまう。
+        && request.resource.data.participants[0] != request.resource.data.participants[1]
         && pairDocId == pairId(request.resource.data.participants[0],
                                request.resource.data.participants[1])
-        && isAcceptedFriendship(request.resource.data);
+        && (isInviteFriendship(request.resource.data)
+            || isAcceptedFriendship(request.resource.data));
       allow delete: if isSignedIn()
         && request.auth.uid in resource.data.participants;
     }
@@ -263,6 +294,14 @@ service cloud.firestore {
         && d.get('commentCount', 0) == 0
         && d.get('viewCount', 0) == 0
         && d.get('deleted', false) == false;
+    }
+
+    // 検索索引(postIndex)の検証。grams は makePostGrams（src/utils/ngram.ts）が作る。
+    function isValidPostIndex() {
+      let d = request.resource.data;
+      return d.boardId is string && d.boardId.size() > 0 && d.boardId.size() <= 64
+        && d.authorUid == request.auth.uid
+        && d.grams is list && d.grams.size() > 0 && d.grams.size() <= 400;
     }
 
     function isValidNewComment() {
@@ -374,6 +413,20 @@ service cloud.firestore {
         }
       }
 
+      // ── 投稿検索の索引（1.1） ──────────────────────────
+      // 投稿本体と同じIDの別文書。本体に grams を持たせると一覧取得のたびに
+      // 2-gram を数百個ダウンロードしてしまうため分離した（src/types/postIndex.ts）。
+      // 投稿と同じバッチで作る。作成のみ許可し、更新・削除は禁止する
+      // ＝索引が本体と食い違わない。論理削除は本体の deleted で判定する。
+      // 既存投稿の索引は Admin SDK で補充（scripts/backfill-post-index.mjs）。
+      match /postIndex/{postId} {
+        allow read: if isSignedIn();
+        allow create: if canWriteContent()
+          && belongsToSchool(schoolDomain)
+          && isValidPostIndex();
+        allow update, delete: if false;
+      }
+
       // 学部別・カスタム掲示板のメタ情報
       match /boardMetas/{boardMetaId} {
         allow read: if isSignedIn();
@@ -444,6 +497,13 @@ service cloud.firestore {
           && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
         allow update, delete: if false; // 送信済みメッセージは改変・物理削除不可
       }
+    }
+
+    // 森の投稿検索の索引（学校掲示板と同じ構造。所属は見ない＝森と同じ条件）。
+    match /lounges/{loungeId}/postIndex/{postId} {
+      allow read: if isSignedIn();
+      allow create: if canWriteContent() && isValidPostIndex();
+      allow update, delete: if false;
     }
 
     // ── 留学生ラウンジ（全国単位の掲示板・Phase 1） ────────

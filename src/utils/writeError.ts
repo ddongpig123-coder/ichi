@@ -25,3 +25,19 @@ export function writeErrorBody(e: unknown, t: (key: TranslationKey) => string): 
   if (isPermissionDenied(e)) return t("school.writeBlocked");
   return (e as { message?: string } | null)?.message ?? String(e);
 }
+
+// 通信系の失敗か（オフライン・タイムアウト・サーバー一時停止）
+export function isNetworkError(e: unknown): boolean {
+  const code = (e as { code?: string } | null)?.code ?? "";
+  if (/unavailable|deadline-exceeded|network-request-failed/.test(code)) return true;
+  const msg = (e as { message?: string } | null)?.message ?? "";
+  return /offline|network|timeout|failed to fetch/i.test(msg);
+}
+
+// 書き込み以外も含めた一般の失敗メッセージ。Firebase の英語の生メッセージは
+// 利用者には意味が分からないので出さない（原因はコンソールに残す）。
+export function friendlyErrorBody(e: unknown, t: (key: TranslationKey) => string): string {
+  console.warn(e);
+  if (isNetworkError(e)) return t("common.networkError");
+  return t("common.tryAgainLater");
+}

@@ -8,16 +8,19 @@ import { useAuth } from "../src/contexts/AuthContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import { useBlock } from "../src/contexts/BlockContext";
+import { useHidden } from "../src/contexts/HiddenContext";
 import {
   fetchCourse, fetchCourseReviews, aggregateReviews, deleteCourseReview,
   type CourseLoc, type CourseReviewWithUid, type ReviewAggregate,
 } from "../src/services/courseService";
 import { REVIEW_TAGS, type Course, type ReviewTag, type Semester } from "../src/types/course";
+import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { timeAgo } from "../src/i18n/translations";
 import StarRating from "../src/components/course/StarRating";
 import ReviewModal from "../src/components/course/ReviewModal";
 import ModerationMenu from "../src/components/common/ModerationMenu";
 import type { Theme } from "../src/theme/themes";
+import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // ============================================================
 // 講義詳細（Phase 2 4週目）
@@ -32,6 +35,7 @@ export default function CourseDetailScreen() {
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const params = useLocalSearchParams<{
@@ -40,7 +44,7 @@ export default function CourseDetailScreen() {
   const schoolDomain = params.schoolDomain ?? "";
   const deptId = params.deptId ?? "";
   const courseId = params.courseId ?? "";
-  const year = Number(params.year) || new Date().getFullYear();
+  const year = Number(params.year) || getCurrentAcademicYear();
   const semester: Semester = params.semester === "秋" ? "秋" : "春";
   const loc: CourseLoc = { schoolDomain, deptId, courseId };
 
@@ -80,23 +84,14 @@ export default function CourseDetailScreen() {
   }, [user, schoolDomain, deptId, courseId]);
 
   const visibleReviews = useMemo(
-    () => reviews.filter((r) => !isBlocked(r.uid)),
-    [reviews, isBlocked]
+    () => reviews.filter((r) => !isBlocked(r.uid) && !isHidden(r.uid)),
+    [reviews, isBlocked, isHidden]
   );
   const hasMine = !!agg?.mine;
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("courseDetail.title")}</Text>
-        <View style={{ width: 28 }} />
-      </View>
+      <ScreenHeader title={t("courseDetail.title")} />
 
       {loading ? (
         <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>
@@ -230,19 +225,6 @@ export default function CourseDetailScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingTop: 56,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32, width: 28 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary, flex: 1, textAlign: "center" },
     center: { flex: 1, justifyContent: "center", alignItems: "center", padding: 32 },
     dim: { fontSize: 14, color: theme.textSecondary, lineHeight: 20 },
     body: { padding: 16, gap: 12 },

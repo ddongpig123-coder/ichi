@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Alert,
   Platform,
   Keyboard,
   Dimensions,
@@ -34,29 +33,29 @@ import { findBannedWords } from "../../../src/utils/contentFilter";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import { getOrCreateChat } from "../../../src/services/chatService";
-import { writeErrorBody } from "../../../src/utils/writeError";
+import { friendlyErrorBody, isPermissionDenied, writeErrorBody } from "../../../src/utils/writeError";
+import { notify } from "../../../src/utils/dialog";
+import { COMMENT_MAX } from "../../../src/data/limits";
+import LoadError from "../../../src/components/common/LoadError";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
-import { BOARDS, isQaBoard, qaTagLabel, type BoardId, type Post, type Comment } from "../../../src/types/board";
+import { BOARDS, boardLabel, isQaBoard, qaTagLabel, type BoardId, type Post, type Comment } from "../../../src/types/board";
 
 const BEST_COLOR = "#E0A500"; // ベストアンサー（金）
 
-// Alert.alert は react-native-web では何も表示されない(no-op)ため、Webでは window.alert/confirm にフォールバック
-function notify(title: string, message?: string) {
-  if (Platform.OS === "web") window.alert(message ? `${title}\n\n${message}` : title);
-  else Alert.alert(title, message);
-}
 export default function PostDetailScreen() {
   const { boardId, postId } = useLocalSearchParams<{ boardId: string; postId: string }>();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -108,6 +107,9 @@ export default function PostDetailScreen() {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  // 読み込み失敗（通信）。「投稿が見つかりません」と区別して再試行を出す
+  const [loadError, setLoadError] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -179,23 +181,41 @@ export default function PostDetailScreen() {
         }
       }
     })
-      .catch((e) => console.warn("post load failed:", e))
+      .catch((e) => {
+        console.warn("post load failed:", e);
+        setLoadError(true);
+      })
       .finally(() => setLoading(false));
-  }, [schoolDomain, boardId, postId]);
+  }, [schoolDomain, boardId, postId, reloadNonce]);
+
+  function retryLoad() {
+    setLoadError(false);
+    setLoading(true);
+    setReloadNonce((n) => n + 1);
+  }
+
+  // コメントのいいね: 押した瞬間に見た目を切り替え、失敗したら元に戻す
+  function applyCommentLike(commentId: string, isLiked: boolean, count: number) {
+    setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: count } : c)));
+    setLikedComments((prev) => {
+      const n = new Set(prev);
+      if (isLiked) n.add(commentId); else n.delete(commentId);
+      return n;
+    });
+  }
 
   async function handleCommentLike(commentId: string) {
     if (!user || !schoolDomain || likingComment) return;
+    const prevLiked = likedComments.has(commentId);
+    const prevCount = comments.find((c) => c.id === commentId)?.likeCount ?? 0;
+    applyCommentLike(commentId, !prevLiked, Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLikingComment(commentId);
     try {
       const res = await toggleCommentLike(schoolDomain, boardId as BoardId, postId, commentId, user.uid);
-      setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, likeCount: res.likeCount } : c)));
-      setLikedComments((prev) => {
-        const n = new Set(prev);
-        if (res.liked) n.add(commentId); else n.delete(commentId);
-        return n;
-      });
+      applyCommentLike(commentId, res.liked, res.likeCount);
     } catch (e: any) {
-      Alert.alert(t("common.error"), e?.message ?? "");
+      applyCommentLike(commentId, prevLiked, prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
     } finally {
       setLikingComment(null);
     }
@@ -214,17 +234,30 @@ export default function PostDetailScreen() {
       const chatRoomId = await getOrCreateChat(user.uid, targetUid, post.title);
       router.push(`/(tabs)/messages/${chatRoomId}`);
     } catch (e: any) {
-      notify(t("post.dmFailed"), e?.message);
+      notify(t("post.dmFailed"), friendlyErrorBody(e, t));
     }
   }
 
+  // 押した瞬間に見た目を切り替え（待たせない）、失敗したら元に戻して知らせる。
+  // 以前は失敗すると liking が true のまま残り、ボタンが二度と押せなくなっていた。
   async function handleLike() {
-    if (!user || !schoolDomain) return;
+    if (!user || !schoolDomain || liking) return;
+    const prevLiked = liked;
+    const prevCount = likeCount;
+    setLiked(!prevLiked);
+    setLikeCount(Math.max(0, prevCount + (prevLiked ? -1 : 1)));
     setLiking(true);
-    const result = await toggleLike(schoolDomain, boardId as BoardId, postId, user.uid);
-    setLiked(result.liked);
-    setLikeCount(result.likeCount);
-    setLiking(false);
+    try {
+      const result = await toggleLike(schoolDomain, boardId as BoardId, postId, user.uid);
+      setLiked(result.liked);
+      setLikeCount(result.likeCount);
+    } catch (e: any) {
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
+      notify(t("common.error"), friendlyErrorBody(e, t));
+    } finally {
+      setLiking(false);
+    }
   }
 
   // ベストアンサー選択/解除（質問の作成者のみ）。選ぶと解決済みに。
@@ -238,7 +271,7 @@ export default function PostDetailScreen() {
       else await clearBestComment(schoolDomain, boardId as BoardId, postId);
       setPost({ ...post, bestCommentId: next, resolved: !!next });
     } catch (e: any) {
-      Alert.alert(t("common.error"), e?.message ?? "");
+      notify(t("common.error"), friendlyErrorBody(e, t));
     } finally {
       setBestBusy(false);
     }
@@ -261,7 +294,7 @@ export default function PostDetailScreen() {
 
   async function handleComment() {
     if (!commentText.trim()) return;
-    if (!user || !schoolDomain) { Alert.alert(t("post.loginRequired")); return; }
+    if (!user || !schoolDomain) { notify(t("post.loginRequired")); return; }
 
     const hits = findBannedWords(commentText);
     if (hits.length) { setBannedWords(hits); return; }
@@ -284,7 +317,7 @@ export default function PostDetailScreen() {
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (e: any) {
       // 所属違い（ルールが弾いた）ときは理由を案内に差し替える
-      Alert.alert(t("post.commentFailed"), writeErrorBody(e, t));
+      notify(t("post.commentFailed"), isPermissionDenied(e) ? writeErrorBody(e, t) : friendlyErrorBody(e, t));
     } finally {
       setSubmitting(false);
     }
@@ -292,6 +325,10 @@ export default function PostDetailScreen() {
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator size="large" color={theme.primary} /></View>;
+  }
+
+  if (loadError) {
+    return <LoadError onRetry={retryLoad} />;
   }
 
   if (!post) {
@@ -327,7 +364,11 @@ export default function PostDetailScreen() {
       repliesByParent.set(c.parentId, arr);
     }
   }
-  const visibleCommentCount = comments.filter((c) => !c.deleted).length;
+  // 「コメント N」は実際に見える数。非表示（通報済み）・ブロック中の相手の分は数えない
+  // （以前は deleted だけ除いていて、N=3 なのに 2 件しか並ばないことがあった）
+  const visibleCommentCount = comments.filter(
+    (c) => !c.deleted && !isHidden(c.id) && !isBlocked(c.authorUid)
+  ).length;
 
   // 質問掲示板（知恵袋化）の状態。ベストアンサーは作成者が回答(トップレベルコメント)から選ぶ。
   const isQa = isQaBoard(boardId as string);
@@ -353,6 +394,8 @@ export default function PostDetailScreen() {
 
   // コメント/返信カード。isReply=返信スタイル（インデント＋左アクセント）。メンションは @匿名N。
   const renderCommentCard = (c: Comment, isReply: boolean) => {
+    // 非表示にしたコメント（通報済み含む）はフィードから完全に消す
+    if (isHidden(c.id)) return null;
     if (c.deleted) {
       return (
         <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard]}>
@@ -457,7 +500,7 @@ export default function PostDetailScreen() {
         {/* Post */}
         <View style={styles.postCard}>
           <View style={styles.boardTagRow}>
-            <Text style={styles.boardTag}>{board?.label}</Text>
+            <Text style={styles.boardTag}>{board ? boardLabel(board, language) : ""}</Text>
             {isQa ? (
               <View style={[styles.qaBadge, post.resolved ? styles.qaBadgeResolved : styles.qaBadgeOpen]}>
                 <Text style={[styles.qaBadgeText, post.resolved ? styles.qaBadgeTextResolved : styles.qaBadgeTextOpen]}>
@@ -491,7 +534,7 @@ export default function PostDetailScreen() {
             <Text style={styles.meta}>·</Text>
             <Text style={styles.meta}>{timeAgo(language, post.createdAt)}</Text>
             <Text style={styles.meta}>·</Text>
-            <Text style={styles.meta}>{t("boards.views")} {post.viewCount ?? 0}</Text>
+            <Text style={styles.meta}><Ionicons name="eye-outline" size={12} color={theme.textSecondary} /> {post.viewCount ?? 0}</Text>
             <View style={{ flex: 1 }} />
             <TouchableOpacity
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -524,6 +567,8 @@ export default function PostDetailScreen() {
 
         {/* Comments (質問板は「回答」表記) */}
         <Text style={styles.commentHeader}>{isQa ? t("qa.answersHeader") : t("post.commentsHeader")} {visibleCommentCount}</Text>
+        {/* 「コメント 0」の下が大きな空白だったので、最初の一言を促す */}
+        {visibleCommentCount === 0 && <Text style={styles.commentEmpty}>{t("post.noCommentsHint")}</Text>}
         {orderedTopLevel.map((c) => {
           const replies = repliesByParent.get(c.id) ?? [];
           const aliveReplies = replies.filter((r) => !r.deleted);
@@ -565,6 +610,7 @@ export default function PostDetailScreen() {
           placeholderTextColor={theme.textSecondary}
           value={commentText}
           onChangeText={setCommentText}
+          maxLength={COMMENT_MAX}
           onKeyPress={({ nativeEvent }) => {
             // バックスペースはメンションのみ外す。返信モードは解除しない（送信で終了）。
             if (nativeEvent.key === "Backspace" && commentText.length === 0 && mention) setMention(null);
@@ -588,6 +634,13 @@ export default function PostDetailScreen() {
           targetPath={modTarget.targetPath}
           targetAuthorUid={modTarget.targetAuthorUid}
           onDelete={handleDelete}
+          onHidden={() => {
+            // 投稿本体を非表示にしたら一覧へ戻る（戻った一覧からも即時に消えている）
+            if (modTarget.targetType === "post") {
+              if (router.canGoBack()) router.back();
+              else router.replace(`/(tabs)/boards/${boardId}` as any);
+            }
+          }}
         />
       )}
 
@@ -595,7 +648,6 @@ export default function PostDetailScreen() {
         visible={bannedWords.length > 0}
         words={bannedWords}
         onEdit={() => setBannedWords([])}
-        onProceed={submitComment}
       />
     </View>
   );
@@ -609,11 +661,11 @@ function makeStyles(theme: Theme) {
     boardTagRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
     boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600" },
     qaBadge: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2 },
-    qaBadgeOpen: { backgroundColor: "#F3A43722" },
-    qaBadgeResolved: { backgroundColor: "#1F9D6B22" },
+    qaBadgeOpen: { backgroundColor: theme.warning + "22" },
+    qaBadgeResolved: { backgroundColor: theme.success + "22" },
     qaBadgeText: { fontSize: 11, fontWeight: "800" },
-    qaBadgeTextOpen: { color: "#C77A10" },
-    qaBadgeTextResolved: { color: "#1F9D6B" },
+    qaBadgeTextOpen: { color: theme.warning },
+    qaBadgeTextResolved: { color: theme.success },
     tagChip: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2, backgroundColor: theme.primary + "14" },
     tagChipText: { fontSize: 11, fontWeight: "700", color: theme.primary },
     // ベストアンサー: 金色のアクセント
@@ -655,6 +707,7 @@ function makeStyles(theme: Theme) {
     likeBtnText: { fontSize: 14, color: theme.textSecondary, fontWeight: "600" },
     likeBtnTextActive: { color: theme.accent },
     commentHeader: { fontSize: 14, fontWeight: "700", color: theme.textSecondary, padding: 16, paddingBottom: 8 },
+    commentEmpty: { fontSize: 13, color: theme.textSecondary, paddingHorizontal: 16, paddingBottom: 24 },
     commentCard: { backgroundColor: theme.card, padding: 16, marginBottom: 1 },
     // 返信（대댓글）: インデント＋左アクセント＋薄い背景で通常コメントと区別
     replyCard: {

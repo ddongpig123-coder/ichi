@@ -19,12 +19,34 @@ import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import { sendMessage, subscribeToMessages } from "../../../src/services/chatService";
+import { findBannedWords } from "../../../src/utils/contentFilter";
+import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
+import { notify } from "../../../src/utils/dialog";
+import { friendlyErrorBody } from "../../../src/utils/writeError";
 import type { Theme } from "../../../src/theme/themes";
 import type { ChatMessage } from "../../../src/types/chat";
+import type { TranslationKey } from "../../../src/i18n/translations";
 
 function timeStr(ms: number): string {
   const d = new Date(ms);
   return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function isSameDay(a: number, b: number): boolean {
+  const x = new Date(a);
+  const y = new Date(b);
+  return x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDate() === y.getDate();
+}
+
+// 日付区切りの文言: 今日 / 昨日 / 11月2日（年が違えば 2025年11月2日）。韓国語は単位の間に空白を入れる。
+function dateLabel(language: "ja" | "ko", ms: number, t: (key: TranslationKey) => string): string {
+  const now = Date.now();
+  if (isSameDay(ms, now)) return t("messages.today");
+  if (isSameDay(ms, now - 86_400_000)) return t("messages.yesterday");
+  const d = new Date(ms);
+  const sep = language === "ko" ? " " : "";
+  const md = `${d.getMonth() + 1}${t("time.monthSuffix")}${sep}${d.getDate()}${t("time.daySuffix")}`;
+  return d.getFullYear() === new Date(now).getFullYear() ? md : `${d.getFullYear()}${t("time.yearSuffix")}${sep}${md}`;
 }
 
 export default function ChatRoomScreen() {
@@ -34,7 +56,7 @@ export default function ChatRoomScreen() {
   const { theme } = useTheme();
   const { isBlocked } = useBlock();
   const { markChatAsRead } = useNotifications();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
@@ -65,30 +87,56 @@ export default function ChatRoomScreen() {
     return unsub;
   }, [chatId]);
 
+  // 禁止語を含むメッセージは送れない（2026-11-02、App Store 指針 1.2 対応で掲示板と同じ扱いに統一）
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
+
   async function handleSend() {
     const trimmed = text.trim();
     if (!trimmed || !user) return;
+    const hits = findBannedWords(trimmed);
+    if (hits.length) { setBannedWords(hits); return; }
     setSending(true);
     setText("");
-    await sendMessage(chatId, user.uid, trimmed);
-    setSending(false);
+    try {
+      await sendMessage(chatId, user.uid, trimmed);
+    } catch (e) {
+      // 失敗したら本文を入力欄に戻す（打ち直しさせない）。送信中に続きを打っていたらその前に戻す。
+      setText((cur) => (cur.trim() ? `${trimmed}\n${cur}` : trimmed));
+      notify(t("messages.sendFailed"), friendlyErrorBody(e, t));
+    } finally {
+      // 以前は失敗時に sending が true のまま残り、送信ボタンが二度と押せなかった
+      setSending(false);
+    }
   }
 
-  function renderMessage({ item }: { item: ChatMessage }) {
+  function renderMessage({ item, index }: { item: ChatMessage; index: number }) {
     const isMine = item.senderUid === user?.uid;
+    // 日付が変わる位置に区切り（今日／昨日／11月2日）。以前は時刻だけで、何日前の会話か分からなかった。
+    const prev = index > 0 ? messages[index - 1] : null;
+    const dateSep =
+      !prev || !isSameDay(prev.createdAt, item.createdAt) ? (
+        <View style={styles.dateSep}>
+          <Text style={styles.dateSepText}>{dateLabel(language, item.createdAt, t)}</Text>
+        </View>
+      ) : null;
 
     // ブロックした相手のメッセージは折りたたむ
     if (!isMine && isBlocked(item.senderUid)) {
       return (
-        <View style={styles.msgRow}>
-          <View style={[styles.bubble, styles.bubbleBlocked]}>
-            <Text style={styles.blockedText}>{t("messages.blockedMessage")}</Text>
+        <>
+          {dateSep}
+          <View style={styles.msgRow}>
+            <View style={[styles.bubble, styles.bubbleBlocked]}>
+              <Text style={styles.blockedText}>{t("messages.blockedMessage")}</Text>
+            </View>
           </View>
-        </View>
+        </>
       );
     }
 
     return (
+      <>
+      {dateSep}
       <View style={[styles.msgRow, isMine && styles.msgRowMine]}>
         {!isMine && (
           // アバターをタップで通報・ブロックメニュー
@@ -109,6 +157,7 @@ export default function ChatRoomScreen() {
           <Text style={[styles.timeText, isMine && styles.timeTextMine]}>{timeStr(item.createdAt)}</Text>
         </View>
       </View>
+      </>
     );
   }
 
@@ -158,6 +207,11 @@ export default function ChatRoomScreen() {
           targetAuthorUid={modTarget.authorUid}
         />
       )}
+      <BannedWordWarning
+        visible={bannedWords.length > 0}
+        words={bannedWords}
+        onEdit={() => setBannedWords([])}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -203,6 +257,15 @@ function makeStyles(theme: Theme) {
     bubbleTextMine: { color: "#fff" },
     timeText: { fontSize: 10, color: theme.textSecondary, marginTop: 4, textAlign: "right" },
     timeTextMine: { color: "rgba(255,255,255,0.6)" },
+    dateSep: {
+      alignSelf: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 3,
+      borderRadius: 999,
+      backgroundColor: theme.border,
+      marginBottom: 12,
+    },
+    dateSepText: { fontSize: 11, fontWeight: "600", color: theme.textSecondary },
     inputBar: {
       flexDirection: "row",
       padding: 10,

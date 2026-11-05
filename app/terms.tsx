@@ -1,15 +1,16 @@
 import { useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
+import ScreenHeader from "../src/components/common/ScreenHeader";
+import { useI18n } from "../src/contexts/I18nContext";
 
 // 利用規約（全文・日本語正本）。docs/legal/TERMS.md と同期して管理すること。
 // 全項目確定(2026-08-24): 運営者=Lee Junhee / 管轄=東京地方裁判所 / 連絡先=ddongpig123@gmail.com / 最終更新日=2026年8月24日。
 const TERMS_TEXT = `利用規約
 
-最終更新日: 2026年9月24日
+最終更新日: 2026年11月2日
 
 本利用規約(以下「本規約」)は、Lee Junhee(以下「運営者」)が提供するアプリケーション「大学の森」(以下「本サービス」)の利用条件を定めるものです。利用者は、本サービスを利用することにより、本規約に同意したものとみなされます。
 
@@ -41,6 +42,7 @@ const TERMS_TEXT = `利用規約
 8. 本サービスの運営を妨害する行為（不正アクセス、自動化ツールによる大量操作等）
 9. 複数アカウントの不正利用、ブロック・通報機能の悪用
 10. その他、運営者が不適切と判断する行為
+運営者は、上記の不適切なコンテンツおよび迷惑行為を一切容認しません（ゼロトレランス）。違反する投稿は発見または通報を受けた時点で削除し、投稿者に対してはアカウントの利用停止（追放）を含む措置を講じます。
 
 第5条（投稿コンテンツの取扱い）
 1. 投稿コンテンツの著作権は投稿した利用者に帰属します。
@@ -54,8 +56,10 @@ const TERMS_TEXT = `利用規約
 
 第7条（通報・ブロック・運営措置）
 1. 利用者は、本規約に違反する投稿等を通報機能により運営者に通報できます。
-2. 運営者は通報を受けた場合、速やかに（原則24時間以内に）内容を確認し、必要な措置（投稿の非表示・削除、警告、機能制限、アカウント停止等）を講じます。
+2. 運営者は通報を受けた場合、24時間以内に内容を確認し、不適切なコンテンツと認めたものは削除し、投稿者のアカウントを利用停止（追放）します。その他必要に応じて警告・機能制限等の措置を講じます。
 3. 運営者は、本規約違反またはそのおそれがあると判断した場合、事前通知なく前項の措置を行うことができます。措置の理由について、運営者は開示義務を負いません。
+4. 利用者は、不適切な投稿を自身の画面から即時に非表示にすること、および迷惑な利用者をブロックすることができます。
+5. 不適切な投稿・行為の報告や削除依頼は、アプリ内の通報機能・お問い合わせフォームのほか、下記の連絡先メールでも受け付けます。
 
 第8条（知的財産権）
 本サービスに関する知的財産権（投稿コンテンツを除く）は、運営者または正当な権利者に帰属します。
@@ -77,19 +81,14 @@ const TERMS_TEXT = `利用規約
 お問い合わせ: ddongpig123@gmail.com`;
 
 export default function TermsScreen() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => (router.canGoBack() ? router.back() : router.replace("/onboarding"))}
-      >
-        <Text style={styles.backIcon}>←</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <ScreenHeader title={t("legal.termsTitle")} fallback="/onboarding" />
       {/* 下端はホームインジケーター/ナビバー分(insets.bottom)を足す。固定値だと最終行が隠れる */}
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
         <Text style={styles.text}>{TERMS_TEXT}</Text>
@@ -101,22 +100,7 @@ export default function TermsScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    backButton: {
-      position: "absolute",
-      top: 16,
-      left: 16,
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: theme.card,
-      borderWidth: 1,
-      borderColor: theme.border,
-      zIndex: 1,
-    },
-    backIcon: { fontSize: 18, color: theme.textPrimary },
-    content: { paddingTop: 64, paddingHorizontal: 20 },
+    content: { paddingTop: 16, paddingHorizontal: 20 },
     text: { fontSize: 12, lineHeight: 19, color: theme.textPrimary },
   });
 }

@@ -16,12 +16,14 @@ import { useLocalSearchParams, useRouter, useFocusEffect, useNavigation } from "
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
 import { fetchPosts, fetchBoardSearchCandidates } from "../../../src/services/boardService";
 import type { Theme } from "../../../src/theme/themes";
 import { boardLabel, isQaBoard, qaTagLabel, QA_TAGS, type BoardId, type Post } from "../../../src/types/board";
 import { useBoards } from "../../../src/hooks/useBoards";
+import LoadError from "../../../src/components/common/LoadError";
 
 export default function PostListScreen() {
   const { boardId } = useLocalSearchParams<{ boardId: string }>();
@@ -29,6 +31,7 @@ export default function PostListScreen() {
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const router = useRouter();
   const navigation = useNavigation();
@@ -38,6 +41,7 @@ export default function PostListScreen() {
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   // 質問板のカテゴリ絞り込み（クライアント側）。null=すべて。
   const isQa = isQaBoard(boardId as string);
@@ -101,10 +105,17 @@ export default function PostListScreen() {
 
   const load = useCallback(async () => {
     if (!schoolDomain || !boardId) return;
-    const { posts: p, lastDoc, hasMore: more } = await fetchPosts(schoolDomain, boardId as BoardId);
-    lastDocRef.current = lastDoc;
-    setHasMore(more);
-    setPosts(p);
+    try {
+      const { posts: p, lastDoc, hasMore: more } = await fetchPosts(schoolDomain, boardId as BoardId);
+      lastDocRef.current = lastDoc;
+      setHasMore(more);
+      setPosts(p);
+      setLoadError(false);
+    } catch (e) {
+      // 失敗を「まだ投稿がありません」に見せない（通信が戻ったらその場で再読み込みできる）
+      console.warn("posts load failed:", e);
+      setLoadError(true);
+    }
   }, [schoolDomain, boardId]);
 
   // 次ページを追記。重複 id は弾く（焦点復帰と追記が重なった場合の保険）。
@@ -147,11 +158,15 @@ export default function PostListScreen() {
   }
 
   // 表示対象（検索中は検索結果、質問板で絞り込み中はタグ一致のみ）。
+  // 非表示にした投稿（通報済み含む）は一覧から即時に除く（審査指針 1.2）。
   const visiblePosts = useMemo(() => {
-    if (searchMode) return results;
-    if (isQa && tagFilter) return posts.filter((p) => p.tag === tagFilter);
-    return posts;
-  }, [searchMode, results, isQa, tagFilter, posts]);
+    const base = searchMode
+      ? results
+      : isQa && tagFilter
+        ? posts.filter((p) => p.tag === tagFilter)
+        : posts;
+    return base.filter((p) => !isHidden(p.id));
+  }, [searchMode, results, isQa, tagFilter, posts, isHidden]);
 
   // 絞り込み中に表示が足りなければ次ページを読む（最後まで読んだら止まる）。
   useEffect(() => {
@@ -169,6 +184,18 @@ export default function PostListScreen() {
       <View style={styles.center}>
         <ActivityIndicator size="large" color={theme.primary} />
       </View>
+    );
+  }
+
+  // 1件も無い状態で失敗した時だけ全面エラー。前回分が残っていればそれを見せ続ける。
+  if (loadError && posts.length === 0) {
+    return (
+      <LoadError
+        onRetry={() => {
+          setLoading(true);
+          load().finally(() => setLoading(false));
+        }}
+      />
     );
   }
 
@@ -235,7 +262,7 @@ export default function PostListScreen() {
                 {searchMode
                   ? keyword.trim()
                     ? `「${keyword}」${t("boards.noResultsSuffix")}`
-                    : t("boards.searchPlaceholder")
+                    : t("boards.searchHint")
                   : t("boards.noPosts")}
               </Text>
             )}
@@ -273,7 +300,7 @@ export default function PostListScreen() {
                 <Text style={styles.metaText}>·</Text>
                 <Text style={styles.metaText}><Ionicons name="chatbubble-outline" size={12} color={theme.textSecondary} /> {item.commentCount}</Text>
                 <Text style={styles.metaText}>·</Text>
-                <Text style={styles.metaText}>{t("boards.views")} {item.viewCount ?? 0}</Text>
+                <Text style={styles.metaText}><Ionicons name="eye-outline" size={12} color={theme.textSecondary} /> {item.viewCount ?? 0}</Text>
               </View>
             </TouchableOpacity>
           )
@@ -317,11 +344,11 @@ function makeStyles(theme: Theme) {
     titleRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 6 },
     title: { flex: 1, fontSize: 15, fontWeight: "600", color: theme.textPrimary },
     qaBadge: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
-    qaBadgeOpen: { backgroundColor: "#F3A43722" },
-    qaBadgeResolved: { backgroundColor: "#1F9D6B22" },
+    qaBadgeOpen: { backgroundColor: theme.warning + "22" },
+    qaBadgeResolved: { backgroundColor: theme.success + "22" },
     qaBadgeText: { fontSize: 10, fontWeight: "800" },
-    qaBadgeTextOpen: { color: "#C77A10" },
-    qaBadgeTextResolved: { color: "#1F9D6B" },
+    qaBadgeTextOpen: { color: theme.warning },
+    qaBadgeTextResolved: { color: theme.success },
     tagChip: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2, backgroundColor: theme.primary + "14" },
     tagChipText: { fontSize: 10, fontWeight: "700", color: theme.primary },
     filterBar: {

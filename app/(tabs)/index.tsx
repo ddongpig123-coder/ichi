@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
@@ -18,10 +20,13 @@ import {
   type TimetableVisibility,
 } from "../../src/services/timetableService";
 import { useFriendOverlaps } from "../../src/hooks/useFriendOverlaps";
+import { notify } from "../../src/utils/dialog";
+import { friendlyErrorBody } from "../../src/utils/writeError";
 import type { ClassSession, Day, Period } from "../../src/types/timetable";
 import {
   type Semester,
   type SemesterKey,
+  getCurrentAcademicYear,
   getCurrentSemester,
   isSemesterAvailable,
 } from "../../src/data/semesterTimetables";
@@ -29,7 +34,7 @@ import {
 const TIMETABLE_HEADER_H = 24;
 const PERIODS_COUNT = 7;
 const NAV_HEADER_BASE = 44;
-const TAB_BAR_BASE = 49;
+const TAB_BAR_BASE = TAB_BAR_HEIGHT;
 const FRIENDS_SECTION_H = 185;
 const COURSE_SEARCH_ROW_H = 44; // 講義検索への導線ぶんの高さ
 
@@ -41,7 +46,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(getCurrentAcademicYear);
   const [selectedSemester, setSelectedSemester] = useState<Semester>(getCurrentSemester());
 
   const { user } = useAuth();
@@ -121,14 +126,20 @@ export default function HomeScreen() {
 
   const [target, setTarget] = useState<{ day: Day; period: Period; session?: ClassSession } | null>(null);
 
-  // ローカル更新 + Firestore保存（保存失敗はログのみ — 次の保存で全量上書きされる）
+  // ローカル更新 + Firestore保存。失敗したら元に戻して知らせる
+  // （以前はログのみで、画面上は保存できたように見え、次回起動で「消えた」になっていた）
   function persistSessions(next: ClassSession[]) {
-    setSessionsMap((prev) => ({ ...prev, [semesterKey]: next }));
+    const prev = sessionsMap[semesterKey] ?? [];
+    setSessionsMap((m) => ({ ...m, [semesterKey]: next }));
     if (!user) return;
     const isNew = missingDocKeys.current.has(semesterKey);
     saveTimetableSessions(user.uid, semesterKey, next, { initVisibility: isNew })
       .then(() => missingDocKeys.current.delete(semesterKey))
-      .catch((e) => console.warn("timetable save failed:", e));
+      .catch((e) => {
+        // その後に別の保存が済んでいたら触らない（参照が next のままの時だけ戻す）
+        setSessionsMap((m) => (m[semesterKey] === next ? { ...m, [semesterKey]: prev } : m));
+        notify(t("common.saveFailed"), friendlyErrorBody(e, t));
+      });
   }
 
   const headerH = NAV_HEADER_BASE + insets.top;
@@ -165,13 +176,25 @@ export default function HomeScreen() {
         rightSlot={<VisibilitySelector value={visibility} onChange={handleChangeVisibility} />}
       />
 
-      <TimeTable
-        sessions={sessions}
-        onPressEmptyCell={(day, period) => setTarget({ day, period })}
-        onPressSession={(session) => setTarget({ day: session.day, period: session.period, session })}
-        cellHeight={cellHeight}
-        friendOverlaps={friendOverlaps}
-      />
+      <View>
+        <TimeTable
+          sessions={sessions}
+          onPressEmptyCell={(day, period) => setTarget({ day, period })}
+          onPressSession={(session) => setTarget({ day: session.day, period: session.period, session })}
+          cellHeight={cellHeight}
+          friendOverlaps={friendOverlaps}
+        />
+        {/* 初めての人は空の格子だけでは何をすればいいか分からない → 読み込み後に0件なら1行だけ重ねる。
+            タップは下のマスに通す（pointerEvents="none"） */}
+        {semesterKey in sessionsMap && sessions.length === 0 && (
+          <View style={styles.emptyHint} pointerEvents="none">
+            <View style={styles.emptyHintPill}>
+              <Ionicons name="hand-left-outline" size={14} color={theme.textSecondary} />
+              <Text style={styles.emptyHintText}>{t("home.emptyHint")}</Text>
+            </View>
+          </View>
+        )}
+      </View>
 
       <View style={styles.actionRow}>
         <TouchableOpacity
@@ -180,6 +203,7 @@ export default function HomeScreen() {
             router.push(`/course-search?year=${selectedYear}&semester=${selectedSemester}`)
           }
         >
+          <Ionicons name="search-outline" size={15} color={theme.primary} />
           <Text style={styles.actionText} numberOfLines={1}>{t("courseSearch.entry")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -188,12 +212,14 @@ export default function HomeScreen() {
             router.push(`/timetable-wizard?year=${selectedYear}&semester=${selectedSemester}`)
           }
         >
+          <Ionicons name="sparkles-outline" size={15} color={theme.primary} />
           <Text style={styles.actionText} numberOfLines={1}>{t("wizard.entry")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.actionBtn}
           onPress={() => router.push("/graduation")}
         >
+          <Ionicons name="school-outline" size={15} color={theme.primary} />
           <Text style={styles.actionText} numberOfLines={1}>{t("grad.entry")}</Text>
         </TouchableOpacity>
       </View>
@@ -216,6 +242,27 @@ export default function HomeScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
+    emptyHint: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    emptyHintPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 999,
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+    },
+    emptyHintText: { fontSize: 13, color: theme.textSecondary },
     actionRow: {
       height: COURSE_SEARCH_ROW_H,
       flexDirection: "row",
@@ -225,6 +272,9 @@ function makeStyles(theme: Theme) {
     },
     actionBtn: {
       flex: 1,
+      flexDirection: "row",
+      gap: 4,
+      paddingHorizontal: 4,
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 8,
@@ -232,6 +282,6 @@ function makeStyles(theme: Theme) {
       borderStyle: "dashed",
       borderColor: theme.primary,
     },
-    actionText: { color: theme.primary, fontSize: 13, fontWeight: "600" },
+    actionText: { color: theme.primary, fontSize: 13, fontWeight: "600", flexShrink: 1 },
   });
 }

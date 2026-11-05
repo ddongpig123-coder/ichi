@@ -65,9 +65,11 @@ export default function OnboardingScreen() {
     }
   }
 
+  // 言語を先に選ぶ: 規約の要約を読める言語で見せてから同意してもらうため
+  // （以前は規約→言語の順で、韓国語話者が日本語の要約に同意する形になっていた）
   function selectLanguage(lang: UserLanguage) {
     setLanguage(lang);
-    setStep(3);
+    setStep(2);
   }
 
   // 左上の戻る。ステップ間は前のステップへ、学校のみモードは呼び出し元へ戻る。
@@ -79,11 +81,11 @@ export default function OnboardingScreen() {
     }
     if (step === 3) { setStep(2); return; }
     if (step === 2) { setStep(1); return; }
-    // step 1（初回起動の規約ステップ）は前がないので、戻れる場合のみ戻る。
+    // step 1（初回起動の言語ステップ）は前がないので、戻れる場合のみ戻る。
     if (router.canGoBack()) router.back();
   }
 
-  // 初回起動の規約ステップ（前がない）以外は戻るを表示。
+  // 初回起動の言語ステップ（前がない）以外は戻るを表示。
   const showBack = schoolOnly || step > 1 || router.canGoBack();
 
   return (
@@ -100,26 +102,9 @@ export default function OnboardingScreen() {
 
         {step === 1 && (
           <>
-            <Text style={styles.title}>{t("onboarding.termsTitle")}</Text>
-            <View style={styles.termsBox}>
-              <Text style={styles.termsText}>{t("onboarding.termsSummary")}</Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push("/terms")}>
-              <Text style={styles.linkText}>{t("onboarding.readTerms")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push("/privacy")}>
-              <Text style={styles.linkText}>{t("onboarding.readPrivacy")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.primaryButton} onPress={() => setStep(2)}>
-              <Text style={styles.primaryButtonText}>{t("onboarding.agree")}</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <Text style={styles.title}>{t("onboarding.languageTitle")}</Text>
-            <Text style={styles.subtitle}>{t("onboarding.languageSubtitle")}</Text>
+            {/* まだ言語を選んでいないので、見出しは両言語で出す */}
+            <Text style={styles.title}>言語を選択 / 언어 선택</Text>
+            <Text style={styles.subtitle}>後で変更できます / 나중에 바꿀 수 있어요</Text>
             <TouchableOpacity
               style={[styles.choiceButton, language === "ja" && styles.choiceButtonActive]}
               onPress={() => selectLanguage("ja")}
@@ -131,6 +116,24 @@ export default function OnboardingScreen() {
               onPress={() => selectLanguage("ko")}
             >
               <Text style={styles.choiceText}>한국어</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <Text style={styles.title}>{t("onboarding.termsTitle")}</Text>
+            <View style={styles.termsBox}>
+              <Text style={styles.termsText}>{t("onboarding.termsSummary")}</Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push("/terms")}>
+              <Text style={styles.linkText}>{t("onboarding.readTerms")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/privacy")}>
+              <Text style={styles.linkText}>{t("onboarding.readPrivacy")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.primaryButton} onPress={() => setStep(3)}>
+              <Text style={styles.primaryButtonText}>{t("onboarding.agree")}</Text>
             </TouchableOpacity>
           </>
         )}
@@ -157,16 +160,6 @@ export default function OnboardingScreen() {
               <Text style={styles.choiceText}>{t("onboarding.schoolOther")}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.primaryButton,
-                (schoolDomain === undefined || busy) && styles.buttonDisabled,
-              ]}
-              onPress={handleStart}
-              disabled={schoolDomain === undefined || busy}
-            >
-              <Text style={styles.primaryButtonText}>{t("onboarding.start")}</Text>
-            </TouchableOpacity>
           </>
         )}
 
@@ -179,6 +172,23 @@ export default function OnboardingScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* 学校を選んだ後の「始める」が画面外（要スクロール）だったので、下に固定する */}
+      {step === 3 && (
+        <View style={[styles.footer, { paddingBottom: 12 + insets.bottom }]}>
+          <TouchableOpacity
+            style={[
+              styles.primaryButton,
+              styles.footerButton,
+              (schoolDomain === undefined || busy) && styles.buttonDisabled,
+            ]}
+            onPress={handleStart}
+            disabled={schoolDomain === undefined || busy}
+          >
+            <Text style={styles.primaryButtonText}>{t("onboarding.start")}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -224,7 +234,7 @@ function makeStyles(theme: Theme) {
       paddingHorizontal: 16,
       marginBottom: 10,
     },
-    choiceButtonActive: { borderColor: theme.primary, borderWidth: 2 },
+    choiceButtonActive: { borderColor: theme.primary, borderWidth: 2, backgroundColor: theme.primary + "14" },
     choiceText: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
 
     primaryButton: {
@@ -236,6 +246,14 @@ function makeStyles(theme: Theme) {
     },
     primaryButtonText: { color: "#fff", fontSize: 15, fontWeight: "700" },
     buttonDisabled: { opacity: 0.4 },
+    footer: {
+      paddingHorizontal: 28,
+      paddingTop: 10,
+      backgroundColor: theme.background,
+      borderTopWidth: 1,
+      borderTopColor: theme.border,
+    },
+    footerButton: { marginTop: 0 },
 
     dots: { flexDirection: "row", justifyContent: "center", gap: 8, marginTop: 28 },
     dot: {

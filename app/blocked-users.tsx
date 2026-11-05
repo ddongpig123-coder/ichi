@@ -13,6 +13,7 @@ import { useBlock } from "../src/contexts/BlockContext";
 import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
+import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // ブロックしたユーザーの一覧・解除。プロフィールから遷移。
 // 匿名性維持のためニックネームは持たず、uid の一部のみ表示する。
@@ -26,16 +27,7 @@ export default function BlockedUsersScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)/profile"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("blocked.title")}</Text>
-        <View style={{ width: 28 }} />
-      </View>
+      <ScreenHeader title={t("blocked.title")} fallback="/(tabs)/profile" />
 
       {!ready ? (
         <ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} />
@@ -73,19 +65,6 @@ export default function BlockedUsersScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingTop: 56,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32, width: 28 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
     sep: { height: 1, backgroundColor: theme.border },
     row: {
       flexDirection: "row",

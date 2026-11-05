@@ -26,6 +26,7 @@ import { searchCourses } from "../src/services/courseService";
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
+import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
 import { DAYS, type ClassSession, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
 import {
@@ -36,6 +37,8 @@ import {
   type WizardOutcome,
   type WizardResult,
 } from "../src/utils/timetableWizard";
+import ScreenHeader from "../src/components/common/ScreenHeader";
+import SchoolPrompt from "../src/components/common/SchoolPrompt";
 
 // ============================================================
 // 時間割メーカー（自動作成 / 시간표 마법사）
@@ -76,24 +79,25 @@ function resultToSessions(result: WizardResult, palette: string[]): ClassSession
 export default function TimetableWizardScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, schoolDomain: mySchool, schoolReady } = useAuth();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const params = useLocalSearchParams<{ year?: string; semester?: string }>();
-  const year = Number(params.year) || new Date().getFullYear();
+  const year = Number(params.year) || getCurrentAcademicYear();
   const semester: Semester = params.semester === "秋" ? "秋" : "春";
   const semesterKey = `${year}-${semester}`;
 
-  // 講義データは学校別スコープ。schoolDomain は course-search と同じくプロフィール値を使う。
-  const [schoolDomain, setSchoolDomain] = useState("meiji.ac.jp");
+  // 講義データは学校別スコープ。course-search と同じく AuthContext の実校ドメインを使う
+  // （以前の meiji.ac.jp フォールバックは学校未選択の人に明治の学部を見せていた）。
+  const noSchool = schoolReady && !mySchool;
+  const schoolDomain = mySchool ?? "";
   const [myDeptRaw, setMyDeptRaw] = useState<string | null>(null);
   useEffect(() => {
     if (!user) return;
     getUserProfile(user.uid)
       .then((p) => {
-        if (p?.schoolDomain) setSchoolDomain(p.schoolDomain);
         if (p?.department) setMyDeptRaw(p.department);
       })
       .catch(() => {});
@@ -229,18 +233,19 @@ export default function TimetableWizardScreen() {
     }
   }
 
+  // 学校が未確定（読み込み中）／未選択の間は本体を出さない。hooks は全て上で呼び終えている。
+  if (!schoolReady || noSchool) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title={t("wizard.title")} />
+        {noSchool ? <SchoolPrompt /> : <ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} />}
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t("wizard.title")}</Text>
-        <Text style={styles.semesterBadge}>{`${year} ${semester}`}</Text>
-      </View>
+      <ScreenHeader title={t("wizard.title")} right={<Text style={styles.semesterBadge}>{`${year} ${semester === "春" ? t("timetable.springSemester") : t("timetable.fallSemester")}`}</Text>} />
 
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
         {/* 학부 선택 — 강의 데이터가 있는 학교에서만 */}
@@ -584,20 +589,7 @@ function ResultCard({
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 16,
-      paddingTop: 56,
-      paddingBottom: 12,
-      backgroundColor: theme.card,
-      borderBottomWidth: 1,
-      borderColor: theme.border,
-    },
-    backIcon: { fontSize: 30, color: theme.primary, lineHeight: 32, width: 28 },
-    headerTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary },
-    semesterBadge: { fontSize: 13, color: theme.textSecondary, width: 60, textAlign: "right" },
+    semesterBadge: { fontSize: 13, color: theme.textSecondary },
 
     sectionLabel: {
       fontSize: 12,

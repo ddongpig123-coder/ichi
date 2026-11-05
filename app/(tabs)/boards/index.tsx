@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, SectionList, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { usePinnedBoards } from "../../../src/hooks/usePinnedBoards";
 import { useBoards } from "../../../src/hooks/useBoards";
 import { useAuth } from "../../../src/contexts/AuthContext";
@@ -21,8 +21,15 @@ export default function BoardsScreen() {
   const { schoolDomain, schoolReady } = useAuth();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
-  const { newCommentCount } = useNotifications();
+  const { newCommentCount, refreshMyPosts } = useNotifications();
   const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
+
+  // 掲示板タブを開くたびに「自分の投稿への新着コメント」を更新（30秒に1回まで）。
+  useFocusEffect(
+    useCallback(() => {
+      refreshMyPosts({ minIntervalMs: 30_000 });
+    }, [refreshMyPosts])
+  );
 
   // 学校掲示板は学校スコープ。学校未選択(schoolDomain=null)ユーザーには
   // 掲示板の代わりに「学校を選択」導線を出す（ラウンジは全国なので使える）。§5
@@ -147,7 +154,7 @@ function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
     myPostsTitleRow: { flexDirection: "row", alignItems: "center" },
-    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E2574C", marginLeft: 6 },
+    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.danger, marginLeft: 6 },
     bestBanner: {
       flexDirection: "row",
       alignItems: "center",

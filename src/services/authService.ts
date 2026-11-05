@@ -10,6 +10,7 @@ import {
   AuthProvider,
   OAuthProvider,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signOut as firebaseSignOut,
   deleteUser,
   reauthenticateWithCredential,
@@ -225,6 +226,19 @@ export async function signUpWithEmail(
 export async function signInWithEmail(email: string, password: string): Promise<User> {
   const result = await signInWithEmailAndPassword(auth, email, password);
   return result.user;
+}
+
+// パスワード再設定メールを送る（メールは Firebase が送信。アプリはパスワードに触れない）。
+// 「そのメールは未登録」は利用者に伝えない: 他人のメールアドレスが登録済みかを
+// 調べる手段にさせないため（Firebase のメール列挙保護と同じ考え方）。
+export async function sendPasswordReset(email: string, language: "ja" | "ko"): Promise<void> {
+  auth.languageCode = language;
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (e: any) {
+    if (e?.code === "auth/user-not-found") return;
+    throw e;
+  }
 }
 
 // ── 匿名アカウントの昇格（アカウント連携） ────────────────────

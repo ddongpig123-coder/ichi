@@ -111,7 +111,7 @@ function makeStyles(theme: Theme) {
     row: { paddingHorizontal: 16, paddingVertical: 12, backgroundColor: theme.card },
     rowTop: { flexDirection: "row", alignItems: "center", marginBottom: 4 },
     boardTag: { fontSize: 11, color: theme.primary, fontWeight: "600" },
-    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#E2574C", marginLeft: 6 },
+    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.danger, marginLeft: 6 },
     title: { fontSize: 15, fontWeight: "600", color: theme.textPrimary, marginBottom: 4 },
     meta: { fontSize: 12, color: theme.textSecondary },
     sep: { height: 1, backgroundColor: theme.border },
