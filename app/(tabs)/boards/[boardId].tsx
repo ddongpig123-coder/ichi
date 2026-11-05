@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import type { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import { mergeFirstPage } from "../../../src/utils/listMerge";
 import {
   View,
   Text,
@@ -103,13 +104,15 @@ export default function PostListScreen() {
     });
   }, [board, language, searchMode, theme]);
 
-  const load = useCallback(async () => {
+  // merge: 焦点復帰時の静かな再読み込み。一覧を置き換えず先頭ページをマージする
+  // （置き換えると追加読み込み分が消え、FlatList が作り直されてスクロールが先頭に戻る）。
+  const load = useCallback(async (opts?: { merge?: boolean }) => {
     if (!schoolDomain || !boardId) return;
     try {
       const { posts: p, lastDoc, hasMore: more } = await fetchPosts(schoolDomain, boardId as BoardId);
       lastDocRef.current = lastDoc;
       setHasMore(more);
-      setPosts(p);
+      setPosts((prev) => (opts?.merge && prev.length > 0 ? mergeFirstPage(prev, p) : p));
       setLoadError(false);
     } catch (e) {
       // 失敗を「まだ投稿がありません」に見せない（通信が戻ったらその場で再読み込みできる）
@@ -143,11 +146,18 @@ export default function PostListScreen() {
     }
   }, [schoolDomain, boardId, hasMore, loadingMore]);
 
-  // 화면 포커스될 때마다 새로고침 (글 작성 후 돌아올 때 포함)
+  // 初回だけスピナー付きで読む。2回目以降の焦点復帰（投稿詳細・投稿作成から戻った時）は
+  // 一覧を残したまま静かにマージ更新 → スクロール位置が保たれる。
+  const focusedOnceRef = useRef(false);
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
-      load().finally(() => setLoading(false));
+      if (!focusedOnceRef.current) {
+        focusedOnceRef.current = true;
+        setLoading(true);
+        load().finally(() => setLoading(false));
+      } else {
+        load({ merge: true });
+      }
     }, [load])
   );
 
@@ -241,6 +251,8 @@ export default function PostListScreen() {
       <FlatList
         data={visiblePosts}
         keyExtractor={(item) => item.id}
+        // 新着が先頭に増えても、見ていた項目の位置を保つ（マージ更新と組み合わせる）
+        maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
         refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
         ItemSeparatorComponent={() => <View style={styles.sep} />}

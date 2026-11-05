@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useRef } from "react";
+import { mergeFirstPage } from "../../../src/utils/listMerge";
 import {
   View,
   Text,
@@ -88,11 +89,12 @@ export default function LoungePostListScreen() {
     });
   }, [lounge, language, searchMode, theme]);
 
-  const load = useCallback(async () => {
+  // merge: 焦点復帰時は一覧を置き換えずマージ（スクロール位置を保つ。掲示板一覧と同じ）
+  const load = useCallback(async (opts?: { merge?: boolean }) => {
     if (!loungeId) return;
     try {
       const p = await fetchLoungePosts(loungeId as LoungeId);
-      setPosts(p);
+      setPosts((prev) => (opts?.merge && prev.length > 0 ? mergeFirstPage(prev, p) : p));
       setLoadError(false);
     } catch (e) {
       // 失敗を「まだ投稿がありません」に見せない
@@ -101,10 +103,17 @@ export default function LoungePostListScreen() {
     }
   }, [loungeId]);
 
+  // 初回だけスピナー、2回目以降の焦点復帰は静かにマージ更新
+  const focusedOnceRef = useRef(false);
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
-      load().finally(() => setLoading(false));
+      if (!focusedOnceRef.current) {
+        focusedOnceRef.current = true;
+        setLoading(true);
+        load().finally(() => setLoading(false));
+      } else {
+        load({ merge: true });
+      }
     }, [load])
   );
 
@@ -154,6 +163,7 @@ export default function LoungePostListScreen() {
         data={(searchMode ? results : posts).filter((p) => !isHidden(p.id))}
         contentContainerStyle={{ paddingBottom: insets.bottom }}
         keyExtractor={(item) => item.id}
+        maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
         refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
         ItemSeparatorComponent={() => <View style={styles.sep} />}
