@@ -22,7 +22,7 @@ import { useConfirmDiscard } from "../../../src/hooks/useConfirmDiscard";
 import { POST_BODY_MAX, POST_TITLE_MAX } from "../../../src/data/limits";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
-import { LOUNGES, loungeLabel, type LoungeId } from "../../../src/types/lounge";
+import { LOUNGES, loungeLabel, forestOfLounge, type LoungeId } from "../../../src/types/lounge";
 
 export default function LoungeWriteScreen() {
   const insets = useSafeAreaInsets();
@@ -72,7 +72,9 @@ export default function LoungeWriteScreen() {
     >
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
         <Text style={styles.boardName}>{lounge ? loungeLabel(lounge, language) : ""}</Text>
-        <Text style={styles.anon}>{t("lounge.anonNotice")}</Text>
+        <Text style={styles.anon}>
+          {forestOfLounge(loungeId)?.id === "ryugakusei" ? t("lounge.anonNoticeRyugakusei") : t("lounge.anonNotice")}
+        </Text>
 
         <TextInput
           style={styles.titleInput}

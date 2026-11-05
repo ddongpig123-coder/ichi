@@ -18,9 +18,10 @@ export function useBoards() {
     reload().finally(() => setLoading(false));
   }, [reload]);
 
-  const departmentBoards = customBoards.filter((b) => b.category === "department");
-  const userBoards = customBoards.filter((b) => b.category === "custom");
+  // 学部別掲示板は 1.1 S4 で廃止（BOARD-ACCESS §3-3 Q3）。既存の category:"department" 板は
+  // 消さずに「学生がつくった掲示板」と同じ枠で表示する — 投稿はそのまま見える。
+  const userBoards = customBoards;
   const allBoards = [...OFFICIAL_BOARDS, ...customBoards];
 
-  return { allBoards, officialBoards: OFFICIAL_BOARDS, departmentBoards, userBoards, customBoards, loading, reload };
+  return { allBoards, officialBoards: OFFICIAL_BOARDS, userBoards, customBoards, loading, reload };
 }

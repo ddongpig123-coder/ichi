@@ -1,14 +1,17 @@
 import React, { useMemo, type ComponentProps } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, SectionList, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import type { Theme } from "../../src/theme/themes";
-import { LOUNGES, loungeLabel, loungeDescription, type LoungeMeta } from "../../src/types/lounge";
+import {
+  FORESTS, loungesOfForest, loungeLabel, loungeDescription, forestLabel, forestDescription, type LoungeMeta,
+} from "../../src/types/lounge";
 
-// 全国の留学生が学校の枠を越えて交流するラウンジ。カテゴリ一覧。
+// 森の一覧（みんなの森 / 留学生の森）。通常の入口は掲示板タブ上部のセグメントで、
+// この画面は /lounge への直リンク用に残している（S4 以前のリンク互換）。
 export default function LoungeHomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -16,12 +19,15 @@ export default function LoungeHomeScreen() {
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
+  const sections = FORESTS.map((f) => ({
+    title: forestLabel(f, language),
+    sub: forestDescription(f, language),
+    data: loungesOfForest(f.id),
+  }));
+
   function renderItem({ item }: { item: LoungeMeta }) {
     return (
-      <TouchableOpacity
-        style={styles.row}
-        onPress={() => router.push(`/lounge/${item.id}`)}
-      >
+      <TouchableOpacity style={styles.row} onPress={() => router.push(`/lounge/${item.id}`)}>
         <Ionicons name={item.icon as ComponentProps<typeof Ionicons>["name"]} style={styles.icon} />
         <View style={{ flex: 1 }}>
           <Text style={styles.label}>{loungeLabel(item, language)}</Text>
@@ -34,18 +40,20 @@ export default function LoungeHomeScreen() {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={LOUNGES}
+      <SectionList
+        sections={sections}
         contentContainerStyle={{ paddingBottom: insets.bottom }}
         keyExtractor={(item) => item.id}
         ItemSeparatorComponent={() => <View style={styles.sep} />}
-        ListHeaderComponent={
+        ListHeaderComponent={<Text style={styles.header}>{t("lounge.bannerSub")}</Text>}
+        renderSectionHeader={({ section }) => (
           <View style={styles.banner}>
-            <Text style={styles.bannerTitle}>{t("boards.loungeTitle")}</Text>
-            <Text style={styles.bannerSub}>{t("lounge.bannerSub")}</Text>
+            <Text style={styles.bannerTitle}>{section.title}</Text>
+            <Text style={styles.bannerSub}>{section.sub}</Text>
           </View>
-        }
+        )}
         renderItem={renderItem}
+        stickySectionHeadersEnabled={false}
       />
     </View>
   );
@@ -54,7 +62,8 @@ export default function LoungeHomeScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    banner: { padding: 20, backgroundColor: theme.primary + "14" },
+    header: { fontSize: 13, color: theme.textSecondary, paddingHorizontal: 20, paddingVertical: 12 },
+    banner: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10, backgroundColor: theme.primary + "14" },
     bannerTitle: { fontSize: 18, fontWeight: "700", color: theme.primary, marginBottom: 4 },
     bannerSub: { fontSize: 13, color: theme.textSecondary },
     sep: { height: 1, backgroundColor: theme.border },

@@ -26,8 +26,8 @@ export default function CreateBoardScreen() {
   const { theme } = useTheme();
   const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  // 学部別掲示板は 1.1 S4 で廃止（BOARD-ACCESS §3-3 Q3）。ユーザーが作れるのはカスタム1種のみ。
   const categories: { value: BoardMeta["category"]; label: string; desc: string }[] = [
-    { value: "department", label: t("boards.department"), desc: t("boards.categoryDepartmentDesc") },
     { value: "custom", label: t("boards.categoryCustom"), desc: t("boards.categoryCustomDesc") },
   ];
   const router = useRouter();
@@ -62,23 +62,28 @@ export default function CreateBoardScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.sectionLabel}>{t("boards.category")}</Text>
-        <View style={styles.categoryRow}>
-          {categories.map((cat) => (
-            <TouchableOpacity
-              key={cat.value}
-              style={[styles.catBtn, category === cat.value && styles.catBtnActive]}
-              onPress={() => setCategory(cat.value)}
-            >
-              <Text style={[styles.catLabel, category === cat.value && styles.catLabelActive]}>
-                {cat.label}
-              </Text>
-              <Text style={[styles.catDesc, category === cat.value && styles.catDescActive]}>
-                {cat.desc}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* 選択肢が1つだけのときはカテゴリ欄を出さない（学部別の廃止後はカスタムのみ） */}
+        {categories.length > 1 && (
+          <>
+            <Text style={styles.sectionLabel}>{t("boards.category")}</Text>
+            <View style={styles.categoryRow}>
+              {categories.map((cat) => (
+                <TouchableOpacity
+                  key={cat.value}
+                  style={[styles.catBtn, category === cat.value && styles.catBtnActive]}
+                  onPress={() => setCategory(cat.value)}
+                >
+                  <Text style={[styles.catLabel, category === cat.value && styles.catLabelActive]}>
+                    {cat.label}
+                  </Text>
+                  <Text style={[styles.catDesc, category === cat.value && styles.catDescActive]}>
+                    {cat.desc}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
 
         <Text style={styles.sectionLabel}>{t("boards.nameLabel")} <Text style={styles.required}>*</Text></Text>
         <TextInput

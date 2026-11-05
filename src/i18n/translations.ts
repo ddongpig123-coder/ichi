@@ -418,14 +418,13 @@ const ja = {
   "myPosts.title": "自分の投稿",
   "myPosts.sub": "書いた投稿とコメントの新着",
   "myPosts.empty": "まだ投稿がありません",
-  "myPosts.emptyHint": "掲示板・ラウンジに投稿すると、ここに一覧で表示されます。",
+  "myPosts.emptyHint": "掲示板・森に投稿すると、ここに一覧で表示されます。",
   "boards.createScreenTitle": "掲示板を作成",
   "boards.official": "公式掲示板",
-  "boards.department": "学部別掲示板",
-  "boards.custom": "みんなの掲示板",
+  "boards.custom": "学生がつくった掲示板",
   "boards.pinnedSection": "よく使う掲示板",
-  "boards.loungeTitle": "留学生ラウンジ",
-  "boards.loungeSub": "全国の留学生と情報交換（ビザ・バイト・住まいなど）",
+  // 掲示板タブ上部のセグメント（学校 ↔ みんなの森 ↔ 留学生の森）。森の名前は src/types/lounge.ts の FORESTS
+  "boards.segmentSchool": "学校",
   "boards.bestTitle": "ベスト投稿",
   "boards.bestSub": "いいね数トップ20をチェック",
   "boards.bestHeaderSub": "いいね数トップ20",
@@ -436,7 +435,6 @@ const ja = {
   "boards.anonymous": "匿名",
   "boards.views": "閲覧",
   "boards.category": "カテゴリ",
-  "boards.categoryDepartmentDesc": "特定の学部・学科向け",
   "boards.categoryCustom": "カスタム掲示板",
   "boards.categoryCustomDesc": "自由にテーマを設定",
   "boards.nameLabel": "掲示板名",
@@ -510,10 +508,11 @@ const ja = {
   "report.blockFailed": "ブロックに失敗しました",
   "report.blockAction": "ブロックする",
 
-  // ラウンジ
-  "lounge.screenTitle": "留学生ラウンジ",
-  "lounge.bannerSub": "学校を越えて、全国の留学生と情報交換",
-  "lounge.anonNotice": "全国の留学生に匿名で投稿されます",
+  // 森（旧ラウンジ）。みんなの森 / 留学生の森 の名前・説明は src/types/lounge.ts の FORESTS
+  "lounge.screenTitle": "森",
+  "lounge.bannerSub": "学校を越えて、全国の学生と情報交換",
+  "lounge.anonNotice": "全国の学生に匿名で投稿されます",
+  "lounge.anonNoticeRyugakusei": "全国の留学生に匿名で投稿されます",
 
   // メッセージ
   "messages.talkTitle": "トーク",
@@ -595,7 +594,7 @@ const ja = {
   "admin.editTitle": "投稿の確認",
   "admin.target": "投稿先",
   "admin.targetSchool": "学校掲示板",
-  "admin.targetLounge": "ラウンジ",
+  "admin.targetLounge": "森",
   "admin.titleLabel": "タイトル",
   "admin.bodyLabel": "本文",
   "admin.sourceUrlLabel": "出典URL（事実確認用・投稿には載りません）",
@@ -673,7 +672,7 @@ const ja = {
   // ※メッセージは 1.1 で全国スコープになったので学校選択なしでも使える（文面から外した）
   "school.promptTitle": "学校を選択してください",
   "school.promptBody":
-    "学校を選ぶと、あなたの大学の掲示板が使えます。\n全国の留学生ラウンジとメッセージは今すぐ利用できます。",
+    "学校を選ぶと、あなたの大学の掲示板が使えます。\nみんなの森・留学生の森とメッセージは今すぐ利用できます。",
   "school.promptButton": "学校を選択する",
   // 所属していない学校の掲示板に書こうとしたとき（ルールが拒否した場合の案内）
   "school.writeBlocked":
@@ -1086,14 +1085,12 @@ const ko: Record<TranslationKey, string> = {
   "myPosts.title": "내가 쓴 글",
   "myPosts.sub": "작성한 글과 새 댓글",
   "myPosts.empty": "아직 작성한 글이 없습니다",
-  "myPosts.emptyHint": "게시판·라운지에 글을 쓰면 여기에 모아서 보여드립니다.",
+  "myPosts.emptyHint": "게시판·숲에 글을 쓰면 여기에 모아서 보여드립니다.",
   "boards.createScreenTitle": "게시판 만들기",
   "boards.official": "공식 게시판",
-  "boards.department": "학부별 게시판",
-  "boards.custom": "모두의 게시판",
+  "boards.custom": "학생이 만든 게시판",
   "boards.pinnedSection": "자주 찾는 게시판",
-  "boards.loungeTitle": "유학생 라운지",
-  "boards.loungeSub": "전국 유학생과 정보 교환 (비자·알바·집 구하기 등)",
+  "boards.segmentSchool": "학교",
   "boards.bestTitle": "베스트 글",
   "boards.bestSub": "좋아요 수 TOP 20 확인",
   "boards.bestHeaderSub": "좋아요 수 TOP 20",
@@ -1104,7 +1101,6 @@ const ko: Record<TranslationKey, string> = {
   "boards.anonymous": "익명",
   "boards.views": "조회",
   "boards.category": "카테고리",
-  "boards.categoryDepartmentDesc": "특정 학부·학과 대상",
   "boards.categoryCustom": "커스텀 게시판",
   "boards.categoryCustomDesc": "자유롭게 주제 설정",
   "boards.nameLabel": "게시판 이름",
@@ -1176,9 +1172,10 @@ const ko: Record<TranslationKey, string> = {
   "report.blockFailed": "차단에 실패했습니다",
   "report.blockAction": "차단하기",
 
-  "lounge.screenTitle": "유학생 라운지",
-  "lounge.bannerSub": "학교를 넘어 전국 유학생과 정보 교환",
-  "lounge.anonNotice": "전국 유학생에게 익명으로 게시됩니다",
+  "lounge.screenTitle": "숲",
+  "lounge.bannerSub": "학교를 넘어 전국 학생과 정보 교환",
+  "lounge.anonNotice": "전국 학생에게 익명으로 게시됩니다",
+  "lounge.anonNoticeRyugakusei": "전국 유학생에게 익명으로 게시됩니다",
 
   "messages.talkTitle": "대화",
   "messages.empty": "아직 쪽지가 없습니다",
@@ -1257,7 +1254,7 @@ const ko: Record<TranslationKey, string> = {
   "admin.editTitle": "글 검토",
   "admin.target": "게시할 곳",
   "admin.targetSchool": "학교 게시판",
-  "admin.targetLounge": "라운지",
+  "admin.targetLounge": "숲",
   "admin.titleLabel": "제목",
   "admin.bodyLabel": "본문",
   "admin.sourceUrlLabel": "출처 URL (사실 확인용 · 글에는 안 실려요)",
@@ -1335,7 +1332,7 @@ const ko: Record<TranslationKey, string> = {
   // ※쪽지는 1.1에서 전국 스코프가 되어 학교 선택 없이도 사용 가능(문구에서 제외)
   "school.promptTitle": "학교를 선택해주세요",
   "school.promptBody":
-    "학교를 선택하면 우리 대학 게시판을 쓸 수 있어요.\n전국 유학생 라운지와 쪽지는 지금 바로 이용 가능해요.",
+    "학교를 선택하면 우리 대학 게시판을 쓸 수 있어요.\n모두의 숲·유학생의 숲과 쪽지는 지금 바로 이용 가능해요.",
   "school.promptButton": "학교 선택하기",
   // 소속되지 않은 학교 게시판에 쓰려고 했을 때(규칙이 거부한 경우 안내)
   "school.writeBlocked":
