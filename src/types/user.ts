@@ -52,6 +52,13 @@ export interface UserProfile {
   frequentFriendIds?: string[]; // よく会う友達（最大6人・ホーム画面表示）
   friendListOrder?: string[];   // その他の友達の並び順
 
+  // 友達招待リンクのトークン（docs/INVITE-LINK.md）。本人しか読めない users/{uid} に置く。
+  // リンク `…/add-friend?u=<uid>&k=<このトークン>` を開いた側が friendships を作り、
+  // firestore.rules が get() でこの値と照合する（クライアントには漏れない）。
+  // 無ければ初回共有時に生成する（friendInvite.getOrCreateInviteToken）。
+  // 🔑 作り直せば、それまでに配ったリンクは全部無効になる（無効化UIは1.2以降）。
+  inviteToken?: string;
+
   // 利用規約への同意日時（オンボーディング完了時に記録。EULA要件の証跡）
   agreedTermsAt?: number;
 }
