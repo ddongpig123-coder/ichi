@@ -34,34 +34,49 @@
 - 상대가 나에게 보낸 `pending` 신청이 남아 있으면 `accepted`로 정리 (내가 보낸 것은 규칙상 못 건드림)
 - 웹 받는 페이지는 같은 `app/add-friend.tsx`의 `Platform.OS === "web"` 분기. 상수(`WEB_ORIGIN`·`APP_STORE_URL`·`PLAY_STORE_PUBLIC`)는 `friendInvite.ts`
 
-## 3. 🔴 태희 — #50 규칙에 초대 경로를 넣어야 한다
+## 3. ✅ 규칙의 초대 경로 — #50 에 반영 완료 (2026-11-06, 태희)
 
-#50은 「승인된 `friendRequest`가 있어야만 `friendships` 생성」으로 조이는 PR. 그대로 배포하면 **초대 링크가 전부 `permission-denied`로 죽는다.** (b) 경로를 같이 넣어 줘.
+#50 은 「승인된 `friendRequest` 가 있어야만 `friendships` 생성」으로 조이는 PR 이라, 그대로 배포하면 초대 링크가 전부 `permission-denied` 로 죽는다. `firestore.rules` 의 `match /friendships/{pairDocId}` 를 **(b) 초대 링크 || (a) 승인된 신청** 으로 바꿔 넣었다. 실제로 들어간 조건:
 
 ```
-// firestore.rules  match /friendships/{pairDocId}
 function otherOf(me, parts) { return parts[0] == me ? parts[1] : parts[0]; }
 
+function isInviteFriendship(d) {
+  let token = d.get('inviteToken', '');
+  return d.get('via', '') == 'invite'
+    && token is string
+    && token.size() >= 16
+    && token == get(/databases/$(database)/documents/users/$(otherOf(request.auth.uid, d.participants))).data.get('inviteToken', '');
+}
+
 allow create: if isSignedIn()
+  && request.resource.data.participants.size() == 2
   && request.auth.uid in request.resource.data.participants
+  && request.resource.data.participants[0] != request.resource.data.participants[1]
   && pairDocId == pairId(request.resource.data.participants[0], request.resource.data.participants[1])
-  && (
-       // (a) 승인된 신청 — #50 본래 조건 (requestId 검증)
-       <#50의 조건>
-       ||
-       // (b) 초대 링크 — 토큰이 초대한 사람의 users.inviteToken과 같을 때
-       (request.resource.data.via == 'invite'
-         && request.resource.data.inviteToken is string
-         && request.resource.data.inviteToken.size() >= 16
-         && request.resource.data.inviteToken
-            == get(/databases/$(database)/documents/users/$(otherOf(request.auth.uid, request.resource.data.participants))).data.inviteToken)
-     );
+  && (isInviteFriendship(request.resource.data)       // (b) 초대 — 먼저 평가
+      || isAcceptedFriendship(request.resource.data)); // (a) 승인된 신청
 ```
 
-- `users` 문서는 본인만 읽지만 **규칙의 `get()`은 읽을 수 있다** (클라이언트에 토큰이 새지 않음)
-- `src/types/user.ts` `UserProfile`에 `inviteToken?: string` 추가 (타입은 태희 창구라 코드 쪽은 안 건드림. 서비스는 필드를 직접 읽음)
-- `users` update 규칙은 `verificationLevel`만 막으므로 `inviteToken` 쓰기는 지금도 허용됨. 변경 불필요
-- 해제(`removeFriendship`) 뒤에도 같은 링크로 다시 친구가 될 수 있음. 막고 싶으면 토큰 재발급 UI (1.2 이후)
+### 처음 초안에서 고친 2곳 (⚠️ 다시 쓸 때 빠뜨리지 말 것)
+
+| 추가한 조건 | 왜 |
+|---|---|
+| `participants[0] != participants[1]` | 🔴 **자기 자신과 친구가 됐다.** 토큰 검증은 「상대의 토큰과 같은가」인데 `participants: [me, me]` 면 상대가 나 자신이고, **내 토큰은 내가 아니까** 그냥 통과한다 |
+| `participants.size() == 2` | 1명짜리 배열을 `participants[1]` 에 닿기 전에 거부 |
+
+### 🔑 두 가지 순서/문법 주의
+
+- **(b) 를 (a) 보다 먼저 둔다.** (a) 의 `getAfter` 는 `requestId` 가 없으면 **에러**가 난다. 초대 링크는 `requestId` 를 안 보내므로 (a) 를 먼저 두면 전부 그 에러에 휩쓸려 거부된다. 에뮬레이터에 「정상: 초대 링크로 친구 (requestId 없음)」 케이스로 고정해 뒀다
+- **필드는 `d.get(필드, 기본값)` 으로만 읽는다.** 없는 필드를 직접 만지면 에러=거부가 되어, `via` 를 안 보내는 승인 플로우(a)까지 같이 죽는다
+
+### 그 밖에
+
+- `users` 문서는 본인만 읽지만 **규칙의 `get()` 은 읽을 수 있다** (클라이언트에 토큰이 새지 않음). 승인 플로우(a)는 이 `get()` 을 타지 않는다
+- `src/types/user.ts` `UserProfile.inviteToken?: string` → **#78 로 머지 완료**. 규칙은 OTA 뒤에 배포해야 해서 타입만 먼저 분리했다
+- `users` update 규칙은 `verificationLevel` 만 막으므로 `inviteToken` 쓰기는 지금도 허용됨. 변경 없음
+- 해제 뒤에도 같은 링크로 다시 친구가 될 수 있음 → §6. 테스트에 「의도된 동작」으로 명시해 뒀다
+- 검증: `scripts/rules-test` 에뮬레이터 **131/131** (친구 31건에 초대 공격 12건 포함)
 
 ## 4. 운영 순서 (이번 OTA)
 
