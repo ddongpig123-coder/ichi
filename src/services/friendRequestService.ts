@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   query,
+  setDoc,
   updateDoc,
   where,
   writeBatch,
@@ -133,6 +134,48 @@ export async function acceptFriendRequest(request: FriendRequest): Promise<void>
 
 export async function rejectFriendRequest(requestId: string): Promise<void> {
   await updateDoc(doc(db, "friendRequests", requestId), { status: "rejected" });
+}
+
+// ── 招待リンクで友達追加（承認なし） ──────────────────────
+// 招待リンク（docs/INVITE-LINK.md）を開いた側が friendships を直接作る。
+// リンクを配った本人の意思表示とみなし、相手の承認は取らない（2026-11-05 準熙決定）。
+// inviteToken はリンクに載っていた値。現行ルールは participants と pairId しか見ないが、
+// #50 以降は users/{inviter}.inviteToken との照合を入れる想定。照合に落ちれば
+// permission-denied → "invalid"（古いリンク・改ざん）。
+export type InviteAddResult = "added" | "already-friends" | "self" | "invalid";
+
+export async function addFriendByInvite(
+  uid: string,
+  inviterUid: string,
+  inviteToken: string
+): Promise<InviteAddResult> {
+  if (uid === inviterUid) return "self";
+  if (!inviteToken) return "invalid";
+  const ref = friendshipDoc(uid, inviterUid);
+  const existing = await getDoc(ref);
+  if (existing.exists()) return "already-friends";
+  try {
+    await setDoc(ref, {
+      participants: [uid, inviterUid].sort(),
+      createdAt: Date.now(),
+      via: "invite",
+      inviteToken,
+    });
+  } catch (e: any) {
+    if (e?.code === "permission-denied") return "invalid";
+    throw e;
+  }
+  // 相手から自分宛てに pending の申請が残っていれば片付ける
+  // （status を変えられるのは受信者だけなので、自分が送った分は触らない。失敗しても追加は成立）
+  try {
+    const snap = await getDocs(
+      query(requestsCol(), where("fromUid", "==", inviterUid), where("toUid", "==", uid), where("status", "==", "pending"))
+    );
+    await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { status: "accepted" })));
+  } catch (e) {
+    console.warn("invite: pending request cleanup failed:", e);
+  }
+  return "added";
 }
 
 // ── 友達一覧 ──────────────────────────────────────────────
