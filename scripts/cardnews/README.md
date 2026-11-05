@@ -1,6 +1,6 @@
 # 카드뉴스 생성기 (`scripts/cardnews/`)
 
-인스타·X용 **글씨 중심 카드 이미지**를 JSON 한 파일로 한 번에 만든다. 실사 인물 없음.
+인스타·X용 카드 이미지를 JSON 한 파일로 한 번에 만든다. **글씨 중심 + 사진·일러스트 1점 허용 · 실사 인물 없음 · AI 생성 인물 불허** (디자인 규칙 v1은 [docs/MARKETING.md §3-1](../../docs/MARKETING.md)).
 전략·운영 규칙은 [docs/MARKETING.md](../../docs/MARKETING.md) §3·§5, 11월 계획은 [docs/MARKETING-2026-11.md](../../docs/MARKETING-2026-11.md).
 
 ## 처음 한 번 (준희 PC)
@@ -12,14 +12,25 @@ npx playwright install chromium
 
 ## 쓰는 법
 ```bash
-# 인스타 피드용 (1080×1350)
-node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json
+# Instagram 게시용 — ig(1080×1350)만 (기본값)
+node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --handle @daigakunomori
 
-# X용 (1200×675) / 전부
-node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size x
+# X·Threads용 — sq(1080×1080)
+node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size sq --handle @daigakunomori
+
+# 전부 (ig + sq + x 16:9)
 node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size all --handle @daigakunomori
 ```
 결과는 `scripts/output/cardnews/` (git에 안 올라감).
+
+| size | 픽셀 | 용도 (2026-11-04 확정) |
+|---|---|---|
+| `ig` | 1080×1350 | **Instagram 게시는 이것만.** 정사각은 IG 그리드가 세로형이라 위아래 여백이 생긴다 |
+| `sq` | 1080×1080 | X · Threads |
+| `x` | 1200×675 | X 가로. 필요할 때만 |
+
+- `npm install` 뒤 `package-lock.json`이 바뀌면(playwright 추가분) 그 변경은 커밋해도 된다
+- **v1 템플릿(`--template v1`)은 구현 예정.** 제목 2줄 규칙·시리즈 라벨 칩·A/B 그림 슬롯(캠퍼스 사진 > 큰 이모지)·전체 폭 CTA 띠·댓글 마커 밑줄·상단 브랜드 띠. v0는 그대로 남긴다. 사진은 `scripts/cardnews/assets/`에 (인물 없는 것만)
 
 ## JSON 형식
 | type | 필드 | 설명 |
