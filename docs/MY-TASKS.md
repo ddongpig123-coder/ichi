@@ -118,13 +118,14 @@
 - [ ] **매일** Firebase `reports`에서 `pending` 확인 (위 7번 링크). 처리 결과는 `status`로 남긴다
 - [ ] 리젝 시: 사유 화면을 Claude에 → 메타데이터 수정이면 ASC에서 고쳐 재제출, 코드면 빌드 6
 - [ ] **승인 후** 「🔁 규칙 배포·OTA 순서」 3번: `eas update --branch production` (심사 중엔 금지) → 그 뒤 4번 #50 리베이스·머지·규칙 배포
-- [ ] 승인 후 OTA 1순위: 문의 메일 교체(결정 시), 초대 링크 처리(태희 결정 후)
+- [ ] 승인 후 OTA 1순위: 문의 메일 교체(결정 시), **초대 링크 https + 자동 친구 추가** ([INVITE-LINK](INVITE-LINK.md)) — OTA **전에** `npm run deploy:web`(링크가 웹 `/add-friend`를 가리킴)
+- [ ] **1.2 빌드 때 잊지 말 것**: App Store 言語가 「英語」로 뜨는 문제 → `app.json` `ios.infoPlist.CFBundleDevelopmentRegion: "ja"` + `CFBundleLocalizations` (바이너리 설정, OTA 불가) / 초대 유니버설 링크 ([INVITE-LINK §5](INVITE-LINK.md))
 - [ ] 안드로이드: 기존 테스터 12명 유지 부탁 + 2~3명 추가, 11/09경 프로덕션 액세스 신청, 서비스 계정 JSON(EAS 자동 업로드용)
 - [ ] Play 데이터 보안 변경(계정 삭제 URL) 검토 결과 확인 — Play Console 받은편지함·Gmail
 
 ### 🗣 10/25 태희와 정할 것
 1. ~~앱 아이콘~~ → ③ 시간표 속 나무로 확정·반영 완료 (PR #29)
-2. **친구 초대 링크** — 커스텀 스킴이라 메신저에서 탭 안 됨. A) 버튼 숨김(OTA) / B) https 링크 / C) 유니버설 링크(재빌드)
+2. ~~**친구 초대 링크**~~ → ✅ **B안 https + 자동 친구 추가**(승인 없음) (2026-11-05 준희). C안 유니버설 링크는 1.2. ⚠️ #50 규칙에 초대 토큰 경로 필요 → [INVITE-LINK §3](INVITE-LINK.md)
 3. **미디어·집중강의〔M〕** — `Course.day/period` nullable + 시간표 「その他」 섹션. 타입 변경이라 태희 창구. 1.1 상위
 4. **졸업요건 학부·입학연도를 프로필(users)에 저장** — 필드 추가라 태희 창구
 5. **1.1 로드맵 합의** — 네이티브 푸시(`expo-notifications`, 재빌드) / 시간표 점수(점수만, 칭호 없음, OTA) / 요일·교시 필터 + 친구 뱃지 / 졸업요건에 강의검색 / 후보 강의 1단계화 / 별점 평균 / 졸업요건 설정 접기 UI
