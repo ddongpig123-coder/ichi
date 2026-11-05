@@ -1,0 +1,6100 @@
+{
+ "_meta": {
+  "source": "明治大学 2023年度 情報コミュニケーション学部便覧「Ⅱ 履修 1. 授業科目配当表」(pp.12-19) + 「2. 卒業・進級・卒業見込に必要な単位」(p.20)",
+  "sourceUrl": "https://www.meiji.ac.jp/infocom/pdf/gakububinran2023.pdf",
+  "extractedAt": "2026-11-05",
+  "tool": "scripts/binran/builders/build-meiji-info-communication.mjs (便覧 텍스트 + 학칙별표1 JSON 대조)",
+  "faculty": "info-communication",
+  "facultyNameJa": "情報コミュニケーション学部",
+  "schoolDomain": "meiji.ac.jp",
+  "admissionYear": 2023,
+  "appliesTo": "2023年度入学者（便覧は入学年度ごと。2024〜2026年度便覧は非公開 — 同一カリキュラムかは未確認）",
+  "requirementMaster": "meiji-info-communication-2017.json",
+  "zoneSource": "meiji-info-communication-allocation-2026.json（学則別表1 2026年4月施行）— 科目→zone はこちらが正本。便覧は履修開始年次を補う",
+  "yearsRule": "履修開始年次 n → years [n..4]（開始年次以降は履修可）",
+  "howExtracted": "2026-11-05: 공개 PDF 를 준희 맥의 미리보기(Preview)에서 텍스트 복사 → 이 빌더. pdftext.mjs 는 클라우드 세션의 네트워크 제한으로 미사용. p.19·p.20 은 스크린샷과 전 행 목시 대조 일치. pp.12~18 은 텍스트 복사본(표에 병합셀·○표 없음, 숫자 열만)",
+  "verification": [
+   "V2 必修 합계 4 == 요건표 必修 4 → ✓",
+   "V4 gakusai 풀 6 ≥ 최저 4 → ✓",
+   "V4 senmon 풀 378 ≥ 최저 64 → ✓",
+   "V4 senmon/社会科学 풀 46 ≥ 최저 4 → ✓",
+   "V4 senmon/人文科学 풀 50 ≥ 최저 4 → ✓",
+   "V4 senmon/自然科学 풀 16 ≥ 최저 2 → ✓",
+   "V4 senmon/社会システム/文化と表象/人間と環境 풀 266 ≥ 최저 54 → ✓",
+   "V4 gaikokugo 풀 82 ≥ 최저 10 → ✓",
+   "V4 kenkyu-hyogen 풀 88 ≥ 최저 10 → ✓",
+   "V6 skipped 201행 (전부 견출·헤더·주석인지 아래 목록을 눈으로 확인)",
+   "V7 配当年次 누락 0건",
+   "V8 zone ⊆ 요건 zone → ✓ (zone 없음 0건)"
+  ],
+  "skippedRows": [
+   "Ⅱ 履修",
+   "1．授業科目配当表",
+   "ゼ",
+   "ミ",
+   "ナ",
+   "ー",
+   "ル",
+   "科",
+   "目",
+   "群",
+   "卒業論文、卒業制作の作成に必",
+   "要な学修等を考慮し、その成果",
+   "を評価のうえ単位を付与する。",
+   "学際科目群",
+   "社",
+   "会",
+   "科",
+   "学",
+   "専",
+   "門",
+   "科",
+   "目",
+   "群",
+   "人",
+   "文",
+   "科",
+   "学",
+   "人",
+   "文",
+   "科",
+   "学",
+   "専",
+   "門",
+   "科",
+   "目",
+   "群",
+   "自",
+   "然",
+   "科",
+   "学",
+   "社",
+   "会",
+   "シ",
+   "ス",
+   "テ",
+   "ム",
+   "専",
+   "門",
+   "科",
+   "目",
+   "群",
+   "社",
+   "会",
+   "シ",
+   "ス",
+   "テ",
+   "ム",
+   "文",
+   "化",
+   "と",
+   "表",
+   "象",
+   "専",
+   "門",
+   "科",
+   "目",
+   "群",
+   "文",
+   "化",
+   "と",
+   "表",
+   "象",
+   "人",
+   "間",
+   "と",
+   "環",
+   "境",
+   "専",
+   "門",
+   "科",
+   "目",
+   "群",
+   "外",
+   "国",
+   "語",
+   "科",
+   "目",
+   "群",
+   "人",
+   "間",
+   "と",
+   "環",
+   "境",
+   "先取り",
+   "英",
+   "語",
+   "ド",
+   "イ",
+   "ツ",
+   "語",
+   "フ",
+   "ラ",
+   "ン",
+   "ス",
+   "語",
+   "ス",
+   "ペ",
+   "イ",
+   "ン",
+   "語",
+   "外",
+   "国",
+   "語",
+   "科",
+   "目",
+   "群",
+   "中",
+   "国",
+   "語",
+   "韓",
+   "国",
+   "語",
+   "タ",
+   "イ",
+   "語",
+   "日",
+   "本",
+   "語",
+   "情",
+   "報",
+   "リ",
+   "テ",
+   "ラ",
+   "シ",
+   "ー",
+   "科",
+   "目",
+   "研",
+   "究",
+   "方",
+   "法",
+   "・",
+   "表",
+   "現",
+   "実",
+   "践",
+   "科",
+   "目",
+   "群",
+   "日本語",
+   "表現科目",
+   "ク",
+   "リ",
+   "エ",
+   "イ",
+   "シ",
+   "ョ",
+   "ン",
+   "科",
+   "目",
+   "リ",
+   "サ",
+   "ー",
+   "チ",
+   "リ",
+   "テ",
+   "ラ",
+   "シ",
+   "ー",
+   "科",
+   "目",
+   "海",
+   "外",
+   "留",
+   "学",
+   "科",
+   "目",
+   "群",
+   "留学先で修得した単",
+   "位を認定するための",
+   "科目",
+   "ウ",
+   "ェ",
+   "ル",
+   "ネ",
+   "ス",
+   "科",
+   "目",
+   "群",
+   "キャリアデザイン",
+   "科目群",
+   "情報リテラシー",
+   "科目群",
+   "総",
+   "合",
+   "講",
+   "座",
+   "※表中のメディア授業科目とは、学則第19条の3第2項に定める方法により履修する授業科目をいう。メ",
+   "ディア授業科目を履修し修得した単位は、卒業の要件として修得すべき単位数のうち60単位を超えないも",
+   "のとする。毎年度の授業計画により、授業の実施方法を変更することがあるため、メディア授業科目の対",
+   "象科目及び履修上の注意事項は必ず各年度の各シラバスを参照すること。"
+  ],
+  "diff": {
+   "note": "便覧(2023年度入学者用) ↔ 学則別表1(2026年4月施行) 의 과목 집합 차이. 연도 차이(2023→2026)로 생긴 개편분",
+   "onlyInBinran": [
+    "ICT統計解析Ⅰ",
+    "ICT統計解析Ⅱ",
+    "ICTデータベースⅠ",
+    "ICTデータベースⅡ",
+    "ICTメディア編集Ⅰ",
+    "ICTメディア編集Ⅱ",
+    "ICTアプリ開発Ⅰ",
+    "ICTアプリ開発Ⅱ",
+    "ICTコンテンツデザインⅠ",
+    "ICTコンテンツデザインⅡ",
+    "ICT総合実践Ⅰ",
+    "ICT総合実践Ⅱ",
+    "インターンシップ",
+    "ICTベーシックⅠ",
+    "ICTベーシックⅡ"
+   ],
+   "onlyInBeppyo1": [
+    "ICT統計解析入門（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICT統計解析応用（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTデータベース入門（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTデータベース応用（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICT画像編集入門（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICT画像編集応用（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICT動画編集入門（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICT動画編集応用（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICT音楽編集入門（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICT音楽編集応用（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTプログラミング入門（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTプログラミング応用（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTWebページ作成（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTeラーニングデザイン入門（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTeラーニングデザイン応用（研究方法・表現実践科目群/情報リテラシー科目）",
+    "ICTプレゼンテーション（研究方法・表現実践科目群/情報リテラシー科目）",
+    "実践キャリア支援講座（キャリアデザイン科目群）",
+    "ICTベーシック（情報リテラシー科目群）"
+   ]
+  },
+  "notes": [
+   "先取り履修科目（3・4年次配当科目）は枠であって実科目ではない → pseudo:true、アプリCANには出さない",
+   "留学関係科目 4件は留学認定枠 → ryugakuNintei:true、アプリCANには出さない（§8-2）",
+   "卒業論文・卒業制作(2, 4年次)は総授業時間数・開講期間なし（便覧どおり null）",
+   "メディア授業科目(そのまま)と「メディア授業科目併設」の両方を media:true とし、biko に原文を残す"
+  ]
+ },
+ "requirementSnapshot": {
+  "source": "便覧 p.20「卒業・進級・卒業見込に必要な単位」(2023年度便覧)",
+  "totalRequired": 124,
+  "hisshu": 4,
+  "zones": {
+   "gakusai": 4,
+   "senmon": {
+    "total": 64,
+    "shakaiKagaku": 4,
+    "jinbunKagaku": 4,
+    "shizenKagaku": 2,
+    "rest3frames": 54
+   },
+   "gaikokugo": 10,
+   "kenkyuHyogen": 10,
+   "jiyu": 36
+  },
+  "promotionToYear3": 40,
+  "graduationProspectAtEndOfYear3": 76,
+  "year4Min": 8,
+  "mediaCap": 60,
+  "outsideFacultyCap": 40,
+  "globalProgramCap": 16,
+  "crossCheck": "meiji-info-communication-2017.json（学則別表1 由来）と全数値一致 → V5 ✓(2出典)"
+ },
+ "poolSummary": {
+  "jiyu": {
+   "courses": 28,
+   "units": 54,
+   "required": 0
+  },
+  "gakusai": {
+   "courses": 3,
+   "units": 6,
+   "required": 4
+  },
+  "senmon/社会科学": {
+   "courses": 23,
+   "units": 46,
+   "required": 0
+  },
+  "senmon/人文科学": {
+   "courses": 25,
+   "units": 50,
+   "required": 0
+  },
+  "senmon/自然科学": {
+   "courses": 8,
+   "units": 16,
+   "required": 0
+  },
+  "senmon/社会システム": {
+   "courses": 56,
+   "units": 112,
+   "required": 0
+  },
+  "senmon/文化と表象": {
+   "courses": 43,
+   "units": 86,
+   "required": 0
+  },
+  "senmon/人間と環境": {
+   "courses": 34,
+   "units": 68,
+   "required": 0
+  },
+  "gaikokugo": {
+   "courses": 67,
+   "units": 82,
+   "required": 0
+  },
+  "kenkyu-hyogen": {
+   "courses": 46,
+   "units": 88,
+   "required": 0
+  }
+ },
+ "courses": [
+  {
+   "name": "基礎ゼミナール",
+   "units": 4,
+   "hours": 60,
+   "term": "通年",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "問題発見テーマ演習Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "問題発見テーマ演習Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "問題分析ゼミナールⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "問題分析ゼミナールⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "問題解決ゼミナールⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "問題解決ゼミナールⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "卒業論文・卒業制作",
+   "units": 2,
+   "hours": null,
+   "term": null,
+   "startYear": 4,
+   "years": [
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ゼミナール科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報コミュニケーション学入門Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "gakusai",
+   "kubunJa": "学際科目群",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報コミュニケーション学入門Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": "必修",
+   "zone": "gakusai",
+   "kubunJa": "学際科目群",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報コミュニケーション学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gakusai",
+   "kubunJa": "学際科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "家族社会学概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "環境と社会",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "経営学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "憲法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "憲法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "コミュニティ論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジェンダー論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "市民社会と法Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "市民社会と法Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会心理学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会心理学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会と経済",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報倫理",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "政治学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "組織論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "犯罪と法Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "犯罪と法Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "法学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "マクロ経済学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ミクロ経済学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "メディア・リテラシー",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "異文化理解",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "英語文学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "英語文学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "外国文学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "言語学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "宗教学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "小集団コミュニケーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "新興国事情",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "心理学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "心理学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "生命論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "生命論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "西洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（基礎）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地誌学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "哲学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "東洋史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本史概論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本文学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "パブリック・スピーキング",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "比較文化（基礎）Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "比較文化（基礎）Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "メディア批評",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "歴史学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人文科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "科学技術史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "環境生物学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報科学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報検索論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "人類学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "人類学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地球環境科学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "inBeppyo1": true
+  },
+  {
+   "name": "脳科学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "自然科学",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "イノベーションの経済学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ＮＰＯ論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "家族と法Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "家族と法Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "経済思想史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "現代アメリカ政治論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "現代型犯罪と刑法Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "現代型犯罪と刑法Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "現代行政と法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "現代行政と法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "現代政治学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "現代政治学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "公共政策Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "公共政策Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "コーポレート・ガバナンスⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "コーポレート・ガバナンスⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "国際開発論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "国際関係論Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "国際関係論Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "国際経済論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "国際経済論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "個人と国家",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "財産と法Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "財産と法Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジェンダーと法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジェンダーと法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジェンダー・マネジメントⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジェンダー・マネジメントⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会思想史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会福祉学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会福祉学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報産業論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報システム論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報政策論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報政策論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "人権と政策",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "政治とメディア",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ソーシャルビジネス論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "組織と情報",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "知的財産法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "知的財産法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "犯罪社会学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ビジネスと法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "ビジネスと法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "ファイナンス論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ファイナンス論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "紛争解決システム論Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "紛争解決システム論Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "マスコミュニケーション論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "マスコミュニケーション論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "メディアの歴史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "メディア論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "社会システム",
+   "inBeppyo1": true
+  },
+  {
+   "name": "アート・マネジメント",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "異文化コミュニケーション史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "英語の文化と歴史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "映像表現論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "音楽表現論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "記号論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "近・現代史Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "近・現代史Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "言語態研究",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "言語表現論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "広告論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジェンダーと社会Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジェンダーと社会Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジャーナリズム論Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ジャーナリズム論Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会文化史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会と教育Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会と教育Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会と芸術",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会と出版",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報デザイン論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報文化論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "スポーツ・ジャーナリズム論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "造形表現論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "多文化と相互理解Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "多文化と相互理解Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（英語圏）Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（英語圏）Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（ドイツ）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（フランス）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（スペイン）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（中国）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（朝鮮）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "地域文化論（イスラーム）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "超域文化論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本文化論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本文化論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "比較文学・比較文化ＡⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "比較文学・比較文化ＡⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "比較文学・比較文化ＢⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "比較文学・比較文化ＢⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ユニバーサルデザイン",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "倫理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "文化と表象",
+   "inBeppyo1": true
+  },
+  {
+   "name": "意思決定論Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "意思決定論Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "異文化間コミュニケーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "科学技術と人間",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "家族社会学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "環境政策Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "環境政策Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "言語使用とディスコース",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "コミュニケーション思想史",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "自然言語の生成モデル",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "自然地理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "消費行動の心理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会と安全Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報社会と安全Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報と経済行動",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "情報と職業",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "人口論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "身体と意識",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "身体表現論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "人文地理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "生命思想史Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "生命思想史Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "組織コミュニケーションＡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "組織コミュニケーションＢ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "都市情報論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "biko": "メディア授業科目",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "人間性心理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "認知科学Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "認知科学Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ネットワーク社会論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "パーソナリティ心理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "不確実性下の人間行動",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "不思議現象の心理学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "法コミュニケーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "リスク社会論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "人間と環境",
+   "inBeppyo1": true
+  },
+  {
+   "name": "先取り履修科目（3・4年次配当科目）",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "senmon",
+   "kubunJa": "専門科目群",
+   "bunya": "先取り履修科目",
+   "pseudo": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＡⅠ（基礎）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＡⅠ（中級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＡⅠ（上級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＡⅡ（基礎）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＡⅡ（中級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＡⅡ（上級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＢⅠ（基礎）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＢⅠ（中級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＢⅠ（上級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＢⅡ（基礎）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＢⅡ（中級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSkillsＢⅡ（上級）",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "Speech&DebateＡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "Speech&DebateＢ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "CriticalReading",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "CriticalDiscussion",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "CriticalWritingＡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "CriticalWritingＢ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSeminarⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "EnglishSeminarⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "英語コミュニケーションⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "英語コミュニケーションⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "英語音声学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "英語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ドイツ語ＡⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ドイツ語ＡⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ドイツ語ＢⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ドイツ語ＢⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ドイツ語演習Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ドイツ語演習Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "ドイツ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "フランス語ＡⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "フランス語ＡⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "フランス語ＢⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "フランス語ＢⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "フランス語演習Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "フランス語演習Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "フランス語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "スペイン語ＡⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "スペイン語ＡⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "スペイン語ＢⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "スペイン語ＢⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "スペイン語演習Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "スペイン語演習Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "スペイン語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "中国語ＡⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "中国語ＡⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "中国語ＢⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "中国語ＢⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "中国語演習Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "中国語演習Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "中国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "韓国語ＡⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "韓国語ＡⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "韓国語ＢⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "韓国語ＢⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "韓国語演習Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "韓国語演習Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "韓国語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "タイ語ＡⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "タイ語ＡⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "タイ語ＢⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "タイ語ＢⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "タイ語演習Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "タイ語演習Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "タイ語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＡⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＡⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＢⅠ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＢⅡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＡⅢ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＡⅣ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＢⅢ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語ＢⅣ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "gaikokugo",
+   "kubunJa": "外国語科目群",
+   "bunya": "日本語",
+   "inBeppyo1": true
+  },
+  {
+   "name": "アルゴリズム実習Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "アルゴリズム実習Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "専門情報リテラシー",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ネットワーク技術Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ネットワーク技術Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ネットワーク技術Ⅲ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ネットワーク技術Ⅳ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "プログラミング実習Ⅰ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "プログラミング実習Ⅱ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ICT統計解析Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICT統計解析Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTデータベースⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTデータベースⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTメディア編集Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTメディア編集Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTアプリ開発Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTアプリ開発Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTコンテンツデザインⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTコンテンツデザインⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICT総合実践Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICT総合実践Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "情報リテラシー科目",
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "日本語表現Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "日本語表現科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "日本語表現Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "日本語表現科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "演劇学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "音楽論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "クリエイティブ・コミュニケーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "美学・芸術学",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "身体コミュニケーションＡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "身体コミュニケーションＢ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "メディア・アート",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "デジタルアートＡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "デジタルアートＢ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "デジタルプレゼンテーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "非言語コミュニケーション",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "メディア教育論",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "クリエイション科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "科学リテラシー",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "数理リテラシー",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "統計学Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "統計学Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "論理リテラシー",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会調査法Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会調査法Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "質的調査分析法",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "社会調査実習",
+   "units": 2,
+   "hours": 60,
+   "term": "通年",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "データ解析論Ⅰ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "データ解析論Ⅱ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "kenkyu-hyogen",
+   "kubunJa": "研究方法・表現実践科目群",
+   "bunya": "リサーチリテラシー科目",
+   "inBeppyo1": true
+  },
+  {
+   "name": "国際交流",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "留学関係科目（語学・実習）Ａ",
+   "units": 1,
+   "hours": 30,
+   "term": null,
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学科目群",
+   "biko": "留学先で修得した単位を認定するための科目",
+   "ryugakuNintei": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "留学関係科目（語学・実習）Ｂ",
+   "units": 2,
+   "hours": 60,
+   "term": null,
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学科目群",
+   "biko": "留学先で修得した単位を認定するための科目",
+   "ryugakuNintei": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "留学関係科目（講義）Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": null,
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学科目群",
+   "biko": "留学先で修得した単位を認定するための科目",
+   "ryugakuNintei": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "留学関係科目（講義）Ｂ",
+   "units": 3,
+   "hours": 45,
+   "term": null,
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "海外留学科目群",
+   "biko": "留学先で修得した単位を認定するための科目",
+   "ryugakuNintei": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "ウェルネスＡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ウェルネス科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ウェルネスＢ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ウェルネス科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ウェルネス・スポーツＡ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ウェルネス科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ウェルネス・スポーツＢ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ウェルネス科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ウェルネス・スポーツＣ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ウェルネス科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "ウェルネス・スポーツＤ",
+   "units": 1,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "ウェルネス科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "キャリアデザイン",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "キャリアデザイン科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "インターンシップ入門",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 2,
+   "years": [
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "キャリアデザイン科目群",
+   "inBeppyo1": true
+  },
+  {
+   "name": "インターンシップ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 3,
+   "years": [
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "キャリアデザイン科目群",
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTベーシックⅠ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "情報リテラシー科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "ICTベーシックⅡ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "情報リテラシー科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "zoneSource": "binran-section",
+   "inBeppyo1": false
+  },
+  {
+   "name": "総合講座Ａ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "情報リテラシー科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "総合講座Ｂ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "情報リテラシー科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "総合講座Ｃ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "情報リテラシー科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  },
+  {
+   "name": "総合講座Ｄ",
+   "units": 2,
+   "hours": 30,
+   "term": "半期",
+   "startYear": 1,
+   "years": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "mark": null,
+   "zone": "jiyu",
+   "kubunJa": "情報リテラシー科目群",
+   "biko": "メディア授業科目併設",
+   "media": true,
+   "inBeppyo1": true
+  }
+ ]
+}

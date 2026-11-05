@@ -18,7 +18,7 @@ npm install          # pdfjs-dist(텍스트) + pdfjs-dist-v3 alias(렌더) + @na
 | `grid.mjs` | (모듈) 괘선으로 표 칸을 복원 → 병합셀 값을 행마다 정확히 배정. 밑줄·배경색 오인 처리 포함(DATA-MANUAL §9-16~18) | 파서에서 import |
 | `gridtest.mjs` | `grid.mjs` 결과를 사람이 확인하는 덤프(표·열 이름·행별 값) | `node gridtest.mjs x.pdf 12` |
 | `parsers/` | 학부별 예시 파서(농·국제일본·별표1·법정HTML) + **早稲田 商 学科目配当表 → 강의 데이터**(`parse-waseda-commerce-haitou.mjs`, grid.mjs 사용). 실행법·기대값은 DATA-MANUAL §13-1-a | |
-| `builders/` | 파서 출력 → `docs/data` JSON + `src/data` TS 예시 | |
+| `builders/` | 파서 출력 → `docs/data` JSON + `src/data` TS 예시 | `build-meiji-agriculture.mjs`(파서 JSON 입력) / `build-meiji-info-communication.mjs`(便覧 配当表 **텍스트** 입력 + 별표1 JSON 대조. `--txt <파일> --year 2023 --out <dir>`) |
 
 파서·빌더는 **예시**다. 새 학부/학교는 가장 비슷한 것을 복사해 열 좌표와 zone 표만 바꾼다.
 각 파일 하단의 「기대값」 주석은 2026년 자료 기준 — 재실행 결과가 그 숫자와 다르면 먼저 원인을 찾는다.
