@@ -75,8 +75,10 @@ async function loadImage(ref, jsonDir) {
 }
 async function withImages(card, jsonDir) {
   const out = { ...card };
-  for (const [src, dst] of [["aImage", "aImageData"], ["bImage", "bImageData"], ["screenshot", "screenshotData"]]) {
-    if (card[src]) out[dst] = await loadImage(card[src], jsonDir);
+  // aImage 와 imageA 는 같은 뜻 (§5 표기 / v1 초안 표기 둘 다 허용)
+  for (const [src, alt, dst] of [["aImage", "imageA", "aImageData"], ["bImage", "imageB", "bImageData"], ["screenshot", "screenshot", "screenshotData"]]) {
+    const ref = card[src] ?? card[alt];
+    if (ref) out[dst] = await loadImage(ref, jsonDir);
   }
   return out;
 }

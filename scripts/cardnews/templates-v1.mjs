@@ -76,12 +76,17 @@ function titleFont(lines, u, base) {
   return Math.max(size, Math.round(u * 0.04));
 }
 
-function titleHtml(text, u, base, deco) {
+function titleHtml(text, u, base, deco, card = {}) {
   const lines = splitTitle(text);
   const fs = titleFont(lines, u, base);
   const body = lines.map((l) => `<span class="tl">${esc(l)}</span>`).join("");
-  if (!deco) return `<div class="title" style="font-size:${fs}px">${body}</div>`;
-  return `<div class="title deco-wrap" style="font-size:${fs}px"><span class="deco">＼</span><span class="tls">${body}</span><span class="deco">／</span></div>`;
+  const main = deco
+    ? `<div class="title deco-wrap" style="font-size:${fs}px"><span class="deco">＼</span><span class="tls">${body}</span><span class="deco">／</span></div>`
+    : `<div class="title" style="font-size:${fs}px">${body}</div>`;
+  // 3단 위계 (§5-1): 메인 / 조건·설명 1줄 / 강조 1줄(브랜드 오렌지)
+  const sub = card.sub ? `<div class="sub">${esc(card.sub)}</div>` : "";
+  const accent = card.accent ? `<div class="accent">${esc(card.accent)}</div>` : "";
+  return `<div class="title-stack">${main}${sub}${accent}</div>`;
 }
 
 function chip(series) {
@@ -99,8 +104,9 @@ function shell({ w, h }, body, extraCss = "") {
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: ${w}px; height: ${h}px; overflow: hidden; }
-  body { font-family: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", "IPAGothic", sans-serif; color: ${C.ink}; background: ${C.cream}; -webkit-font-smoothing: antialiased; }
-  .card { position: relative; width: ${w}px; height: ${h}px; display: flex; flex-direction: column; }
+  body { font-family: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", "IPAGothic", sans-serif; color: ${C.ink}; background: #E9E2D3; -webkit-font-smoothing: antialiased; padding: ${Math.round(u * 0.028)}px; }
+  /* §5-3 간판 틀 */
+  .card { position: relative; width: ${w - Math.round(u * 0.056)}px; height: ${h - Math.round(u * 0.056)}px; display: flex; flex-direction: column; background: ${C.cream}; border: 2px solid rgba(28,42,34,0.18); border-radius: ${Math.round(u * 0.03)}px; box-shadow: 0 ${Math.round(u * 0.012)}px ${Math.round(u * 0.04)}px rgba(28,42,34,0.18), inset 0 1px 0 rgba(255,255,255,0.6); overflow: hidden; }
   /* ⑥ 상단 브랜드 띠 */
   .band { height: ${Math.round(u * 0.085)}px; background: ${C.green}; color: ${C.white}; display: flex; align-items: center; padding: 0 ${Math.round(u * 0.06)}px; font-weight: 900; font-size: ${Math.round(u * 0.036)}px; letter-spacing: 0.06em; gap: 14px; }
   .band .leaf { width: ${Math.round(u * 0.024)}px; height: ${Math.round(u * 0.024)}px; border-radius: 50% 0 50% 0; background: #9FD8B5; }
@@ -116,6 +122,9 @@ function shell({ w, h }, body, extraCss = "") {
   .title.deco-wrap { display: flex; align-items: center; gap: 0.15em; }
   .title .tls { display: block; }
   .title .deco { color: ${C.green}; font-weight: 700; font-size: 1.1em; transform: translateY(-0.05em); }
+  .title-stack { display: flex; flex-direction: column; gap: ${Math.round(u * 0.012)}px; }
+  .sub { font-weight: 500; font-size: ${Math.round(u * 0.03)}px; color: ${C.muted}; line-height: 1.4; }
+  .accent { font-weight: 900; font-size: ${Math.round(u * 0.036)}px; color: ${C.b}; line-height: 1.3; }
   .mid { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: ${Math.round(u * 0.02)}px; }
   /* ④ CTA 띠 */
   .cta { height: ${Math.round(u * 0.095)}px; background: ${C.greenDark}; color: ${C.white}; display: flex; align-items: center; padding: 0 ${Math.round(u * 0.06)}px; font-weight: 900; font-size: ${Math.round(u * 0.03)}px; }
@@ -133,8 +142,9 @@ function cta(text, handle) {
 
 // ③ 그림 슬롯 — image(data URI) > emoji > 없음
 function slot(card, key, u, landscape) {
+  const K = key.toUpperCase();
   const img = card[`${key}ImageData`];
-  const emoji = card[`${key}Emoji`];
+  const emoji = card[`${key}Emoji`] ?? card[`emoji${K}`];
   if (img) return `<div class="slot img" style="background-image:url('${img}')"></div>`;
   if (emoji) return `<div class="slot emoji">${esc(emoji)}</div>`;
   return "";
@@ -161,7 +171,7 @@ export function balance(card, size) {
   const body = `
     <div class="body">
       <div class="head">${chip(card.series || "究極の2択")}${card.tag ? `<span class="tag">${esc(card.tag)}</span>` : ""}</div>
-      ${titleHtml(card.question, u, Math.round(u * (landscape ? 0.056 : 0.068)), card.deco)}
+      ${titleHtml(card.question, u, Math.round(u * (landscape ? 0.056 : 0.068)), card.deco, card)}
       <div class="mid">
         <div class="vs">
           <div class="opt a">${slot(card, "a", u, landscape)}<div class="txt"><span class="k">A</span>${esc(card.a)}</div></div>
@@ -204,7 +214,7 @@ export function topic(card, size) {
       <div class="head">${chip(card.series || "今週の話題")}${card.tag ? `<span class="tag">${esc(card.tag)}</span>` : ""}</div>
       <div class="mid">
         ${card.board ? `<div class="board">${esc(card.board)}</div>` : ""}
-        ${titleHtml(`「${card.title}」`, u, Math.round(u * (landscape ? 0.054 : 0.07)), card.deco)}
+        ${titleHtml(`「${card.title}」`, u, Math.round(u * (landscape ? 0.054 : 0.07)), card.deco, card)}
         ${phone || stats ? `<div class="row">${phone}${stats}</div>` : ""}
       </div>
     </div>
@@ -260,7 +270,7 @@ export function list(card, size) {
   const body = `
     <div class="body">
       <div class="head">${chip(card.series || "キャンパス情報")}${card.tag ? `<span class="tag">${esc(card.tag)}</span>` : ""}</div>
-      ${titleHtml(card.title, u, Math.round(u * 0.06), card.deco)}
+      ${titleHtml(card.title, u, Math.round(u * 0.06), card.deco, card)}
       <div class="mid list-mid"><ol class="items">${items.map((t, i) => `<li><span class="n">${i + 1}</span><span>${esc(t)}</span></li>`).join("")}</ol></div>
     </div>
     <div class="sen">${items.length}選</div>

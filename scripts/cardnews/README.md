@@ -30,7 +30,9 @@ node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size
 | `x` | 1200×675 | X 가로. 필요할 때만 |
 
 - `npm install` 뒤 `package-lock.json`이 바뀌면(playwright 추가분) 그 변경은 커밋해도 된다
-## v1 템플릿 (`--template v1`) — 2026-11-05부터 이걸 쓴다
+## v1 템플릿 (`--template v1`) — 예비용
+
+> 🔴 **2026-11-05 준희 판단: 생성기 카드는 AI 티가 난다 → 주력은 Canva 템플릿**(코워크 + Canva 커넥터). 이 생성기는 Canva가 막혔을 때의 예비·문안 확인용으로만 남긴다.
 ```bash
 node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w2-v1.json --template v1 --handle @daigakunomori
 ```
@@ -41,8 +43,9 @@ v0(`templates.mjs`)는 그대로 남아 있고 기본값이다. 파일명 끝에
 |---|---|---|
 | `series` | 전부 | 시리즈 칩. `究極の2択` / `大学生あるある` / `留学生の森` / `キャンパス情報` / `今週の話題` (색은 `templates-v1.mjs`의 `SERIES`에 고정. 없는 이름은 검정) |
 | `deco: true` | 제목 있는 카드 | 제목 양옆에 「＼ ／」 |
-| `aImage` / `bImage` | `balance` | 그림 슬롯 사진. `assets/` 안 파일 이름 또는 JSON 기준 경로. **인물 없는 캠퍼스 사진만** |
-| `aEmoji` / `bEmoji` | `balance` | 사진이 없을 때 큰 이모지 |
+| `sub` / `accent` | 제목 있는 카드 | 제목 3단 위계(§5-1): `sub`=조건·설명 1줄(중간 크기·회색), `accent`=강조 1줄(브랜드 오렌지). 둘 다 선택 |
+| `aImage` / `bImage` (= `imageA` / `imageB`) | `balance` | 그림 슬롯 사진. `assets/` 안 파일 이름 또는 JSON 기준 경로. **인물 없는 캠퍼스 사진만** |
+| `aEmoji` / `bEmoji` (= `emojiA` / `emojiB`) | `balance` | 사진이 없을 때 큰 이모지 |
 | `screenshot` | `topic` | 앱 화면 캡처(세로) → 폰 프레임에 들어간다 |
 | `highlight` | `topic` (bestComment와 함께) | 댓글 카드에서 노란 마커를 칠할 구절 (댓글 본문에 그대로 포함된 문자열) |
 | `type: "list"` + `items[]` | 새 카드 | 랭킹·체크리스트. 최대 7개, 우하단에 「〇選」 자동 |
