@@ -23,7 +23,7 @@ import {
   type DocumentReference,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { makePostGrams, queryGram } from "../utils/ngram";
+import { makePostGrams, queryGram, stripSurrogates } from "../utils/ngram";
 import type { PostIndexDoc } from "../types/postIndex";
 
 // array-contains で引く候補の上限（1回の検索でこの件数まで読む）。
@@ -93,7 +93,10 @@ export async function searchPostIndex(
   indexCol: CollectionReference<DocumentData>,
   keyword: string
 ): Promise<{ postId: string; boardId: string }[] | null> {
-  const gram = queryGram(keyword);
+  // 索引側（makePostGrams）と同じく絵文字を落としてから代表2-gramを取る。
+  // 落とさないと「a😀」のような検索語で単独サロゲートの gram ができ、クエリ自体が
+  // invalid-argument で失敗する。
+  const gram = queryGram(stripSurrogates(keyword));
   if (!gram || gram.length < 2) return null;
   // orderBy は付けない。複合索引（grams + createdAt）が必要になり、
   // 規則デプロイとは別に索引デプロイが要るため。並べ替えは呼び出し側が本体取得後に行う。

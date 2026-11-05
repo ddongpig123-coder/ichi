@@ -63,12 +63,23 @@ export const POST_INDEX_BODY_CHARS = 400;
 // 索引配列の上限（array-contains の索引エントリ数を抑える）。
 export const POST_GRAMS_MAX = 400;
 
+// サロゲートペア（絵文字・一部の漢字は UTF-16 の2単位で1文字）を取り除く。
+// 2文字窓で切ると単独サロゲートができ、Firestore が不正な文字列として
+// 書き込み・検索を拒否する（INVALID_ARGUMENT）。投稿索引では絵文字を
+// 検索対象にしないので、索引化と検索語の両方で先に落とす。
+// ⚠️ 講義名の nameGrams（makeBigrams 直呼び）には適用しない — クローラ側
+//    （scripts/load-firestore.mjs）と同一でなければならず、講義名に絵文字は無い。
+export function stripSurrogates(s: string): string {
+  return (s ?? "").replace(/[\uD800-\uDFFF]/g, "");
+}
+
 // タイトルと本文冒頭から2-gram集合を作る。タイトルと本文は別々に gram 化して
 // 束ねる（連結すると境界に実在しない2-gramができる）。
+// ⚠️ scripts/backfill-post-index.mjs の同名関数と**完全に同一**に保つこと。
 export function makePostGrams(title: string, body: string): string[] {
   const set = new Set<string>([
-    ...makeBigrams(title ?? ""),
-    ...makeBigrams((body ?? "").slice(0, POST_INDEX_BODY_CHARS)),
+    ...makeBigrams(stripSurrogates(title ?? "")),
+    ...makeBigrams(stripSurrogates((body ?? "").slice(0, POST_INDEX_BODY_CHARS))),
   ]);
   return [...set].slice(0, POST_GRAMS_MAX);
 }
