@@ -61,10 +61,16 @@ function makeBigrams(name) {
   return [...set];
 }
 
+// 絵文字などのサロゲートペアを落とす（2文字窓で切ると単独サロゲートになり、
+// Firestore が INVALID_ARGUMENT で commit ごと拒否する。2026-11-05 に実際に起きた）。
+function stripSurrogates(s) {
+  return (s ?? "").replace(/[\uD800-\uDFFF]/g, "");
+}
+
 function makePostGrams(title, body) {
   const set = new Set([
-    ...makeBigrams(title ?? ""),
-    ...makeBigrams((body ?? "").slice(0, POST_INDEX_BODY_CHARS)),
+    ...makeBigrams(stripSurrogates(title ?? "")),
+    ...makeBigrams(stripSurrogates((body ?? "").slice(0, POST_INDEX_BODY_CHARS))),
   ]);
   return [...set].slice(0, POST_GRAMS_MAX);
 }
@@ -127,6 +133,7 @@ console.log(`글 ${snap.size}건 (대상 ${targets.length} / 경로 밖 ${skippe
 let created = 0;
 let already = 0;
 let noText = 0;
+let failed = 0;
 const perScope = new Map();
 
 for (let i = 0; i < targets.length; i += 200) {
@@ -135,6 +142,7 @@ for (let i = 0; i < targets.length; i += 200) {
 
   const batch = db.batch();
   let inBatch = 0;
+  const pending = []; // バッチが落ちたときに1件ずつ書き直すための控え
 
   for (let k = 0; k < chunk.length; k++) {
     const { post, boardId, indexRef, scopeLabel } = chunk[k];
@@ -155,19 +163,39 @@ for (let i = 0; i < targets.length; i += 200) {
         : data.createdAt?.toMillis?.() ?? Date.now();
 
     if (!dryRun) {
-      batch.set(indexRef, {
+      const indexDoc = {
         boardId,
         authorUid: data.authorUid ?? "",
         grams,
         createdAt,
-      });
+      };
+      batch.set(indexRef, indexDoc);
+      pending.push({ indexRef, indexDoc, postPath: post.ref.path, scopeLabel });
       inBatch++;
     }
     created++;
     perScope.set(scopeLabel, (perScope.get(scopeLabel) ?? 0) + 1);
   }
 
-  if (inBatch > 0) await batch.commit();
+  if (inBatch > 0) {
+    try {
+      await batch.commit();
+    } catch (e) {
+      // バッチは全部か無か。1件でも不正があると全滅するので、1件ずつ書いて
+      // どの投稿が原因かを表示し、残りは救う。
+      console.warn(`バッチ失敗（${inBatch}件）→ 1件ずつ書き直します: ${e?.message ?? e}`);
+      for (const p of pending) {
+        try {
+          await p.indexRef.set(p.indexDoc);
+        } catch (e2) {
+          failed++;
+          created--;
+          perScope.set(p.scopeLabel, (perScope.get(p.scopeLabel) ?? 1) - 1);
+          console.error(`  ✗ ${p.postPath}: ${e2?.message ?? e2}`);
+        }
+      }
+    }
+  }
 }
 
 console.log("");
@@ -175,6 +203,6 @@ for (const [scope, n] of [...perScope].sort((a, b) => b[1] - a[1])) {
   console.log(`  ${scope}: ${n}건`);
 }
 console.log("");
-console.log(`${dryRun ? "[dry-run] " : ""}새로 만든 색인 ${created}건 / 이미 있음 ${already}건 / 제목·본문 없음 ${noText}건`);
+console.log(`${dryRun ? "[dry-run] " : ""}새로 만든 색인 ${created}건 / 이미 있음 ${already}건 / 제목·본문 없음 ${noText}건${failed ? ` / 🔴 실패 ${failed}건` : ""}`);
 if (dryRun) console.log("실제로 쓰려면 --dry-run 없이 다시 실행하세요.");
 else if (created > 0) console.log("🔴 며칠 뒤 다시 돌려 「새로 만든 색인 0건」을 확인할 것 (파일 상단 주석 참조).");
