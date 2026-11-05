@@ -119,7 +119,7 @@ node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size
 node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size sq --handle @daigakunomori
 ```
 → `scripts/output/cardnews/` 에 PNG. 자세한 건 [scripts/cardnews/README.md](../scripts/cardnews/README.md).
-크기 운용(11-04 확정): **IG = `ig`만 / X·Threads = `sq`** / `x`(16:9)는 필요할 때만. v1 템플릿(`--template v1`)은 구현 예정 — 규칙 [MARKETING §3-1](MARKETING.md).
+크기 운용(11-04 확정): **IG = `ig`만 / X·Threads = `sq`** / `x`(16:9)는 필요할 때만. **v1 템플릿은 `--template v1`로 (11/05 구현)** — 규칙 [MARKETING §3-1](MARKETING.md), 필드 설명은 README. 앞으로의 카드는 v1로 만든다.
 `scripts/`에서 `npm install`하면 `package-lock.json`이 바뀐다(playwright 추가분) — 그 변경은 **커밋해도 된다**.
 문안 JSON은 주 단위로 `scripts/cardnews/samples/2026-11-wN.json`(또는 `ichi-content`)에 둔다.
 
@@ -200,8 +200,9 @@ docs/MARKETING.md(전략·운영 규칙 §9)와 docs/MARKETING-2026-11.md(이번
 1. git pull 로 최신화하고 scripts/cardnews/samples/ 에서 이번 주 파일(2026-11-wN.json, N=이번 주)을 찾아.
    없으면 「문안 JSON이 없습니다」라고만 알려주고 끝내. 글을 직접 지어내지 마.
 2. 터미널에서 실행:
-   node scripts/cardnews/render.mjs scripts/cardnews/samples/<이번 주 파일> --size all --handle @daigakunomori
-3. 생긴 PNG를 outputs/cardnews/<날짜>/ 에 월·수·금 폴더로 나눠 복사해 (JSON 순서대로 1→월, 2→수, 3→금).
+   node scripts/cardnews/render.mjs scripts/cardnews/samples/<이번 주 파일> --template v1 --size ig --handle @daigakunomori
+   node scripts/cardnews/render.mjs scripts/cardnews/samples/<이번 주 파일> --template v1 --size sq --handle @daigakunomori
+3. 생긴 PNG를 outputs/cardnews/<날짜>/ 에 월·수·금 폴더로 나눠 복사해 (JSON 순서대로 1→월, 2→수, 3→금). ig는 Instagram용, sq는 X·Threads용이라고 적어줘.
 4. 각 날짜별로 캡션을 일본어로 써줘 (IG용 100~150자 + 해시태그 5개 / X용 60자 이내 + 해시태그 2개).
    톤: docs/CONTENT-OPS.md §4 문체 규칙. 앱 홍보 문구는 캡션 끝 한 줄만.
    밸런스 게임(수)에는 「大学の森のみんなの森でも投票受付中」을 넣어.

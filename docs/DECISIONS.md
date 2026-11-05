@@ -156,7 +156,7 @@
 | ~~10~~ | ~~승인 방법~~ → ✅ **앱 안 운영자 전용 화면** (2026-10-30) | 준희 | — | [CONTENT-OPS §9](CONTENT-OPS.md) |
 
 ### 🔴 결정이 아니라 「해야 하는 일」인데 제일 급한 것
-- **카드 생성기 v1 템플릿 구현** (Claude Code) — 사양은 준희 PC `outputs/card-design-note.md` §5. v0는 남기고 `--template v1` 옵션으로. 선행: **준희가 캠퍼스 사진(인물 없음) 몇 장 촬영**해서 `scripts/cardnews/assets/`에 넣기
+- ~~카드 생성기 v1 템플릿 구현~~ → ✅ **2026-11-05 구현** (`scripts/cardnews/templates-v1.mjs`, `--template v1`). 남은 선행: **준희가 캠퍼스 사진(인물 없음)·앱 화면 캡처**를 `scripts/cardnews/assets/`에 넣기 → 첫 피드 9장
 - **안드로이드 테스터 12명 모집** — 10/31까지. 돈으로도 코드로도 못 줄이는 유일한 항목.
   🟢 **理工·情コミ 학생을 섞으면 便覧 문제도 같이 풀린다**([COLLAB §10-2](COLLAB-DATA-TAEHUI.md))
 - **태희에게 S2·S3 전달** — 11/08 기한. 복붙용 메시지는 [COLLAB §11](COLLAB-DATA-TAEHUI.md)
