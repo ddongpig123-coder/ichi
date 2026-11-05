@@ -29,6 +29,7 @@ import { LAW_ALLOCATION } from "../src/data/allocationLaw";
 import { POLITICALECONOMICS_ALLOCATION } from "../src/data/allocationPoliticalEconomics";
 import { GLOBAL_JAPANESE_ALLOCATION } from "../src/data/allocationGlobalJapanese";
 import { LITERATURE_ALLOCATION } from "../src/data/allocationLiterature";
+import { INFO_COMMUNICATION_ALLOCATION, INFO_COMMUNICATION_CAN_EXTRA_ZONES } from "../src/data/allocationInfoCommunication";
 import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
@@ -273,7 +274,7 @@ export default function GraduationScreen() {
     ? resolveZones(selBand, deptId, isRyugakusei)
     : null;
   const zoneBaseline = zoneCtx ? (zoneBaselines[zoneCtx] ?? {}) : {};
-  // 科目配当表（CAN）: 総合数理・経営・農・法・政治経済・国際日本・文 が整備済み。
+  // 科目配当表（CAN）: 総合数理・経営・農・法・政治経済・国際日本・文・情報コミュニケーション が整備済み（理工のみ未整備）。
   const allocCourses = selFaculty?.id === "interdisciplinary-math" && deptId
     ? INTERDISCIPLINARY_MATH_ALLOCATION[deptId] ?? null
     : selFaculty?.id === "agriculture" && deptId
@@ -288,6 +289,8 @@ export default function GraduationScreen() {
     ? LAW_ALLOCATION
     : selFaculty?.id === "management"
     ? MANAGEMENT_ALLOCATION
+    : selFaculty?.id === "info-communication"
+    ? INFO_COMMUNICATION_ALLOCATION
     : null;
   // 経営・法は学科/コースで専門科目を絞る（canDepartments を deptId で選択）。
   const gakkaFilter = selFaculty?.id === "management" || selFaculty?.id === "law" ? deptId : null;
@@ -298,6 +301,8 @@ export default function GraduationScreen() {
       .map((z) => ({ id: z.id, nameJa: z.nameJa }));
     const extra = selFaculty?.id === "agriculture" && deptId
       ? AGRICULTURE_CAN_EXTRA_ZONES[deptId] ?? []
+      : selFaculty?.id === "info-communication"
+      ? INFO_COMMUNICATION_CAN_EXTRA_ZONES // 自由選択に入るゼミ・留学・ウェルネス等を表示用に
       : [];
     return [...base, ...extra];
   }, [resolvedZones, selFaculty, deptId]);
