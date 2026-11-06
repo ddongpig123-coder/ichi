@@ -5,7 +5,7 @@
 
 ## 0. 지금 이미 돼 있는 것 (유지)
 - Firestore 규칙: `users`는 본인만 읽기 · `verificationLevel` 자기 승격 차단 · `reports`/`inquiries` 읽기 전면 금지 · `operators` 쓰기 금지(list도 금지) · 쪽지는 `participants` 기반 · 학교 게시판 쓰기 소속 검증(S3) · 글 카운터 ±1·authorUid 변경 차단·글자 수 상한(11/01) · 검색 색인 검증
-- 규칙 회귀 테스트 4파일(`scripts/rules-test/`: chats · content-and-boards · post-index · posts-hardening) — 에뮬레이터, 전부 통과
+- 규칙 회귀 테스트 **7파일 216케이스**(`scripts/rules-test/`: anonymity · chats · content-and-boards · courses-and-metas · post-index · posts-hardening · privacy) — 에뮬레이터, 전부 통과. `npm test` 가 폴더의 `*.test.mjs` 를 자동으로 다 돌린다
 - 비밀번호는 Firebase Auth 직접 전달(앱에 저장·로그 없음) · 성적/학점은 단말 로컬만 · `.env`·서비스 계정 키 커밋 금지(.gitignore) · 학교 메일 인증은 `emailVerified` 플래그만 사용
 - 신고 24시간 처리 체계(약관 명문화) · 금칙어 차단 · 차단·숨김 · 계정 삭제 기능 + 공개 안내 페이지
 
@@ -21,7 +21,7 @@
 ## 2. 🟠 2주 안 — 규칙 보강·백업 (태희 + 준희)
 | # | 할 일 | 비고 |
 |---|---|---|
-| 2-1 | **규칙 테스트를 전 컬렉션으로**: 지금 없는 케이스 추가 — 타인 `users` 읽기 거부 / `usersPublic` 타인 uid로 쓰기 거부 / `operators` 쓰기·list 거부 / `reports`·`inquiries` 읽기 거부 / `verificationLevel` 승격 거부 / `timetables` 타인 쓰기 거부 / 익명 체크박스(S4-4) 필드 검증 | `scripts/rules-test/` |
+| 2-1 | ✅ **완료 (2026-11-07, 태희)** — 규칙 테스트를 전 컬렉션으로. 새 파일 2개 **82케이스** 추가: `privacy.test.mjs`(타인 `users` 읽기·`verificationLevel` 승격·`usersPublic` 사칭·`emailIndex` list·타인 시간표 쓰기·차단목록·스크랩·`operators` 쓰기/list·`reports`·`inquiries` 읽기 전부 거부) / `courses-and-metas.test.mjs`(공식 강의 수정·삭제 금지, `verified:true` 생성 금지, `confirms` 1인1회, 강의평 1인1평·rating 범위, 게시판 메타, **글·댓글 물리삭제 금지**). 익명 체크박스는 `anonymity.test.mjs`(S4-4)에서 이미 커버. 🔑 **돌연변이 테스트로 검증** — 규칙 5곳을 일부러 약하게 만들어 의도한 9케이스만 FAIL 로 뒤집히는 것을 확인(방법은 `scripts/rules-test/README.md` 말미) | `scripts/rules-test/` |
 | 2-2 | **쓰기 폭주 완화(규칙 수준)**: `users/{uid}.lastPostAt`을 쓰고 글·댓글·쪽지 create에서 `request.time - lastPostAt >= 10s`류 검사. 【추측】 봇·스팸 1차 방어로 충분, 완전 방어는 App Check(§3) | 규칙 + `src/types/user.ts`(태희) + 서비스 1줄(준희) |
 | 2-3 | ✅ **완료 (2026-11-07, 태희)** — `scripts/backup-firestore.mjs` + 복구 절차 [docs/BACKUP.md](BACKUP.md). `--estimate`(읽기 비용을 집계 쿼리로 미리 셈) / 덤프 / `--restore`(기본 미리보기·있는 문서는 건너뜀). `courses`·`postIndex` 는 **기본 제외** — 다시 만들 수 있고 둘이 전체의 대부분이라 받으면 Spark 읽기 한도를 날린다. 에뮬레이터 왕복 시험 통과(§6). 🔴 **실행은 키가 있는 준희 PC** | 스크립트 완료 / 실행은 준희 PC |
 | 2-4 | ✅ **조사 완료 (2026-11-07, 태희) — 지금 당장 고칠 것은 없다.** 28건을 **앱 번들에 들어가는지**로 갈라 봤다(빌드된 `dist` 번들에서 각 라이브러리 고유 문자열을 grep). **26건은 빌드·CLI 도구**(`@expo/*`·`shell-quote`←react-devtools·`node-forge`·`browserslist`…)로 **출하되는 앱에 안 들어간다.** 🔑 지시서가 확인하라고 한 `@firebase/firestore`·`@grpc/grpc-js` 는 **grpc 자체가 번들에 없다**(0히트 / `webchannel` 2히트 — 웹·RN 은 WebChannel 전송을 쓰고 grpc 는 Node 전용) = **앱 영향 없음**. 🔴 `npm audit` 이 제안하는 「수정」은 **firebase 9.14.0 다운그레이드**(12.14.0 → 9.x)라 **절대 따르면 안 된다**. 실제로 번들에 들어가는 유일한 건 `decode-uri-component`(←`query-string`←`expo-router`, URL 파싱). 패치판 0.5.1 을 `overrides` 로 넣어 봤는데 **0.5.1 이 ESM 전용이라 `query-string@7` 의 `require()` 가 깨져 앱의 모든 URL 파싱이 터진다**(실제로 재현). CJS 패치판은 없다 → **expo-router 58(SDK 58) = 1.2 재빌드까지 보류.** 리스크: 악성 링크를 탭한 본인의 앱이 멈추는 DoS. 데이터 노출 없음 | 조사 완료 → 1.2 로 |

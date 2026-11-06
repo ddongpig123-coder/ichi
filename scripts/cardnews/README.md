@@ -30,13 +30,35 @@ node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size
 | `x` | 1200×675 | X 가로. 필요할 때만 |
 
 - `npm install` 뒤 `package-lock.json`이 바뀌면(playwright 추가분) 그 변경은 커밋해도 된다
-- **v1 템플릿(`--template v1`)은 구현 예정.** 제목 2줄 규칙·시리즈 라벨 칩·A/B 그림 슬롯(캠퍼스 사진 > 큰 이모지)·전체 폭 CTA 띠·댓글 마커 밑줄·상단 브랜드 띠. v0는 그대로 남긴다. 사진은 `scripts/cardnews/assets/`에 (인물 없는 것만)
+## v1 템플릿 (`--template v1`) — 예비용
+
+> 🔴 **2026-11-05 준희 판단: 생성기 카드는 AI 티가 난다 → 주력은 Canva 템플릿**(코워크 + Canva 커넥터). 이 생성기는 Canva가 막혔을 때의 예비·문안 확인용으로만 남긴다.
+```bash
+node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w2-v1.json --template v1 --handle @daigakunomori
+```
+MARKETING §3-1 규칙 ①~⑥ 구현: 제목 2줄 자동 분할(1줄 11자·고아 줄 금지·숫자 덩어리 보호) · 시리즈 칩 고정색 · A/B 그림 슬롯 · 전체 폭 CTA 띠 · 댓글 마커 밑줄 · 리스트 「〇選」 · 상단 브랜드 띠.
+v0(`templates.mjs`)는 그대로 남아 있고 기본값이다. 파일명 끝에 `-v1`이 붙는다.
+
+| v1 추가 필드 | 어디에 | 설명 |
+|---|---|---|
+| `series` | 전부 | 시리즈 칩. `究極の2択` / `大学生あるある` / `留学生の森` / `キャンパス情報` / `今週の話題` (색은 `templates-v1.mjs`의 `SERIES`에 고정. 없는 이름은 검정) |
+| `deco: true` | 제목 있는 카드 | 제목 양옆에 「＼ ／」 |
+| `sub` / `accent` | 제목 있는 카드 | 제목 3단 위계(§5-1): `sub`=조건·설명 1줄(중간 크기·회색), `accent`=강조 1줄(브랜드 오렌지). 둘 다 선택 |
+| `aImage` / `bImage` (= `imageA` / `imageB`) | `balance` | 그림 슬롯 사진. `assets/` 안 파일 이름 또는 JSON 기준 경로. **인물 없는 캠퍼스 사진만** |
+| `aEmoji` / `bEmoji` (= `emojiA` / `emojiB`) | `balance` | 사진이 없을 때 큰 이모지 |
+| `screenshot` | `topic` | 앱 화면 캡처(세로) → 폰 프레임에 들어간다 |
+| `highlight` | `topic` (bestComment와 함께) | 댓글 카드에서 노란 마커를 칠할 구절 (댓글 본문에 그대로 포함된 문자열) |
+| `type: "list"` + `items[]` | 새 카드 | 랭킹·체크리스트. 최대 7개, 우하단에 「〇選」 자동 |
+
+- 사진·캡처는 `scripts/cardnews/assets/` ([규칙](assets/README.md)). 🔴 AI 생성 인물·실사 인물 금지
+- 제목에 `\n`을 직접 넣으면 그 자리에서 끊는다(자동 분할보다 우선)
 
 ## JSON 형식
 | type | 필드 | 설명 |
 |---|---|---|
 | `balance` | `question`, `a`, `b`, `tag?`, `cta?` | 밸런스 게임. `\n`으로 줄바꿈 |
 | `topic` | `title`, `board?`, `comments?`, `likes?`, `bestComment?`, `tag?`, `cta?` | 앱에서 화제가 된 글. `bestComment`가 있으면 2장째(댓글 카드)가 자동으로 붙는다 |
+| `list` (v1만) | `title`, `items[]`, `tag?`, `cta?` | 랭킹·체크리스트 |
 
 - `comments`·`likes`는 **실제 수치만** (MARKETING §5-3). 글이 아직 없으면 빼면 된다 (표시 안 됨)
 - 템플릿(색·글꼴·배치)은 `templates.mjs` 한 파일. 글자 수에 따라 제목 크기가 자동으로 줄어든다
