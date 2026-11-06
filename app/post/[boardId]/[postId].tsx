@@ -36,6 +36,9 @@ import { getOrCreateChat } from "../../../src/services/chatService";
 import { friendlyErrorBody, isPermissionDenied, writeErrorBody } from "../../../src/utils/writeError";
 import { notify } from "../../../src/utils/dialog";
 import { COMMENT_MAX } from "../../../src/data/limits";
+import { addScrap, isScrapped, removeScrap } from "../../../src/services/scrapService";
+import { scrapKey } from "../../../src/types/scrap";
+import { recordCommentedPost } from "../../../src/services/commentedPostsStore";
 import LoadError from "../../../src/components/common/LoadError";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useBlock } from "../../../src/contexts/BlockContext";
@@ -115,6 +118,9 @@ export default function PostDetailScreen() {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [liking, setLiking] = useState(false);
+  // スクラップ（users/{uid}/scraps）。開いたときに 1 回だけ有無を読む
+  const [scrapped, setScrapped] = useState(false);
+  const [scrapBusy, setScrapBusy] = useState(false);
   const [bannedWords, setBannedWords] = useState<string[]>([]);
   const scrollRef = useRef<ScrollView>(null);
   // コメント/返信のいいね状態
@@ -159,6 +165,9 @@ export default function PostDetailScreen() {
       const mine = p as Post | null;
       const loadedComments = _c as Comment[];
       setPost(mine);
+      if (mine && user) {
+        isScrapped(user.uid, scrapKey("board", boardId as string, postId)).then(setScrapped).catch(() => {});
+      }
       // 閲覧数+1（開くたび）。書き込みが通った時だけ表示に反映する。削除済みは数えない。
       if (mine && !mine.deleted && schoolDomain) {
         incrementViewCount(schoolDomain, boardId as BoardId, postId).then((ok) => {
@@ -301,6 +310,35 @@ export default function PostDetailScreen() {
     await submitComment();
   }
 
+  // スクラップ（ブックマーク）の付け外し。板名・タイトルの写しを users/{uid}/scraps に置く
+  async function toggleScrap() {
+    if (!user || !post || scrapBusy) return;
+    setScrapBusy(true);
+    const key = scrapKey("board", boardId as string, postId);
+    try {
+      if (scrapped) {
+        await removeScrap(user.uid, key);
+        setScrapped(false);
+      } else {
+        const meta = BOARDS.find((b) => b.id === boardId);
+        await addScrap(user.uid, {
+          kind: "board",
+          boardId: boardId as string,
+          postId,
+          schoolDomain: schoolDomain ?? null,
+          title: post.title,
+          boardLabel: meta?.label ?? (boardId as string),
+          boardLabelKo: meta?.labelKo ?? meta?.label ?? (boardId as string),
+        });
+        setScrapped(true);
+      }
+    } catch (e: any) {
+      notify(t("post.scrapFailed"), friendlyErrorBody(e, t));
+    } finally {
+      setScrapBusy(false);
+    }
+  }
+
   async function submitComment() {
     if (!user || !schoolDomain) return;
     setBannedWords([]);
@@ -310,6 +348,19 @@ export default function PostDetailScreen() {
         schoolDomain, boardId as BoardId, postId, user.uid, commentText.trim(),
         reply?.rootId ?? null, mention?.uid ?? null
       );
+      // 「コメントした投稿」（端末ローカル）に記録
+      {
+        const meta = BOARDS.find((b) => b.id === boardId);
+        recordCommentedPost({
+          kind: "board",
+          boardId: boardId as string,
+          postId,
+          schoolDomain,
+          title: post?.title ?? "",
+          boardLabel: meta?.label ?? (boardId as string),
+          boardLabelKo: meta?.labelKo ?? meta?.label ?? (boardId as string),
+        });
+      }
       await loadComments();
       setCommentText("");
       setReply(null);
@@ -560,6 +611,16 @@ export default function PostDetailScreen() {
               <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
                 <Ionicons name={liked ? "heart" : "heart-outline"} size={15} color={liked ? theme.accent : theme.textSecondary} />{" "}
                 {likeCount}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.likeBtn, scrapped && styles.likeBtnActive]}
+              onPress={toggleScrap}
+              disabled={scrapBusy}
+            >
+              <Text style={[styles.likeBtnText, scrapped && styles.likeBtnTextActive]}>
+                <Ionicons name={scrapped ? "bookmark" : "bookmark-outline"} size={15} color={scrapped ? theme.accent : theme.textSecondary} />{" "}
+                {t("post.scrap")}
               </Text>
             </TouchableOpacity>
           </View>

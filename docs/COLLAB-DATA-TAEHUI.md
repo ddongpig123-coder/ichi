@@ -312,3 +312,28 @@ docs/DATA-MANUAL.md 와 docs/COLLAB-DATA-TAEHUI.md §9 를 읽고, §9-1 담당�
 
 **S10(데이터) 쪽 태희 분담은 §9-1 담당표 그대로** — 上智 8학부 + 他校 출처 조사.
 비공개 便覧 경로는 §10, 1차 탐색 결과는 §10-4.
+
+---
+
+## 12. 태희 전달용 — S4-4 익명 체크박스 (2026-11-05 작성, 복붙용)
+
+> S4의 나머지(숲 2개·게시판 추가·학부 게시판 삭제·세그먼트)는 11/05 준희 축에서 코드 완료. **타입·규칙만** 태희 창구.
+> 설계 근거는 [BOARD-ACCESS §8](BOARD-ACCESS.md). 배포 순서: **규칙 배포(추가뿐이라 구앱 무해) → OTA**.
+
+```
+태희야, S4 익명 체크박스의 타입·규칙 부분 부탁해. 준희 축 UI는 이게 들어오면 바로 붙일게.
+
+1. src/types/board.ts Post·Comment / src/types/lounge.ts LoungePost·LoungeComment 에 두 필드 추가(둘 다 optional, 기존 문서 호환)
+   anonymous?: boolean        // 기본 true. false = 닉네임 공개. 작성 시점에 고정(나중에 못 바꿈)
+   authorNickname?: string | null   // anonymous=false 일 때 usersPublic 닉네임 스냅샷(읽기 비용 0). anonymous=true 면 null/없음
+   🔴 authorUid 는 그대로(법적 대응용). 익명 해제는 표시만 바뀜.
+
+2. firestore.rules — isValidNewPost() / isValidNewComment() 에 추가 (글자 수 상한은 src/data/limits.ts 닉네임 20과 동일)
+   && (!('anonymous' in d) || d.anonymous is bool)
+   && (!('authorNickname' in d) || d.authorNickname == null || (d.authorNickname is string && d.authorNickname.size() <= 20))
+   update 쪽은 기존 허용 필드 목록을 안 바꾼다(anonymous·authorNickname 은 수정 불가 = 작성 시점 고정).
+
+3. scripts/rules-test 에 케이스 3개: anonymous:false + 닉네임 20자 OK / 21자 거부 / update 로 anonymous 변경 거부
+
+4. 규칙 배포 → 알려주면 준희 축에서 글쓰기 화면 체크박스(기본 ON) + 「닉네임이 공개됩니다」 1줄 안내 + 목록·상세 표시 분기를 올림.
+```

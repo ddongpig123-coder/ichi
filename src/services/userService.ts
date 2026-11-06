@@ -258,6 +258,9 @@ export async function deleteSelfData(uid: string, email: string | null): Promise
   tasks.push({ step: "usersPublic", task: deleteDoc(publicDoc(uid)) });
   // 時間割(サブコレクション)を全学期分削除
   tasks.push({ step: "timetables", task: deleteTimetables(uid) });
+  // スクラップ・ブロックリスト（本人だけのサブコレクション）も消す
+  tasks.push({ step: "scraps", task: deleteSubcollection(uid, "scraps") });
+  tasks.push({ step: "blocks", task: deleteSubcollection(uid, "blocks") });
 
   const results = await Promise.allSettled(tasks.map((t) => t.task));
   results.forEach((r, i) => {
@@ -269,6 +272,10 @@ export async function deleteSelfData(uid: string, email: string | null): Promise
 }
 
 async function deleteTimetables(uid: string): Promise<void> {
-  const tts = await getDocs(collection(db, "users", uid, "timetables"));
-  await Promise.all(tts.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
+  return deleteSubcollection(uid, "timetables");
+}
+
+async function deleteSubcollection(uid: string, name: string): Promise<void> {
+  const snap = await getDocs(collection(db, "users", uid, name));
+  await Promise.all(snap.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
 }
