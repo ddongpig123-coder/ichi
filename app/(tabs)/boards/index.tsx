@@ -92,18 +92,17 @@ export default function BoardsHomeScreen() {
     const sub = forest ? forestDescription(forest, language) : t("boards.schoolForestSub");
     const items = (feeds[id] ?? []).filter((p) => !isBlocked(p.authorUid) && !isHidden(p.id));
     const schoolMissing = id === "school" && noSchool;
+    // 見出しはカードの外（大きく）、投稿はカードの中 — エブリタイムの「즐겨찾는 게시판」と同じ分け方。
+    // 見出しと投稿の行が同じ箱に入っていると区別しにくかった（準熙 11/06 プレビュー）。
     return (
-      <View key={id} style={styles.block}>
+      <View key={id} style={styles.section}>
         <TouchableOpacity
-          style={styles.blockHeader}
+          style={styles.sectionHeader}
           onPress={() => openAll(id)}
           disabled={schoolMissing}
           accessibilityRole="button"
         >
-          <View style={{ flex: 1 }}>
-            <Text style={styles.blockTitle}>{title}</Text>
-            <Text style={styles.blockSub}>{sub}</Text>
-          </View>
+          <Text style={styles.sectionTitle}>{title}</Text>
           {!schoolMissing && (
             <View style={styles.seeAll}>
               <Text style={styles.seeAllText}>{t("boards.seeAll")}</Text>
@@ -111,29 +110,31 @@ export default function BoardsHomeScreen() {
             </View>
           )}
         </TouchableOpacity>
-        <View style={styles.sep} />
-        {schoolMissing ? (
-          <SchoolPrompt />
-        ) : feeds[id] === undefined ? (
-          <ActivityIndicator style={styles.blockSpinner} color={theme.primary} />
-        ) : items.length === 0 ? (
-          <Text style={styles.empty}>{t("boards.feedEmpty")}</Text>
-        ) : (
-          items.map((p, i) => (
-            <View key={p.key}>
-              {i > 0 && <View style={styles.sep} />}
-              <PostListRow
-                boardLabel={p.boardLabel}
-                boardLabelKo={p.boardLabelKo}
-                title={p.title}
-                createdAt={p.createdAt}
-                likeCount={p.likeCount}
-                commentCount={p.commentCount}
-                onPress={() => openPost(p)}
-              />
-            </View>
-          ))
-        )}
+        <Text style={styles.sectionSub}>{sub}</Text>
+        <View style={styles.card}>
+          {schoolMissing ? (
+            <SchoolPrompt />
+          ) : feeds[id] === undefined ? (
+            <ActivityIndicator style={styles.blockSpinner} color={theme.primary} />
+          ) : items.length === 0 ? (
+            <Text style={styles.empty}>{t("boards.feedEmpty")}</Text>
+          ) : (
+            items.map((p, i) => (
+              <View key={p.key}>
+                {i > 0 && <View style={styles.sep} />}
+                <PostListRow
+                  boardLabel={p.boardLabel}
+                  boardLabelKo={p.boardLabelKo}
+                  title={p.title}
+                  createdAt={p.createdAt}
+                  likeCount={p.likeCount}
+                  commentCount={p.commentCount}
+                  onPress={() => openPost(p)}
+                />
+              </View>
+            ))
+          )}
+        </View>
       </View>
     );
   }
@@ -156,20 +157,19 @@ export default function BoardsHomeScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
-    content: { paddingVertical: 12, paddingBottom: 32 },
-    block: {
-      marginHorizontal: 12,
-      marginBottom: 14,
+    content: { paddingTop: 18, paddingBottom: 32 },
+    section: { marginHorizontal: 16, marginBottom: 26 },
+    sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+    sectionTitle: { fontSize: 21, fontWeight: "800", color: theme.textPrimary, letterSpacing: -0.3 },
+    sectionSub: { fontSize: 12, color: theme.textSecondary, marginTop: 3, marginBottom: 10 },
+    card: {
       borderRadius: 14,
       backgroundColor: theme.card,
       overflow: "hidden",
       borderWidth: 1,
       borderColor: theme.border,
     },
-    blockHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 14 },
-    blockTitle: { fontSize: 17, fontWeight: "700", color: theme.textPrimary, marginBottom: 2 },
-    blockSub: { fontSize: 12, color: theme.textSecondary },
-    seeAll: { flexDirection: "row", alignItems: "center", paddingLeft: 8 },
+    seeAll: { flexDirection: "row", alignItems: "center", paddingLeft: 8, paddingVertical: 4 },
     seeAllText: { fontSize: 13, color: theme.textSecondary },
     sep: { height: 1, backgroundColor: theme.border },
     blockSpinner: { paddingVertical: 20 },
