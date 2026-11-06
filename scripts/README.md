@@ -164,3 +164,19 @@ id(`{courseNumber}-{semester}-{day}{period}`)가 같아 덮어쓰기되어 중�
 - [x] 学部間共通(81·82·83·84·87) 수집·적재 (2026-10-25, 건수는 커밋 메시지·DATA-MANUAL §11 참조)
 - [ ] 다른 유명 대학 확장 (구조 다름 — 대학별 파서 분리). 절차는 `docs/DATA-MANUAL.md` §13
 - [ ] 매년 3~4월: 새 nendo로 재크롤 → dry-run → 적재 → `count-firestore.mjs` (DATA-MANUAL §12)
+
+## 운영 스크립트 (강의 데이터와 무관)
+
+Firestore 운영용. 둘 다 **Admin SDK** 라서 `firestore.rules` 를 타지 않는다.
+키는 `scripts/keys/serviceAccount.json` (⚠️ 커밋 금지. `.gitignore` 등록됨).
+자세한 설명·주의사항은 각 파일 상단 주석에 있다.
+
+| 파일 | 하는 일 |
+|---|---|
+| `backfill-post-index.mjs` | 색인 없는 옛 글·봇 글에 검색 색인(`postIndex`)을 만든다. 반복 실행용 |
+| `recount-counters.mjs` | 투고·댓글의 좋아요 수·댓글 수를 실제 문서 수로 다시 센다. **기본은 점검 전용**, 고치려면 `--write` ([SECURITY-1.1 §7](../docs/SECURITY-1.1.md) 의 카운터 하한 0 선행 작업) |
+
+```bash
+node recount-counters.mjs                 # 점검만
+node recount-counters.mjs --write         # 어긋난 것만 고침 → 끝나고 한 번 더 점검
+```
