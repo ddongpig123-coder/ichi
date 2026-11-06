@@ -83,6 +83,7 @@ node backup-firestore.mjs --restore ../../ichi-backup/2026-11-07T00-00-00-000Z -
 
 | 날짜 | 건수 | 메모 |
 |---|---|---|
+| 2026-11-07 | (estimate) 대상 627 / 제외 21,140 | `--estimate`만. users 151 · usersPublic 144 · posts 66 · comments 103 · chats 12 · messages 9 · friendships 6 · reports 4 · contentQueue 48 등. 실제 덤프는 아직 |
 | | | 돌릴 때마다 한 줄 추가 |
 
 ## 5. 유출일 때는 복구가 아니라 신고다
