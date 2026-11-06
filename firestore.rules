@@ -92,6 +92,12 @@ service cloud.firestore {
       match /blocks/{blockedUid} {
         allow read, write: if isOwner(uid);
       }
+
+      // スクラップ（投稿のブックマーク。1.1 S4-5, src/types/scrap.ts）。本人のみ。
+      // 投稿のタイトル・板名の写しだけで本文は持たない。
+      match /scraps/{scrapId} {
+        allow read, write: if isOwner(uid);
+      }
     }
 
     // 友達判定：friendships/{小さいuid_大きいuid} の存在で判定
