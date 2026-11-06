@@ -180,3 +180,19 @@ Firestore 운영용. 둘 다 **Admin SDK** 라서 `firestore.rules` 를 타지 �
 node recount-counters.mjs                 # 점검만
 node recount-counters.mjs --write         # 어긋난 것만 고침 → 끝나고 한 번 더 점검
 ```
+
+## 백업·복구 (강의 데이터와 무관)
+
+| 스크립트 | 하는 일 |
+|---|---|
+| `backup-firestore.mjs` | Firestore 덤프·복구. **Spark 는 자동 백업도 PITR 도 없다.** 절차·주기·사고 대응은 [docs/BACKUP.md](../docs/BACKUP.md) |
+
+```bash
+node backup-firestore.mjs --estimate   # 읽기 몇 건 드는지 (거의 공짜)
+```
+
+```bash
+node backup-firestore.mjs              # 덤프 → 저장소 밖 ../ichi-backup/<시각>/
+```
+
+⚠️ 덤프에는 이메일·쪽지 본문·초대 토큰이 평문으로 들어 있다. 저장소 안에 두거나 공유하지 말 것.
