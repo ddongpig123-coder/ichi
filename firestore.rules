@@ -92,6 +92,12 @@ service cloud.firestore {
       match /blocks/{blockedUid} {
         allow read, write: if isOwner(uid);
       }
+
+      // スクラップ（投稿のブックマーク。1.1 S4-5, src/types/scrap.ts）。本人のみ。
+      // 投稿のタイトル・板名の写しだけで本文は持たない。
+      match /scraps/{scrapId} {
+        allow read, write: if isOwner(uid);
+      }
     }
 
     // 友達判定：friendships/{小さいuid_大きいuid} の存在で判定
@@ -284,6 +290,33 @@ service cloud.firestore {
     // posts / comments / likes の権限パターンを関数化。
     // 文字数の上限は src/data/limits.ts と合わせる（本文 5000 は contentQueue と同じ）。
 
+    // ── 匿名/記名（S4-4, BOARD-ACCESS §8）──────────────────
+    // 作成時に固定。更新許可リスト（isAuthorEditOfPost / isAuthorEditOfComment）に
+    // 入れていないので、あとから匿名↔記名を切り替えることはできない。
+    // 既存文書・まだ更新していないアプリは両フィールドが無い → 匿名として扱う。
+    //
+    // 匿名なら名前を載せさせない。「匿名で出した」はずの投稿にニックネームが
+    // 残っていると、あとで表示を変えただけで本人が割れてしまう。
+    //
+    // 🔑 記名のときだけ usersPublic.nickname と一致を要求する（匿名側は get を通らない
+    //    ＝ 既定の匿名投稿では読み取り課金が増えない）。一致を見る理由は2つ:
+    //    ① ニックネーム保存時の禁止語チェック（profile.tsx）を投稿時に迂回できてしまう
+    //    ② 投稿ごとに違う名前を名乗れると「記名」＝説明責任の意味が消える
+    //    外すなら最後の == get(...) の1行だけ削ればよい（形の検証は残る）。
+    // 文字数 20 は src/data/limits.ts の NICKNAME_MAX と合わせる。
+    function isValidAnonymity() {
+      let d = request.resource.data;
+      return (!('anonymous' in d) || d.anonymous is bool)
+        && (
+          d.get('anonymous', true) == true
+            ? d.get('authorNickname', null) == null
+            : (d.authorNickname is string
+                && d.authorNickname.size() > 0
+                && d.authorNickname.size() <= 20
+                && d.authorNickname == get(/databases/$(database)/documents/usersPublic/$(request.auth.uid)).data.nickname)
+        );
+    }
+
     // 新規投稿: カウンターは 0 から（いいね 9999 の投稿を作らせない）。
     // likeCount / viewCount は学校掲示板の投稿では作成時に無いので「無いか 0」を許す。
     function isValidNewPost() {
@@ -293,7 +326,8 @@ service cloud.firestore {
         && d.get('likeCount', 0) == 0
         && d.get('commentCount', 0) == 0
         && d.get('viewCount', 0) == 0
-        && d.get('deleted', false) == false;
+        && d.get('deleted', false) == false
+        && isValidAnonymity();
     }
 
     // 検索索引(postIndex)の検証。grams は makePostGrams（src/utils/ngram.ts）が作る。
@@ -308,7 +342,8 @@ service cloud.firestore {
       let d = request.resource.data;
       return d.body is string && d.body.size() > 0 && d.body.size() <= 1000
         && d.get('likeCount', 0) == 0
-        && d.get('deleted', false) == false;
+        && d.get('deleted', false) == false
+        && isValidAnonymity();
     }
 
     // カウンターは「ちょうど ±1」だけ。以前は任意の値に書き換えられ、ベスト掲示板を操作できた。
@@ -344,15 +379,52 @@ service cloud.firestore {
       return resource.data.authorUid == request.auth.uid
         && changed.hasOnly(['title', 'body', 'tag', 'deleted', 'deletedAt', 'resolved', 'bestCommentId'])
         && (!changed.hasAny(['title']) || (d.title is string && d.title.size() > 0 && d.title.size() <= 100))
-        && (!changed.hasAny(['body']) || (d.body is string && d.body.size() > 0 && d.body.size() <= 5000));
+        && (!changed.hasAny(['body']) || (d.body is string && d.body.size() > 0 && d.body.size() <= 5000))
+        // tag は空にする（null）のも許す。文字列なら 30 字まで
+        && (!changed.hasAny(['tag']) || d.tag == null || (d.tag is string && d.tag.size() <= 30));
     }
 
-    function canUpdatePost(likePath) {
+    // コメント数（段階2・docs/SECURITY-1.1.md §7）: 「本当にコメントが増減したか」を見る。
+    // 段階1（#80・配備済み）は lastCommentId を任意にして旧アプリも通していたので、
+    // コメントを書かずに +1 を繰り返せた（通知の赤丸を永久に鳴らせる・ベスト掲示板の操作）。
+    // ⚠️ lastCommentId を必須にするので、1.1 OTA が行き渡ってから配備すること。
+    //
+    // commentsPath は '…/posts/{postId}/comments' の**文字列**（path() で文書パスを組む）。
+    // ルールの関数内では $() 補間が使えないので、呼び出し側で文字列を作って渡している。
+    //
+    // 🔑 id の文字種を自動id に限定するのが必須。'/' を入れられると comments/{id} 以外の
+    //    文書を指せてしまい、「コメントの いいね文書 を作って commentCount を +1」が通る
+    //    （id = 'realComment/likes/myUid' で !exists && existsAfter が成立してしまう）。
+    // 🔑 exists/get は同じパスなら評価ごとにキャッシュされるので、読み取りは増えない。
+    function isValidCommentCountChange(commentsPath) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let before = resource.data.get('commentCount', 0);
+      let after = request.resource.data.get('commentCount', 0);
+      let id = request.resource.data.get('lastCommentId', '');
+      return changed.hasOnly(['commentCount', 'lastCommentId'])
+        && changed.hasAny(['commentCount'])
+        && id is string
+        && id.matches('^[A-Za-z0-9_-]{1,64}$')
+        && (
+          // +1: このバッチで新しく作られたコメントの分だけ（createComment のバッチ）
+          (after == before + 1
+            && !exists(path(commentsPath + '/' + id))
+            && existsAfter(path(commentsPath + '/' + id)))
+          ||
+          // -1: このトランザクションで deleted が false→true になったコメントの分だけ
+          //     （softDeleteComment）。下限 0 — 0 から下げられない
+          (after == before - 1 && after >= 0
+            && get(path(commentsPath + '/' + id)).data.get('deleted', false) == false
+            && getAfter(path(commentsPath + '/' + id)).data.get('deleted', false) == true)
+        );
+    }
+
+    function canUpdatePost(likePath, commentsPath) {
       return isSignedIn() && (
         isAuthorEditOfPost() ||
         // いいね数・コメント数・閲覧数のカウンター更新は他ユーザー操作でも発生
         isValidLikeCountChange(likePath) ||
-        (changedOnly('commentCount') && isOneStep('commentCount')) ||
+        isValidCommentCountChange(commentsPath) ||
         // 閲覧数は「ちょうど+1」のみ許可する。affectedKeys だけ見ると任意の値に
         // 書き換えられる（水増し・0埋め）ため。既存文書は viewCount 欠落なので get で既定0。
         (
@@ -387,7 +459,9 @@ service cloud.firestore {
       match /boards/{boardId}/posts/{postId} {
         allow read: if isSignedIn();
         allow create: if canWriteContent() && isAuthor() && belongsToSchool(schoolDomain) && isValidNewPost();
-        allow update: if canUpdatePost(/databases/$(database)/documents/schools/$(schoolDomain)/boards/$(boardId)/posts/$(postId)/likes/$(request.auth.uid));
+        allow update: if canUpdatePost(
+          /databases/$(database)/documents/schools/$(schoolDomain)/boards/$(boardId)/posts/$(postId)/likes/$(request.auth.uid),
+          '/databases/' + database + '/documents/schools/' + schoolDomain + '/boards/' + boardId + '/posts/' + postId + '/comments');
         // 物理削除は禁止（MODERATION.md §1）: 削除は deleted:true フラグ(=update)で行い、
         // authorUid 等の記録を残す。ハード削除を許すと法的対応の証跡が消えるため。
         allow delete: if false;
@@ -511,7 +585,9 @@ service cloud.firestore {
     match /lounges/{loungeId}/posts/{postId} {
       allow read: if isSignedIn();
       allow create: if canWriteContent() && isAuthor() && isValidNewPost();
-      allow update: if canUpdatePost(/databases/$(database)/documents/lounges/$(loungeId)/posts/$(postId)/likes/$(request.auth.uid));
+      allow update: if canUpdatePost(
+        /databases/$(database)/documents/lounges/$(loungeId)/posts/$(postId)/likes/$(request.auth.uid),
+        '/databases/' + database + '/documents/lounges/' + loungeId + '/posts/' + postId + '/comments');
       allow delete: if false; // 物理削除禁止（MODERATION.md §1、学校掲示板と同じ）
 
       match /comments/{commentId} {

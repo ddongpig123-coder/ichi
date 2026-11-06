@@ -9,6 +9,9 @@ export interface Theme {
   dark: boolean;
   primary: string;
   background: string;
+  // カードを並べる画面（掲示板ホーム・自分の活動）の下地。background より一段濃くして
+  // 白いカードとはっきり分ける（2026-11-06 準熙: 見出しと投稿の区別がつきにくい）
+  groupedBackground: string;
   card: string;
   textPrimary: string;
   textSecondary: string;
@@ -40,6 +43,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     dark: false,
     primary: "#2F6AD9",
     background: "#F5F7FA",
+    groupedBackground: "#E4EAF4",
     card: "#FFFFFF",
     textPrimary: "#1A1A2E",
     textSecondary: "#888888",
@@ -59,6 +63,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     dark: false,
     primary: "#7A6A50",
     background: "#F5F2EC",
+    groupedBackground: "#E9E3D6",
     card: "#FFFFFF",
     textPrimary: "#26231E",
     textSecondary: "#8B857A",
@@ -78,6 +83,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     dark: false,
     primary: "#0FAF95",
     background: "#F2FAF7",
+    groupedBackground: "#DEF0E8",
     card: "#FFFFFF",
     textPrimary: "#16342E",
     textSecondary: "#7FA097",
@@ -97,6 +103,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     dark: false,
     primary: "#D9432F",
     background: "#FAF6F0",
+    groupedBackground: "#EFE5D9",
     card: "#FFFFFF",
     textPrimary: "#1C1A17",
     textSecondary: "#93897B",
@@ -116,6 +123,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     dark: true,
     primary: "#E3A857",
     background: "#131417",
+    groupedBackground: "#0B0C0E",
     card: "#1E2024",
     textPrimary: "#ECEAE4",
     textSecondary: "#8E9094",
@@ -135,6 +143,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     dark: false,
     primary: "#7C6BC9",
     background: "#F6F4FA",
+    groupedBackground: "#E8E3F3",
     card: "#FFFFFF",
     textPrimary: "#262336",
     textSecondary: "#8B87A0",

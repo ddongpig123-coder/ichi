@@ -9,6 +9,7 @@
     "cardnews": "node cardnews/render.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.5.0",
     "firebase-admin": "^14.2.0",
     "node-html-parser": "^7.0.1"
   },

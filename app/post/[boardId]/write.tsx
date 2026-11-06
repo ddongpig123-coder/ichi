@@ -35,14 +35,17 @@ export default function WriteScreen() {
 
   const board = BOARDS.find((b) => b.id === boardId);
   const isQa = isQaBoard(boardId as string);
+  // アンケート協力・ゼミは本文に書式を最初から入れる（空欄埋め式）。書式のままなら未入力扱い。
+  const template = board?.bodyTemplate ?? "";
   const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState(template);
   const [tag, setTag] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   // 禁止語が見つかったら投稿を止めて警告を出す（2026-11-02 から制限。言い換えてもらう）
   const [bannedWords, setBannedWords] = useState<string[]>([]);
-  const canSubmit = title.trim().length > 0 && body.trim().length > 0;
-  const leave = useConfirmDiscard(title.trim().length > 0 || body.trim().length > 0);
+  const bodyTouched = body.trim().length > 0 && body.trim() !== template.trim();
+  const canSubmit = title.trim().length > 0 && bodyTouched;
+  const leave = useConfirmDiscard(title.trim().length > 0 || bodyTouched);
 
   async function handleSubmit() {
     if (!title.trim()) { notify(t("post.titleRequired")); return; }

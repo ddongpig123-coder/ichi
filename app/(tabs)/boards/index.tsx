@@ -1,205 +1,179 @@
-import { useCallback, useMemo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, SectionList, ActivityIndicator } from "react-native";
+import { useCallback, useMemo, useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
-import { usePinnedBoards } from "../../../src/hooks/usePinnedBoards";
 import { useBoards } from "../../../src/hooks/useBoards";
 import { useAuth } from "../../../src/contexts/AuthContext";
+import { useBlock } from "../../../src/contexts/BlockContext";
+import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
 import SchoolPrompt from "../../../src/components/common/SchoolPrompt";
+import PostListRow from "../../../src/components/boards/PostListRow";
 import type { Theme } from "../../../src/theme/themes";
-import { boardLabel, boardDescription, type BoardMeta } from "../../../src/types/board";
+import { OFFICIAL_BOARDS } from "../../../src/types/board";
+import { FORESTS, forestLabel, forestDescription, type ForestId } from "../../../src/types/lounge";
+import { fetchForestFeed, fetchSchoolFeed, type FeedItem } from "../../../src/services/forestFeedService";
 
-const PIN_COLOR = "#E0A500"; // お気に入り（金）
+// 掲示板タブのホーム（2026-11-06 準熙決定, BOARD-ACCESS §4-3）。
+// エブリタイムのホームに倣い、森ごとのブロックを縦に 3 つ並べ、それぞれの下に新着投稿を数件出す:
+//   みんなの森 → 留学生の森 → 学校の森
+// ブロックの見出しを押すとその森の板一覧へ、投稿を押すと投稿へ。
+// 以前の上部セグメント（学校 / みんなの森 / 留学生の森）は廃止。一覧にアイコン・絵文字は出さない。
+type BlockId = ForestId | "school";
+const ORDER: BlockId[] = ["minna", "ryugakusei", "school"];
 
-export default function BoardsScreen() {
+export default function BoardsHomeScreen() {
   const router = useRouter();
   const { theme } = useTheme();
   const { t, language } = useI18n();
   const { schoolDomain, schoolReady } = useAuth();
+  const { isBlocked } = useBlock();
+  const { isHidden } = useHidden();
+  const { refreshMyPosts } = useNotifications();
+  const { customBoards, loading: boardsLoading } = useBoards();
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const { pinned, isPinned, toggle, ready: pinReady } = usePinnedBoards();
-  const { newCommentCount, refreshMyPosts } = useNotifications();
-  const { officialBoards, departmentBoards, userBoards, loading } = useBoards();
 
-  // 掲示板タブを開くたびに「自分の投稿への新着コメント」を更新（30秒に1回まで）。
+  const [feeds, setFeeds] = useState<Partial<Record<BlockId, FeedItem[]>>>({});
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // 森 2 つは全国スコープなので学校未選択でも読む。学校の森は学校が決まってから。
+  // ※ useBoards の allBoards は描画ごとに新しい配列なので依存に入れない（customBoards は state で安定）
+  const load = useCallback(
+    async (force = false) => {
+      const tasks: Promise<void>[] = FORESTS.map((f) =>
+        fetchForestFeed(f.id, { force })
+          .then((items) => setFeeds((prev) => ({ ...prev, [f.id]: items })))
+          .catch((e) => console.warn("forest feed failed:", f.id, e))
+      );
+      if (schoolDomain && !boardsLoading) {
+        tasks.push(
+          fetchSchoolFeed(schoolDomain, [...OFFICIAL_BOARDS, ...customBoards], { force })
+            .then((items) => setFeeds((prev) => ({ ...prev, school: items })))
+            .catch((e) => console.warn("school feed failed:", e))
+        );
+      }
+      await Promise.all(tasks);
+    },
+    [schoolDomain, customBoards, boardsLoading]
+  );
+
+  // タブを開くたびに静かに最新化（60 秒以内はキャッシュ）。初回だけスピナー
   useFocusEffect(
     useCallback(() => {
       refreshMyPosts({ minIntervalMs: 30_000 });
-    }, [refreshMyPosts])
+      load().finally(() => setLoading(false));
+    }, [load, refreshMyPosts])
   );
 
-  // 学校掲示板は学校スコープ。学校未選択(schoolDomain=null)ユーザーには
-  // 掲示板の代わりに「学校を選択」導線を出す（ラウンジは全国なので使える）。§5
+  async function onRefresh() {
+    setRefreshing(true);
+    await load(true);
+    setRefreshing(false);
+  }
+
+  function openPost(item: FeedItem) {
+    if (item.kind === "lounge") router.push(`/lounge/${item.boardId}/${item.id}`);
+    else router.push(`/post/${item.boardId}/${item.id}`);
+  }
+
+  function openAll(id: BlockId) {
+    if (id === "school") router.push("/(tabs)/boards/school");
+    else router.push({ pathname: "/lounge", params: { forest: id } });
+  }
+
   const noSchool = schoolReady && !schoolDomain;
 
-  const pinnedBoards = [...officialBoards, ...departmentBoards, ...userBoards].filter((b) =>
-    isPinned(b.id)
-  );
-
-  const sections = [
-    ...(pinnedBoards.length > 0 ? [{ title: t("boards.pinnedSection"), data: pinnedBoards }] : []),
-    { title: t("boards.official"), data: officialBoards.filter((b) => !isPinned(b.id)) },
-    ...(departmentBoards.length > 0
-      ? [{ title: t("boards.department"), data: departmentBoards.filter((b) => !isPinned(b.id)) }]
-      : []),
-    ...(userBoards.length > 0
-      ? [{ title: t("boards.custom"), data: userBoards.filter((b) => !isPinned(b.id)) }]
-      : []),
-  ];
-
-  function renderBoard({ item }: { item: BoardMeta }) {
+  function renderBlock(id: BlockId) {
+    const forest = FORESTS.find((f) => f.id === id);
+    const title = forest ? forestLabel(forest, language) : t("boards.schoolForest");
+    const sub = forest ? forestDescription(forest, language) : t("boards.schoolForestSub");
+    const items = (feeds[id] ?? []).filter((p) => !isBlocked(p.authorUid) && !isHidden(p.id));
+    const schoolMissing = id === "school" && noSchool;
+    // 見出しはカードの外（大きく）、投稿はカードの中 — エブリタイムの「즐겨찾는 게시판」と同じ分け方。
+    // 見出しと投稿の行が同じ箱に入っていると区別しにくかった（準熙 11/06 プレビュー）。
     return (
-      <TouchableOpacity
-        style={styles.row}
-        onPress={() => router.push(`/(tabs)/boards/${item.id}`)}
-      >
-        <View style={styles.rowContent}>
-          <Text style={styles.label}>{boardLabel(item, language)}</Text>
-          <Text style={styles.desc}>{boardDescription(item, language)}</Text>
-        </View>
+      <View key={id} style={styles.section}>
         <TouchableOpacity
-          style={styles.pinBtn}
-          onPress={() => toggle(item.id)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={styles.sectionHeader}
+          onPress={() => openAll(id)}
+          disabled={schoolMissing}
+          accessibilityRole="button"
         >
-          <Ionicons
-            name={isPinned(item.id) ? "star" : "star-outline"}
-            size={20}
-            color={isPinned(item.id) ? PIN_COLOR : theme.textSecondary}
-          />
+          <Text style={styles.sectionTitle}>{title}</Text>
+          {!schoolMissing && (
+            <View style={styles.seeAll}>
+              <Text style={styles.seeAllText}>{t("boards.seeAll")}</Text>
+              <Ionicons name="chevron-forward" size={16} color={theme.textSecondary} />
+            </View>
+          )}
         </TouchableOpacity>
-      </TouchableOpacity>
-    );
-  }
-
-  if (!pinReady || loading || !schoolReady) {
-    return <View style={styles.container}><ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} /></View>;
-  }
-
-  // 学校未選択: ラウンジ導線だけ残し、学校掲示板は「学校を選択」プロンプトに置き換える
-  if (noSchool) {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.loungeBanner} onPress={() => router.push("/lounge")}>
-          <View>
-            <Text style={styles.loungeTitle}>{t("boards.loungeTitle")}</Text>
-            <Text style={styles.loungeSub}>{t("boards.loungeSub")}</Text>
-          </View>
-          <Text style={styles.bestArrow}>›</Text>
-        </TouchableOpacity>
-        <SchoolPrompt />
+        <Text style={styles.sectionSub}>{sub}</Text>
+        <View style={styles.card}>
+          {schoolMissing ? (
+            <SchoolPrompt />
+          ) : feeds[id] === undefined ? (
+            <ActivityIndicator style={styles.blockSpinner} color={theme.primary} />
+          ) : items.length === 0 ? (
+            <Text style={styles.empty}>{t("boards.feedEmpty")}</Text>
+          ) : (
+            items.map((p, i) => (
+              <View key={p.key}>
+                {i > 0 && <View style={styles.sep} />}
+                <PostListRow
+                  boardLabel={p.boardLabel}
+                  boardLabelKo={p.boardLabelKo}
+                  title={p.title}
+                  createdAt={p.createdAt}
+                  likeCount={p.likeCount}
+                  commentCount={p.commentCount}
+                  onPress={() => openPost(p)}
+                />
+              </View>
+            ))
+          )}
+        </View>
       </View>
     );
   }
 
+  if (loading && !schoolReady) {
+    return <View style={styles.container}><ActivityIndicator style={{ marginTop: 40 }} color={theme.primary} /></View>;
+  }
+
   return (
-    <View style={styles.container}>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={() => <View style={styles.sep} />}
-        SectionSeparatorComponent={() => <View style={styles.sectionSep} />}
-        ListHeaderComponent={
-          <>
-            <TouchableOpacity style={styles.loungeBanner} onPress={() => router.push("/lounge")}>
-              <View>
-                <Text style={styles.loungeTitle}>{t("boards.loungeTitle")}</Text>
-                <Text style={styles.loungeSub}>{t("boards.loungeSub")}</Text>
-              </View>
-              <Text style={styles.bestArrow}>›</Text>
-            </TouchableOpacity>
-            <View style={styles.sectionSep} />
-            <TouchableOpacity style={styles.bestBanner} onPress={() => router.push("/(tabs)/boards/best")}>
-              <View>
-                <Text style={styles.bestTitle}>{t("boards.bestTitle")}</Text>
-                <Text style={styles.bestSub}>{t("boards.bestSub")}</Text>
-              </View>
-              <Text style={styles.bestArrow}>›</Text>
-            </TouchableOpacity>
-            <View style={styles.sectionSep} />
-            <TouchableOpacity style={styles.bestBanner} onPress={() => router.push("/(tabs)/boards/my-posts")}>
-              <View>
-                <View style={styles.myPostsTitleRow}>
-                  <Text style={styles.bestTitle}>{t("myPosts.title")}</Text>
-                  {/* 自分の投稿に新しいコメントが付いたら赤丸 */}
-                  {newCommentCount > 0 && <View style={styles.dot} />}
-                </View>
-                <Text style={styles.bestSub}>{t("myPosts.sub")}</Text>
-              </View>
-              <Text style={styles.bestArrow}>›</Text>
-            </TouchableOpacity>
-            <View style={styles.sectionSep} />
-          </>
-        }
-        ListFooterComponent={
-          <TouchableOpacity style={styles.createBtn} onPress={() => router.push("/(tabs)/boards/create")}>
-            <Text style={styles.createBtnText}>{t("boards.createButton")}</Text>
-          </TouchableOpacity>
-        }
-        renderSectionHeader={({ section }) => (
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
-          </View>
-        )}
-        renderItem={renderBoard}
-      />
-    </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      {ORDER.map(renderBlock)}
+    </ScrollView>
   );
 }
 
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.background },
-    myPostsTitleRow: { flexDirection: "row", alignItems: "center" },
-    dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.danger, marginLeft: 6 },
-    bestBanner: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+    // 下地は background より濃い groupedBackground — 白いカードを浮かせる
+    container: { flex: 1, backgroundColor: theme.groupedBackground },
+    content: { paddingTop: 18, paddingBottom: 32 },
+    section: { marginHorizontal: 16, marginBottom: 26 },
+    sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+    sectionTitle: { fontSize: 21, fontWeight: "800", color: theme.textPrimary, letterSpacing: -0.3 },
+    sectionSub: { fontSize: 12, color: theme.textSecondary, marginTop: 3, marginBottom: 10 },
+    card: {
+      borderRadius: 14,
       backgroundColor: theme.card,
-      padding: 20,
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: theme.border,
     },
-    bestTitle: { fontSize: 16, fontWeight: "700", color: theme.accent, marginBottom: 2 },
-    bestSub: { fontSize: 13, color: theme.textSecondary },
-    bestArrow: { fontSize: 22, color: theme.textSecondary },
-    loungeBanner: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      backgroundColor: theme.primary + "14",
-      padding: 20,
-    },
-    loungeTitle: { fontSize: 16, fontWeight: "700", color: theme.primary, marginBottom: 2 },
-    loungeSub: { fontSize: 13, color: theme.textSecondary, maxWidth: 260 },
-    sectionHeader: { backgroundColor: theme.background, paddingHorizontal: 16, paddingVertical: 8 },
-    sectionTitle: { fontSize: 12, fontWeight: "700", color: theme.textSecondary, letterSpacing: 0.5 },
-    sectionSep: { height: 8, backgroundColor: theme.background },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: theme.card,
-      paddingVertical: 16,
-      paddingLeft: 20,
-      paddingRight: 12,
-    },
-    rowContent: { flex: 1 },
+    seeAll: { flexDirection: "row", alignItems: "center", paddingLeft: 8, paddingVertical: 4 },
+    seeAllText: { fontSize: 13, color: theme.textSecondary },
     sep: { height: 1, backgroundColor: theme.border },
-    label: { fontSize: 16, fontWeight: "700", color: theme.textPrimary, marginBottom: 4 },
-    desc: { fontSize: 13, color: theme.textSecondary },
-    pinBtn: { padding: 8 },
-    pinIcon: { fontSize: 18 },
-    createBtn: {
-      margin: 16,
-      padding: 16,
-      borderRadius: 12,
-      borderWidth: 1.5,
-      borderColor: theme.primary,
-      borderStyle: "dashed",
-      alignItems: "center",
-    },
-    createBtnText: { color: theme.primary, fontWeight: "700", fontSize: 15 },
+    blockSpinner: { paddingVertical: 20 },
+    empty: { paddingHorizontal: 16, paddingVertical: 18, fontSize: 13, color: theme.textSecondary },
   });
 }
