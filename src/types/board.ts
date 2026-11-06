@@ -57,6 +57,12 @@ export interface Post {
   body: string;
   authorUid: string;
   commentCount: number;
+  // 直前のコメント操作（作成/ソフトデリート）のコメント id。commentCount と同じ
+  // バッチ/トランザクションで書く（boardService.createComment / softDeleteComment）。
+  // firestore.rules がこの id の文書を exists/existsAfter/getAfter で見て
+  // 「本当にコメントが増減したか」を確かめるためだけに置く値（docs/SECURITY-1.1.md §7）。
+  // 表示には使わない。古い投稿には無い（段階1の規則は無くても通す）。
+  lastCommentId?: string;
   likeCount: number;
   createdAt: number;
   deleted?: boolean;
