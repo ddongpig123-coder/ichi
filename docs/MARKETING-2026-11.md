@@ -119,7 +119,7 @@ node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size
 node scripts/cardnews/render.mjs scripts/cardnews/samples/2026-11-w1.json --size sq --handle @daigakunomori
 ```
 → `scripts/output/cardnews/` 에 PNG. 자세한 건 [scripts/cardnews/README.md](../scripts/cardnews/README.md).
-크기 운용(11-04 확정): **IG = `ig`만 / X·Threads = `sq`** / `x`(16:9)는 필요할 때만. v1 템플릿(`--template v1`)은 구현 예정 — 규칙 [MARKETING §3-1](MARKETING.md).
+🔁 **11/05: 카드는 Canva 템플릿으로 만든다** ([MARKETING §3-2](MARKETING.md)). 이 생성기는 예비·문안 확인용. 문안 JSON(`samples/`)은 Canva 카드의 원본 문안으로 계속 쓴다. 크기 운용(IG = 1080×1350 / X·Threads = 정사각)은 Canva에서도 동일.
 `scripts/`에서 `npm install`하면 `package-lock.json`이 바뀐다(playwright 추가분) — 그 변경은 **커밋해도 된다**.
 문안 JSON은 주 단위로 `scripts/cardnews/samples/2026-11-wN.json`(또는 `ichi-content`)에 둔다.
 
@@ -191,7 +191,7 @@ docs/MARKETING.md(전략·운영 규칙 §9)와 docs/MARKETING-2026-11.md(이번
 5. outputs 폴더에 「benchmark.md」로 저장.
 ```
 
-### 7-4. 주간 게시 루틴 (예약 작업 · 매주 일요일 저녁)
+### 7-4. 주간 게시 루틴 (예약 작업 · 매주 일요일 저녁) — 🔁 11/05 Canva 기준으로 교체
 ```
 [大学の森 마케팅 · 주간 카드 준비]
 매주 일요일에 돌리는 루틴이야. 작업 폴더는 ichi 저장소.
@@ -199,9 +199,12 @@ docs/MARKETING.md(전략·운영 규칙 §9)와 docs/MARKETING-2026-11.md(이번
 해줄 것:
 1. git pull 로 최신화하고 scripts/cardnews/samples/ 에서 이번 주 파일(2026-11-wN.json, N=이번 주)을 찾아.
    없으면 「문안 JSON이 없습니다」라고만 알려주고 끝내. 글을 직접 지어내지 마.
-2. 터미널에서 실행:
-   node scripts/cardnews/render.mjs scripts/cardnews/samples/<이번 주 파일> --size all --handle @daigakunomori
-3. 생긴 PNG를 outputs/cardnews/<날짜>/ 에 월·수·금 폴더로 나눠 복사해 (JSON 순서대로 1→월, 2→수, 3→금).
+2. Canva 커넥터로: 폴더「大学の森 カードニュース」의 마스터「大学の森 究極の2択 Instagram投稿」를 카드 수만큼 복제하고,
+   각 복제본의 제목·A·B·CTA 글자를 JSON 문안으로 바꿔. 제목은 2줄(1줄 7~8자), A/B는 2줄(1줄 6자 이내). 이름은「大学の森_2択_<제목 요약>」.
+   A/B 그림 슬롯: JSON에 imageA/imageB 가 있으면 그 사진을 업로드해 교체, 없으면 마스터 일러스트를 그대로 두고 「그림 교체 필요」라고 표시.
+   마스터 자체는 절대 고치지 마.
+3. 각 복제본의 Canva 링크를 월·수·금 순서로 정리해줘 (JSON 순서대로 1→월, 2→수, 3→금).
+   PNG 다운로드가 커넥터로 되면 outputs/cardnews/<날짜>/ 에 저장하고, 안 되면 「Canva에서 共有 → ダウンロード」라고 알려줘.
 4. 각 날짜별로 캡션을 일본어로 써줘 (IG용 100~150자 + 해시태그 5개 / X용 60자 이내 + 해시태그 2개).
    톤: docs/CONTENT-OPS.md §4 문체 규칙. 앱 홍보 문구는 캡션 끝 한 줄만.
    밸런스 게임(수)에는 「大学の森のみんなの森でも投票受付中」을 넣어.
