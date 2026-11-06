@@ -48,7 +48,7 @@ export default function ActivityMenuScreen() {
 
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.background, paddingTop: 12 },
+    container: { flex: 1, backgroundColor: theme.groupedBackground, paddingTop: 12 },
     group: {
       marginHorizontal: 12,
       borderRadius: 14,

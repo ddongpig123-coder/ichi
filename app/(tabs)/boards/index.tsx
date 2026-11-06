@@ -156,7 +156,8 @@ export default function BoardsHomeScreen() {
 
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: theme.background },
+    // 下地は background より濃い groupedBackground — 白いカードを浮かせる
+    container: { flex: 1, backgroundColor: theme.groupedBackground },
     content: { paddingTop: 18, paddingBottom: 32 },
     section: { marginHorizontal: 16, marginBottom: 26 },
     sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
