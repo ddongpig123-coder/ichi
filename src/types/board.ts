@@ -69,6 +69,15 @@ export interface Post {
   viewCount?: number;
   // 質問掲示板のカテゴリ（QA_TAGS の id）。質問板のみ。
   tag?: string | null;
+  // 匿名/記名の切り替え（S4-4, BOARD-ACCESS §8）。**作成時に固定**で、あとから変更できない
+  // （firestore.rules の更新許可リストに入れていない）。
+  // 既存文書にはこのフィールドが無い → undefined = 匿名。つまり既定は匿名（true）。
+  anonymous?: boolean;
+  // anonymous:false のときだけ入る usersPublic.nickname のスナップショット。
+  // 一覧や詳細を描くたびに usersPublic を読まずに済ませるため（表示時の読み取り 0 件）。
+  // 匿名のときは null / 無し（規則で強制。「匿名で出した」のに名前が残るのを防ぐ）。
+  // 🔴 authorUid は記名でも匿名でもそのまま残す（法的対応の記録 — AGENTS.md の不変制約）。
+  authorNickname?: string | null;
 }
 
 // 質問掲示板の boardId（知恵袋スタイルの Q&A 表示を適用する板）。
@@ -111,4 +120,13 @@ export interface Comment {
   mentionUid?: string | null;
   deleted?: boolean;
   deletedAt?: number;
+  // 匿名/記名の切り替え（S4-4, BOARD-ACCESS §8）。**作成時に固定**で、あとから変更できない
+  // （firestore.rules の更新許可リストに入れていない）。
+  // 既存文書にはこのフィールドが無い → undefined = 匿名。つまり既定は匿名（true）。
+  anonymous?: boolean;
+  // anonymous:false のときだけ入る usersPublic.nickname のスナップショット。
+  // 一覧や詳細を描くたびに usersPublic を読まずに済ませるため（表示時の読み取り 0 件）。
+  // 匿名のときは null / 無し（規則で強制。「匿名で出した」のに名前が残るのを防ぐ）。
+  // 🔴 authorUid は記名でも匿名でもそのまま残す（法的対応の記録 — AGENTS.md の不変制約）。
+  authorNickname?: string | null;
 }

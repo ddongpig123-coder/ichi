@@ -239,6 +239,33 @@ service cloud.firestore {
     // posts / comments / likes の権限パターンを関数化。
     // 文字数の上限は src/data/limits.ts と合わせる（本文 5000 は contentQueue と同じ）。
 
+    // ── 匿名/記名（S4-4, BOARD-ACCESS §8）──────────────────
+    // 作成時に固定。更新許可リスト（isAuthorEditOfPost / isAuthorEditOfComment）に
+    // 入れていないので、あとから匿名↔記名を切り替えることはできない。
+    // 既存文書・まだ更新していないアプリは両フィールドが無い → 匿名として扱う。
+    //
+    // 匿名なら名前を載せさせない。「匿名で出した」はずの投稿にニックネームが
+    // 残っていると、あとで表示を変えただけで本人が割れてしまう。
+    //
+    // 🔑 記名のときだけ usersPublic.nickname と一致を要求する（匿名側は get を通らない
+    //    ＝ 既定の匿名投稿では読み取り課金が増えない）。一致を見る理由は2つ:
+    //    ① ニックネーム保存時の禁止語チェック（profile.tsx）を投稿時に迂回できてしまう
+    //    ② 投稿ごとに違う名前を名乗れると「記名」＝説明責任の意味が消える
+    //    外すなら最後の == get(...) の1行だけ削ればよい（形の検証は残る）。
+    // 文字数 20 は src/data/limits.ts の NICKNAME_MAX と合わせる。
+    function isValidAnonymity() {
+      let d = request.resource.data;
+      return (!('anonymous' in d) || d.anonymous is bool)
+        && (
+          d.get('anonymous', true) == true
+            ? d.get('authorNickname', null) == null
+            : (d.authorNickname is string
+                && d.authorNickname.size() > 0
+                && d.authorNickname.size() <= 20
+                && d.authorNickname == get(/databases/$(database)/documents/usersPublic/$(request.auth.uid)).data.nickname)
+        );
+    }
+
     // 新規投稿: カウンターは 0 から（いいね 9999 の投稿を作らせない）。
     // likeCount / viewCount は学校掲示板の投稿では作成時に無いので「無いか 0」を許す。
     function isValidNewPost() {
@@ -248,7 +275,8 @@ service cloud.firestore {
         && d.get('likeCount', 0) == 0
         && d.get('commentCount', 0) == 0
         && d.get('viewCount', 0) == 0
-        && d.get('deleted', false) == false;
+        && d.get('deleted', false) == false
+        && isValidAnonymity();
     }
 
     // 検索索引(postIndex)の検証。grams は makePostGrams（src/utils/ngram.ts）が作る。
@@ -263,7 +291,8 @@ service cloud.firestore {
       let d = request.resource.data;
       return d.body is string && d.body.size() > 0 && d.body.size() <= 1000
         && d.get('likeCount', 0) == 0
-        && d.get('deleted', false) == false;
+        && d.get('deleted', false) == false
+        && isValidAnonymity();
     }
 
     // カウンターは「ちょうど ±1」だけ。以前は任意の値に書き換えられ、ベスト掲示板を操作できた。
@@ -303,12 +332,28 @@ service cloud.firestore {
         && (!changed.hasAny(['body']) || (d.body is string && d.body.size() > 0 && d.body.size() <= 5000));
     }
 
+    // コメント数: ±1 に加えて lastCommentId（このバッチで作成/削除したコメントの id）を同時に書ける。
+    // 段階1（この版・OTA 前に配備・加算のみ）: 旧アプリ（commentCount だけ）も
+    //   新アプリ（commentCount + lastCommentId）も通す。
+    // 段階2（#50・OTA 後）: lastCommentId を必須にし、
+    //   +1 は !exists(comments/lastCommentId) && existsAfter(comments/lastCommentId)、
+    //   -1 は getAfter(comments/lastCommentId).data.deleted == true
+    //   で「本当にコメントが増減したか」を見る（docs/SECURITY-1.1.md §7）。
+    //   今はコメントを書かずに +1 を繰り返せる（通知の赤丸を鳴らし続けられる）。
+    function isValidCommentCountChange() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.hasOnly(['commentCount', 'lastCommentId'])
+        && changed.hasAny(['commentCount'])
+        && isOneStep('commentCount')
+        && (!changed.hasAny(['lastCommentId']) || request.resource.data.lastCommentId is string);
+    }
+
     function canUpdatePost(likePath) {
       return isSignedIn() && (
         isAuthorEditOfPost() ||
         // いいね数・コメント数・閲覧数のカウンター更新は他ユーザー操作でも発生
         isValidLikeCountChange(likePath) ||
-        (changedOnly('commentCount') && isOneStep('commentCount')) ||
+        isValidCommentCountChange() ||
         // 閲覧数は「ちょうど+1」のみ許可する。affectedKeys だけ見ると任意の値に
         // 書き換えられる（水増し・0埋め）ため。既存文書は viewCount 欠落なので get で既定0。
         (
