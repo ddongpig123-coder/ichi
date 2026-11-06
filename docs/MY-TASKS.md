@@ -121,7 +121,7 @@
 - [ ] 리젝 시: 사유 화면을 Claude에 → 메타데이터 수정이면 ASC에서 고쳐 재제출, 코드면 빌드 6
 - [ ] **승인 후** 「🔁 규칙 배포·OTA 순서」 3번: `eas update --branch production` (심사 중엔 금지) → 그 뒤 4번 #50 리베이스·머지·규칙 배포
 - [ ] 승인 후 OTA 1순위: 문의 메일 교체(결정 시), **초대 링크 https + 자동 친구 추가** ([INVITE-LINK](INVITE-LINK.md)) — OTA **전에** `npm run deploy:web`(링크가 웹 `/add-friend`를 가리킴)
-- [ ] **1.2 빌드 때 잊지 말 것**: App Store 言語가 「英語」로 뜨는 문제 → `app.json` `ios.infoPlist.CFBundleDevelopmentRegion: "ja"` + `CFBundleLocalizations` (바이너리 설정, OTA 불가) / 초대 유니버설 링크 ([INVITE-LINK §5](INVITE-LINK.md))
+- [ ] **1.2 빌드 때 잊지 말 것**: App Store 言語가 「英語」로 뜨는 문제 → `app.json` `ios.infoPlist.CFBundleDevelopmentRegion: "ja"` + `CFBundleLocalizations` (바이너리 설정, OTA 불가) / 초대 유니버설 링크 ([INVITE-LINK §5](INVITE-LINK.md)) / **스플래시 화면**(`expo-splash-screen` 플러그인: 아이콘 + 배경색, 다크 모드 변형. 지금은 설정이 없어 흰 화면 → 홈. 에브리타임처럼 로고 화면을 넣으려면 재빌드)
 - [ ] 안드로이드: 기존 테스터 12명 유지 부탁 + 2~3명 추가, 11/09경 프로덕션 액세스 신청, 서비스 계정 JSON(EAS 자동 업로드용)
 - [ ] Play 데이터 보안 변경(계정 삭제 URL) 검토 결과 확인 — Play Console 받은편지함·Gmail
 - [ ] 🔴 **11/20까지 시간표 OCR 정확도 테스트**(API 크레딧 $100이 **11/27 만료**) — 절차 [TIMETABLE-OCR §3](TIMETABLE-OCR.md).

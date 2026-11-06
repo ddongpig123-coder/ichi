@@ -332,12 +332,28 @@ service cloud.firestore {
         && (!changed.hasAny(['body']) || (d.body is string && d.body.size() > 0 && d.body.size() <= 5000));
     }
 
+    // コメント数: ±1 に加えて lastCommentId（このバッチで作成/削除したコメントの id）を同時に書ける。
+    // 段階1（この版・OTA 前に配備・加算のみ）: 旧アプリ（commentCount だけ）も
+    //   新アプリ（commentCount + lastCommentId）も通す。
+    // 段階2（#50・OTA 後）: lastCommentId を必須にし、
+    //   +1 は !exists(comments/lastCommentId) && existsAfter(comments/lastCommentId)、
+    //   -1 は getAfter(comments/lastCommentId).data.deleted == true
+    //   で「本当にコメントが増減したか」を見る（docs/SECURITY-1.1.md §7）。
+    //   今はコメントを書かずに +1 を繰り返せる（通知の赤丸を鳴らし続けられる）。
+    function isValidCommentCountChange() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.hasOnly(['commentCount', 'lastCommentId'])
+        && changed.hasAny(['commentCount'])
+        && isOneStep('commentCount')
+        && (!changed.hasAny(['lastCommentId']) || request.resource.data.lastCommentId is string);
+    }
+
     function canUpdatePost(likePath) {
       return isSignedIn() && (
         isAuthorEditOfPost() ||
         // いいね数・コメント数・閲覧数のカウンター更新は他ユーザー操作でも発生
         isValidLikeCountChange(likePath) ||
-        (changedOnly('commentCount') && isOneStep('commentCount')) ||
+        isValidCommentCountChange() ||
         // 閲覧数は「ちょうど+1」のみ許可する。affectedKeys だけ見ると任意の値に
         // 書き換えられる（水増し・0埋め）ため。既存文書は viewCount 欠落なので get で既定0。
         (

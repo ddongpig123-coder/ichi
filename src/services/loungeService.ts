@@ -12,6 +12,8 @@ import {
   serverTimestamp,
   increment,
   updateDoc,
+  writeBatch,
+  runTransaction,
   Timestamp,
   type DocumentData,
 } from "firebase/firestore";
@@ -178,12 +180,17 @@ export async function softDeleteLoungeComment(
   postId: string,
   commentId: string
 ): Promise<void> {
-  await updateDoc(doc(commentsCol(loungeId, postId), commentId), {
-    deleted: true,
-    deletedAt: Date.now(),
-  });
-  await updateDoc(doc(postsCol(loungeId), postId), {
-    commentCount: increment(-1),
+  // boardService.softDeleteComment と同じ: 削除フラグとカウンター -1 を 1 トランザクションで。
+  // lastCommentId で「本当に削除されたコメントの分か」をルールが確かめる（#50）。
+  const postRef = doc(postsCol(loungeId), postId);
+  const commentRef = doc(commentsCol(loungeId, postId), commentId);
+  await runTransaction(db, async (tx) => {
+    const post = await tx.get(postRef);
+    const count = (post.data()?.commentCount as number | undefined) ?? 0;
+    tx.update(commentRef, { deleted: true, deletedAt: Date.now() });
+    if (count > 0) {
+      tx.update(postRef, { commentCount: increment(-1), lastCommentId: commentId });
+    }
   });
 }
 
@@ -212,7 +219,11 @@ export async function createLoungeComment(
   parentId: string | null = null,
   mentionUid: string | null = null
 ): Promise<void> {
-  await addDoc(commentsCol(loungeId, postId), {
+  // boardService.createComment と同じ: コメント文書と +1 を 1 バッチで、id を lastCommentId に載せる
+  //（ルールが existsAfter で「本当にコメントが増えたか」を確かめる。docs/SECURITY-1.1.md §7）。
+  const commentRef = doc(commentsCol(loungeId, postId));
+  const batch = writeBatch(db);
+  batch.set(commentRef, {
     postId,
     body,
     authorUid,
@@ -221,9 +232,11 @@ export async function createLoungeComment(
     likeCount: 0,
     createdAt: serverTimestamp(),
   });
-  await updateDoc(doc(postsCol(loungeId), postId), {
+  batch.update(doc(postsCol(loungeId), postId), {
     commentCount: increment(1),
+    lastCommentId: commentRef.id,
   });
+  await batch.commit();
 }
 
 export async function fetchLoungeComments(

@@ -56,5 +56,57 @@
           ⑧ npm audit 28건 중 firebase/grpc 항목 확인, expo install --fix 범위만 OTA
           ⑨ 백업: Spark엔 자동 백업이 없어서 주 1회 Admin SDK 덤프 스크립트 + 복구 절차(스크립트는 Claude가 짜고 실행은 내 PC)
 [1.2] ⑩ App Check(App Attest/Play Integrity) — JS SDK라 네이티브 모듈 필요, 재빌드 묶음에 설계부터
+[OTA 전] ⑪ 11/02에 물어본 commentCount 건은 ①+② 둘 다로. ② 앱 쪽(댓글 배치 + lastCommentId)은 준희 쪽에서 했고
+          단계1 규칙(加算만)도 같은 PR에 넣었으니 검토해줘 → 준희가 OTA 전에 배포. 단계2(existsAfter/getAfter 게이트 + 하한 ①)는 #50에 — SECURITY-1.1 §7
 끝난 건 SECURITY-1.1.md 체크박스에 날짜 적어줘.
 ```
+
+## 7. 댓글 수(`commentCount`) 게이트 — 2단계 (2026-11-06, 태희 #50 리뷰 지적)
+
+**문제**: `likeCount`는 조였지만 `commentCount`는 「±1」만 검사해서, 댓글을 쓰지 않고도 누구나 올리고 내릴 수 있었다(태희가 에뮬레이터에서 공격 확인). 표시만이 아니라 `NotificationsContext`가 「내 글의 commentCount > 전에 본 수」로 빨간 점을 켜므로, 남의 글에 +1을 반복하면 알림이 영구히 울리고, 음수로 내리면 진짜 댓글이 달려도 알림이 안 온다.
+
+**왜 좋아요처럼 못 막나**: 댓글 id가 자동 생성이라 규칙이 「이 쓰기에서 생긴 댓글」의 경로를 모른다. → 클라이언트가 id를 먼저 만들고 글 문서에 `lastCommentId`로 같이 써서 규칙이 그 경로를 보게 한다.
+
+### 단계1 — 이 PR (OTA **전** 배포, 加算만, 구앱 무해)
+| 어디 | 무엇 |
+|---|---|
+| `boardService.createComment` · `loungeService.createLoungeComment` | `doc(commentsCol)`로 id 생성 → **배치**로 댓글 set + 글 `{ commentCount: +1, lastCommentId: id }` |
+| `boardService.softDeleteComment` · `loungeService.softDeleteLoungeComment` | **트랜잭션**: 댓글 `deleted:true` + 글 `{ commentCount: -1, lastCommentId: id }`. 글의 count가 이미 0이면 카운터는 안 건드림(0 미만 방지, 옛 데이터 보호) |
+| `firestore.rules` `isValidCommentCountChange()` | `affectedKeys.hasOnly(['commentCount','lastCommentId'])` + ±1 + `lastCommentId is string`. **commentCount만 바꾸는 구앱도 통과** |
+| 타입 | `Post.lastCommentId?: string` · `LoungePost.lastCommentId?: string` — 태희 창구(#78처럼 한 줄) |
+
+🔴 **배포 순서**: 이 규칙이 OTA보다 먼저 올라가야 한다. 없으면 새 번들의 댓글 쓰기가 `changedOnly('commentCount')`에 걸려 전부 거부된다 → [OTA-2026-11 §4](OTA-2026-11.md) 0번.
+
+### 단계2 — #50 (OTA **후**, 태희)
+`lastCommentId`를 필수로 하고 「정말 댓글이 생겼/지워졌나」를 본다. 형태(태희가 다듬어 넣을 것):
+
+```
+// canUpdatePost(likePath, commentsPath) — commentsPath 는 '…/posts/{postId}/comments' 문자열
+function isValidCommentCountChange(commentsPath) {
+  let changed = request.resource.data.diff(resource.data).affectedKeys();
+  let before = resource.data.get('commentCount', 0);
+  let after  = request.resource.data.get('commentCount', 0);
+  let id     = request.resource.data.get('lastCommentId', '');
+  return changed.hasOnly(['commentCount', 'lastCommentId'])
+    && id is string && id.size() > 0
+    && (
+      // +1: 이 배치에서 새로 생긴 댓글일 때만
+      (after == before + 1
+        && !exists(path(commentsPath + '/' + id)) && existsAfter(path(commentsPath + '/' + id)))
+      ||
+      // -1: 이 트랜잭션에서 deleted 가 false→true 로 바뀐 댓글일 때만. 하한 0 (① 포함)
+      (after == before - 1 && after >= 0
+        && get(path(commentsPath + '/' + id)).data.get('deleted', false) == false
+        && getAfter(path(commentsPath + '/' + id)).data.get('deleted', false) == true)
+    );
+}
+```
+
+에뮬레이터 케이스(`scripts/rules-test`): 댓글 없이 +1 → 거부 / 남이 쓴 기존 댓글 id로 +1 → 거부 / 삭제 안 된 댓글 id로 -1 → 거부 / 0에서 -1 → 거부 / 정상 배치(새 댓글 + +1) → 통과 / 정상 트랜잭션(삭제 + -1) → 통과 / `lastCommentId` 없는 구앱 쓰기 → **단계2부터 거부**(OTA 후라 OK).
+
+### 그 밖에 (태희 제안, #50에 같이)
+- `tag` 글자 수 상한(`isAuthorEditOfPost`에 `d.tag.size() <= 30`류)
+- `likeCount` 하한 0은 옛 데이터(좋아요 문서는 있는데 카운터 0)가 걸릴 수 있어 **카운터 재계산 스크립트 후** 넣는다(태희가 쓰겠다고 함)
+
+### 단계1 동안 남는 구멍
+댓글 없이 +1은 여전히 가능(지금과 같음). 음수는 코드 쪽에서 안 내려가지만 규칙 하한은 단계2. 봇(`post-next.mjs`, Admin SDK)은 규칙과 무관.
