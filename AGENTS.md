@@ -49,7 +49,7 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 - **크롤러(scripts/) 작업 시**: 적재 데이터는 반드시 `src/types/course.ts`의 `Course` 타입을 따를 것.
   서비스 계정 키는 절대 커밋 금지 (.gitignore에 패턴 등록됨)
 
-## 🧭 현재 상태 (2026-10-28) — **1.1 스프린트. 새 세션은 이 블록부터 읽을 것**
+## 🧭 현재 상태 (2026-11-07) — **1.1 스프린트. 새 세션은 이 블록부터 읽을 것**
 
 ### 🔴 새 세션이 읽는 순서 (이 순서를 지키면 같은 걸 두 번 묻지 않는다)
 1. **이 블록** → 2. **[docs/DECISIONS.md](docs/DECISIONS.md)** (결정 로그. 정해진 것/안 정해진 것이 한눈에)
@@ -61,7 +61,12 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 - **iOS**: 10/31 리젝(1.2 익명 UGC) → 11/02 빌드 5 재제출 → **🎉 11/06 승인·App Store 배포 완료**(`apps.apple.com/jp/app/id6825671804`). 다음은 첫 OTA — [OTA-2026-11](docs/OTA-2026-11.md) /
   **Android**: 비공개 테스트 `alpha` **테스터 12명 참여 7일째**(11/02 Play 판정) → 11/09경 14일 충족 → 프로덕션 액세스 신청
 - 규칙 배포 현황: 2026-11-02 배포(#52 색인 + 좋아요·글자 수 보호 포함). #50(친구·좋아요 보안)은 OTA 뒤에 — [MY-TASKS 🔁](docs/MY-TASKS.md)
-- 🔴 **최대 리스크: 11/08까지 S2(학교 분기)·S3(게시판 권한)을 태희가 끝내야 한다.** 둘이 나머지 전부의 선행이다
+- ✅ **S2(학교 분기)·S3(게시판 권한) 완료** — 11/08 기한이었던 「최대 리스크」는 해소됐다. S2 = #40(`3ad003a`), S3 = #39(`e541ea2`),
+  규칙은 11/02 배포분에 포함. **S7·S8·S9·S10 의 선행이 전부 풀렸다**(ROADMAP-1.1 §5)
+- 🔴 **지금의 최대 리스크는 일정 그 자체다.** 12/08 기능 동결까지 한 달인데 S7~S10 이 통째로 남아 있다.
+  밀리면 뒤에서부터 1.2 로 내린다(S10 → S9 → S8 → S7 순, ROADMAP-1.1 §7)
+- **보안 강화(출시 직후)**: [SECURITY-1.1](docs/SECURITY-1.1.md) 이 태희 지시서. §2-1·2-3·2-4·2-5 는 11/07 완료(PR #85·#86).
+  남은 건 **§1-3·1-4 콘솔 설정**(사람 손) · **§2-2 쓰기 폭주 10초 제한** · **§3-1 App Check(1.2)**
 
 ### 1.1 문서 지도
 | 문서 | 내용 |
@@ -73,10 +78,17 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 | [docs/CONTENT-OPS.md](docs/CONTENT-OPS.md) | AI 시딩 · 문체 규칙 · 소재 40개 · 강의평 전략 |
 | [docs/MARKETING.md](docs/MARKETING.md) | 카드뉴스·SNS 외부 유입 |
 
-### 🔴 알아둘 구조 문제 3개 (1.1의 뼈대)
-1. `src/data/departments.ts`가 **메이지 10학부 하드코딩** → 어느 학교 유저든 메이지 학부가 뜬다
-2. `firestore.rules`의 학교 게시판에 **소속 검증이 없다** (분리는 UI 차원일 뿐)
-3. 채팅이 `schools/{sd}/chats` 스코프라 **라운지에서 타교 유저에게 보낸 쪽지가 상대에게 안 간다**
+### ✅ 「구조 문제 3개」는 다 풀렸다 (S2·S3, 2026-11-05까지)
+1. ~~`src/data/departments.ts` 메이지 하드코딩~~ → `DEPARTMENTS_BY_SCHOOL`(학교별) + `hasDepartmentData` 로 데이터 없는 학교는 UI 자체를 숨김
+2. ~~학교 게시판에 소속 검증 없음~~ → `firestore.rules` `belongsToSchool()`. **읽기는 개방, 쓰기만 학교 일치**(BOARD-ACCESS §3-3)
+3. ~~채팅이 학교 스코프~~ → `chats/` 최상위로 이전. 구 경로 `schools/{sd}/chats` 는 **구앱용으로 아직 열려 있다**
+   → 🔴 남은 일: `migrate-chats-to-global.mjs` 가 「옮긴 방 0」 연속이면 구 경로 쓰기를 닫는다(SECURITY-1.1 §1-2)
+
+### 🔴 그래서 지금 태희 쪽에 남은 것 (이 순서)
+1. **#50 머지 → 규칙 배포** — OTA(11/06 1.0.1)가 퍼진 뒤. 친구 수락 없는 관계 차단 + 초대 토큰 경로 + 댓글 수 단계2 + 좋아요 1인1회
+2. **카운터 재계산**(#84 `recount-counters.mjs`) 실행 → 어긋남 0 확인 → 그 뒤에 `likeCount >= 0` 하한을 규칙에 추가(SECURITY-1.1 §7)
+3. **백업 1회 실행**(#86 `backup-firestore.mjs`) — 키가 있는 준희 PC에서. 절차 [docs/BACKUP.md](docs/BACKUP.md)
+4. **I-8 타입**(집중강의·메디아 `day/period` nullable, S9) · **S10 上智·他校 데이터**
 
 ### 데이터 현황
 明治 10학부 중 **8학부 완성**(理工·情コミ는 便覧 비공개) / 早稲田 商 · 法政 経営 · 上智 経済 각 1건.
