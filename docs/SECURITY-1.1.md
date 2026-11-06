@@ -77,18 +77,22 @@
 
 🔴 **배포 순서**: 이 규칙이 OTA보다 먼저 올라가야 한다. 없으면 새 번들의 댓글 쓰기가 `changedOnly('commentCount')`에 걸려 전부 거부된다 → [OTA-2026-11 §4](OTA-2026-11.md) 0번.
 
-### 단계2 — #50 (OTA **후**, 태희)
-`lastCommentId`를 필수로 하고 「정말 댓글이 생겼/지워졌나」를 본다. 형태(태희가 다듬어 넣을 것):
+### 단계2 — ✅ #50 에 반영 완료 (2026-11-06, 태희). OTA 후 배포
+`lastCommentId`를 필수로 하고 「정말 댓글이 생겼/지워졌나」를 본다. **실제로 들어간 것**:
 
 ```
-// canUpdatePost(likePath, commentsPath) — commentsPath 는 '…/posts/{postId}/comments' 문자열
+// canUpdatePost(likePath, commentsPath) — commentsPath 는 '…/posts/{postId}/comments' 문자열.
+// 규칙 함수 안에서는 $() 보간을 못 쓰므로, 호출부(학교·숲)에서 문자열로 조립해 넘긴다:
+//   '/databases/' + database + '/documents/schools/' + schoolDomain + … + '/comments'
 function isValidCommentCountChange(commentsPath) {
   let changed = request.resource.data.diff(resource.data).affectedKeys();
   let before = resource.data.get('commentCount', 0);
   let after  = request.resource.data.get('commentCount', 0);
   let id     = request.resource.data.get('lastCommentId', '');
   return changed.hasOnly(['commentCount', 'lastCommentId'])
-    && id is string && id.size() > 0
+    && changed.hasAny(['commentCount'])
+    && id is string
+    && id.matches('^[A-Za-z0-9_-]{1,64}$')   // 🔴 이 줄이 없으면 아래 「우회」가 통한다
     && (
       // +1: 이 배치에서 새로 생긴 댓글일 때만
       (after == before + 1
@@ -102,10 +106,23 @@ function isValidCommentCountChange(commentsPath) {
 }
 ```
 
-에뮬레이터 케이스(`scripts/rules-test`): 댓글 없이 +1 → 거부 / 남이 쓴 기존 댓글 id로 +1 → 거부 / 삭제 안 된 댓글 id로 -1 → 거부 / 0에서 -1 → 거부 / 정상 배치(새 댓글 + +1) → 통과 / 정상 트랜잭션(삭제 + -1) → 통과 / `lastCommentId` 없는 구앱 쓰기 → **단계2부터 거부**(OTA 후라 OK).
+#### 🔴 초안에 있던 구멍 — `id` 의 문자 제한 (⚠️ 다시 쓸 때 빠뜨리지 말 것)
+
+초안은 `id.size() > 0` 만 봤다. **`id` 에 `/` 를 넣으면 `comments/{id}` 가 아닌 다른 문서를 가리킬 수 있다.**
+
+```
+lastCommentId = '<실제 댓글 id>/likes/<내 uid>'
+→ path(... + '/comments/' + id) = '…/comments/<실제 댓글 id>/likes/<내 uid>'
+```
+
+그 **댓글의 좋아요 문서를 같은 배치에서 만들면** `!exists && existsAfter` 가 성립해 `commentCount` 가 +1 된다. 좋아요를 취소하면 `!exists` 가 다시 성립하니 **무한 반복**이고, 단계2가 막으려던 알림 스팸이 그대로 남는다. `id.matches('^[A-Za-z0-9_-]{1,64}$')` 한 줄만 빼고 에뮬레이터를 돌려 공격이 통하는 것을 확인했다 (Firestore 자동 id 는 `[A-Za-z0-9]` 20자).
+
+에뮬레이터 케이스(`scripts/rules-test/posts-hardening.test.mjs`, 전체 **173/173**): 구앱 `lastCommentId` 없이 +1 → 거부 / 댓글 없이 id만 → 거부 / 남이 쓴 기존 댓글 id → 거부 / **`/` 우회 → 거부** / 제목 동시 변경 → 거부 / 삭제 안 된 댓글 id로 -1 → 거부 / 남의 댓글 삭제 → 거부 / **0에서 -1 → 거부** / 정상 배치(새 댓글 + +1) → 통과 / 정상 삭제(-1) → 통과 / 숲도 동일.
+
+> 테스트는 소프트 삭제를 `writeBatch` 로 쓴다. 앱은 트랜잭션이지만 규칙이 보는 것(같은 쓰기 안의 전·후 상태)은 동일하다.
 
 ### 그 밖에 (태희 제안, #50에 같이)
-- `tag` 글자 수 상한(`isAuthorEditOfPost`에 `d.tag.size() <= 30`류)
+- ✅ `tag` 글자 수 상한 — `isAuthorEditOfPost` 에 `(!changed.hasAny(['tag']) || d.tag == null || (d.tag is string && d.tag.size() <= 30))`. 태그를 **비우는(null)** 것도 허용해야 한다(안 그러면 태그 삭제가 막힌다)
 - `likeCount` 하한 0은 옛 데이터(좋아요 문서는 있는데 카운터 0)가 걸릴 수 있어 **카운터 재계산 스크립트 후** 넣는다(태희가 쓰겠다고 함)
 
 ### 단계1 동안 남는 구멍
