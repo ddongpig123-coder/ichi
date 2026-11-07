@@ -10,8 +10,14 @@
 
 ## 📍 현재 상태 (2026-11-02) — 태희·준희 공유용. 다른 세션은 이 블록을 먼저 읽을 것
 
+> **🚀 2026-11-06 첫 OTA(1.0.1) 배포 완료(준희)** — 규칙 배포(댓글 `lastCommentId` + 스크랩 `users/{uid}/scraps`) → `npm run deploy:web` → `eas update --branch production` → 실기기 확인.
+> Claude 세션에서 확인한 것: 웹 번들 새 해시(`index-f877c418…`), `/add-friend` 받는 페이지 표시, 배포 웹에서 스크랩 쓰기 성공(= 규칙 배포 확인).
+> **🚀 2026-11-07 03:02 JST OTA 1.0.2(친구 목록 실시간 갱신 #89) 배포 완료** — 업데이트 그룹 `8db20dae…`, iOS·Android. 실기기: 초대 링크 탭 → 즉시 친구 추가 확인(준희).
+> **점검 결과(11/07 준희 PC)**: `recount-counters.mjs` → **어긋남 0건**(투고 66·댓글 103. 필드 없는 문서 73건은 규칙이 0 취급) → #50의 `likeCount` 하한 0 넣어도 됨(태희). `backup-firestore.mjs --estimate` → **덤프 대상 627건**(제외 `courses` 21,078·`postIndex` 62) → 실제 덤프 1회 실행 권장(읽기 627건, 한도 5만).
+> **다음 할 일은 [OTA-2026-11.md](OTA-2026-11.md) §5(직후 운영: 쪽지방 마이그레이션·색인 보충 반복)** 과 「🔁」 4번(#50, OTA가 퍼진 뒤 태희 머지·배포).
+>
 > **🎉 iOS 1.0(빌드 5) 승인·App Store 배포 완료 — 2026-11-06 01:14 JST 메일 수신, 검색에 「入手」 표시 확인.**
-> App Store: `https://apps.apple.com/jp/app/id6825671804`. 다음 할 일은 **[OTA-2026-11.md](OTA-2026-11.md) §4(당일 순서)** — 승인이 S4보다 먼저 왔으므로 §7의 판단대로 진행.
+> App Store: `https://apps.apple.com/jp/app/id6825671804`.
 > (이전 위치: 빌드 5 재제출 완료(2026-11-03 01:19 JST, 2차 제출) → 심사 대기 → 11/06 승인)
 > 10/25 제출(빌드 4) → **10/31 리젝**(Guideline 1.2 익명 UGC "proper precautions") → 11/02 대응 머지 →
 > **11/02 콘솔 작업 전부 완료**(규칙 배포 · 18+ · 빌드 5 업로드 · 심사 노트 교체 · 리젝 스레드 답장 · Submit for Review ·
@@ -105,7 +111,7 @@
 |---|---|---|
 | 1 | ✅ **#52 규칙 배포** — `npx firebase-tools deploy --only firestore:rules` | **2026-11-02 배포 완료(준희)**. 11/01 좋아요 ±1·authorUid 변경 차단·글자 수 상한도 같이 나감. 추가뿐이라 구버전 앱에 무해 |
 | 2 | ✅ 빌드 5 재제출 → 승인 | 11/02 재제출(11/03 2차) → **2026-11-06 승인·배포 완료** |
-| 3 | 승인 후 **OTA** — `eas update --branch production` | **범위·순서·운영은 [OTA-2026-11.md](OTA-2026-11.md)** (#60·#62·#63·#66·#67 + S4. 안드로이드 alpha에도 같이 감. 쪽지방 마이그레이션 반복 필요) |
+| 3 | ✅ 승인 후 **OTA** — `eas update --branch production` | **2026-11-06 배포 완료(준희)**. 범위·운영은 [OTA-2026-11.md](OTA-2026-11.md) (#60·#62·#63·#66·#67·#76·#77·#80 + S4 #69. 안드로이드 alpha에도 같이 감. **§5 쪽지방 마이그레이션·색인 보충 반복**) |
 | 4 | 업데이트가 퍼진 뒤 **#50 머지 + 규칙 배포** | 먼저 하면 **구버전 앱에서 친구 수락·좋아요가 실패**한다 |
 
 - 🔴 **심사 중에는 production OTA 금지** — 심사자가 보는 바이너리와 JS가 어긋난다.
@@ -119,8 +125,9 @@
 - [ ] 아이폰에 App Store Connect 앱 설치 + 알림 켜기 / 네이버 메일 확인 (Apple 메일은 네이버로 옴)
 - [ ] **매일** Firebase `reports`에서 `pending` 확인 (위 7번 링크). 처리 결과는 `status`로 남긴다
 - [ ] 리젝 시: 사유 화면을 Claude에 → 메타데이터 수정이면 ASC에서 고쳐 재제출, 코드면 빌드 6
-- [ ] **승인 후** 「🔁 규칙 배포·OTA 순서」 3번: `eas update --branch production` (심사 중엔 금지) → 그 뒤 4번 #50 리베이스·머지·규칙 배포
-- [ ] 승인 후 OTA 1순위: 문의 메일 교체(결정 시), **초대 링크 https + 자동 친구 추가** ([INVITE-LINK](INVITE-LINK.md)) — OTA **전에** `npm run deploy:web`(링크가 웹 `/add-friend`를 가리킴)
+- [x] ~~**승인 후** 「🔁 규칙 배포·OTA 순서」 3번~~ → ✅ **2026-11-06 OTA 완료**. 남은 건 4번 #50 리베이스·머지·규칙 배포(태희)
+- [x] ~~승인 후 OTA 1순위~~ → ✅ 초대 링크(#77)·웹 배포 완료. 문의 메일 교체는 미결정(바꿀 거면 안드로이드 프로덕션 신청 전)
+- [ ] **OTA 직후 며칠 반복**(OTA §5): `node migrate-chats-to-global.mjs --dry-run` → 실행 / `node backfill-post-index.mjs` / `reports` 확인. 「0건」 연속이면 끝
 - [ ] **1.2 빌드 때 잊지 말 것**: App Store 言語가 「英語」로 뜨는 문제 → `app.json` `ios.infoPlist.CFBundleDevelopmentRegion: "ja"` + `CFBundleLocalizations` (바이너리 설정, OTA 불가) / 초대 유니버설 링크 ([INVITE-LINK §5](INVITE-LINK.md)) / **스플래시 화면**(`expo-splash-screen` 플러그인: 아이콘 + 배경색, 다크 모드 변형. 지금은 설정이 없어 흰 화면 → 홈. 에브리타임처럼 로고 화면을 넣으려면 재빌드)
 - [ ] 안드로이드: 기존 테스터 12명 유지 부탁 + 2~3명 추가, 11/09경 프로덕션 액세스 신청, 서비스 계정 JSON(EAS 자동 업로드용)
 - [ ] Play 데이터 보안 변경(계정 삭제 URL) 검토 결과 확인 — Play Console 받은편지함·Gmail

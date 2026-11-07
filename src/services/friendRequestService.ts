@@ -5,6 +5,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -116,6 +117,44 @@ export async function fetchReceivedRequests(uid: string): Promise<FriendRequestW
     }))
   );
   return withSender.sort((a, b) => b.createdAt - a.createdAt);
+}
+
+// ── リアルタイム購読 ───────────────────────────────────────
+// 相手が承認した瞬間に双方の友達一覧へ反映するため、friendships と受信箱を onSnapshot で見る
+// （2026-11-06 準熙: 承認後に一覧が変わらない / 送った側は開き直さないと出ない）。
+// 初回スナップショットが件数ぶんの読み取り、以後は変更分だけ。戻り値で購読解除。
+export function subscribeFriendUids(
+  uid: string,
+  onChange: (uids: string[]) => void
+): () => void {
+  const q = query(collection(db, "friendships"), where("participants", "array-contains", uid));
+  return onSnapshot(
+    q,
+    (snap) => {
+      const uids = snap.docs
+        .map((d) => (d.data().participants as string[]).find((p) => p !== uid))
+        .filter((p): p is string => !!p);
+      onChange(uids);
+    },
+    (e) => console.warn("friendships listen failed:", e)
+  );
+}
+
+export function subscribeReceivedRequests(
+  uid: string,
+  onChange: (requests: FriendRequest[]) => void
+): () => void {
+  const q = query(requestsCol(), where("toUid", "==", uid), where("status", "==", "pending"));
+  return onSnapshot(
+    q,
+    (snap) => {
+      const requests = snap.docs
+        .map((d) => ({ id: d.id, ...(d.data() as Omit<FriendRequest, "id">) }))
+        .sort((a, b) => b.createdAt - a.createdAt);
+      onChange(requests);
+    },
+    (e) => console.warn("friendRequests listen failed:", e)
+  );
 }
 
 // 承認: status更新(toUid本人のみ・ルール強制) と friendships作成を1つのバッチで行う。

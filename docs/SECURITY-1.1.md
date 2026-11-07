@@ -5,7 +5,7 @@
 
 ## 0. 지금 이미 돼 있는 것 (유지)
 - Firestore 규칙: `users`는 본인만 읽기 · `verificationLevel` 자기 승격 차단 · `reports`/`inquiries` 읽기 전면 금지 · `operators` 쓰기 금지(list도 금지) · 쪽지는 `participants` 기반 · 학교 게시판 쓰기 소속 검증(S3) · 글 카운터 ±1·authorUid 변경 차단·글자 수 상한(11/01) · 검색 색인 검증
-- 규칙 회귀 테스트 4파일(`scripts/rules-test/`: chats · content-and-boards · post-index · posts-hardening) — 에뮬레이터, 전부 통과
+- 규칙 회귀 테스트 **7파일 216케이스**(`scripts/rules-test/`: anonymity · chats · content-and-boards · courses-and-metas · post-index · posts-hardening · privacy) — 에뮬레이터, 전부 통과. `npm test` 가 폴더의 `*.test.mjs` 를 자동으로 다 돌린다
 - 비밀번호는 Firebase Auth 직접 전달(앱에 저장·로그 없음) · 성적/학점은 단말 로컬만 · `.env`·서비스 계정 키 커밋 금지(.gitignore) · 학교 메일 인증은 `emailVerified` 플래그만 사용
 - 신고 24시간 처리 체계(약관 명문화) · 금칙어 차단 · 차단·숨김 · 계정 삭제 기능 + 공개 안내 페이지
 
@@ -21,11 +21,11 @@
 ## 2. 🟠 2주 안 — 규칙 보강·백업 (태희 + 준희)
 | # | 할 일 | 비고 |
 |---|---|---|
-| 2-1 | **규칙 테스트를 전 컬렉션으로**: 지금 없는 케이스 추가 — 타인 `users` 읽기 거부 / `usersPublic` 타인 uid로 쓰기 거부 / `operators` 쓰기·list 거부 / `reports`·`inquiries` 읽기 거부 / `verificationLevel` 승격 거부 / `timetables` 타인 쓰기 거부 / 익명 체크박스(S4-4) 필드 검증 | `scripts/rules-test/` |
+| 2-1 | ✅ **완료 (2026-11-07, 태희)** — 규칙 테스트를 전 컬렉션으로. 새 파일 2개 **82케이스** 추가: `privacy.test.mjs`(타인 `users` 읽기·`verificationLevel` 승격·`usersPublic` 사칭·`emailIndex` list·타인 시간표 쓰기·차단목록·스크랩·`operators` 쓰기/list·`reports`·`inquiries` 읽기 전부 거부) / `courses-and-metas.test.mjs`(공식 강의 수정·삭제 금지, `verified:true` 생성 금지, `confirms` 1인1회, 강의평 1인1평·rating 범위, 게시판 메타, **글·댓글 물리삭제 금지**). 익명 체크박스는 `anonymity.test.mjs`(S4-4)에서 이미 커버. 🔑 **돌연변이 테스트로 검증** — 규칙 5곳을 일부러 약하게 만들어 의도한 9케이스만 FAIL 로 뒤집히는 것을 확인(방법은 `scripts/rules-test/README.md` 말미) | `scripts/rules-test/` |
 | 2-2 | **쓰기 폭주 완화(규칙 수준)**: `users/{uid}.lastPostAt`을 쓰고 글·댓글·쪽지 create에서 `request.time - lastPostAt >= 10s`류 검사. 【추측】 봇·스팸 1차 방어로 충분, 완전 방어는 App Check(§3) | 규칙 + `src/types/user.ts`(태희) + 서비스 1줄(준희) |
-| 2-3 | **Firestore 백업**: Spark에는 자동 백업·PITR이 없다. Admin SDK로 **주 1회 JSON 덤프** 스크립트(`scripts/backup-firestore.mjs`, 키는 로컬·출력은 레포 밖). 복구 절차 1페이지 | 스크립트는 Claude 작성 가능, 실행은 준희 PC |
-| 2-4 | **의존성 취약점**: `npm audit --omit=dev` 28건(critical 2·high 12, 2026-11-06). 대부분 Expo 빌드 도구의 전이 의존성이지만 **`@firebase/firestore`·`@grpc/grpc-js` 항목은 확인**. `npx expo install --fix` 범위의 패치는 OTA, 네이티브가 바뀌면 1.2 재빌드 | 태희 조사 → 준희 머지 |
-| 2-5 | **로그 점검**: `console.log/warn`에 이메일·uid·본문이 찍히는 곳이 없는지 grep. 있으면 제거(프로덕션 로그는 기기 밖으로 안 나가지만 스크린샷·공유로 샐 수 있음) | 0.5일 |
+| 2-3 | ✅ **완료 (2026-11-07, 태희)** — `scripts/backup-firestore.mjs` + 복구 절차 [docs/BACKUP.md](BACKUP.md). `--estimate`(읽기 비용을 집계 쿼리로 미리 셈) / 덤프 / `--restore`(기본 미리보기·있는 문서는 건너뜀). `courses`·`postIndex` 는 **기본 제외** — 다시 만들 수 있고 둘이 전체의 대부분이라 받으면 Spark 읽기 한도를 날린다. 에뮬레이터 왕복 시험 통과(§6). 🔴 **실행은 키가 있는 준희 PC** | 스크립트 완료 / 실행은 준희 PC |
+| 2-4 | ✅ **조사 완료 (2026-11-07, 태희) — 지금 당장 고칠 것은 없다.** 28건을 **앱 번들에 들어가는지**로 갈라 봤다(빌드된 `dist` 번들에서 각 라이브러리 고유 문자열을 grep). **26건은 빌드·CLI 도구**(`@expo/*`·`shell-quote`←react-devtools·`node-forge`·`browserslist`…)로 **출하되는 앱에 안 들어간다.** 🔑 지시서가 확인하라고 한 `@firebase/firestore`·`@grpc/grpc-js` 는 **grpc 자체가 번들에 없다**(0히트 / `webchannel` 2히트 — 웹·RN 은 WebChannel 전송을 쓰고 grpc 는 Node 전용) = **앱 영향 없음**. 🔴 `npm audit` 이 제안하는 「수정」은 **firebase 9.14.0 다운그레이드**(12.14.0 → 9.x)라 **절대 따르면 안 된다**. 실제로 번들에 들어가는 유일한 건 `decode-uri-component`(←`query-string`←`expo-router`, URL 파싱). 패치판 0.5.1 을 `overrides` 로 넣어 봤는데 **0.5.1 이 ESM 전용이라 `query-string@7` 의 `require()` 가 깨져 앱의 모든 URL 파싱이 터진다**(실제로 재현). CJS 패치판은 없다 → **expo-router 58(SDK 58) = 1.2 재빌드까지 보류.** 리스크: 악성 링크를 탭한 본인의 앱이 멈추는 DoS. 데이터 노출 없음 | 조사 완료 → 1.2 로 |
+| 2-5 | ✅ **완료 (2026-11-07, 태희) — 고칠 곳 없음.** `src/`·`app/` 의 `console.*` 63곳 전수 확인. 민감어로 걸린 17곳은 전부 **정적 메시지 + 에러 객체**(`console.warn("email lookup failed:", e)` 형태)로, 이메일·uid·본문·비밀번호 값이 들어가는 곳은 **0건**. `authService` 의 `[deleteAccount] 1/4 再認証（パスワード）` 도 단계 이름일 뿐 값이 아니다 | 확인 완료 |
 
 ## 3. 🟡 1.2 재빌드 묶음 — 네이티브가 필요한 것
 | # | 할 일 | 왜 지금 못 하나 |
@@ -77,18 +77,22 @@
 
 🔴 **배포 순서**: 이 규칙이 OTA보다 먼저 올라가야 한다. 없으면 새 번들의 댓글 쓰기가 `changedOnly('commentCount')`에 걸려 전부 거부된다 → [OTA-2026-11 §4](OTA-2026-11.md) 0번.
 
-### 단계2 — #50 (OTA **후**, 태희)
-`lastCommentId`를 필수로 하고 「정말 댓글이 생겼/지워졌나」를 본다. 형태(태희가 다듬어 넣을 것):
+### 단계2 — ✅ #50 에 반영 완료 (2026-11-06, 태희). OTA 후 배포
+`lastCommentId`를 필수로 하고 「정말 댓글이 생겼/지워졌나」를 본다. **실제로 들어간 것**:
 
 ```
-// canUpdatePost(likePath, commentsPath) — commentsPath 는 '…/posts/{postId}/comments' 문자열
+// canUpdatePost(likePath, commentsPath) — commentsPath 는 '…/posts/{postId}/comments' 문자열.
+// 규칙 함수 안에서는 $() 보간을 못 쓰므로, 호출부(학교·숲)에서 문자열로 조립해 넘긴다:
+//   '/databases/' + database + '/documents/schools/' + schoolDomain + … + '/comments'
 function isValidCommentCountChange(commentsPath) {
   let changed = request.resource.data.diff(resource.data).affectedKeys();
   let before = resource.data.get('commentCount', 0);
   let after  = request.resource.data.get('commentCount', 0);
   let id     = request.resource.data.get('lastCommentId', '');
   return changed.hasOnly(['commentCount', 'lastCommentId'])
-    && id is string && id.size() > 0
+    && changed.hasAny(['commentCount'])
+    && id is string
+    && id.matches('^[A-Za-z0-9_-]{1,64}$')   // 🔴 이 줄이 없으면 아래 「우회」가 통한다
     && (
       // +1: 이 배치에서 새로 생긴 댓글일 때만
       (after == before + 1
@@ -102,10 +106,23 @@ function isValidCommentCountChange(commentsPath) {
 }
 ```
 
-에뮬레이터 케이스(`scripts/rules-test`): 댓글 없이 +1 → 거부 / 남이 쓴 기존 댓글 id로 +1 → 거부 / 삭제 안 된 댓글 id로 -1 → 거부 / 0에서 -1 → 거부 / 정상 배치(새 댓글 + +1) → 통과 / 정상 트랜잭션(삭제 + -1) → 통과 / `lastCommentId` 없는 구앱 쓰기 → **단계2부터 거부**(OTA 후라 OK).
+#### 🔴 초안에 있던 구멍 — `id` 의 문자 제한 (⚠️ 다시 쓸 때 빠뜨리지 말 것)
+
+초안은 `id.size() > 0` 만 봤다. **`id` 에 `/` 를 넣으면 `comments/{id}` 가 아닌 다른 문서를 가리킬 수 있다.**
+
+```
+lastCommentId = '<실제 댓글 id>/likes/<내 uid>'
+→ path(... + '/comments/' + id) = '…/comments/<실제 댓글 id>/likes/<내 uid>'
+```
+
+그 **댓글의 좋아요 문서를 같은 배치에서 만들면** `!exists && existsAfter` 가 성립해 `commentCount` 가 +1 된다. 좋아요를 취소하면 `!exists` 가 다시 성립하니 **무한 반복**이고, 단계2가 막으려던 알림 스팸이 그대로 남는다. `id.matches('^[A-Za-z0-9_-]{1,64}$')` 한 줄만 빼고 에뮬레이터를 돌려 공격이 통하는 것을 확인했다 (Firestore 자동 id 는 `[A-Za-z0-9]` 20자).
+
+에뮬레이터 케이스(`scripts/rules-test/posts-hardening.test.mjs`, 전체 **173/173**): 구앱 `lastCommentId` 없이 +1 → 거부 / 댓글 없이 id만 → 거부 / 남이 쓴 기존 댓글 id → 거부 / **`/` 우회 → 거부** / 제목 동시 변경 → 거부 / 삭제 안 된 댓글 id로 -1 → 거부 / 남의 댓글 삭제 → 거부 / **0에서 -1 → 거부** / 정상 배치(새 댓글 + +1) → 통과 / 정상 삭제(-1) → 통과 / 숲도 동일.
+
+> 테스트는 소프트 삭제를 `writeBatch` 로 쓴다. 앱은 트랜잭션이지만 규칙이 보는 것(같은 쓰기 안의 전·후 상태)은 동일하다.
 
 ### 그 밖에 (태희 제안, #50에 같이)
-- `tag` 글자 수 상한(`isAuthorEditOfPost`에 `d.tag.size() <= 30`류)
+- ✅ `tag` 글자 수 상한 — `isAuthorEditOfPost` 에 `(!changed.hasAny(['tag']) || d.tag == null || (d.tag is string && d.tag.size() <= 30))`. 태그를 **비우는(null)** 것도 허용해야 한다(안 그러면 태그 삭제가 막힌다)
 - `likeCount` 하한 0은 옛 데이터(좋아요 문서는 있는데 카운터 0)가 걸릴 수 있어 **카운터 재계산 스크립트 후** 넣는다(태희가 쓰겠다고 함)
 
 ### 단계1 동안 남는 구멍

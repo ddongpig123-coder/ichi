@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { useAuth } from "./AuthContext";
-import { fetchFriendProfiles, removeFriendship } from "../services/friendRequestService";
-import { getUserProfile, saveFriendOrders } from "../services/userService";
+import { fetchFriendProfiles, removeFriendship, subscribeFriendUids } from "../services/friendRequestService";
+import { getPublicProfile, getUserProfile, saveFriendOrders, type PublicProfile } from "../services/userService";
 import { useI18n } from "./I18nContext";
 import { displayNickname } from "../utils/nickname";
 
@@ -53,12 +53,18 @@ export function FriendsProvider({ children }: { children: ReactNode }) {
 
   // Firestoreから友達一覧と保存済みの表示順を読み込み、
   // 「保存順に並べる → 新規はあいうえお順で末尾へ / 削除済みは除外」の整合を取る
-  const refresh = useCallback(async () => {
+  // uids を渡されたとき（friendships 購読からの通知）はその uid の公開プロフィールだけ読む。
+  // 渡されないとき（手動 refresh）は friendships を読み直す
+  const load = useCallback(async (uids?: string[]) => {
     if (!user) return;
     setLoading(true);
     try {
       const [profiles, me] = await Promise.all([
-        fetchFriendProfiles(user.uid),
+        uids
+          ? Promise.all(uids.map((id) => getPublicProfile(id).catch(() => null))).then((ps) =>
+              ps.filter((p): p is PublicProfile => p !== null)
+            )
+          : fetchFriendProfiles(user.uid),
         getUserProfile(user.uid),
       ]);
       const friends: Friend[] = profiles.map((p) => ({
@@ -92,15 +98,23 @@ export function FriendsProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
+  const refresh = useCallback(() => load(), [load]);
+
+  // friendships をリアルタイム購読。相手が承認した瞬間に、承認した側も送った側も一覧が変わる
+  // （2026-11-06 準熙: 承認後に一覧が変わらなかった）。初回スナップショットが最初の読み込みを兼ねる
   useEffect(() => {
     if (!user) {
       setAllFriends([]);
       setFrequentIds([]);
       setNonFrequentIds([]);
+      setLoading(false);
       return;
     }
-    refresh();
-  }, [user, refresh]);
+    const unsubscribe = subscribeFriendUids(user.uid, (uids) => {
+      load(uids);
+    });
+    return unsubscribe;
+  }, [user, load]);
 
   // 表示順の永続化（失敗してもローカル状態は維持 — 次の変更で再保存される）
   function persistOrders(frequent: string[], rest: string[]) {

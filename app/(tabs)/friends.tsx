@@ -12,10 +12,11 @@ import { useFriends } from "../../src/contexts/FriendsContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import {
   acceptFriendRequest,
-  fetchReceivedRequests,
   rejectFriendRequest,
+  subscribeReceivedRequests,
   type FriendRequestWithSender,
 } from "../../src/services/friendRequestService";
+import { getPublicProfile } from "../../src/services/userService";
 import { getTimetable } from "../../src/services/timetableService";
 import { getOrCreateChat } from "../../src/services/chatService";
 import type { ClassSession } from "../../src/types/timetable";
@@ -68,14 +69,24 @@ export default function FriendsScreen() {
   // ── 受信箱（フレンド申請） ──────────────────────────────
   const [requests, setRequests] = useState<FriendRequestWithSender[]>([]);
 
-  const loadRequests = useCallback(() => {
-    if (!user) return;
-    fetchReceivedRequests(user.uid)
-      .then(setRequests)
-      .catch((e) => console.warn("requests load failed:", e));
+  // 受信箱をリアルタイム購読（申請が来た瞬間に出る。承認/拒否で消える）。2026-11-06 準熙
+  useEffect(() => {
+    if (!user) {
+      setRequests([]);
+      return;
+    }
+    let alive = true;
+    const unsubscribe = subscribeReceivedRequests(user.uid, async (reqs) => {
+      const withSender = await Promise.all(
+        reqs.map(async (r) => ({ ...r, sender: await getPublicProfile(r.fromUid).catch(() => null) }))
+      );
+      if (alive) setRequests(withSender);
+    });
+    return () => {
+      alive = false;
+      unsubscribe();
+    };
   }, [user]);
-
-  useFocusEffect(loadRequests);
 
   // 相手が申請を承認した場合は自分側で何も起きないため、タブを開くたびに友達一覧も読み直す。
   // 初回フォーカスは FriendsContext がログイン時に読んでいるのでスキップ（二重読み取り防止）。
@@ -177,7 +188,7 @@ export default function FriendsScreen() {
 
   return (
     <View style={styles.container}>
-      <AddFriendModal visible={addModalVisible} onClose={() => { setAddModalVisible(false); loadRequests(); }} />
+      <AddFriendModal visible={addModalVisible} onClose={() => setAddModalVisible(false)} />
 
       {/* 受信箱: 保留中の申請があるときだけ表示 */}
       {requests.length > 0 && (
