@@ -21,6 +21,9 @@ const SCHOOL = "meiji.ac.jp";
 const BOARD_POST = `schools/${SCHOOL}/boards/free/posts/p1`;
 const LOUNGE_POST = "lounges/visa/posts/p1";
 const LONG_POST = `schools/${SCHOOL}/boards/free/posts/long`;
+// 하한 0 시험용: 「좋아요 문서는 있는데 카운터가 0/음수」인 옛 데이터를 재현한다
+const STALE_POST = `schools/${SCHOOL}/boards/free/posts/stale`;
+const NEGATIVE_POST = `schools/${SCHOOL}/boards/free/posts/negative`;
 
 await env.withSecurityRulesDisabled(async (ctx) => {
   const db = ctx.firestore();
@@ -33,6 +36,15 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(db, `${LOUNGE_POST}/comments/lc1`), { postId: "p1", body: "c", authorUid: "author", likeCount: 0 });
   // 상한 도입 전에 쓰인 긴 글
   await setDoc(doc(db, LONG_POST), { boardId: "free", schoolDomain: SCHOOL, title: "t", body: "あ".repeat(6000), authorUid: "author", commentCount: 0 });
+  // 🔑 하한 0(SECURITY-1.1 §7) 시험용. 카운터와 실제 좋아요 문서가 어긋난 상태를 일부러 만든다.
+  //    이런 데이터가 남아 있으면 「취소」가 전부 거부되므로, 하한을 넣기 전에
+  //    scripts/recount-counters.mjs 로 어긋남 0건을 만들어야 했다(2026-11-07 확인).
+  await setDoc(doc(db, STALE_POST), { boardId: "free", schoolDomain: SCHOOL, title: "t", body: "b", authorUid: "author", commentCount: 0, likeCount: 0 });
+  await setDoc(doc(db, `${STALE_POST}/likes/reader`), { uid: "reader" });
+  await setDoc(doc(db, NEGATIVE_POST), { boardId: "free", schoolDomain: SCHOOL, title: "t", body: "b", authorUid: "author", commentCount: 0, likeCount: -2 });
+  await setDoc(doc(db, `${NEGATIVE_POST}/likes/reader`), { uid: "reader" });
+  await setDoc(doc(db, `${STALE_POST}/comments/sc1`), { postId: "stale", body: "c", authorUid: "author", likeCount: 0 });
+  await setDoc(doc(db, `${STALE_POST}/comments/sc1/likes/reader`), { uid: "reader" });
 });
 
 const author = env.authenticatedContext("author").firestore();
@@ -61,6 +73,30 @@ for (const [label, post] of [["학교", BOARD_POST], ["숲", LOUNGE_POST]]) {
   unlike.update(doc(reader, post), { likeCount: increment(-1) });
   await t(`${label} 새앱: 좋아요 취소 batch`, assertSucceeds(unlike.commit()));
 }
+
+// ── 좋아요 수 하한 0 (SECURITY-1.1 §7. 카운터 재계산 뒤에 넣은 조건) ──
+// 음수로 내려가면 NotificationsContext 의 「전에 본 수보다 늘었나」 판정이 영구히 어긋난다.
+const unlikeBatch = (post) => {
+  const b = writeBatch(reader);
+  b.delete(doc(reader, `${post}/likes/reader`));
+  b.update(doc(reader, post), { likeCount: increment(-1) });
+  return b.commit();
+};
+await t("🔴 하한: 카운터 0 인 글의 좋아요 취소 → 거부 (0 밑으로 못 내린다)", assertFails(unlikeBatch(STALE_POST)));
+await t("🔴 하한: 이미 음수인 글은 더 내릴 수 없다", assertFails(unlikeBatch(NEGATIVE_POST)));
+await t("🔴 하한: 댓글도 같다 (카운터 0 인 댓글의 좋아요 취소 → 거부)", assertFails((() => {
+  const b = writeBatch(reader);
+  b.delete(doc(reader, `${STALE_POST}/comments/sc1/likes/reader`));
+  b.update(doc(reader, `${STALE_POST}/comments/sc1`), { likeCount: increment(-1) });
+  return b.commit();
+})()));
+await t("하한: 카운터가 맞는 글은 그대로 취소된다", assertSucceeds((async () => {
+  const like = writeBatch(reader);
+  like.set(doc(reader, `${LOUNGE_POST}/likes/reader`), { uid: "reader" });
+  like.update(doc(reader, LOUNGE_POST), { likeCount: increment(1) });
+  await like.commit();
+  await unlikeBatch(LOUNGE_POST);
+})()));
 
 // ── 좋아요 수 조작 (B2) ──
 await t("조작: 좋아요 문서 없이 +1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(1) })));
