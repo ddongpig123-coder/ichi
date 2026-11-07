@@ -447,40 +447,16 @@ service cloud.firestore {
           && resource.data.createdBy == request.auth.uid;
       }
 
-      // ⚠️ DEPRECATED（1.1 で /chats 最上位へ移設。下の「全国チャット」を見ること）
-      // 学校スコープだったため、森から他校ユーザーに送ったメッセージが
-      // 相手に届かなかった（送信者の学校の下に部屋ができ、受信者は自分の学校の下だけを
-      // 購読していた）。新しいアプリは新パスにしか書かない。
+      // 🗑 旧パス schools/{sd}/chats のルールは **削除した**。
+      //    1.1 で /chats 最上位へ移し、旧バンドルのために書き込みを開けたままにしていたもの。
+      //    1.1 の OTA が行き渡り、scripts/migrate-chats-to-global.mjs が「移した部屋 0」を
+      //    連続で返すようになったので閉じた（手順は docs/OTA-2026-11.md §5）。
       //
-      // 🔴 ここを塞がない理由（規則の配備と OTA を切り離すため）:
-      //    OTA（expo-updates）は既定で「次回起動時」に適用される。配備直後に
-      //    開いているセッションは全部まだ旧バンドルで、旧パスに書きに来る。
-      //    ここを allow create: if false にすると、その人たちのメッセージ送信が
-      //    OTA が届くまで弾かれる。だから旧パスの書き込みは開けたままにする。
-      //    → 規則はいつ配備してもよく、OTA はそれと独立に出せる。
-      //
-      // 片付け手順（この順でやる。順番を守れば利用者に見える壊れ方をしない）:
-      //    ① 規則を配備（この状態。旧も新も書ける）
-      //    ② OTA を出す（新しい端末から順に新パスへ移る）
-      //    ③ scripts/migrate-chats-to-global.mjs を流す。旧端末が残っている間は
-      //       何度でも流してよい（追いつかなかった分だけを足す作りにしてある）
-      //    ④ 旧パスに新しい書き込みが来なくなったら、このブロックごと削除する
-      match /chats/{chatId} {
-        allow read: if isSignedIn()
-          && (resource == null || request.auth.uid in resource.data.participants);
-        allow create: if isSignedIn()
-          && request.auth.uid in request.resource.data.participants;
-        allow update: if isSignedIn()
-          && request.auth.uid in resource.data.participants;
-
-        match /messages/{messageId} {
-          allow read: if isSignedIn()
-            && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
-          allow create: if isSignedIn()
-            && request.resource.data.senderUid == request.auth.uid
-            && request.auth.uid in get(/databases/$(database)/documents/schools/$(schoolDomain)/chats/$(chatId)).data.participants;
-        }
-      }
+      // 🔴 ここに chats のルールを復活させないこと。学校スコープに戻すと、森から他校ユーザーに
+      //    送ったメッセージが相手に永久に届かない（送信者の学校の下に部屋ができるのに、受信者は
+      //    自分の学校の下だけを購読するため）。メッセージは下の「全国チャット」= /chats だけ。
+      //    旧パスの文書自体は消していない（migrate は複写で、Admin SDK からは読める。
+      //    取りこぼしが見つかったときに復旧できるようにするため）。
     }
 
     // ── 個別チャット（メッセージ。全国スコープ・1.1） ──────
