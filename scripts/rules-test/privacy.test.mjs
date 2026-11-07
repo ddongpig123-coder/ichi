@@ -49,6 +49,9 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   });
   await setDoc(doc(db, "usersPublic/alice"), { uid: "alice", nickname: "alice" });
   await setDoc(doc(db, "usersPublic/bob"), { uid: "bob", nickname: "bob" });
+  // 🔑 옛 버전이 남긴 「지금은 쓰지 않는 필드」가 있는 문서. 이게 있어도 프로필 수정이
+  //    막히지 않아야 한다(affectedKeys 로 검증하는 이유를 증명하는 장치)
+  await setDoc(doc(db, "usersPublic/legacy"), { uid: "legacy", nickname: "legacy", grade: "3" });
   await setDoc(doc(db, "friendships/alice_bob"), { participants: ["alice", "bob"], createdAt: 1 });
 
   await setDoc(doc(db, `users/alice/timetables/${SEM}`), { visibility: "private", entries: [] });
@@ -70,6 +73,10 @@ const carol = env.authenticatedContext("carol").firestore();
 const dave = env.authenticatedContext("dave").firestore();   // 아직 users 문서가 없는 신규 유저
 const op = env.authenticatedContext("op1").firestore();
 const guest = env.unauthenticatedContext().firestore();
+// 🔴 첫 실행마다 자동으로 만들어지는 익명 계정. 규칙에서는 「그냥 로그인한 uid」와 같다
+//    = 공격자는 앱을 한 번 켜기만 하면 이 권한을 얻는다. 명단 조회의 실제 경로
+const anon = env.authenticatedContext("anon1").firestore();
+const legacy = env.authenticatedContext("legacy").firestore();
 
 const r = [];
 const t = async (n, p) => {
@@ -101,6 +108,30 @@ await t("🔴 usersPublic: 타인 uid 문서에 쓰기 → 거부", assertFails(
 await t("usersPublic: 자기 문서에 uid 를 타인으로 위조 → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "alice", nickname: "bob" })));
 await t("usersPublic: 본인 문서 정상 쓰기", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob2" })));
 await t("usersPublic: 타인 문서 삭제 → 거부", assertFails(deleteDoc(doc(bob, "usersPublic/alice"))));
+// 🔴 목록 조회 금지 — 열려 있으면 전 회원 명단(uid·닉네임·학교·학부)을 통째로 긁어갈 수 있다.
+//    앱은 uid 로 1건씩만 읽으므로(userService.publicDoc) 막아도 기능에 영향이 없다.
+//    읽기 과금도 1인이 Spark 일일 한도를 태울 수 있다 = 그날 앱이 멈춘다(SECURITY-1.1 §1-5)
+await t("🔴 usersPublic: 목록 조회(list) → 거부", assertFails(getDocs(collection(bob, "usersPublic"))));
+await t("🔴 usersPublic: 익명 계정의 목록 조회 → 거부", assertFails(getDocs(collection(anon, "usersPublic"))));
+
+// ── usersPublic 필드 검증 (공개 미러에 「넣어선 안 되는 것」을 막는다) ──
+// 🔴 제일 중요: 성적을 공개 미러로 흘릴 수 없다(CREDIT-TRACKING §6-2 = 서버에 성적 평문 금지)
+await t("🔴 usersPublic: 모르는 필드(gpa) 추가 → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", gpa: 3.9 })));
+await t("🔴 usersPublic: 닉네임 21자 → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "あ".repeat(21) })));
+await t("🔴 usersPublic: 거대 닉네임(1만자) → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "あ".repeat(10000) })));
+await t("🔴 usersPublic: 빈 닉네임 → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "" })));
+await t("usersPublic: 닉네임 20자 → 통과", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "あ".repeat(20) })));
+// 🔴 photoURL 에 임의 URL = 추적 픽셀. 그 프로필을 본 사람의 IP·UA 가 URL 주인에게 넘어간다
+await t("🔴 usersPublic: photoURL 에 http 추적 URL → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: "http://evil.example/px.gif" })));
+await t("🔴 usersPublic: photoURL 에 data: URI → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: "data:image/gif;base64,R0lGOD" })));
+await t("usersPublic: photoURL 이 https → 통과", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: "https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg" })));
+await t("usersPublic: photoURL 이 null → 통과", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: null })));
+await t("🔴 usersPublic: admissionYear 가 문자열 → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", admissionYear: "2024" })));
+await t("usersPublic: 앱이 쓰는 형태 그대로(6필드)", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: null, schoolDomain: SCHOOL, department: "12", admissionYear: 2024 })));
+// 🔑 옛 버전이 남긴 모르는 필드가 있어도, 그걸 건드리지 않는 수정은 통과해야 한다.
+//    안 그러면 그 유저는 프로필을 영구히 못 바꾼다 — update 를 affectedKeys 로 검증하는 이유
+await t("usersPublic: 레거시 필드가 남아 있어도 닉네임 변경은 통과", assertSucceeds(setDoc(doc(legacy, "usersPublic/legacy"), { nickname: "new" }, { merge: true })));
+await t("🔴 usersPublic: 레거시 필드를 새로 쓰는 것은 거부", assertFails(setDoc(doc(legacy, "usersPublic/legacy"), { grade: "4" }, { merge: true })));
 
 // ── emailIndex (메일로 친구 찾기. 토큰의 메일과 일치해야 등록 가능) ──
 await t("emailIndex: 본인 메일 색인 생성", assertSucceeds(setDoc(doc(alice, `emailIndex/${ALICE_MAIL}`), { uid: "alice" })));
