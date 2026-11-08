@@ -5,7 +5,7 @@
 
 ## 0. 지금 이미 돼 있는 것 (유지)
 - Firestore 규칙: `users`는 본인만 읽기 · `verificationLevel` 자기 승격 차단 · `reports`/`inquiries` 읽기 전면 금지 · `operators` 쓰기 금지(list도 금지) · 쪽지는 `participants` 기반 · 학교 게시판 쓰기 소속 검증(S3) · 글 카운터 ±1·authorUid 변경 차단·글자 수 상한(11/01) · 검색 색인 검증
-- 규칙 회귀 테스트 **7파일 216케이스**(`scripts/rules-test/`: anonymity · chats · content-and-boards · courses-and-metas · post-index · posts-hardening · privacy) — 에뮬레이터, 전부 통과. `npm test` 가 폴더의 `*.test.mjs` 를 자동으로 다 돌린다
+- 규칙 회귀 테스트 **7파일 231케이스**(`scripts/rules-test/`: anonymity · chats · content-and-boards · courses-and-metas · post-index · posts-hardening · privacy) — 에뮬레이터, 전부 통과. `npm test` 가 폴더의 `*.test.mjs` 를 자동으로 다 돌린다
 - 비밀번호는 Firebase Auth 직접 전달(앱에 저장·로그 없음) · 성적/학점은 단말 로컬만 · `.env`·서비스 계정 키 커밋 금지(.gitignore) · 학교 메일 인증은 `emailVerified` 플래그만 사용
 - 신고 24시간 처리 체계(약관 명문화) · 금칙어 차단 · 차단·숨김 · 계정 삭제 기능 + 공개 안내 페이지
 
@@ -127,3 +127,90 @@ lastCommentId = '<실제 댓글 id>/likes/<내 uid>'
 
 ### 단계1 동안 남는 구멍
 댓글 없이 +1은 여전히 가능(지금과 같음). 음수는 코드 쪽에서 안 내려가지만 규칙 하한은 단계2. 봇(`post-next.mjs`, Admin SDK)은 규칙과 무관.
+
+## 8. 공개 프로필·웹 헤더 점검 (2026-11-08, 태희) — 지시서에 없던 것
+
+준희 요청(「보안·네트워크 쪽 문제 있으면 찾아봐」)으로 **규칙 바깥의 표면**을 훑었다.
+4건 나왔고 3건은 막았다. 1건은 준희 결정이 필요하다.
+
+### 8-1 🔴 `usersPublic` 목록 조회가 열려 있었다 = 전 회원 명단 유출 — ✅ 막음
+`allow read: if isSignedIn()` 이라 **get 과 list 가 둘 다** 열려 있었다. 즉
+**앱을 한 번 켜기만 하면 생기는 익명 계정으로 전 회원의 uid·닉네임·학교·학부를
+통째로 긁어갈 수 있었다.** 이름·학교·학부가 묶인 명부라 개인정보 유출에 해당한다.
+
+- **왜 생겼나**: 선배 시간표가 학부로 `usersPublic` 을 조회했었다(`882d527`).
+  기능은 2026-08-23 에 폐기(`9cff538`)됐는데 **열어 둔 `read` 만 남았다.**
+- **왜 막아도 되나**: 지금 앱은 `userService.publicDoc` 으로 **uid 1건씩만** 읽는다.
+  `src`·`app` 전체에 `usersPublic` 을 쿼리하는 코드가 **0곳**이다(스크립트는 Admin SDK라 무관).
+- **부수 효과**: 읽기 과금. 명단을 반복해 긁으면 **혼자서 Spark 일일 한도(5만)를 태워**
+  그날 앱 전체를 멈출 수 있었다(§1-5).
+- **고침**: `allow get: if isSignedIn(); allow list: if false;` — `emailIndex`·`operators` 와 같은 형태.
+
+### 8-2 🔴 `usersPublic` 에 아무 필드나·아무 값이나 쓸 수 있었다 — ✅ 막음
+검증이 `request.resource.data.uid == uid` **한 줄뿐**이었다. 본인 문서에는
+**정의되지 않은 필드를 얼마든지** 넣을 수 있었고, 그걸 **로그인한 전원이 읽는다.**
+
+- **성적 유출 경로**: `gpa` 같은 필드를 공개 미러에 넣을 수 있었다 —
+  CREDIT-TRACKING §6-2(성적은 단말 로컬만, 서버에 평문 금지)를 클라이언트가 스스로 깰 수 있었다.
+- **추적 픽셀**: `photoURL` 에 임의 URL을 넣으면 그 프로필을 본 사람(친구 목록·초대 링크 화면)의
+  **IP 와 UA 가 URL 주인에게 넘어간다.** 개인정보처리방침의 「제3자 제공은 Google/Firebase 뿐」에 어긋난다.
+  🔑 `updatePhotoURL` 은 **호출하는 화면이 하나도 없다** — 정상 앱은 절대 안 쓰는 값인데 규칙만 열려 있었다.
+- **닉네임 무제한**: 화면은 20자(`NICKNAME_MAX`)로 막지만 규칙은 안 봤다. 1만 자도 통과했다.
+- **고침**: 키 화이트리스트 6개(`publicProfileKeys`) + 형 검증(`isValidPublicProfile`).
+  닉네임 1~20자 · `photoURL` 은 null 또는 `https://` 500자 이내 · `admissionYear` 는 정수.
+  🔑 `update` 는 **`affectedKeys` 에** 걸었다. 옛 버전이 남긴 모르는 필드가 있어도
+  **그걸 건드리지 않는 수정은 통과한다**(안 그러면 그 유저는 프로필을 영구히 못 바꾼다).
+  이 동작은 테스트로 고정해 뒀다.
+- **같이 넣은 것**: `userService.clampNickname` — 소셜 로그인은 프로바이더 표시명을 그대로 넘기므로
+  20자를 넘으면 **연동 자체가 규칙에 막힌다.** 서비스에서 미리 자른다(코드포인트 단위).
+
+### 8-3 🟠 초대 토큰은 영구고 무효화 수단이 없다 — **미결(준희 결정)**
+`getOrCreateInviteToken` 은 한 번 만든 토큰을 **계속 재사용**한다. 만료도, 횟수 제한도,
+재발급 UI도 없다(코드 주석에 「将来のUI」로만 남아 있다). 네이티브에서 링크를 열면
+**승인 없이 바로 친구가 되고**, 친구는 `visibility: "friends"` 시간표를 본다.
+
+→ 링크가 한 번 새면(LINE 단톡 캡처·전달·공개 게시) **그 뒤로 영원히** 누구나
+그 사람의 친구가 되어 시간표를 볼 수 있다. 되돌릴 방법이 없다.
+
+**제안(작음)**: 친구 추가 화면에 「招待リンクを作り直す」 버튼 1개.
+`getOrCreateInviteToken` 옆에 `regenerateInviteToken(uid)`(새 토큰 생성 후 저장) 한 함수면 되고,
+기존 링크는 #50 의 토큰 대조에 걸려 자동으로 죽는다. 친구 화면은 태희 축이라 지시만 주면 넣는다.
+**지금 안 넣은 이유**: 화면·문구가 붙는 기능 추가라 12/08 동결 전 스코프는 준희가 정할 일.
+
+### 8-4 🟠 웹 보안 헤더가 하나도 없었다 — ✅ 넣음
+`firebase.json` 에 `headers` 블록 자체가 없었다. 배포본(`https://ichi-6b8f7.web.app`)이
+내려주던 보안 헤더는 **HSTS 하나뿐**(Firebase 기본). 6개를 넣었다.
+
+| 헤더 | 막는 것 |
+|---|---|
+| `Content-Security-Policy` | 주입된 인라인 스크립트 실행 · 허가 안 된 호스트로의 통신/이미지 |
+| `Referrer-Policy: no-referrer` | **초대 링크의 토큰이 `Referer` 로 새 나가는 것**(URL에 `?k=<토큰>`이 실린다) |
+| `X-Content-Type-Options: nosniff` | MIME 스니핑 |
+| `X-Frame-Options: DENY` | 클릭재킹(iframe 삽입) |
+| `Cross-Origin-Opener-Policy: same-origin-allow-popups` | 크로스 윈도우 공격. 🔑 `allow-popups` 인 이유는 소셜 로그인 `signInWithPopup` 을 깨지 않기 위해서 |
+| `Permissions-Policy` | 위치·마이크·결제·USB 접근. 🔑 **카메라는 일부러 뺐다** — 시간표 OCR(TIMETABLE-OCR)이 웹에서 카메라를 쓸 수 있다 |
+
+🔑 **CSP는 추측으로 넣지 않고 실제 번들로 검증했다.** `dist` 를 후보 CSP와 함께 로컬에
+띄워(8100) 앱을 열고 콘솔 위반 0건, 화면·스타일 정상, 초대 링크 화면까지 확인.
+`connect-src` 는 Firebase 호스트를 하나씩 때려 봤다 —
+`securetoken`·`firebaseinstallations`·`u.expo.dev` 의 실패는 **CORS 였고 CSP 통과**,
+CSP가 실제로 막은 건 `evil.example.com` 하나뿐이었다(콘솔 메시지로 구분).
+
+- `style-src` 에 `'unsafe-inline'` 이 필요한 이유: `dist/index.html` 의 `<style id="expo-reset">`
+  (Expo가 생성. 해시·nonce를 못 붙인다). **`script-src` 는 `'self'` 로 조였다** — 인라인 `<script>` 가 0개라 가능했다.
+- `img-src` 는 Storage·구글 호스트로 좁혔다. 지금 앱은 원격 이미지를 하나도 안 쓴다.
+  🔴 아바타 업로드를 넣을 때 호스트가 다르면 **여기도 같이 고쳐야 한다**(안 고치면 이미지가 안 뜬다).
+- 🔴 적용은 **`npm run deploy:web` 이 돌아야** 반영된다(정지선 = 준희). 규칙 배포와는 별개다.
+
+### 8-5 봤는데 문제 없던 것 (다시 안 보도록 기록)
+- **`.env`**: 전부 공개 전제값(Firebase 웹 설정 6개 + Microsoft **공개** 클라이언트 ID). 비밀 없음.
+  Firebase 웹 API 키가 번들에 들어가는 건 정상 — 보호는 규칙과 §1-4 키 제한이 한다
+- **외부 통신**: `fetch`·`axios`·`XMLHttpRequest`·`WebView` **0곳**. 나가는 건 Firebase SDK 뿐.
+  `Linking.openURL` 3곳(문의 메일 · 시라버스 출처 · 강의 출처 링크)
+- **XSS 싱크**: `dangerouslySetInnerHTML`·`innerHTML`·`eval`·`new Function` **0곳**
+- **HSTS**: 이미 적용돼 있다(`max-age=31556926; includeSubDomains; preload`, Firebase 기본)
+- **초대 링크 웹 화면의 클릭재킹**: `/add-friend` 는 **웹에서는 친구를 만들지 않는다**
+  (`if (Platform.OS === "web") return;`). iframe 으로 강제 친구 추가는 불가능 —
+  그래도 `X-Frame-Options` 는 넣어 뒀다(다른 화면·향후 변경 대비)
+- **투고 작성자 이름**: `authorNickname` 은 이미 20자 상한 + `usersPublic.nickname` 과 일치 요구
+  (`isValidAnonymity`). 8-2 의 긴 닉네임이 투고로는 번지지 않는다
