@@ -241,11 +241,14 @@ export default function FriendsScreen() {
             <Text style={styles.emptySubText}>{t("friends.emptyHint")}</Text>
           </View>
         )}
+        {/* 削除は行の長押し → 確認ダイアログ（2026-11-08 準熙: 削除ボタンが大きく目立ちすぎた）。行には「メッセージ」だけ残す */}
         {orderedAll.map((friend) => (
           <TouchableOpacity
             key={friend.id}
             style={[styles.friendRow, friend.id === effectiveId && styles.friendRowSelected]}
             onPress={() => setSelectedId(friend.id)}
+            onLongPress={() => handleRemove(friend.id, friend.nickname)}
+            delayLongPress={450}
             activeOpacity={0.7}
           >
             <DefaultAvatar size={36} />
@@ -259,15 +262,10 @@ export default function FriendsScreen() {
               <TouchableOpacity style={styles.messageButton} onPress={() => handleMessage(friend.id)}>
                 <Text style={styles.messageButtonText}>{t("friends.message")}</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => handleRemove(friend.id, friend.nickname)}
-              >
-                <Text style={styles.deleteButtonText}>{t("common.delete")}</Text>
-              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         ))}
+        {orderedAll.length > 0 && <Text style={styles.listHint}>{t("friends.longPressHint")}</Text>}
       </ScrollView>
     </View>
   );
@@ -362,12 +360,6 @@ function makeStyles(theme: Theme) {
       paddingVertical: 6,
     },
     messageButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
-    deleteButton: {
-      backgroundColor: theme.accent,
-      borderRadius: 6,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-    },
-    deleteButtonText: { color: "#fff", fontSize: 12, fontWeight: "700" },
+    listHint: { fontSize: 12, color: theme.textSecondary, textAlign: "center", paddingVertical: 14 },
   });
 }
