@@ -45,6 +45,16 @@ export async function getOrCreateInviteToken(uid: string): Promise<string> {
   return token;
 }
 
+// 招待リンクを作り直す。新しいトークンを保存すると、**今まで配ったリンクは全部その場で死ぬ**
+// （#50 のルールが users/{inviter}.inviteToken と照合するため）。
+// LINE のグループに貼った・スクショが出回った、というときの唯一の出口。
+// 🔴 取り消し不可。呼ぶ側で必ず確認ダイアログを出すこと（SECURITY-1.1 §8-3）。
+export async function regenerateInviteToken(uid: string): Promise<string> {
+  const token = Crypto.randomUUID().replace(/-/g, "");
+  await setDoc(doc(db, "users", uid), { inviteToken: token }, { merge: true });
+  return token;
+}
+
 function invitePath(uid: string, token: string): string {
   return `add-friend?u=${encodeURIComponent(uid)}&k=${encodeURIComponent(token)}`;
 }
