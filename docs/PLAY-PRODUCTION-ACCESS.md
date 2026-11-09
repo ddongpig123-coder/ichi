@@ -10,6 +10,24 @@
 
 ---
 
+## 0. ✅ 실제 붙여넣기용 — 각 300자 이내 (2026-11-09, 준희 신청 중 「300자 제한」 확인)
+
+> 콘솔 문항 칸이 **300자 제한**이라 아래 §1~§6 원문은 그대로 안 들어간다. 이 표를 쓴다. 원문은 근거·참고용으로 남긴다.
+> 「No crashes」 문장은 **Android vitals 0건일 때만**. 숫자가 있으면 고쳐서 넣는다.
+
+| 문항 | 글자 수 | 붙여넣을 문장 |
+|---|---|---|
+| 테스터 모집 방법 | 293 | Recruited personally from my university community (Meiji University classmates and friends, mostly international students) via LINE and KakaoTalk groups. Each tester joined with a Google account via the opt-in link and installed the app on their own Android phone. 12+ testers stayed opted in. |
+| 테스터 사용 방식 | 282 | Testers used it like real students: chose their university and faculty, built weekly timetables, searched about 20,000 courses, checked the graduation-credit calculator, posted and commented on anonymous boards, wrote course reviews and sent messages. Feedback came via group chats. |
+| 받은 피드백 | 270 | 1) Screen bottoms cut off on some phones. 2) Decorative emoji looked unpolished. 3) Keyboard covered the message input. 4) Some actions failed silently. 5) Other universities saw Meiji's faculty list. 6) Empty screens lacked guidance. 7) Requests for a timetable widget. |
+| 피드백 반영 | 273 | All fixed in test updates (Oct 29 - Nov 9): safe-area layout fixed, emoji replaced with a vector icon set, keyboard-aware message input, error + retry instead of silent failures, per-university faculty lists, empty-state hints. Widget is planned for the next store release. |
+| (모더레이션 문항이 따로 있으면) | 252 | The anonymous boards have full moderation: banned-word filter, report / hide / block on every post, comment and message, zero-tolerance Terms with a 24-hour response, in-app operator contact, a published account-deletion page and an 18+ content rating. |
+| 프로덕션 준비 이유 | 272 | 12+ testers used it on real devices for the full test; every reported issue was fixed and confirmed in later updates. No crashes were reported. UGC has full moderation and published Terms/Privacy. The same app is already live on the Apple App Store (approved Nov 6, 2026). |
+| 대상 사용자 | 261 | University students in Japan aged 18+. The first supported university is Meiji University (Tokyo); other universities' course data and boards are being added one by one. A secondary audience is international students (Korean UI is available alongside Japanese). |
+| 차별점 | 282 | Most apps offer only one of: a timetable, an anonymous campus board, or course reviews. 大学の森 combines all of them with a timetable shared with friends and a graduation-credit calculator built from each faculty's official handbook, plus a nationwide board for international students. |
+
+---
+
 ## 1. 비공개 테스트 운영 (About your closed test)
 
 **Q. How did you recruit testers? / 테스터를 어떻게 모집했나요?**
@@ -119,7 +137,13 @@ students. Everything is in Japanese, with Korean available, and moderation is bu
 ## 제출 체크리스트 (11/09 이후, 준희)
 - [ ] **판매자 상태 선언** — 2026년 11월부터 Play Console 계정 요구사항(2026-10-29 정책 공지). 설정 → 개발자 계정 → 계정 세부정보 또는
       대시보드 작업에 떠 있으면 먼저 완료. 무료·판매 없음이라 보통 「판매자 아님(개인)」이지만 화면의 정의대로 선택
-- [ ] Play Console 프로덕션 페이지에 「14일 충족」 표시 확인 (12명 유지가 하루라도 끊기면 날짜가 밀린다)
-- [ ] Android vitals에서 크래시·ANR 확인 → §4 문장 조정
-- [ ] 위 §1~§6을 해당 문항에 붙여넣기 → 제출
-- [ ] 결과(보통 7일 이내)는 Play Console 받은편지함·Gmail. 거절이면 사유 화면을 Claude에게
+- [x] Play Console 프로덕션 페이지에 「14일 충족」 표시 확인
+- [x] 위 §0(300자판)을 해당 문항에 붙여넣기 → **✅ 2026-11-09 22:26 JST 제출, 「검토 중」**
+- [ ] 결과(보통 7일 이내 → **~11/16**)는 계정 소유자 Gmail. 거절이면 사유 화면을 Claude에게
+- [ ] 결과 나올 때까지 **테스터 12명 유지**(심사 중 재확인될 수 있음)
+
+## 승인 후 (프로덕션 출시)
+- 비공개 테스트(`alpha`)의 현재 릴리스를 **프로덕션으로 승격** — 새 빌드 불필요. 그 AAB는 커밋 `159a5b3`(S2/S3 이전)이지만
+  런타임 1.0.0이라 설치 직후 production 채널의 최신 OTA를 받는다
+- 스토어 등록정보(설명·스크린샷·데이터 보안·콘텐츠 등급) 최종 확인 → 국가: 일본(+원하면 한국)
+- 출시 후 `docs/MY-TASKS.md` 📍에 날짜 기록

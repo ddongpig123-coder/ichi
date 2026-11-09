@@ -22,7 +22,7 @@ npm test
 | `chats.test.mjs` | 쪽지 — 구 경로 `schools/{sd}/chats`(현재 배포된 앱)와 신 경로 `chats/`(S3) 쓰기, 남의 방·남의 이름 거부 |
 | `posts-hardening.test.mjs` | 글·댓글 — 좋아요 수는 ±1만, `authorUid` 등 변경 금지, 글자 수 상한, 시작 카운터 0. 좋아요는 batch만 통과 (옛날 앱은 거부) |
 | `post-index.test.mjs` | 검색 색인 `postIndex` — 투고와 같은 배치로 작성, 남의 이름·타교 거부, `grams` 개수 검증, **수정·삭제 금지** |
-| `privacy.test.mjs` | **개인정보·권한**(SECURITY-1.1 §2-1) — `users` 타인 읽기 금지(이메일·`inviteToken` 보호) · `verificationLevel` 자기 승격 금지 · `usersPublic` 사칭 금지 · `emailIndex` 목록 조회 금지 · 시간표 공개범위 · 차단목록·스크랩 · `operators` 쓰기·list 금지 · `reports`·`inquiries` 읽기 전면 금지 |
+| `privacy.test.mjs` | **개인정보·권한**(SECURITY-1.1 §2-1) — `users` 타인 읽기 금지(이메일·`inviteToken` 보호) · `verificationLevel` 자기 승격 금지 · `usersPublic` 사칭·**목록 조회(전 회원 명단)**·**필드 검증**(모르는 필드·긴 닉네임·추적 URL photoURL) 금지 · `emailIndex` 목록 조회 금지 · 시간표 공개범위 · 차단목록·스크랩 · `operators` 쓰기·list 금지 · `reports`·`inquiries` 읽기 전면 금지 |
 | `courses-and-metas.test.mjs` | 강의 마스터(공식 데이터 **수정·삭제 전면 금지**, `verified:true` 생성 금지) · 확인(`confirms` 1인1회) · 강의평(1인1평·rating 1〜5) · 유저 게시판 메타 · **글·댓글 물리삭제 금지** |
 | `anonymity.test.mjs` | 익명/기명 투고(S4-4) — 기본은 익명, 기명은 `usersPublic.nickname`과 일치 요구(사칭·금칙어 우회 차단), 익명인데 이름 남기면 거부, **작성 후 변경 금지**. **두 필드 없는 구버전 앱**도 통과해야 한다 |
 | `friends.test.mjs` | 친구 관계 — 수락된 신청 없이 생성 불가, 남의 신청·자기 자신 신청 재사용 불가, 친구 공개 시간표 보호, **초대 링크**(토큰 일치만 통과·자기 자신 금지) |

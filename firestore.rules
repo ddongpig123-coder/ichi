@@ -119,9 +119,63 @@ service cloud.firestore {
     // users/{uid} 本体は本人のみ読めるため、他ユーザーに見せてよい情報
     // （ニックネーム・写真・学校・学部）だけをここに複製する。
     // GPA等の学業情報は絶対にここへ書かないこと。
+    function publicProfileKeys() {
+      return ['uid', 'nickname', 'photoURL', 'schoolDomain', 'department', 'admissionYear'];
+    }
+
+    // 🔑 どのフィールドも「無ければ素通り、あれば形を見る」。merge 書き込みでは
+    //    request.resource.data が **合成後の文書全体** になるので、古い文書に
+    //    nickname が無くても更新を塞がない形にしてある。
+    //    nickname の 20 は src/data/limits.ts の NICKNAME_MAX（isValidAnonymity と同じ値）。
+    //
+    // 🔴 photoURL を https だけに絞る理由: 今はどの画面も書いていない
+    //    （userService.updatePhotoURL に呼び出しが無い）が、値は友達リスト・
+    //    招待リンク画面でそのまま <img> / Image の uri になる。任意の URL を
+    //    入れられると、そのプロフィールを見た人の IP と UA が URL の持ち主へ渡る
+    //    ＝ 追跡ピクセル。プライバシーポリシーの「第三者提供は Google/Firebase のみ」
+    //    に反するので、ルール側で止める。
+    //    🔑 画像アップロードを入れるときは Storage のホストまで絞るとさらに良い。
+    function isValidPublicProfile() {
+      let d = request.resource.data;
+      return (!('nickname' in d)
+               || (d.nickname is string && d.nickname.size() > 0 && d.nickname.size() <= 20))
+        && (d.get('photoURL', null) == null
+             || (d.photoURL is string && d.photoURL.size() <= 500
+                  && d.photoURL.matches('^https://.*$')))
+        && (d.get('schoolDomain', null) == null
+             || (d.schoolDomain is string && d.schoolDomain.size() <= 64))
+        && (d.get('department', null) == null
+             || (d.department is string && d.department.size() <= 64))
+        && (d.get('admissionYear', null) == null
+             || (d.admissionYear is int
+                  && d.admissionYear >= 1900 && d.admissionYear <= 2100));
+    }
+
     match /usersPublic/{uid} {
-      allow read: if isSignedIn();
-      allow create, update: if isOwner(uid) && request.resource.data.uid == uid;
+      // 🔴 list（コレクション照会）は禁止。アプリは friendships / emailIndex から uid を
+      //    得て doc(usersPublic/{uid}) を1件ずつ読むだけで、照会は一度も使わない
+      //    （src/services/userService.ts の publicDoc が唯一の読み口）。開けたままだと
+      //    初回起動で誰でも作れる匿名アカウントから **全会員の uid・ニックネーム・
+      //    学校・学部の名簿をまるごと** 取れてしまう。読み取り課金も1人で
+      //    Spark の日次上限（5万）を焼き切れる（§1-5 = その日アプリが止まる）。
+      //    学部で照会していた先輩時間割の名残り（機能は 2026-08-23 に廃止済み）。
+      //    emailIndex・operators と同じ「get だけ開ける」形に揃える。
+      allow get: if isSignedIn();
+      allow list: if false;
+
+      // 🔑 hasOnly(publicProfileKeys()) で「決めた6つ以外は書けない」ようにする。
+      //    update 側は affectedKeys にかけるので、昔の版が書いた見知らぬ
+      //    フィールドが残っていても（触らなければ）更新は通る。
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.keys().hasOnly(publicProfileKeys())
+        && 'nickname' in request.resource.data
+        && isValidPublicProfile();
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(publicProfileKeys())
+        && isValidPublicProfile();
       allow delete: if isOwner(uid);
     }
 
