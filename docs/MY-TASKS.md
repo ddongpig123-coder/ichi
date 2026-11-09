@@ -14,7 +14,9 @@
 > Claude 세션에서 확인한 것: 웹 번들 새 해시(`index-f877c418…`), `/add-friend` 받는 페이지 표시, 배포 웹에서 스크랩 쓰기 성공(= 규칙 배포 확인).
 > **🚀 2026-11-07 03:02 JST OTA 1.0.2(친구 목록 실시간 갱신 #89) 배포 완료** — 업데이트 그룹 `8db20dae…`, iOS·Android. 실기기: 초대 링크 탭 → 즉시 친구 추가 확인(준희).
 > **점검 결과(11/07 준희 PC)**: `recount-counters.mjs` → **어긋남 0건**(투고 66·댓글 103. 필드 없는 문서 73건은 규칙이 0 취급) → #50의 `likeCount` 하한 0 넣어도 됨(태희). `backup-firestore.mjs --estimate` → **덤프 대상 627건**(제외 `courses` 21,078·`postIndex` 62) → 실제 덤프 1회 실행 권장(읽기 627건, 한도 5만).
-> **11/08 머지**: #92(보안 §8: usersPublic 명단 유출 차단·필드 검증·웹 헤더) · #93(친구 목록 길게 눌러 삭제). **배포 순서(준희)**: ① `npx firebase-tools deploy --only firestore:rules` ② `npm run deploy:web`(헤더) ③ `eas update --branch production --message "1.0.3: 친구 목록 UI·보안"`. 셋 다 구앱 무해.
+> **11/08 머지 → 11/09 배포 완료(준희)**: #92(보안 §8: usersPublic 명단 유출 차단·필드 검증·웹 헤더) · #93(친구 목록 길게 눌러 삭제). 규칙·웹 헤더·**OTA 1.0.3**(21:55 JST, 그룹 `176d083a…`) 셋 다 세션에서 확인(usersPublic list 거부·gpa 필드 거부·CSP 등 헤더 6개·매니페스트).
+> 📌 교훈: 11/08 첫 시도는 **`git pull` 전에 배포해서 옛 코드가 나갔다.** 배포 전엔 항상 `git pull && git log --oneline -1`로 해시 확인. `eas update`는 **`--environment production`을 붙여서** 돌린다(「Select environment」 질문 자체가 안 뜸. 준희 11/09 확인).
+> **11/09 운영 1회차**: `backup-firestore.mjs` 첫 덤프 **659건**([BACKUP §4](BACKUP.md)) · `migrate-chats-to-global.mjs` **실제 실행 → 방 11개·메시지 9건 이전 완료**(구 경로는 남김). 며칠 뒤 `--dry-run`으로 재확인, 「새로 옮긴 방 0」이 2~3회 연속이면 태희에게 → #91(구 경로 닫기).
 > **태희 다음 작업**: 「招待リンクを作り直す」 버튼(§8-④, 준희 수용) → #50 머지·배포(OTA 퍼진 뒤) → #91(쪽지 구 경로 닫기, `migrate-chats` 「옮긴 방 0」 연속 뒤).
 > **다음 할 일은 [OTA-2026-11.md](OTA-2026-11.md) §5(직후 운영: 쪽지방 마이그레이션·색인 보충 반복)** 과 「🔁」 4번(#50, OTA가 퍼진 뒤 태희 머지·배포).
 >
