@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, updateDoc, deleteField } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, updateDoc, deleteField, query, where } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import type { UserProfile } from "../types/user";
 import { NICKNAME_MAX } from "../data/limits";
@@ -19,14 +19,18 @@ function userDoc(uid: string) {
 // ── 公開プロフィール（usersPublic）とメール索引（emailIndex） ──────
 // users/{uid} 本体は本人のみ読めるため、友達検索・友達リスト表示に必要な
 // 最小情報だけを usersPublic に複製する。学業情報(GPA等)は絶対に含めない。
+// 🔑 学校・学部・入学年度は **載せない**（2026-11-10）。どの画面も他人のこれらを使っておらず、
+//    プライバシーポリシー「所属等が他の利用者に公開されることはありません」とも合わない。
+//    本人の値は users/{uid}（本人だけが読める）にある。昔の版が書いた値は
+//    LEGACY_PUBLIC_KEYS として起動時に消す（ensureUserProfile）。
 export interface PublicProfile {
   uid: string;
   nickname: string;
   photoURL: string | null;
-  schoolDomain: string | null;
-  department: string | null;
-  admissionYear?: number | null; // 学年フィルタ用（先輩時間割）
 }
+
+// 以前 usersPublic にミラーしていた所属情報。もう書かない。残っていれば消す
+const LEGACY_PUBLIC_KEYS = ["schoolDomain", "department", "admissionYear"] as const;
 
 function publicDoc(uid: string) {
   return doc(db, "usersPublic", uid);
@@ -89,9 +93,7 @@ export async function ensureUserProfile(uid: string, email: string | null): Prom
   const snap = await getDoc(userDoc(uid));
   if (!snap.exists()) {
     await createUserProfile(uid, email ?? "", "ゲスト");
-    await writePublicMirror(uid, {
-      nickname: "ゲスト", photoURL: null, schoolDomain: null, department: null,
-    });
+    await writePublicMirror(uid, { nickname: "ゲスト", photoURL: null });
   } else {
     const data = snap.data() as UserProfile;
     const pub = await getDoc(publicDoc(uid));
@@ -99,9 +101,21 @@ export async function ensureUserProfile(uid: string, email: string | null): Prom
       await writePublicMirror(uid, {
         nickname: data.nickname || "ゲスト",
         photoURL: data.photoURL ?? null,
-        schoolDomain: data.schoolDomain ?? null,
-        department: data.department ?? null,
       });
+    } else {
+      // 昔の版（ストア版に内蔵の初回起動コードを含む）が書いた所属情報を消す。
+      // 既に消えていれば何もしない（読み取りは上の1回だけ、書き込みは残っているときだけ）
+      const pubData = pub.data();
+      const legacy = LEGACY_PUBLIC_KEYS.filter((k) => k in pubData);
+      if (legacy.length > 0) {
+        try {
+          const patch: Record<string, unknown> = { uid };
+          legacy.forEach((k) => { patch[k] = deleteField(); });
+          await updateDoc(publicDoc(uid), patch);
+        } catch (e) {
+          console.warn("usersPublic legacy cleanup failed:", e);
+        }
+      }
     }
   }
   // メール索引の自己修復（登録済みユーザーのみ。失敗しても致命的ではない）
@@ -149,7 +163,7 @@ export async function updateMicrosoftAccountInfo(
 ): Promise<void> {
   const nick = clampNickname(nickname);
   await setDoc(userDoc(uid), { uid, email, nickname: nick, schoolDomain }, { merge: true });
-  await writePublicMirror(uid, { nickname: nick, schoolDomain });
+  await writePublicMirror(uid, { nickname: nick });
   try {
     await auth.currentUser?.getIdToken(true);
     await writeEmailIndex(uid, email);
@@ -170,13 +184,12 @@ export async function updatePhotoURL(uid: string, photoURL: string): Promise<voi
   await writePublicMirror(uid, { photoURL });
 }
 
-// 学部の保存（プロフィール）。学部は公開してよい情報なので usersPublic にもミラーする。
+// 学部の保存（プロフィール）。users 本体のみ（usersPublic には載せない — 上の PublicProfile 参照）。
 // ※ GPA・単位などの成績はここに書かない — 端末保存（gradRecordService の PrivateAcademic）。
 //    以前の updateAcademicInfo は academic ごとサーバーに平文で書いていた（CREDIT-TRACKING §6-2 違反）。
 export async function updateDepartment(uid: string, department: string): Promise<void> {
   const value = department.trim();
   await setDoc(userDoc(uid), { uid, academic: { department: value }, department: value || null }, { merge: true });
-  await writePublicMirror(uid, { department: value || null });
 }
 
 // 旧版がサーバーに平文で置いた成績（GPA・単位・履修数・学年）を消す。
@@ -192,11 +205,9 @@ export async function clearServerPrivateAcademic(uid: string): Promise<void> {
   });
 }
 
-// 入学年度の保存。学年フィルタ(先輩時間割)・学点管理(Phase 3)が使う単一ソース。
-// 他ユーザーに公開してよい値なので usersPublic にもミラーする（GPA等とは別扱い）。
+// 入学年度の保存。学点管理(Phase 3)が使う単一ソース。users 本体のみ（usersPublic には載せない）。
 export async function updateAdmissionYear(uid: string, admissionYear: number | null): Promise<void> {
   await setDoc(userDoc(uid), { uid, admissionYear }, { merge: true });
-  await writePublicMirror(uid, { admissionYear });
 }
 
 // 卒業要件で選んだ学部の保存（I-9 / 1.1 S2）。
@@ -212,8 +223,8 @@ export async function updateGradFaculty(
   await setDoc(userDoc(uid), { uid, gradFacultyId }, { merge: true });
 }
 
-// オンボーディング完了時の一括保存（規約同意日時・言語・学校）。
-// 学校は公開情報（先輩時間割の学部公開判定等に使用）なので usersPublic にもミラーする。
+// オンボーディング完了時の一括保存（規約同意日時・言語・学校）。users 本体のみ。
+// 学校の所属判定（掲示板の書き込み権限）はルールが users/{uid}.schoolDomain を見る。
 export async function completeOnboarding(
   uid: string,
   language: UserProfile["language"],
@@ -224,7 +235,6 @@ export async function completeOnboarding(
     { uid, language, schoolDomain, agreedTermsAt: Date.now() },
     { merge: true }
   );
-  await writePublicMirror(uid, { schoolDomain });
 }
 
 // 学校選択のみ更新（規約同意済みユーザーの後からの学校選択）。
@@ -234,7 +244,6 @@ export async function updateSchoolSelection(
   schoolDomain: string | null
 ): Promise<void> {
   await setDoc(userDoc(uid), { uid, schoolDomain }, { merge: true });
-  await writePublicMirror(uid, { schoolDomain });
 }
 
 // 自分の友達リスト表示順（よく会う友達など）の保存。users本体のみでよい。
@@ -251,6 +260,8 @@ export async function saveFriendOrders(
 // メール索引・時間割)を物理削除する。firestore.rules は本人の delete を許可済み(ルール変更不要)。
 // ⚠️ 投稿・コメント・쪽지は authorUid を法的対応のため保存する方針(MODERATION.md)なので
 //    ここでは削除しない。表示は既に匿名(@匿名N)で、アカウント削除により本人との紐付けは切れる。
+// ⚠️ 講義レビュー（courses/…/reviews/{uid}）といいねはまだ消していない。講義・投稿をまたいで
+//    自分の分を探すには collectionGroup 照会とルール追加が要る（Admin スクリプトで扱う想定）。
 // ⚠️ 直列 await だと、1件目の書き込みが（ネイティブで ack が返らず）止まった時点で
 //    残り全部が実行されない。並列(allSettled)にして、機微な本人識別データから先に投げる。
 //    どのルールも isOwner(uid) ベースで他の文書を参照しないため、順序に依存しない
@@ -274,6 +285,11 @@ export async function deleteSelfData(uid: string, email: string | null): Promise
   // スクラップ・ブロックリスト（本人だけのサブコレクション）も消す
   tasks.push({ step: "scraps", task: deleteSubcollection(uid, "scraps") });
   tasks.push({ step: "blocks", task: deleteSubcollection(uid, "blocks") });
+  // 友達関係と友達申請（送った分・届いた分）。残すと相手の一覧に「消えた人」との関係が残り、
+  // 申請にも uid の組が残る。ルールはどれも当事者の delete を許可済み（2026-11-10 追加）
+  tasks.push({ step: "friendships", task: deleteWhere("friendships", "participants", "array-contains", uid) });
+  tasks.push({ step: "friendRequests(from)", task: deleteWhere("friendRequests", "fromUid", "==", uid) });
+  tasks.push({ step: "friendRequests(to)", task: deleteWhere("friendRequests", "toUid", "==", uid) });
 
   const results = await Promise.allSettled(tasks.map((t) => t.task));
   results.forEach((r, i) => {
@@ -290,5 +306,16 @@ async function deleteTimetables(uid: string): Promise<void> {
 
 async function deleteSubcollection(uid: string, name: string): Promise<void> {
   const snap = await getDocs(collection(db, "users", uid, name));
+  await Promise.all(snap.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
+}
+
+// 本人が当事者の文書を条件で集めて消す（友達関係・友達申請）。1件の失敗で残りを止めない
+async function deleteWhere(
+  col: string,
+  field: string,
+  op: "==" | "array-contains",
+  uid: string
+): Promise<void> {
+  const snap = await getDocs(query(collection(db, col), where(field, op, uid)));
   await Promise.all(snap.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
 }
