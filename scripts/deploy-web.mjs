@@ -13,6 +13,11 @@ import { spawnSync } from "node:child_process";
 import { copyFileSync, mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { guard } from "./release-guard.mjs";
+
+// 0) 배포 전 확인（루트·master·원격과 같음·변경 없음·타입 검사·y 확인）— release-guard.mjs
+//    11/08 에 pull 전 배포로 옛 웹이 나간 적이 있다
+await guard({ what: "웹(Firebase Hosting) 배포" });
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");

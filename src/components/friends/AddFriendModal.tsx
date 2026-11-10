@@ -6,9 +6,9 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useI18n } from "../../contexts/I18nContext";
 import type { Theme } from "../../theme/themes";
 import { findUserByEmail, sendFriendRequest } from "../../services/friendRequestService";
-import { shareInvite } from "../../services/friendInvite";
+import { regenerateInviteToken, shareInvite } from "../../services/friendInvite";
 import type { PublicProfile } from "../../services/userService";
-import { notify } from "../../utils/dialog";
+import { confirmDialog, notify } from "../../utils/dialog";
 import { friendlyErrorBody } from "../../utils/writeError";
 
 interface Props {
@@ -108,6 +108,24 @@ export default function AddFriendModal({ visible, onClose }: Props) {
     // "shared" は OS の共有シートが処理済みなので通知不要
   }
 
+  // 配ったリンクを無効にする。取り消せないので必ず確認してから
+  function handleResetInvite() {
+    if (!user) return;
+    confirmDialog(
+      t("friends.inviteResetTitle"),
+      t("friends.inviteResetMessage"),
+      async () => {
+        try {
+          await regenerateInviteToken(user.uid);
+          notify(t("friends.inviteResetDone"), t("friends.inviteResetDoneBody"));
+        } catch (e) {
+          notify(t("friends.inviteResetFailed"), friendlyErrorBody(e, t));
+        }
+      },
+      { cancel: t("common.cancel"), ok: t("friends.inviteResetOk") }
+    );
+  }
+
   const addEnabled = lookupState === "found" && !busy;
 
   return (
@@ -178,6 +196,10 @@ export default function AddFriendModal({ visible, onClose }: Props) {
             <Text style={styles.inviteText}>
               <Ionicons name="link-outline" size={15} color={theme.primary} /> {t("friends.inviteShare")}
             </Text>
+          </TouchableOpacity>
+          {/* 配ったリンクを無効にする出口。目立たせる必要はないので控えめな文字リンク */}
+          <TouchableOpacity style={styles.inviteResetButton} onPress={handleResetInvite}>
+            <Text style={styles.inviteResetText}>{t("friends.inviteReset")}</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>
@@ -257,5 +279,7 @@ function makeStyles(theme: Theme) {
       alignItems: "center",
     },
     inviteText: { color: theme.primary, fontSize: 14, fontWeight: "700" },
+    inviteResetButton: { paddingVertical: 9, alignItems: "center" },
+    inviteResetText: { color: theme.textSecondary, fontSize: 12.5, textDecorationLine: "underline" },
   });
 }

@@ -12,7 +12,8 @@ import { db } from "../config/firebase";
 //
 //   https://ichi-6b8f7.web.app/add-friend?u=<uid>&k=<inviteToken>
 //
-// - アプリ内（ネイティブ）で開いた場合: /add-friend 画面が承認なしで友達を作る
+// - アプリ内（ネイティブ）で開いた場合: /add-friend 画面が招待者を見せて「友達になりますか？」と
+//   一度だけ確認し、[友達になる] で friendships を作る（招待した側の承認は取らない）
 // - Safari/Chrome で開いた場合（Web）: 「アプリで開く」(カスタムスキーム/intent) と
 //   ストアのボタンだけを出す。Web 側のゲスト口座はアプリと別人なので、Web では友達を作らない
 // - ユニバーサルリンク（タップで直接アプリ起動）はネイティブ設定が要るので 1.2 再ビルドで
@@ -42,6 +43,16 @@ export async function getOrCreateInviteToken(uid: string): Promise<string> {
   if (typeof existing === "string" && existing.length >= 16) return existing;
   const token = Crypto.randomUUID().replace(/-/g, "");
   await setDoc(ref, { inviteToken: token }, { merge: true });
+  return token;
+}
+
+// 招待リンクを作り直す。新しいトークンを保存すると、**今まで配ったリンクは全部その場で死ぬ**
+// （#50 のルールが users/{inviter}.inviteToken と照合するため）。
+// LINE のグループに貼った・スクショが出回った、というときの唯一の出口。
+// 🔴 取り消し不可。呼ぶ側で必ず確認ダイアログを出すこと（SECURITY-1.1 §8-3）。
+export async function regenerateInviteToken(uid: string): Promise<string> {
+  const token = Crypto.randomUUID().replace(/-/g, "");
+  await setDoc(doc(db, "users", uid), { inviteToken: token }, { merge: true });
   return token;
 }
 
