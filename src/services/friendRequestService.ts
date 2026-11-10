@@ -175,13 +175,24 @@ export async function rejectFriendRequest(requestId: string): Promise<void> {
   await updateDoc(doc(db, "friendRequests", requestId), { status: "rejected" });
 }
 
-// ── 招待リンクで友達追加（承認なし） ──────────────────────
+// ── 招待リンクで友達追加（招待した側の承認なし） ──────────
 // 招待リンク（docs/INVITE-LINK.md）を開いた側が friendships を直接作る。
-// リンクを配った本人の意思表示とみなし、相手の承認は取らない（2026-11-05 準熙決定）。
-// inviteToken はリンクに載っていた値。現行ルールは participants と pairId しか見ないが、
-// #50 以降は users/{inviter}.inviteToken との照合を入れる想定。照合に落ちれば
-// permission-denied → "invalid"（古いリンク・改ざん）。
+// リンクを配った本人の意思表示とみなし、招待した側の承認は取らない（2026-11-05 準熙決定）。
+// ただし **開いた側** には画面で一度確認する（2026-11-10）。開いただけで友達になると、
+// 知らない人のリンクを踏んだだけで時間割（友達まで公開）が見えてしまうため。
+// inviteToken はリンクに載っていた値。#50 以降のルールは users/{inviter}.inviteToken と
+// 照合し、落ちれば permission-denied → "invalid"（古いリンク・改ざん・作り直し後）。
 export type InviteAddResult = "added" | "already-friends" | "self" | "invalid";
+
+// 確認画面を出す前の判定（書き込みなし）。自分のリンク・既に友達なら確認は要らない
+export async function checkInviteStatus(
+  uid: string,
+  inviterUid: string
+): Promise<"self" | "already-friends" | "ready"> {
+  if (uid === inviterUid) return "self";
+  const existing = await getDoc(friendshipDoc(uid, inviterUid));
+  return existing.exists() ? "already-friends" : "ready";
+}
 
 export async function addFriendByInvite(
   uid: string,
