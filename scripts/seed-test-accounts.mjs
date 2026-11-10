@@ -90,10 +90,10 @@ async function seedOne(a, idx) {
     academic: { department: a.department, grade: String(YEAR - a.admissionYear + 1), gpa: "", earnedCredits: "", requiredCredits: "", courseCount: String(a.fall.length) },
   }, { merge: true });
 
-  // usersPublic ミラー（他ユーザーに見せてよい情報のみ）
+  // usersPublic ミラー（他ユーザーに見せてよい情報のみ = uid・ニックネーム・写真。
+  // 学校・学部・入学年度は 2026-11-10 から載せない — src/services/userService.ts PublicProfile）
   await setDoc(doc(db, "usersPublic", uid), {
     uid, nickname: a.nickname, photoURL: null,
-    schoolDomain: SCHOOL, department: a.department, admissionYear: a.admissionYear,
   }, { merge: true });
 
   // emailIndex（メールで友達検索できるように）

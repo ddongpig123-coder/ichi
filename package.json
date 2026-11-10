@@ -38,7 +38,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "deploy:web": "node scripts/deploy-web.mjs"
+    "deploy:web": "node scripts/deploy-web.mjs",
+    "deploy:rules": "node scripts/deploy-rules.mjs",
+    "ota": "node scripts/ota.mjs"
   },
   "private": true
 }

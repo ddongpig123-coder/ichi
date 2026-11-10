@@ -9,21 +9,28 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import { useI18n } from "../src/contexts/I18nContext";
 import type { Theme } from "../src/theme/themes";
 import { getPublicProfile, type PublicProfile } from "../src/services/userService";
-import { addFriendByInvite, type InviteAddResult } from "../src/services/friendRequestService";
+import {
+  addFriendByInvite, checkInviteStatus, type InviteAddResult,
+} from "../src/services/friendRequestService";
 import {
   APP_STORE_URL, PLAY_STORE_PUBLIC, PLAY_STORE_URL, buildAppOpenUrl, detectMobileOS,
 } from "../src/services/friendInvite";
 import ScreenHeader from "../src/components/common/ScreenHeader";
 
 // 招待リンク（/add-friend?u=<uid>&k=<token>）の受け口。docs/INVITE-LINK.md
-// - ネイティブ: 開いた時点で承認なしに友達を作り、結果を見せる（準熙決定 2026-11-05）
+// - ネイティブ: 招待者を見せて「友達になりますか？」→ [友達になる] で friendships を作る。
+//   招待した側の承認は取らない（準熙決定 2026-11-05）が、開いた側には一度だけ確認する
+//   （2026-11-10。開いただけで友達になると、知らない人のリンクで時間割が見えてしまう）。
+//   自分のリンク・既に友達のときは確認なしで結果を出す。
+//   友達一覧への反映は FriendsContext の friendships 購読（#89）が拾う。念のため refresh も呼ぶ
 // - Web（Safari/Chrome）: 友達は作らない。Web のゲスト口座はアプリと別人なので、
 //   「アプリで開く」とストアのボタンだけを出す
 function param(v: string | string[] | undefined): string | undefined {
   return typeof v === "string" ? v : Array.isArray(v) ? v[0] : undefined;
 }
 
-type Phase = "waiting" | "working" | "done";
+// checking = 招待者の確認中 / confirm = 「友達になりますか？」 / working = 追加中 / done = 結果
+type Phase = "checking" | "confirm" | "working" | "done";
 type Result = InviteAddResult | "failed";
 
 export default function AddFriendScreen() {
@@ -40,11 +47,13 @@ export default function AddFriendScreen() {
   const valid = !!inviterUid && !!token;
 
   const [inviter, setInviter] = useState<PublicProfile | null>(null);
-  const [phase, setPhase] = useState<Phase>("waiting");
+  const [phase, setPhase] = useState<Phase>("checking");
   const [result, setResult] = useState<Result | null>(null);
-  const [attempt, setAttempt] = useState(0);
   const refreshRef = useRef(refreshFriends);
   refreshRef.current = refreshFriends;
+  // 画面を離れたあとに state を触らないための印（追加ボタンの非同期処理用）
+  const aliveRef = useRef(true);
+  useEffect(() => () => { aliveRef.current = false; }, []);
 
   // 招待者の公開プロフィール（表示用）。usersPublic はサインイン後しか読めないので user を待つ
   useEffect(() => {
@@ -56,31 +65,50 @@ export default function AddFriendScreen() {
     return () => { alive = false; };
   }, [inviterUid, user]);
 
-  // ネイティブ: 友達を作る
+  // ネイティブ: 確認画面を出すかどうかの判定（ここでは友達を作らない）
+  const uid = user?.uid;
   useEffect(() => {
     if (Platform.OS === "web") return;
     if (!valid) { setResult("invalid"); setPhase("done"); return; }
-    if (!user) return; // 匿名サインイン待ち
+    if (!uid) return; // 匿名サインイン待ち
     let alive = true;
-    setPhase("working");
+    setPhase("checking");
     (async () => {
       const p = await getPublicProfile(inviterUid!).catch(() => null);
       if (!alive) return;
       if (!p) { setResult("invalid"); setPhase("done"); return; }
-      let r: Result;
-      try {
-        r = await addFriendByInvite(user.uid, inviterUid!, token);
-      } catch (e) {
-        console.warn("invite add failed:", e);
-        r = "failed";
-      }
+      const status = await checkInviteStatus(uid, inviterUid!).catch(() => "ready" as const);
       if (!alive) return;
-      if (r === "added") refreshRef.current().catch(() => {}); // 友達一覧に即反映
-      setResult(r);
-      setPhase("done");
+      if (status === "ready") {
+        setPhase("confirm");
+      } else {
+        setResult(status);
+        setPhase("done");
+      }
     })();
     return () => { alive = false; };
-  }, [user, inviterUid, token, valid, attempt]);
+  }, [uid, inviterUid, token, valid]);
+
+  // [友達になる]（失敗時の「もう一度試す」もここ）
+  const busyRef = useRef(false); // 連打で2回書かないように（state の反映を待たずに止める）
+  async function confirmAdd() {
+    if (!uid || !inviterUid || busyRef.current) return;
+    busyRef.current = true;
+    setPhase("working");
+    let r: Result;
+    try {
+      r = await addFriendByInvite(uid, inviterUid, token);
+    } catch (e) {
+      console.warn("invite add failed:", e);
+      r = "failed";
+    }
+    // 友達一覧に即反映（購読でも反映されるが、画面を離れていても確実に読み直す）
+    if (r === "added") refreshRef.current().catch(() => {});
+    busyRef.current = false;
+    if (!aliveRef.current) return;
+    setResult(r);
+    setPhase("done");
+  }
 
   function goFriends() {
     router.replace("/(tabs)/friends");
@@ -159,16 +187,28 @@ export default function AddFriendScreen() {
     );
   }
 
-  // ── ネイティブ: 自動で友達に追加 ──────────────────────────
+  // ── ネイティブ: 確認してから友達に追加 ──────────────────────
   return (
     <View style={styles.container}>
       <ScreenHeader title={t("friends.addTitle")} onBack={goFriends} />
 
       <View style={styles.content}>
-        {phase !== "done" ? (
+        {phase === "checking" || phase === "working" ? (
           <>
             <ActivityIndicator color={theme.primary} />
-            <Text style={styles.desc}>{t("addFriend.adding")}</Text>
+            {phase === "working" && <Text style={styles.desc}>{t("addFriend.adding")}</Text>}
+          </>
+        ) : phase === "confirm" ? (
+          <>
+            {avatar}
+            <Text style={styles.title}>{`${name}${t("addFriend.confirmSuffix")}`}</Text>
+            <Text style={styles.desc}>{t("addFriend.confirmDesc")}</Text>
+            <TouchableOpacity style={styles.primaryButton} onPress={confirmAdd}>
+              <Text style={styles.primaryText}>{t("addFriend.confirmButton")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.secondaryButton} onPress={goFriends}>
+              <Text style={styles.secondaryText}>{t("addFriend.declineButton")}</Text>
+            </TouchableOpacity>
           </>
         ) : result === "invalid" ? (
           invalidBlock
@@ -176,7 +216,7 @@ export default function AddFriendScreen() {
           <>
             <Text style={styles.title}>{t("addFriend.failedTitle")}</Text>
             <Text style={styles.desc}>{t("addFriend.failedDesc")}</Text>
-            <TouchableOpacity style={styles.primaryButton} onPress={() => setAttempt((n) => n + 1)}>
+            <TouchableOpacity style={styles.primaryButton} onPress={confirmAdd}>
               <Text style={styles.primaryText}>{t("addFriend.retry")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.secondaryButton} onPress={goFriends}>
