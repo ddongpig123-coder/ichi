@@ -5,7 +5,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
+  setDoc,
   updateDoc,
   where,
   writeBatch,
@@ -117,6 +119,44 @@ export async function fetchReceivedRequests(uid: string): Promise<FriendRequestW
   return withSender.sort((a, b) => b.createdAt - a.createdAt);
 }
 
+// ── リアルタイム購読 ───────────────────────────────────────
+// 相手が承認した瞬間に双方の友達一覧へ反映するため、friendships と受信箱を onSnapshot で見る
+// （2026-11-06 準熙: 承認後に一覧が変わらない / 送った側は開き直さないと出ない）。
+// 初回スナップショットが件数ぶんの読み取り、以後は変更分だけ。戻り値で購読解除。
+export function subscribeFriendUids(
+  uid: string,
+  onChange: (uids: string[]) => void
+): () => void {
+  const q = query(collection(db, "friendships"), where("participants", "array-contains", uid));
+  return onSnapshot(
+    q,
+    (snap) => {
+      const uids = snap.docs
+        .map((d) => (d.data().participants as string[]).find((p) => p !== uid))
+        .filter((p): p is string => !!p);
+      onChange(uids);
+    },
+    (e) => console.warn("friendships listen failed:", e)
+  );
+}
+
+export function subscribeReceivedRequests(
+  uid: string,
+  onChange: (requests: FriendRequest[]) => void
+): () => void {
+  const q = query(requestsCol(), where("toUid", "==", uid), where("status", "==", "pending"));
+  return onSnapshot(
+    q,
+    (snap) => {
+      const requests = snap.docs
+        .map((d) => ({ id: d.id, ...(d.data() as Omit<FriendRequest, "id">) }))
+        .sort((a, b) => b.createdAt - a.createdAt);
+      onChange(requests);
+    },
+    (e) => console.warn("friendRequests listen failed:", e)
+  );
+}
+
 // 承認: status更新(toUid本人のみ・ルール強制) と friendships作成を1つのバッチで行う。
 // requestId はルールが「本当に承認された申請か」を確かめるために必要
 // （これが無いと、相手の承認なしに friendships を作って友達限定の時間割を読めてしまう）。
@@ -133,6 +173,48 @@ export async function acceptFriendRequest(request: FriendRequest): Promise<void>
 
 export async function rejectFriendRequest(requestId: string): Promise<void> {
   await updateDoc(doc(db, "friendRequests", requestId), { status: "rejected" });
+}
+
+// ── 招待リンクで友達追加（承認なし） ──────────────────────
+// 招待リンク（docs/INVITE-LINK.md）を開いた側が friendships を直接作る。
+// リンクを配った本人の意思表示とみなし、相手の承認は取らない（2026-11-05 準熙決定）。
+// inviteToken はリンクに載っていた値。現行ルールは participants と pairId しか見ないが、
+// #50 以降は users/{inviter}.inviteToken との照合を入れる想定。照合に落ちれば
+// permission-denied → "invalid"（古いリンク・改ざん）。
+export type InviteAddResult = "added" | "already-friends" | "self" | "invalid";
+
+export async function addFriendByInvite(
+  uid: string,
+  inviterUid: string,
+  inviteToken: string
+): Promise<InviteAddResult> {
+  if (uid === inviterUid) return "self";
+  if (!inviteToken) return "invalid";
+  const ref = friendshipDoc(uid, inviterUid);
+  const existing = await getDoc(ref);
+  if (existing.exists()) return "already-friends";
+  try {
+    await setDoc(ref, {
+      participants: [uid, inviterUid].sort(),
+      createdAt: Date.now(),
+      via: "invite",
+      inviteToken,
+    });
+  } catch (e: any) {
+    if (e?.code === "permission-denied") return "invalid";
+    throw e;
+  }
+  // 相手から自分宛てに pending の申請が残っていれば片付ける
+  // （status を変えられるのは受信者だけなので、自分が送った分は触らない。失敗しても追加は成立）
+  try {
+    const snap = await getDocs(
+      query(requestsCol(), where("fromUid", "==", inviterUid), where("toUid", "==", uid), where("status", "==", "pending"))
+    );
+    await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { status: "accepted" })));
+  } catch (e) {
+    console.warn("invite: pending request cleanup failed:", e);
+  }
+  return "added";
 }
 
 // ── 友達一覧 ──────────────────────────────────────────────

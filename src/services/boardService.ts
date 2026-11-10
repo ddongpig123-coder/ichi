@@ -15,6 +15,8 @@ import {
   serverTimestamp,
   increment,
   updateDoc,
+  writeBatch,
+  runTransaction,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
@@ -145,7 +147,13 @@ export async function createComment(
   parentId: string | null = null,
   mentionUid: string | null = null
 ): Promise<void> {
-  await addDoc(commentsCol(schoolDomain, boardId, postId), {
+  // コメント文書とカウンター +1 を 1 つのバッチで書く（docs/SECURITY-1.1.md §7）。
+  // id をクライアント側で先に作り、投稿文書に lastCommentId として載せることで、
+  // ルールが existsAfter(comments/lastCommentId) で「このバッチで本当にコメントが増えたか」を
+  // 確かめられる（#50 で締める。以前は誰でも commentCount だけを +1 し続けられた）。
+  const commentRef = doc(commentsCol(schoolDomain, boardId, postId));
+  const batch = writeBatch(db);
+  batch.set(commentRef, {
     postId,
     body,
     authorUid,
@@ -154,10 +162,12 @@ export async function createComment(
     likeCount: 0,
     createdAt: serverTimestamp(),
   });
-  // increment counter on the post（返信もコメント数に含める）
-  await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
+  // 返信もコメント数に含める
+  batch.update(doc(postsCol(schoolDomain, boardId), postId), {
     commentCount: increment(1),
+    lastCommentId: commentRef.id,
   });
+  await batch.commit();
 }
 
 // ── 削除（ソフトデリート） ──────────────────────────────
@@ -181,13 +191,19 @@ export async function softDeleteComment(
   postId: string,
   commentId: string
 ): Promise<void> {
-  await updateDoc(doc(commentsCol(schoolDomain, boardId, postId), commentId), {
-    deleted: true,
-    deletedAt: Date.now(),
-  });
-  // 削除済みコメントは一覧の件数に数えない
-  await updateDoc(doc(postsCol(schoolDomain, boardId), postId), {
-    commentCount: increment(-1),
+  // 削除フラグとカウンター -1 を 1 つのトランザクションで書く（createComment と同じ理由）。
+  // lastCommentId に消したコメントの id を載せ、ルールが getAfter(...).data.deleted == true で
+  // 「本当に削除されたコメントの分か」を確かめられるようにする。
+  // 古いデータで commentCount が既に 0 のときはカウンターを触らない（0 未満にしない）。
+  const postRef = doc(postsCol(schoolDomain, boardId), postId);
+  const commentRef = doc(commentsCol(schoolDomain, boardId, postId), commentId);
+  await runTransaction(db, async (tx) => {
+    const post = await tx.get(postRef);
+    const count = (post.data()?.commentCount as number | undefined) ?? 0;
+    tx.update(commentRef, { deleted: true, deletedAt: Date.now() });
+    if (count > 0) {
+      tx.update(postRef, { commentCount: increment(-1), lastCommentId: commentId });
+    }
   });
 }
 

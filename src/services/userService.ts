@@ -1,6 +1,16 @@
 import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, updateDoc, deleteField } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import type { UserProfile } from "../types/user";
+import { NICKNAME_MAX } from "../data/limits";
+
+// ニックネームは usersPublic のルールで 20 文字（NICKNAME_MAX）までに制限されている。
+// 画面の入力欄は maxLength で止めているが、ソーシャル連携はプロバイダの表示名を
+// そのまま渡してくるので、ここで必ず詰める。詰めないと usersPublic への書き込みが
+// ルールに弾かれ、連携そのものが失敗する。
+// 🔑 コードポイント単位で切る（絵文字のサロゲートペアを半分で切らないため）。
+function clampNickname(nickname: string): string {
+  return Array.from(nickname).slice(0, NICKNAME_MAX).join("");
+}
 
 function userDoc(uid: string) {
   return doc(db, "users", uid);
@@ -57,7 +67,7 @@ export async function createUserProfile(
   await setDoc(userDoc(uid), {
     uid,
     email,
-    nickname,
+    nickname: clampNickname(nickname),
     photoURL: null,
     friendIds: [],
     createdAt: Date.now(),
@@ -117,8 +127,9 @@ export async function updateAccountInfo(
   email: string,
   nickname: string
 ): Promise<void> {
-  await setDoc(userDoc(uid), { uid, email, nickname }, { merge: true });
-  await writePublicMirror(uid, { nickname });
+  const nick = clampNickname(nickname);
+  await setDoc(userDoc(uid), { uid, email, nickname: nick }, { merge: true });
+  await writePublicMirror(uid, { nickname: nick });
   try {
     await auth.currentUser?.getIdToken(true);
     await writeEmailIndex(uid, email);
@@ -136,8 +147,9 @@ export async function updateMicrosoftAccountInfo(
   nickname: string,
   schoolDomain: string | null
 ): Promise<void> {
-  await setDoc(userDoc(uid), { uid, email, nickname, schoolDomain }, { merge: true });
-  await writePublicMirror(uid, { nickname, schoolDomain });
+  const nick = clampNickname(nickname);
+  await setDoc(userDoc(uid), { uid, email, nickname: nick, schoolDomain }, { merge: true });
+  await writePublicMirror(uid, { nickname: nick, schoolDomain });
   try {
     await auth.currentUser?.getIdToken(true);
     await writeEmailIndex(uid, email);
@@ -148,8 +160,9 @@ export async function updateMicrosoftAccountInfo(
 
 // 익명 사용자는 users/{uid} 문서가 없을 수 있으므로 setDoc(merge)로 자동 생성
 export async function updateNickname(uid: string, nickname: string): Promise<void> {
-  await setDoc(userDoc(uid), { uid, nickname }, { merge: true });
-  await writePublicMirror(uid, { nickname });
+  const nick = clampNickname(nickname);
+  await setDoc(userDoc(uid), { uid, nickname: nick }, { merge: true });
+  await writePublicMirror(uid, { nickname: nick });
 }
 
 export async function updatePhotoURL(uid: string, photoURL: string): Promise<void> {
@@ -258,6 +271,9 @@ export async function deleteSelfData(uid: string, email: string | null): Promise
   tasks.push({ step: "usersPublic", task: deleteDoc(publicDoc(uid)) });
   // 時間割(サブコレクション)を全学期分削除
   tasks.push({ step: "timetables", task: deleteTimetables(uid) });
+  // スクラップ・ブロックリスト（本人だけのサブコレクション）も消す
+  tasks.push({ step: "scraps", task: deleteSubcollection(uid, "scraps") });
+  tasks.push({ step: "blocks", task: deleteSubcollection(uid, "blocks") });
 
   const results = await Promise.allSettled(tasks.map((t) => t.task));
   results.forEach((r, i) => {
@@ -269,6 +285,10 @@ export async function deleteSelfData(uid: string, email: string | null): Promise
 }
 
 async function deleteTimetables(uid: string): Promise<void> {
-  const tts = await getDocs(collection(db, "users", uid, "timetables"));
-  await Promise.all(tts.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
+  return deleteSubcollection(uid, "timetables");
+}
+
+async function deleteSubcollection(uid: string, name: string): Promise<void> {
+  const snap = await getDocs(collection(db, "users", uid, name));
+  await Promise.all(snap.docs.map((d) => deleteDoc(d.ref).catch(() => {})));
 }

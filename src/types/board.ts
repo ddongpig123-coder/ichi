@@ -1,5 +1,8 @@
 export type BoardId = string;
 
+// "department" は 1.1 S4（2026-11-05）で廃止 — UI からは作れず一覧にも出ないが、
+// Firestore に残る category:"department" 文書と型を合わせるため値は残す（BOARD-ACCESS §3-3 Q3）。
+// 既存の学部掲示板は "custom" と同じ扱いで表示する（useBoards）。
 export type BoardCategory = "official" | "department" | "custom";
 
 export interface BoardMeta {
@@ -11,14 +14,24 @@ export interface BoardMeta {
   category: BoardCategory;
   createdBy?: string;
   createdAt?: number;
+  // 投稿画面の本文に最初から入れる書式（アンケート協力・ゼミ）。空欄埋め式にして投稿の質と敷居を揃える。
+  bodyTemplate?: string;
 }
 
+// 公式掲示板。boardId は Firestore パスに入るので変更禁止。追加は規則変更なしで OTA（BOARD-ACCESS §7-0）。
+// 1.1 S4（2026-11-05）: 今日の授業・アンケート協力・ゼミ を追加（§7。「出席コード」板は作らず今日の授業に）。
+// 留学生掲示板は留学生の森と並存させる（DECISIONS 2026-11-05 準希決定）。
 export const OFFICIAL_BOARDS: BoardMeta[] = [
   { id: "free",          label: "自由掲示板",   description: "なんでも自由に話しましょう", labelKo: "자유게시판",   descriptionKo: "무엇이든 자유롭게 이야기해요", category: "official" },
-  { id: "international", label: "留学生掲示板", description: "留学生同士で情報共有",       labelKo: "유학생게시판", descriptionKo: "유학생끼리 정보 공유",         category: "official" },
   { id: "question",      label: "質問掲示板",   description: "学校・授業の質問はこちら",   labelKo: "질문게시판",   descriptionKo: "학교·수업 질문은 여기",        category: "official" },
+  { id: "todayclass",    label: "今日の授業",   description: "授業の感想・休講・課題のシェア", labelKo: "오늘의 수업", descriptionKo: "수업 감상·휴강·과제 공유", category: "official" },
+  { id: "survey",        label: "アンケート協力", description: "卒論・ゼミの調査に協力し合う", labelKo: "설문 협력", descriptionKo: "졸논·제미 설문조사 서로 돕기", category: "official",
+    bodyTemplate: "・調査テーマ：\n・対象：（例：明治大生 / 留学生 / 20代全般）\n・所要時間：約〇分\n・締切：〇月〇日\n・リンク：\n" },
+  { id: "zemi",          label: "ゼミ",         description: "ゼミ紹介・選考体験記・募集情報", labelKo: "제미(세미나)", descriptionKo: "제미 소개·선발 체험기·모집 정보", category: "official",
+    bodyTemplate: "・ゼミ名：\n・担当教員：\n・募集人数：\n・選考方法：（面接 / 課題 / 成績）\n・活動内容：\n・雰囲気：\n" },
   { id: "trade",         label: "教科書ゆずり",     description: "教科書・参考書の売買・ゆずります", labelKo: "교과서 물려받기", descriptionKo: "교과서·참고서 매매·물려주기",   category: "official" },
   { id: "club",          label: "サークル掲示板", description: "サークル・部活の情報交換",  labelKo: "동아리게시판", descriptionKo: "동아리·부활동 정보 교환",     category: "official" },
+  { id: "international", label: "留学生掲示板", description: "この大学の留学生同士で情報共有", labelKo: "유학생게시판", descriptionKo: "우리 대학 유학생끼리 정보 공유",         category: "official" },
 ];
 
 // 旧名称のエイリアス（既存コードの互換性維持）
@@ -44,6 +57,12 @@ export interface Post {
   body: string;
   authorUid: string;
   commentCount: number;
+  // 直前のコメント操作（作成/ソフトデリート）のコメント id。commentCount と同じ
+  // バッチ/トランザクションで書く（boardService.createComment / softDeleteComment）。
+  // firestore.rules がこの id の文書を exists/existsAfter/getAfter で見て
+  // 「本当にコメントが増減したか」を確かめるためだけに置く値（docs/SECURITY-1.1.md §7）。
+  // 表示には使わない。古い投稿には無い（段階1の規則は無くても通す）。
+  lastCommentId?: string;
   likeCount: number;
   createdAt: number;
   deleted?: boolean;
@@ -56,6 +75,15 @@ export interface Post {
   viewCount?: number;
   // 質問掲示板のカテゴリ（QA_TAGS の id）。質問板のみ。
   tag?: string | null;
+  // 匿名/記名の切り替え（S4-4, BOARD-ACCESS §8）。**作成時に固定**で、あとから変更できない
+  // （firestore.rules の更新許可リストに入れていない）。
+  // 既存文書にはこのフィールドが無い → undefined = 匿名。つまり既定は匿名（true）。
+  anonymous?: boolean;
+  // anonymous:false のときだけ入る usersPublic.nickname のスナップショット。
+  // 一覧や詳細を描くたびに usersPublic を読まずに済ませるため（表示時の読み取り 0 件）。
+  // 匿名のときは null / 無し（規則で強制。「匿名で出した」のに名前が残るのを防ぐ）。
+  // 🔴 authorUid は記名でも匿名でもそのまま残す（法的対応の記録 — AGENTS.md の不変制約）。
+  authorNickname?: string | null;
 }
 
 // 質問掲示板の boardId（知恵袋スタイルの Q&A 表示を適用する板）。
@@ -98,4 +126,13 @@ export interface Comment {
   mentionUid?: string | null;
   deleted?: boolean;
   deletedAt?: number;
+  // 匿名/記名の切り替え（S4-4, BOARD-ACCESS §8）。**作成時に固定**で、あとから変更できない
+  // （firestore.rules の更新許可リストに入れていない）。
+  // 既存文書にはこのフィールドが無い → undefined = 匿名。つまり既定は匿名（true）。
+  anonymous?: boolean;
+  // anonymous:false のときだけ入る usersPublic.nickname のスナップショット。
+  // 一覧や詳細を描くたびに usersPublic を読まずに済ませるため（表示時の読み取り 0 件）。
+  // 匿名のときは null / 無し（規則で強制。「匿名で出した」のに名前が残るのを防ぐ）。
+  // 🔴 authorUid は記名でも匿名でもそのまま残す（法的対応の記録 — AGENTS.md の不変制約）。
+  authorNickname?: string | null;
 }

@@ -92,6 +92,12 @@ service cloud.firestore {
       match /blocks/{blockedUid} {
         allow read, write: if isOwner(uid);
       }
+
+      // スクラップ（投稿のブックマーク。1.1 S4-5, src/types/scrap.ts）。本人のみ。
+      // 投稿のタイトル・板名の写しだけで本文は持たない。
+      match /scraps/{scrapId} {
+        allow read, write: if isOwner(uid);
+      }
     }
 
     // 友達判定：friendships/{小さいuid_大きいuid} の存在で判定
@@ -113,9 +119,63 @@ service cloud.firestore {
     // users/{uid} 本体は本人のみ読めるため、他ユーザーに見せてよい情報
     // （ニックネーム・写真・学校・学部）だけをここに複製する。
     // GPA等の学業情報は絶対にここへ書かないこと。
+    function publicProfileKeys() {
+      return ['uid', 'nickname', 'photoURL', 'schoolDomain', 'department', 'admissionYear'];
+    }
+
+    // 🔑 どのフィールドも「無ければ素通り、あれば形を見る」。merge 書き込みでは
+    //    request.resource.data が **合成後の文書全体** になるので、古い文書に
+    //    nickname が無くても更新を塞がない形にしてある。
+    //    nickname の 20 は src/data/limits.ts の NICKNAME_MAX（isValidAnonymity と同じ値）。
+    //
+    // 🔴 photoURL を https だけに絞る理由: 今はどの画面も書いていない
+    //    （userService.updatePhotoURL に呼び出しが無い）が、値は友達リスト・
+    //    招待リンク画面でそのまま <img> / Image の uri になる。任意の URL を
+    //    入れられると、そのプロフィールを見た人の IP と UA が URL の持ち主へ渡る
+    //    ＝ 追跡ピクセル。プライバシーポリシーの「第三者提供は Google/Firebase のみ」
+    //    に反するので、ルール側で止める。
+    //    🔑 画像アップロードを入れるときは Storage のホストまで絞るとさらに良い。
+    function isValidPublicProfile() {
+      let d = request.resource.data;
+      return (!('nickname' in d)
+               || (d.nickname is string && d.nickname.size() > 0 && d.nickname.size() <= 20))
+        && (d.get('photoURL', null) == null
+             || (d.photoURL is string && d.photoURL.size() <= 500
+                  && d.photoURL.matches('^https://.*$')))
+        && (d.get('schoolDomain', null) == null
+             || (d.schoolDomain is string && d.schoolDomain.size() <= 64))
+        && (d.get('department', null) == null
+             || (d.department is string && d.department.size() <= 64))
+        && (d.get('admissionYear', null) == null
+             || (d.admissionYear is int
+                  && d.admissionYear >= 1900 && d.admissionYear <= 2100));
+    }
+
     match /usersPublic/{uid} {
-      allow read: if isSignedIn();
-      allow create, update: if isOwner(uid) && request.resource.data.uid == uid;
+      // 🔴 list（コレクション照会）は禁止。アプリは friendships / emailIndex から uid を
+      //    得て doc(usersPublic/{uid}) を1件ずつ読むだけで、照会は一度も使わない
+      //    （src/services/userService.ts の publicDoc が唯一の読み口）。開けたままだと
+      //    初回起動で誰でも作れる匿名アカウントから **全会員の uid・ニックネーム・
+      //    学校・学部の名簿をまるごと** 取れてしまう。読み取り課金も1人で
+      //    Spark の日次上限（5万）を焼き切れる（§1-5 = その日アプリが止まる）。
+      //    学部で照会していた先輩時間割の名残り（機能は 2026-08-23 に廃止済み）。
+      //    emailIndex・operators と同じ「get だけ開ける」形に揃える。
+      allow get: if isSignedIn();
+      allow list: if false;
+
+      // 🔑 hasOnly(publicProfileKeys()) で「決めた6つ以外は書けない」ようにする。
+      //    update 側は affectedKeys にかけるので、昔の版が書いた見知らぬ
+      //    フィールドが残っていても（触らなければ）更新は通る。
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.keys().hasOnly(publicProfileKeys())
+        && 'nickname' in request.resource.data
+        && isValidPublicProfile();
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(publicProfileKeys())
+        && isValidPublicProfile();
       allow delete: if isOwner(uid);
     }
 
@@ -239,6 +299,33 @@ service cloud.firestore {
     // posts / comments / likes の権限パターンを関数化。
     // 文字数の上限は src/data/limits.ts と合わせる（本文 5000 は contentQueue と同じ）。
 
+    // ── 匿名/記名（S4-4, BOARD-ACCESS §8）──────────────────
+    // 作成時に固定。更新許可リスト（isAuthorEditOfPost / isAuthorEditOfComment）に
+    // 入れていないので、あとから匿名↔記名を切り替えることはできない。
+    // 既存文書・まだ更新していないアプリは両フィールドが無い → 匿名として扱う。
+    //
+    // 匿名なら名前を載せさせない。「匿名で出した」はずの投稿にニックネームが
+    // 残っていると、あとで表示を変えただけで本人が割れてしまう。
+    //
+    // 🔑 記名のときだけ usersPublic.nickname と一致を要求する（匿名側は get を通らない
+    //    ＝ 既定の匿名投稿では読み取り課金が増えない）。一致を見る理由は2つ:
+    //    ① ニックネーム保存時の禁止語チェック（profile.tsx）を投稿時に迂回できてしまう
+    //    ② 投稿ごとに違う名前を名乗れると「記名」＝説明責任の意味が消える
+    //    外すなら最後の == get(...) の1行だけ削ればよい（形の検証は残る）。
+    // 文字数 20 は src/data/limits.ts の NICKNAME_MAX と合わせる。
+    function isValidAnonymity() {
+      let d = request.resource.data;
+      return (!('anonymous' in d) || d.anonymous is bool)
+        && (
+          d.get('anonymous', true) == true
+            ? d.get('authorNickname', null) == null
+            : (d.authorNickname is string
+                && d.authorNickname.size() > 0
+                && d.authorNickname.size() <= 20
+                && d.authorNickname == get(/databases/$(database)/documents/usersPublic/$(request.auth.uid)).data.nickname)
+        );
+    }
+
     // 新規投稿: カウンターは 0 から（いいね 9999 の投稿を作らせない）。
     // likeCount / viewCount は学校掲示板の投稿では作成時に無いので「無いか 0」を許す。
     function isValidNewPost() {
@@ -248,7 +335,8 @@ service cloud.firestore {
         && d.get('likeCount', 0) == 0
         && d.get('commentCount', 0) == 0
         && d.get('viewCount', 0) == 0
-        && d.get('deleted', false) == false;
+        && d.get('deleted', false) == false
+        && isValidAnonymity();
     }
 
     // 検索索引(postIndex)の検証。grams は makePostGrams（src/utils/ngram.ts）が作る。
@@ -263,7 +351,8 @@ service cloud.firestore {
       let d = request.resource.data;
       return d.body is string && d.body.size() > 0 && d.body.size() <= 1000
         && d.get('likeCount', 0) == 0
-        && d.get('deleted', false) == false;
+        && d.get('deleted', false) == false
+        && isValidAnonymity();
     }
 
     // カウンターは「ちょうど ±1」だけ。以前は任意の値に書き換えられ、ベスト掲示板を操作できた。
@@ -303,12 +392,28 @@ service cloud.firestore {
         && (!changed.hasAny(['body']) || (d.body is string && d.body.size() > 0 && d.body.size() <= 5000));
     }
 
+    // コメント数: ±1 に加えて lastCommentId（このバッチで作成/削除したコメントの id）を同時に書ける。
+    // 段階1（この版・OTA 前に配備・加算のみ）: 旧アプリ（commentCount だけ）も
+    //   新アプリ（commentCount + lastCommentId）も通す。
+    // 段階2（#50・OTA 後）: lastCommentId を必須にし、
+    //   +1 は !exists(comments/lastCommentId) && existsAfter(comments/lastCommentId)、
+    //   -1 は getAfter(comments/lastCommentId).data.deleted == true
+    //   で「本当にコメントが増減したか」を見る（docs/SECURITY-1.1.md §7）。
+    //   今はコメントを書かずに +1 を繰り返せる（通知の赤丸を鳴らし続けられる）。
+    function isValidCommentCountChange() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.hasOnly(['commentCount', 'lastCommentId'])
+        && changed.hasAny(['commentCount'])
+        && isOneStep('commentCount')
+        && (!changed.hasAny(['lastCommentId']) || request.resource.data.lastCommentId is string);
+    }
+
     function canUpdatePost(likePath) {
       return isSignedIn() && (
         isAuthorEditOfPost() ||
         // いいね数・コメント数・閲覧数のカウンター更新は他ユーザー操作でも発生
         isValidLikeCountChange(likePath) ||
-        (changedOnly('commentCount') && isOneStep('commentCount')) ||
+        isValidCommentCountChange() ||
         // 閲覧数は「ちょうど+1」のみ許可する。affectedKeys だけ見ると任意の値に
         // 書き換えられる（水増し・0埋め）ため。既存文書は viewCount 欠落なので get で既定0。
         (

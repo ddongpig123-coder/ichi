@@ -41,6 +41,9 @@ import type { Theme } from "../../../src/theme/themes";
 import { friendlyErrorBody } from "../../../src/utils/writeError";
 import { notify } from "../../../src/utils/dialog";
 import { COMMENT_MAX } from "../../../src/data/limits";
+import { addScrap, isScrapped, removeScrap } from "../../../src/services/scrapService";
+import { scrapKey } from "../../../src/types/scrap";
+import { recordCommentedPost } from "../../../src/services/commentedPostsStore";
 import LoadError from "../../../src/components/common/LoadError";
 import { LOUNGES, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
 
@@ -99,6 +102,9 @@ export default function LoungePostDetailScreen() {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [liking, setLiking] = useState(false);
+  // スクラップ（users/{uid}/scraps）。開いたときに 1 回だけ有無を読む
+  const [scrapped, setScrapped] = useState(false);
+  const [scrapBusy, setScrapBusy] = useState(false);
   // commentId を持つときはコメント対象（削除の分岐に使う）
   const [modTarget, setModTarget] = useState<
     | {
@@ -151,6 +157,9 @@ export default function LoungePostDetailScreen() {
     ]).then(([p, _c, isLiked]) => {
       const mine = p as LoungePost | null;
       setPost(mine);
+      if (mine && user) {
+        isScrapped(user.uid, scrapKey("lounge", loungeId as string, postId)).then(setScrapped).catch(() => {});
+      }
       setLiked(isLiked as boolean);
       setLikeCount(mine?.likeCount ?? 0);
       // 自分の投稿を開いたら「新着コメント」の赤丸を消す
@@ -261,6 +270,35 @@ export default function LoungePostDetailScreen() {
     await submitComment();
   }
 
+  // スクラップ（ブックマーク）の付け外し。板名・タイトルの写しを users/{uid}/scraps に置く
+  async function toggleScrap() {
+    if (!user || !post || scrapBusy) return;
+    setScrapBusy(true);
+    const key = scrapKey("lounge", loungeId as string, postId);
+    try {
+      if (scrapped) {
+        await removeScrap(user.uid, key);
+        setScrapped(false);
+      } else {
+        const meta = LOUNGES.find((l) => l.id === loungeId);
+        await addScrap(user.uid, {
+          kind: "lounge",
+          boardId: loungeId as string,
+          postId,
+          schoolDomain: null,
+          title: post.title,
+          boardLabel: meta?.label ?? (loungeId as string),
+          boardLabelKo: meta?.labelKo ?? meta?.label ?? (loungeId as string),
+        });
+        setScrapped(true);
+      }
+    } catch (e: any) {
+      notify(t("post.scrapFailed"), friendlyErrorBody(e, t));
+    } finally {
+      setScrapBusy(false);
+    }
+  }
+
   async function submitComment() {
     if (!user) return;
     setBannedWords([]);
@@ -270,6 +308,19 @@ export default function LoungePostDetailScreen() {
         loungeId as LoungeId, postId, user.uid, commentText.trim(),
         reply?.rootId ?? null, mention?.uid ?? null
       );
+      // 「コメントした投稿」（端末ローカル）に記録
+      {
+        const meta = LOUNGES.find((l) => l.id === loungeId);
+        recordCommentedPost({
+          kind: "lounge",
+          boardId: loungeId as string,
+          postId,
+          schoolDomain: null,
+          title: post?.title ?? "",
+          boardLabel: meta?.label ?? (loungeId as string),
+          boardLabelKo: meta?.labelKo ?? meta?.label ?? (loungeId as string),
+        });
+      }
       await loadComments();
       setCommentText("");
       setReply(null);
@@ -461,6 +512,16 @@ export default function LoungePostDetailScreen() {
               <Text style={[styles.likeBtnText, liked && styles.likeBtnTextActive]}>
                 <Ionicons name={liked ? "heart" : "heart-outline"} size={15} color={liked ? theme.accent : theme.textSecondary} />{" "}
                 {likeCount}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.likeBtn, scrapped && styles.likeBtnActive]}
+              onPress={toggleScrap}
+              disabled={scrapBusy}
+            >
+              <Text style={[styles.likeBtnText, scrapped && styles.likeBtnTextActive]}>
+                <Ionicons name={scrapped ? "bookmark" : "bookmark-outline"} size={15} color={scrapped ? theme.accent : theme.textSecondary} />{" "}
+                {t("post.scrap")}
               </Text>
             </TouchableOpacity>
           </View>
