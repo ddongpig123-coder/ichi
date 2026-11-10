@@ -86,3 +86,25 @@
 - Recraft 스타일 참조: [Recraft 블로그](https://www.recraft.ai/blog/best-ai-image-generators) · [mindstudio 비교](https://www.mindstudio.ai/blog/recraft-v4-vs-imagen-3-vs-midjourney-v8-design-comparison) · [eesel](https://www.eesel.ai/blog/canva-craft-alternatives)
 - Higgsfield 요금·성격: [Krea 정리](https://www.krea.ai/blog/higgsfield-pricing-explained-2026-unlimited-credits-and-real-monthly-costs) · [hackceleration 리뷰](https://hackceleration.com/labs/review/higgsfield) · [HeyGen 정리](https://www.heygen.com/blog/higgsfield-pricing)
 - 일본 릴스 도구: [PerfectCorp](https://www.perfectcorp.com/ja/consumer/blog/video-editing/instagram-reels-guide-video-app) · [istep Edits/Canva](https://istep.click/news_blog/5576) · [remolabo](https://remolabo.co.jp/magazine/10875/)
+
+---
+
+## 7. 🆕 Higgsfield MCP 「무료 무제한」 프로모션 검토 (2026-11-10, 준희가 공유한 링크)
+
+준희가 공유한 안내(인플루언서 노션 + higgsfield.ai/mcp)는 이 세션 네트워크에서 직접 열리지 않아 **공식 X 게시물·헬프센터·제3자 가이드로 확인**했다.
+
+| 항목 | 확인된 내용 |
+|---|---|
+| 내용 | 11/9 발표. Higgsfield MCP **72시간 무료 체험**, 영상·이미지·오디오 상위 모델 「무제한」 |
+| 🔴 함정 1 | **체험 종료 후 자동으로 Higgsfield Ultra 유료 전환**(첫 달 40% 할인). 취소 안 하면 과금 |
+| 🔴 함정 2 | Higgsfield 자체 헬프센터: **「무제한·무료 생성은 higgsfield.ai 웹에서만. MCP·CLI로 만든 건 정규 크레딧 차감」** — 즉 Claude에서 쓰면 무제한이 아닐 수 있다 (출처 간 충돌, 공식 문서 쪽을 신뢰) |
+| 연결 | claude.ai/데스크톱: 설정 → 커넥터 → 커스텀 커넥터 `https://mcp.higgsfield.ai/mcp` (Higgsfield 유료 플랜 필요). Claude Code는 공식적으로 Higgsfield CLI 경로 |
+| 모델 | Nano Banana·Kling·Seedance·Veo 등을 한 곳에서 쓰는 **모음 플랫폼** — §2의 그림 후보(Nano Banana 등)가 여기 들어 있다 |
+
+### 판단
+- **지금 바로 체험을 시작하지 않는다.** 72시간이 흘러가는데, 기준이 될 **준희 예시가 아직 없어서** 뽑아도 버릴 가능성이 크다
+- **쓸 가치가 있는 순간 = 예시를 받고 스타일이 정해진 직후.** 그때 체험을 켜고 **웹(higgsfield.ai)에서** 3일 안에 카드 그림·배경을 30~50장 몰아서 뽑아 두고, **72시간 전에 취소**한다 (MCP로 뽑으면 크레딧이 깎일 수 있으니 웹에서)
+- 릴스용 AI 영상(Kling·Veo)은 여전히 우선순위 아님 — 우리 릴스는 글자+BGM이고, 인물 생성 불허 원칙과도 충돌
+- 체험을 켜는 날 **취소 알림을 같이 건다** (Claude에게 「〇시간 뒤 알려줘」)
+
+출처: [Higgsfield 공식 X — 72시간 체험](https://x.com/higgsfield/status/2119884452054937656) · [자동 갱신 조건](https://x.com/higgsfield/status/2119884460577726915) · [헬프센터: Higgsfield MCP란](https://higgsfield.ai/creator-hub/help-center/integrations/what-is-higgsfield-mcp) · [헬프센터: Claude 연결](https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent) · [layer3labs: 크레딧 함정](https://www.layer3labs.io/guides/higgsfield-mcp) · [pasqualepillitteri 정리](https://pasqualepillitteri.it/en/news/31553/higgsfield-free-72-hour-trial-claude-fable-5-2)
