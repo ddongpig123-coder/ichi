@@ -457,27 +457,41 @@ service cloud.firestore {
     //    文書を指せてしまい、「コメントの いいね文書 を作って commentCount を +1」が通る
     //    （id = 'realComment/likes/myUid' で !exists && existsAfter が成立してしまう）。
     // 🔑 exists/get は同じパスなら評価ごとにキャッシュされるので、読み取りは増えない。
-    // 🔴 段階2（lastCommentId を必須にして「本当にコメントが増減したか」を見る）は
-    //    **別PR に分けた**。ストア版に内蔵のコードが lastCommentId を送らないからだ
-    //    （iOS ビルド5 = 2026-11-02 の 6ba8c4b。lastCommentId は 11-06 の c8f8857 で入った）。
-    //    OTA は「受け取って **次の起動** から適用」なので、OTA が行き渡っても
-    //    **新規インストール直後の初回起動は内蔵コードで動く** → その人はコメントが書けない。
-    //    次のストアビルドは 1.2（2027-01 末提出）なので、そこまでこの段階1のまま運用する。
-    //    （OTA-2026-11 §0 / SECURITY-1.1 §7）
-    function isValidCommentCountChange() {
+    // 🔴 **배포 조건: 1.2 스토어 빌드가 승인·배포된 뒤.** OTA 가 퍼지는 것만으로는 부족하다.
+    //    lastCommentId 는 c8f8857(2026-11-06)에서 들어갔고, 지금 스토어에 있는 iOS 빌드5
+    //    (6ba8c4b, 11-02)의 내장 코드는 이 필드를 보내지 않는다. OTA 는 「받아 두고 다음
+    //    실행부터」라서, **새로 설치한 사람의 첫 실행은 내장 코드로 돈다** → 그 사람은
+    //    첫 실행에서 댓글을 못 단다(두 번째 실행부터 정상). OTA-2026-11 §0.
+    //    1.2 제출 예정은 2027-01 말(ROADMAP-1.1 §5) — 그 빌드가 스토어에 깔린 뒤 배포할 것.
+    function isValidCommentCountChange(commentsPath) {
       let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let before = resource.data.get('commentCount', 0);
+      let after = request.resource.data.get('commentCount', 0);
+      let id = request.resource.data.get('lastCommentId', '');
       return changed.hasOnly(['commentCount', 'lastCommentId'])
         && changed.hasAny(['commentCount'])
-        && isOneStep('commentCount')
-        && (!changed.hasAny(['lastCommentId']) || request.resource.data.lastCommentId is string);
+        && id is string
+        && id.matches('^[A-Za-z0-9_-]{1,64}$')
+        && (
+          // +1: このバッチで新しく作られたコメントの分だけ（createComment のバッチ）
+          (after == before + 1
+            && !exists(path(commentsPath + '/' + id))
+            && existsAfter(path(commentsPath + '/' + id)))
+          ||
+          // -1: このトランザクションで deleted が false→true になったコメントの分だけ
+          //     （softDeleteComment）。下限 0 — 0 から下げられない
+          (after == before - 1 && after >= 0
+            && get(path(commentsPath + '/' + id)).data.get('deleted', false) == false
+            && getAfter(path(commentsPath + '/' + id)).data.get('deleted', false) == true)
+        );
     }
 
-    function canUpdatePost(likePath) {
+    function canUpdatePost(likePath, commentsPath) {
       return isSignedIn() && (
         isAuthorEditOfPost() ||
         // いいね数・コメント数・閲覧数のカウンター更新は他ユーザー操作でも発生
         isValidLikeCountChange(likePath) ||
-        isValidCommentCountChange() ||
+        isValidCommentCountChange(commentsPath) ||
         // 閲覧数は「ちょうど+1」のみ許可する。affectedKeys だけ見ると任意の値に
         // 書き換えられる（水増し・0埋め）ため。既存文書は viewCount 欠落なので get で既定0。
         (
@@ -512,7 +526,9 @@ service cloud.firestore {
       match /boards/{boardId}/posts/{postId} {
         allow read: if isSignedIn();
         allow create: if canWriteContent() && isAuthor() && belongsToSchool(schoolDomain) && isValidNewPost();
-        allow update: if canUpdatePost(/databases/$(database)/documents/schools/$(schoolDomain)/boards/$(boardId)/posts/$(postId)/likes/$(request.auth.uid));
+        allow update: if canUpdatePost(
+          /databases/$(database)/documents/schools/$(schoolDomain)/boards/$(boardId)/posts/$(postId)/likes/$(request.auth.uid),
+          '/databases/' + database + '/documents/schools/' + schoolDomain + '/boards/' + boardId + '/posts/' + postId + '/comments');
         // 物理削除は禁止（MODERATION.md §1）: 削除は deleted:true フラグ(=update)で行い、
         // authorUid 等の記録を残す。ハード削除を許すと法的対応の証跡が消えるため。
         allow delete: if false;
@@ -636,7 +652,9 @@ service cloud.firestore {
     match /lounges/{loungeId}/posts/{postId} {
       allow read: if isSignedIn();
       allow create: if canWriteContent() && isAuthor() && isValidNewPost();
-      allow update: if canUpdatePost(/databases/$(database)/documents/lounges/$(loungeId)/posts/$(postId)/likes/$(request.auth.uid));
+      allow update: if canUpdatePost(
+        /databases/$(database)/documents/lounges/$(loungeId)/posts/$(postId)/likes/$(request.auth.uid),
+        '/databases/' + database + '/documents/lounges/' + loungeId + '/posts/' + postId + '/comments');
       allow delete: if false; // 物理削除禁止（MODERATION.md §1、学校掲示板と同じ）
 
       match /comments/{commentId} {
