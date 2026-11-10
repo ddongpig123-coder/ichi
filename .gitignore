@@ -69,3 +69,11 @@ docs/test-content/
 # 기본 출력 경로는 저장소 밖이지만, --out 을 잘못 줘서 안에 떨어뜨렸을 때의 안전망.
 ichi-backup/
 *.jsonl
+
+# 카드뉴스 그림 슬롯용 사진 (준희가 찍은 캠퍼스 사진 등) — 공개 저장소라 커밋하지 않는다.
+# 원본은 Canva 라이브러리와 로컬에만 둔다. assets/README.md 참조
+scripts/cardnews/assets/*.jpg
+scripts/cardnews/assets/*.jpeg
+scripts/cardnews/assets/*.png
+scripts/cardnews/assets/*.webp
+scripts/cardnews/assets/*.heic
