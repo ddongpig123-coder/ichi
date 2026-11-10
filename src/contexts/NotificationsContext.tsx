@@ -18,6 +18,12 @@ import { fetchMyPosts, myPostKey, type MyPostItem } from "../services/myPostsSer
 
 const SEEN_KEY = "ichi:seenCommentCounts";
 
+// 「自分の投稿」の新着コメント確認の最短間隔（タブ切替・アプリ復帰のとき）。
+// 1回の確認 = 掲示板の数（≒17）だけクエリが出て、結果0件でも1件ずつ読み取り課金になる。
+// 30 秒だと、タブを行き来するだけで1人1時間に数百読み取りになり、Spark の日次上限（5万）を
+// 圧迫するので 5 分にした（2026-11-10）。「自分の投稿」画面を開いたとき・引っぱって更新は常に取得。
+export const MY_POSTS_REFRESH_INTERVAL_MS = 5 * 60_000;
+
 interface NotificationsValue {
   unreadChatCount: number;
   markChatAsRead: (chatId: string) => void;
@@ -121,7 +127,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   // 以前は起動時と「自分の投稿」を開いた時だけで、赤丸が付くのはアプリを立ち上げ直した時だった。
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") refreshMyPosts({ minIntervalMs: 30_000 });
+      if (state === "active") refreshMyPosts({ minIntervalMs: MY_POSTS_REFRESH_INTERVAL_MS });
     });
     return () => sub.remove();
   }, [refreshMyPosts]);

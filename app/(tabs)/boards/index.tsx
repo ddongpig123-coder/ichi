@@ -8,7 +8,7 @@ import { useBlock } from "../../../src/contexts/BlockContext";
 import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
-import { useNotifications } from "../../../src/contexts/NotificationsContext";
+import { MY_POSTS_REFRESH_INTERVAL_MS, useNotifications } from "../../../src/contexts/NotificationsContext";
 import SchoolPrompt from "../../../src/components/common/SchoolPrompt";
 import PostListRow from "../../../src/components/boards/PostListRow";
 import type { Theme } from "../../../src/theme/themes";
@@ -63,7 +63,7 @@ export default function BoardsHomeScreen() {
   // タブを開くたびに静かに最新化（60 秒以内はキャッシュ）。初回だけスピナー
   useFocusEffect(
     useCallback(() => {
-      refreshMyPosts({ minIntervalMs: 30_000 });
+      refreshMyPosts({ minIntervalMs: MY_POSTS_REFRESH_INTERVAL_MS });
       load().finally(() => setLoading(false));
     }, [load, refreshMyPosts])
   );
