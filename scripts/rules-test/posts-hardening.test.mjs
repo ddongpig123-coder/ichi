@@ -109,20 +109,19 @@ await t("조작: 좋아요 문서가 있어도 +5 → 거부", (async () => {
 })());
 await t("조작: 작성자도 자기 글 좋아요를 임의 값으로 → 거부", assertFails(updateDoc(doc(author, BOARD_POST), { likeCount: 500 })));
 await t("조작: 좋아요와 제목을 동시에 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(1), title: "x" })));
-// ── 댓글 수 게이트 (단계2 · SECURITY-1.1 §7) ──
-// 단계1은 commentCount 만 ±1 이면 통과시켰다 → 댓글을 안 써도 올리고 내릴 수 있었고,
-// NotificationsContext 가 그 수로 빨간 점을 켜므로 알림을 영구히 울릴 수 있었다.
-// 단계2는 lastCommentId 로 「이 쓰기에서 진짜 댓글이 생겼/지워졌나」를 본다.
-// 🔴 구앱(lastCommentId 없음)은 여기서부터 거부된다 → OTA 뒤에 배포해야 하는 이유
+// ── 댓글 수 게이트 (단계1 · SECURITY-1.1 §7) ──
+// 🔴 단계2(lastCommentId 필수)는 **별 PR 로 분리**했다. 스토어판 내장 코드가
+//    lastCommentId 를 안 보내서(iOS 빌드5 = 11-02), 지금 넣으면 **새로 설치한 사람의
+//    첫 실행**에서 댓글이 안 써진다. 다음 스토어 빌드는 1.2(2027-01 말) — OTA-2026-11 §0.
+//    여기(단계1)는 「±1 이고 다른 필드는 못 건드린다」까지만 본다.
 const comment = (postPath, id) => `${postPath}/comments/${id}`;
-// 새 댓글 + 카운터 +1 을 한 배치로 (boardService.createComment)
+// 새 댓글 + 카운터 +1 을 한 배치로 (boardService.createComment — 새 앱)
 function addComment(db, postPath, id, extra = {}) {
   const b = writeBatch(db);
   b.set(doc(db, comment(postPath, id)), { postId: "p1", body: "c", authorUid: "reader", parentId: null, mentionUid: null, likeCount: 0, createdAt: serverTimestamp() });
   b.update(doc(db, postPath), { commentCount: increment(1), lastCommentId: id, ...extra });
   return b.commit();
 }
-// 소프트 삭제 + 카운터 -1 을 한 배치로 (softDeleteComment 는 트랜잭션이지만 규칙에는 동일)
 function delComment(db, postPath, id) {
   const b = writeBatch(db);
   b.update(doc(db, comment(postPath, id)), { deleted: true, deletedAt: 1 });
@@ -131,32 +130,22 @@ function delComment(db, postPath, id) {
 }
 
 await t("조작: 댓글 수 임의 값 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { commentCount: 100 })));
-await t("🔴 구앱: lastCommentId 없이 +1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1) })));
-await t("조작: 댓글 없이 id 만 붙여 +1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1), lastCommentId: "ghost" })));
-await t("조작: 남이 이미 쓴 댓글 id 로 +1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1), lastCommentId: "c1" })));
-// 🔑 id 에 '/' 를 넣으면 comments/{id} 가 아닌 문서를 가리킬 수 있다.
-//    댓글의 좋아요 문서를 만들면서 +1 → 문자 제한이 없으면 통과해버린다
-await t("조작: id 에 '/' 를 넣어 좋아요 문서로 우회 → 거부", assertFails((() => {
-  const b = writeBatch(reader);
-  b.set(doc(reader, `${comment(BOARD_POST, "c1")}/likes/reader`), { uid: "reader" });
-  b.update(doc(reader, BOARD_POST), { commentCount: increment(1), lastCommentId: "c1/likes/reader" });
-  return b.commit();
-})()));
 await t("조작: 댓글 수와 제목을 동시에 → 거부", assertFails(addComment(reader, BOARD_POST, "cx", { title: "x" })));
-
-await t("정상: 댓글 + 카운터 +1 (batch)", assertSucceeds(addComment(reader, BOARD_POST, "cnew")));
+await t("정상: 댓글 + 카운터 +1 (새 앱 batch)", assertSucceeds(addComment(reader, BOARD_POST, "cnew")));
 await t("정상: 숲도 동일", assertSucceeds(addComment(reader, LOUNGE_POST, "lcnew")));
-await t("조작: 삭제 안 된 댓글 id 로 -1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1), lastCommentId: "c1" })));
-await t("조작: 남의 댓글을 지우면서 -1 → 거부(댓글 쪽에서 막힘)", assertFails(delComment(reader, BOARD_POST, "c1")));
 await t("정상: 소프트 삭제 + 카운터 -1 (batch)", assertSucceeds(delComment(reader, BOARD_POST, "cnew")));
-// 여기서 학교 글의 commentCount 는 0. 하한 ① 검증
-await t("조작: 0 에서 -1 → 거부 (하한)", assertFails((async () => {
-  await addComment(reader, BOARD_POST, "c3");   // 1
-  await delComment(reader, BOARD_POST, "c3");   // 0
-  await addComment(reader, BOARD_POST, "c4");   // 1
-  await delComment(reader, BOARD_POST, "c4");   // 0 — 여기까지는 정상
-  await delComment(reader, BOARD_POST, "c4");   // 0 → -1 : 거부돼야 한다
-})()));
+// 🔑 **스토어판 내장 코드(lastCommentId 없음)가 통해야 한다.** 이게 막히면
+//    새로 설치한 사람이 첫 실행에서 댓글을 못 단다 — 단계2 를 분리한 이유 그 자체
+await t("구앱: lastCommentId 없이 +1 → 통과(단계1)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1) })));
+await t("구앱: lastCommentId 없이 -1 → 통과(단계1)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1) })));
+// 🔴 **단계1 이 남기는 구멍을 일부러 기록해 둔다.** 댓글을 안 써도 카운터를 올릴 수 있고,
+//    NotificationsContext 가 그 수로 빨간 점을 켜므로 알림을 계속 울릴 수 있다.
+//    단계2 PR 에서 이 두 줄이 assertFails 로 뒤집힌다 = 그 PR 이 실제로 막았다는 증거
+await t("⚠️ 단계1 한계: 댓글 없이 id 만 붙여 +1 이 통과한다", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1), lastCommentId: "ghost" })));
+await t("⚠️ 단계1 한계: 남이 쓴 댓글 id 로도 +1 이 통과한다", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1), lastCommentId: "c1" })));
+// isOneStep 때문에 ±1 씩만 — 위에서 2 올렸으니 두 번 내린다
+await t("정리: 올린 만큼 되돌린다 (1/2)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1) })));
+await t("정리: 올린 만큼 되돌린다 (2/2)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1) })));
 await t("조작: 남의 글 제목 변경 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { title: "x" })));
 
 // ── 댓글 좋아요 ──
