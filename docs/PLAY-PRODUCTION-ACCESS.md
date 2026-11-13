@@ -139,11 +139,43 @@ students. Everything is in Japanese, with Korean available, and moderation is bu
       대시보드 작업에 떠 있으면 먼저 완료. 무료·판매 없음이라 보통 「판매자 아님(개인)」이지만 화면의 정의대로 선택
 - [x] Play Console 프로덕션 페이지에 「14일 충족」 표시 확인
 - [x] 위 §0(300자판)을 해당 문항에 붙여넣기 → **✅ 2026-11-09 22:26 JST 제출, 「검토 중」**
-- [ ] 결과(보통 7일 이내 → **~11/16**)는 계정 소유자 Gmail. 거절이면 사유 화면을 Claude에게
+- [x] 결과 → **✅ 2026-11-11 07:16 JST 승인 메일** (「Google Play の本番環境へのアクセスが承認されました」)
 - [ ] 결과 나올 때까지 **테스터 12명 유지**(심사 중 재확인될 수 있음)
 
-## 승인 후 (프로덕션 출시)
-- 비공개 테스트(`alpha`)의 현재 릴리스를 **프로덕션으로 승격** — 새 빌드 불필요. 그 AAB는 커밋 `159a5b3`(S2/S3 이전)이지만
-  런타임 1.0.0이라 설치 직후 production 채널의 최신 OTA를 받는다
-- 스토어 등록정보(설명·스크린샷·데이터 보안·콘텐츠 등급) 최종 확인 → 국가: 일본(+원하면 한국)
-- 출시 후 `docs/MY-TASKS.md` 📍에 날짜 기록
+## 승인 후 (프로덕션 출시) — 🔴 2026-11-13 변경: **새 AAB를 빌드해서 올린다** (승격 아님)
+
+~~비공개 테스트의 현재 릴리스를 그대로 승격, 새 빌드 불필요~~ → **폐기.** 그 AAB(버전 코드 2)는 커밋 `159a5b3`(10/25) 코드다.
+OTA는 「받아 두고 **다음 실행**부터 적용」이라 **새로 설치한 사람의 첫 실행은 10/25 코드로 돈다**(OTA-2026-11 §0):
+옛 화면(이모지·옛 게시판 탭), 쪽지는 옛 경로(상대에게 안 보임), 11/13 배포 규칙(#50)에서 친구 수락이 실패한다.
+첫인상이 깨지므로 **master로 새로 빌드**한다. 런타임은 그대로 1.0.0이라 OTA는 계속 닿는다.
+
+1. **[Claude] 이번 빌드에 넣을 네이티브 설정** — `app.json` `android.blockedPermissions: ["com.google.android.gms.permission.AD_ID"]`
+   (앱 콘텐츠에 「광고 ID 미사용」으로 신고했는데 라이브러리가 권한을 끼워 넣는 것을 막는다. `expo prebuild` 로
+   매니페스트에 `tools:node="remove"` 가 들어가는 것 확인). R8 최적화는 기한 2027-02 라 이번엔 안 켠다
+2. **[준희 맥] 빌드** (15~30분, 버전 코드는 EAS 가 자동으로 올림 → 3):
+   ```
+   cd ~/ichi && git checkout master && git pull
+   eas build --platform android --profile production
+   ```
+   키스토어 질문이 나오면 기존 것 사용(기본값). 끝나면 나오는 링크에서 `.aab` 다운로드
+3. **[준희 Play Console] 대시보드 → 「버전 생성 및 게시」**
+   1. 국가 및 지역 선택 → **일본**(비공개 테스트와 같게 하려면 + 한국)
+   2. 새 버전 만들기 → `.aab` 업로드 → 출시 노트(아래) → 다음
+   3. 버전 미리보기 및 확인 → 경고가 있으면 Claude에게 화면 공유 → **검토를 위해 Google에 버전 전송**
+   4. Google 검토(보통 1~3일, 길면 7일) → 승인되면 게시(관리형 게시를 켜 두지 않았다면 자동)
+4. **[Claude] 출시 후**: `src/services/friendInvite.ts` `PLAY_STORE_PUBLIC = true` → 준희 `npm run deploy:web` + OTA
+   (초대 링크 웹 페이지의 「Android版は近日公開予定」 → Google Play 버튼). `docs/MY-TASKS.md` 📍에 날짜 기록
+
+출시 노트 (각 500자 이내):
+```
+<ja-JP>
+大学の森 Android版を公開しました。時間割・卒業単位の管理、大学ごとの掲示板、友達との時間割共有が使えます。
+</ja-JP>
+<ko-KR>
+大学の森 Android 버전을 공개했습니다. 시간표·졸업 학점 관리, 대학별 게시판, 친구와 시간표 공유를 이용할 수 있어요.
+</ko-KR>
+<en-US>
+大学の森 is now available on Android: timetable and graduation credit tracking, university boards, and timetable sharing with friends.
+</en-US>
+```
+- 비공개 테스트 트랙은 그대로 둬도 된다. 테스터도 더 높은 버전 코드(프로덕션 3)를 받는다
