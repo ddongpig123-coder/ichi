@@ -96,6 +96,9 @@
 | ✅ | **Higgsfield 3일 무료는 「예시 받고 켜기」** — 준희가 3일을 직접 붙잡고 있어야 해서 (준희) | [MARKETING-TOOLS §7](MARKETING-TOOLS.md) |
 | ✅ | ~~AI 생성 인물 불허 (11/04)~~ → **영상은 UGC형 연습용으로 만든다** (준희). 게시 여부는 나중에 결정, 연습 단계에선 규제 조건 없음. 구체 대본은 공개 저장소에 안 씀 | [MARKETING-VIDEO-PLAN §3](MARKETING-VIDEO-PLAN.md) |
 | ✅ | 모델 운용: 기획·대본·게시는 **Opus 5.5**, Higgsfield 3일 스프린트(생성·비교·조립)만 **Fable 5.2** | [MARKETING-VIDEO-PLAN §2](MARKETING-VIDEO-PLAN.md) |
+| ✅ | **카드 스타일 v2 = 준희 예시 4장 기준** — 사람·캐릭터 주인공, 밝은 파스텔(핑크 vs 블루), 굵은 둥근 제목+키워드 색, 제목 3단 위계, 번호 그리드, 댓글 유도. 「AI 느낌이어도 **고퀄**이면 OK, 직접 찍은 사진 없어도 OK」(준희) | [MARKETING §3-3](MARKETING.md) |
+| ✅ | **카드에도 AI 생성 인물·캐릭터 허용** (11/13 영상 결정을 카드로 확대). 실존 인물을 닮게 하지 않는다 | 同上 |
+| ✅ | 카드 제작 방식: **이미지 모델로 카드 통째 생성**(Nano Banana Pro·GPT Image) → 글자 오류만 Canva로 수정. Recraft+Canva 레이아웃안은 보류 | 同上 |
 
 ## 2026-11-05 (iOS 심사 대기 중 — S4 선행 결정)
 
@@ -200,10 +203,11 @@
 | ~~3~~ | ~~유학생의 숲 입장 조건~~ → ✅ **전원 개방** (2026-11-05 준희) | 준희 | — | [BOARD-ACCESS §4-2](BOARD-ACCESS.md) |
 | ~~4~~ | ~~게시판 여는 순서~~ → ✅ **4종 한 번에** (2026-11-05 준희, 시딩 선행) | 준희 | — | [BOARD-ACCESS §7-5](BOARD-ACCESS.md) |
 | 5 | QA #3 **「マーケティング」이 어느 화면이었나** | 준희 | 기억나면 | [QA-FEEDBACK §3](QA-FEEDBACK.md) |
-| 6 | 「美人多くない？」류 **자극적 소재 방침** — 대체안 수용 여부 | 준희 | 📌 **보류 (2026-11-03 준희)** — 앱 심사 뒤 따로 정한다 | [CONTENT-OPS §6](CONTENT-OPS.md) |
+| 6 | 「美人多くない？」류 **자극적 소재 방침** — 대체안 수용 여부 | 준희 | 🔴 **지금 정할 때** — 11/06 심사 통과. 준희 예시 ④(체형 순위)가 이 유형 | [CONTENT-OPS §6](CONTENT-OPS.md) |
 | ~~7~~ | ~~Canva 카드뉴스 템플릿 — 직접 / 외주~~ → ✅ **자체 생성기(`scripts/cardnews/`)로 확정** (2026-11-04). 다음은 v1 템플릿 구현 | 준희 | — | [MARKETING §3-1](MARKETING.md) |
+| 13 | **마스코트 캐릭터 만들까** (숲의 동물 하나 — 권장) | 준희 | 기획(단계 2) 전 | [MARKETING-VIDEO-PLAN §6](MARKETING-VIDEO-PLAN.md) |
 | 11 | 밸런스 게임 **앱 투표 기능·사진 게시** 시기 (1.1 기능 동결 12/08이라 1.2 이후) | 준희 | 1.2 계획 때 | [MARKETING-2026-11 §5](MARKETING-2026-11.md) |
-| 12 | **카드 제작 도구 최종 결정** — Canva 생성 카드도 「AI 티·칙칙한 색」(11/06 준희). 잠정안 = Recraft 그림 + Canva 레이아웃 + CapCut 릴스. **준희 예시 3~5장 받은 뒤 테스트로 확정** | 준희 → Claude | 예시 받는 대로 | [MARKETING-TOOLS](MARKETING-TOOLS.md) |
+| ~~12~~ | ~~**카드 제작 도구 최종 결정**~~ → ✅ 11/13 예시로 결정(위 표) · 실제 품질은 Higgsfield 체험에서 확인 — Canva 생성 카드도 「AI 티·칙칙한 색」(11/06 준희). 잠정안 = Recraft 그림 + Canva 레이아웃 + CapCut 릴스. **준희 예시 3~5장 받은 뒤 테스트로 확정** | 준희 → Claude | 예시 받는 대로 | [MARKETING-TOOLS](MARKETING-TOOLS.md) |
 | 13 | **계정 삭제 후 글·댓글을 숨길지(삭제 표시) / 익명으로 남길지** — 지금은 남는다. 삭제 안내 페이지·앱 경고 문구와 한쪽으로 맞춰야 한다 | 준희 | 12/08 전 | `docs/legal/delete-account.html` · `account.deleteWarn` |
 | 8 | 理工·情コミ 便覧 — 학생에게 PDF 받기 추진 여부 | 준희 | 테스터 모집과 겸함 | [COLLAB §10-2](COLLAB-DATA-TAEHUI.md) |
 | ~~9~~ | ~~콘텐츠 봇 실행 위치~~ → ✅ **별도 비공개 저장소** (2026-10-30) | 준희 | — | [CONTENT-OPS §9-3](CONTENT-OPS.md) |
