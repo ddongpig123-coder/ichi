@@ -119,6 +119,12 @@ service cloud.firestore {
     // users/{uid} 本体は本人のみ読めるため、他ユーザーに見せてよい情報
     // （ニックネーム・写真・学校・学部）だけをここに複製する。
     // GPA等の学業情報は絶対にここへ書かないこと。
+    // 🔴 このリストを縮めるとき（2026-11-10 の #98 で学校・学部・入学年度はもう書かない）は
+    //    **消す書き込みも affectedKeys に乗る** ことに注意。3つを外すと
+    //    ensureUserProfile の後片付け（deleteField）まで拒否され、古い文書が永久に残る。
+    //    順番: scripts/strip-public-profile.mjs が 0 件を返す → 旧ストアビルドが
+    //    行き渡る → そのあと縮める（縮めるなら「削除だけは許す」を別に書く）。
+    //    privacy.test.mjs の「옛 소속 3필드를 지우는 정리 쓰기 → 통과」がこの安全装置。
     function publicProfileKeys() {
       return ['uid', 'nickname', 'photoURL', 'schoolDomain', 'department', 'admissionYear'];
     }
