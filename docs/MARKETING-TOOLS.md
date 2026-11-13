@@ -86,3 +86,39 @@
 - Recraft 스타일 참조: [Recraft 블로그](https://www.recraft.ai/blog/best-ai-image-generators) · [mindstudio 비교](https://www.mindstudio.ai/blog/recraft-v4-vs-imagen-3-vs-midjourney-v8-design-comparison) · [eesel](https://www.eesel.ai/blog/canva-craft-alternatives)
 - Higgsfield 요금·성격: [Krea 정리](https://www.krea.ai/blog/higgsfield-pricing-explained-2026-unlimited-credits-and-real-monthly-costs) · [hackceleration 리뷰](https://hackceleration.com/labs/review/higgsfield) · [HeyGen 정리](https://www.heygen.com/blog/higgsfield-pricing)
 - 일본 릴스 도구: [PerfectCorp](https://www.perfectcorp.com/ja/consumer/blog/video-editing/instagram-reels-guide-video-app) · [istep Edits/Canva](https://istep.click/news_blog/5576) · [remolabo](https://remolabo.co.jp/magazine/10875/)
+
+---
+
+## 7. 🆕 Higgsfield MCP 「무료 무제한」 프로모션 검토 (2026-11-10, 준희가 공유한 링크)
+
+준희가 공유한 안내(인플루언서 노션 + higgsfield.ai/mcp)는 이 세션 네트워크에서 직접 열리지 않아 **공식 X 게시물·헬프센터·제3자 가이드로 확인**했다.
+
+| 항목 | 확인된 내용 |
+|---|---|
+| 내용 | 11/9 발표. Higgsfield MCP **72시간 무료 체험**, 영상·이미지·오디오 상위 모델 「무제한」 |
+| 🔴 함정 1 | **체험 종료 후 자동으로 Higgsfield Ultra 유료 전환**(첫 달 40% 할인). 취소 안 하면 과금 |
+| ~~함정 2~~ 🔁 정정 (11/13) | ~~MCP로 만들면 크레딧 차감~~ → 헬프센터의 그 문구는 **일반 무제한 플랜** 얘기. **이번 프로모션은 공식 X·안내 모두 「MCP 안에서」 3일 무료·무제한**이라고 명시 → Claude에서 바로 써도 된다. 단 **신규 계정만**, 가입 화면에 3일 무료 표시가 떠야 적용 |
+| 연결 | claude.ai/데스크톱: 설정 → 커넥터 → 커스텀 커넥터 `https://mcp.higgsfield.ai/mcp` (Higgsfield 유료 플랜 필요). Claude Code는 공식적으로 Higgsfield CLI 경로 |
+| 모델 | Nano Banana·Kling·Seedance·Veo 등을 한 곳에서 쓰는 **모음 플랫폼** — §2의 그림 후보(Nano Banana 등)가 여기 들어 있다 |
+
+| 출처 보강 | 준희가 붙여준 노션 원문(인스타 @trenddalkak.ai 작성, **초대 코드가 붙은 홍보 링크** — 제휴 콘텐츠로 보고 걸러 읽음). 사례(게임·3D·전투기)는 우리와 무관 |
+| 기간 | 11/9 시작. **가입 가능 마감일은 공개된 곳에서 확인 못 함** — 늦을수록 프로모션이 끝났을 위험 |
+
+### 판단 (11/13: 「예시 받고 켜기」로 확정 — 준희)
+- **지금 바로 체험을 시작하지 않는다.** 72시간이 흘러가는데, 기준이 될 **준희 예시가 아직 없어서** 뽑아도 버릴 가능성이 크다
+- **쓸 가치가 있는 순간 = 예시를 받고 스타일이 정해진 직후.** 그때 체험을 켜고 3일 안에 몰아서 뽑은 뒤 **72시간 전에 취소**한다. MCP가 프로모션 대상이라 **Claude 대화 안에서 바로** 뽑으면 된다
+- 🟢 **우리한테 진짜 쓸모 있는 건 영상 쪽이다** — 준희 캠퍼스 사진(인물 없음)을 **이미지→영상으로 살짝 움직이게**(벚꽃 흔들림·구름 흐름) 만들어 **릴스 배경**으로 쓴다. 실사 기반이라 AI 티가 적고, 인물 생성 금지 원칙에도 안 걸린다
+
+### 우리 계정용 3일 계획 (체험 켜는 날 그대로 실행)
+| 날 | 할 것 | 결과물 |
+|---|---|---|
+| 준비(체험 전) | 준희 예시 3~5장으로 스타일 확정 · 캠퍼스 사진 5~10장 더 촬영(인물 없이) · Claude가 프롬프트 목록 작성 | 프롬프트 30개 |
+| DAY 1 | 캠퍼스 사진 → 5~8초 움직이는 영상(모델 2~3개 비교: Seedance·Kling 등) | 릴스 배경 10개 |
+| DAY 2 | 확정 스타일로 카드 그림·배경 이미지 몰아서 생성 | 카드 그림 30~50장 |
+| DAY 3 | 배경 영상 + 글자로 15초 릴스 3개 시안(글자는 CapCut/Canva에서 얹음) · **취소** | 릴스 시안 3개 |
+- ~~노션이 권하는 「UGC 광고」는 하지 않는다~~ → 🔁 **11/13 준희: UGC형은 연습용으로 만든다** (게시 여부는 나중에). 진행은 [MARKETING-VIDEO-PLAN.md](MARKETING-VIDEO-PLAN.md)
+- 체험 시작 시각을 Claude에게 말하면 **60시간 뒤 취소 알림**을 건다
+- ~~릴스용 AI 영상은 우선순위 아님~~ → 🔁 11/13 골이 「홍보 릴스·유튜브 완성」으로 정해져 영상 생성이 주력이 됐다
+- 체험을 켜는 날 **취소 알림을 같이 건다** (Claude에게 「〇시간 뒤 알려줘」)
+
+출처: [Higgsfield 공식 X — 72시간 체험](https://x.com/higgsfield/status/2119884452054937656) · [자동 갱신 조건](https://x.com/higgsfield/status/2119884460577726915) · [헬프센터: Higgsfield MCP란](https://higgsfield.ai/creator-hub/help-center/integrations/what-is-higgsfield-mcp) · [헬프센터: Claude 연결](https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent) · [layer3labs: 크레딧 함정](https://www.layer3labs.io/guides/higgsfield-mcp) · [pasqualepillitteri 정리](https://pasqualepillitteri.it/en/news/31553/higgsfield-free-72-hour-trial-claude-fable-5-2)
