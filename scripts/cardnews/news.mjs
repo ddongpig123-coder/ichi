@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // 뉴스형 카드 「キャンパス速報」 — 사진 전면 + 아래 검은 그라데이션 + 흰 굵은 3줄 제목 (2026-11-13, MARKETING §3-3 예시 ⑤)
 // 사용법: node scripts/cardnews/news.mjs scripts/cardnews/samples/news-sample.json [--out 폴더]
-// JSON: { "cards": [ { "img": "assets 안 파일명", "pos": "CSS background-position(선택)", "lines": ["1줄","2줄","「인용」"] } ] }
+// JSON: { "cards": [ { "img": "assets 안 파일명", "pos": "CSS background-position(선택)", "lines": ["1줄","2줄","「인용」"],
+//          "inset": "원형 확대 사진(선택)", "insetSide": "right|left", "insetZoom": "250%", "insetFocus": "30% 80%" } ] }
+// inset = 예시 ⑥(yabai) 의 동그란 확대 컷 — 같은 사진의 디테일을 확대하거나 다른 사진을 넣는다
 // 사진은 scripts/cardnews/assets/ 에 (git 제외). 1줄 12자 이내가 안전하다
 import { readFile, mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -22,6 +24,13 @@ const browser = await chromium.launch();
 for (const [i, c] of cards.entries()) {
   const buf = await readFile(path.resolve(here, "assets", c.img));
   const mime = c.img.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
+  let insetHtml = "";
+  if (c.inset) {
+    const ib = await readFile(path.resolve(here, "assets", c.inset));
+    const im = c.inset.toLowerCase().endsWith(".png") ? "image/png" : "image/jpeg";
+    const side = c.insetSide === "left" ? "left:56px" : "right:56px";
+    insetHtml = `<div style="position:absolute;top:520px;${side};width:330px;height:330px;border-radius:50%;border:10px solid #fff;box-shadow:0 10px 30px rgba(0,0,0,.45);background:url('data:${im};base64,${ib.toString("base64")}') ${c.insetFocus || "center"}/${c.insetZoom || "cover"} no-repeat"></div>`;
+  }
   const html = `<!doctype html><html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
 <style>*{margin:0;padding:0;box-sizing:border-box}
@@ -31,7 +40,7 @@ body{width:1080px;height:1350px;font-family:"Noto Sans JP","Hiragino Sans","IPAG
 .txt{position:absolute;left:64px;right:64px;bottom:88px;color:#fff}
 .credit{font-size:30px;font-weight:700;opacity:.85;margin-bottom:22px}
 .h{font-size:${c.size || 76}px;font-weight:900;line-height:1.32;letter-spacing:-.01em;text-shadow:0 2px 12px rgba(0,0,0,.35)}
-.h span{display:block}</style></head><body><div class="bg"></div><div class="grad"></div>
+.h span{display:block}</style></head><body><div class="bg"></div><div class="grad"></div>${insetHtml}
 <div class="txt"><div class="credit">${esc(c.credit || "@daigakunomori")}</div><div class="h">${(c.lines || []).map((l) => `<span>${esc(l)}</span>`).join("")}</div></div>
 </body></html>`;
   const page = await browser.newPage({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 1 });
