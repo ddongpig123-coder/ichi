@@ -7,7 +7,7 @@
 
 ---
 
-## 👉 지금 여기: **단계 1 후반** — 카드 예시 ✅(11/13, 5개 — 규칙은 [MARKETING §3-3](MARKETING.md), 뉴스형 템플릿 `scripts/cardnews/news.mjs`) · **릴스 예시 대기** (준희) · 결정 2개 대기(§6)
+## 👉 지금 여기: **단계 1 후반** — 카드 예시 ✅(11/13, 6개 — 규칙은 [MARKETING §3-3](MARKETING.md), 뉴스형 템플릿 `scripts/cardnews/news.mjs`) · **릴스 예시 대기** (준희) · 결정 2개 대기(§6)
 
 ---
 
