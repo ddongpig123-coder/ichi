@@ -1,0 +1,6 @@
+{
+  "cards": [
+    { "img": "campus-01-sakura-slot.jpg", "pos": "35% center", "lines": ["明治で話題の空きコマ論争", "図書館派 vs カフェ派", "「結局カフェで寝てる」"] },
+    { "img": "campus-02-terrace.jpg", "pos": "center 40%", "lines": ["新校舎のテラス席", "昼休みは争奪戦", "「12時5分にはもう満席」"] }
+  ]
+}
