@@ -86,7 +86,8 @@
       `https://ddongpig123-coder.github.io/ichi/delete-account.html`
       **Play Console 데이터 보안 → 계정 삭제 URL 교체 + 검토 제출 완료(2026-11-02)**. 앱 콘텐츠 변경은 14일 카운트와 무관.
       (`web.app` 쪽은 `npm run deploy:web` 한 번이면 반영 — 복사 목록에 등록해 둠)
-- [ ] 다음 안드로이드 빌드: `android.blockedPermissions`에 `com.google.android.gms.permission.AD_ID` / R8 코드 최적화 켜기(기한 2027-02) /
+- [x] **2026-11-11 프로덕션 액세스 승인** → 출시 절차는 [PLAY-PRODUCTION-ACCESS 「승인 후」](PLAY-PRODUCTION-ACCESS.md) (🔴 승격이 아니라 master 새 빌드)
+- [~] 다음 안드로이드 빌드: ✅ `android.blockedPermissions`에 `com.google.android.gms.permission.AD_ID`(11/13 app.json) / R8 코드 최적화 켜기(기한 2027-02, 이번엔 안 함) /
       대형 화면 방향 제한·Android 15 edge-to-edge API 경고는 Expo 업데이트 때 재확인
 
 ### 🔴 iOS 리젹 대응 (2026-10-31 Guideline 1.2 익명 UGC) — 준희가 할 것, 순서대로
