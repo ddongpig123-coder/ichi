@@ -88,6 +88,15 @@
 | ✅ | **하루 2~3개, 8~24시(일본 시간) 사이 랜덤 시각** 게시 — 매일 같은 시각이면 사람 글처럼 안 보인다 | [CONTENT-OPS §3-3](CONTENT-OPS.md) |
 | ✅ | **AI 글은 Claude API 대신 Claude 구독으로 생성** — 매주 예약된 Claude Code 세션이 20개를 써서 비공개 저장소에 올리면 Actions가 대기 목록에 넣는다. **추가 비용 0원** (준희, 비용 이유). API 생성 기능은 지우지 않고 꺼 둠 | [CONTENT-OPS §9](CONTENT-OPS.md) |
 
+## 2026-11-13 (마케팅 — 영상)
+
+| | 결정 | 상세 |
+|---|---|---|
+| ✅ | 🎯 **마케팅 골 = 홍보용 릴스 + 유튜브 영상 완성** (준희). 진행표·모델 전환 시점은 문서 하나로 관리 | [MARKETING-VIDEO-PLAN](MARKETING-VIDEO-PLAN.md) |
+| ✅ | **Higgsfield 3일 무료는 「예시 받고 켜기」** — 준희가 3일을 직접 붙잡고 있어야 해서 (준희) | [MARKETING-TOOLS §7](MARKETING-TOOLS.md) |
+| ✅ | ~~AI 생성 인물 불허 (11/04)~~ → **영상에서 UGC형(AI 인물이 소개·후기처럼 말하기) 허용** (준희). 조건: 캡션 `#PR` + 인스타 AI 라벨 + 유튜브 합성 콘텐츠 「예」 (景品表示法 ステマ規制·플랫폼 규칙) | [MARKETING-VIDEO-PLAN §3](MARKETING-VIDEO-PLAN.md) |
+| ✅ | 모델 운용: 기획·대본·게시는 **Opus 5.5**, Higgsfield 3일 스프린트(생성·비교·조립)만 **Fable 5.2** | [MARKETING-VIDEO-PLAN §2](MARKETING-VIDEO-PLAN.md) |
+
 ## 2026-11-05 (iOS 심사 대기 중 — S4 선행 결정)
 
 | | 결정 | 상세 |

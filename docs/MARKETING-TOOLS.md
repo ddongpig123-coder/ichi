@@ -104,7 +104,7 @@
 | 출처 보강 | 준희가 붙여준 노션 원문(인스타 @trenddalkak.ai 작성, **초대 코드가 붙은 홍보 링크** — 제휴 콘텐츠로 보고 걸러 읽음). 사례(게임·3D·전투기)는 우리와 무관 |
 | 기간 | 11/9 시작. **가입 가능 마감일은 공개된 곳에서 확인 못 함** — 늦을수록 프로모션이 끝났을 위험 |
 
-### 판단
+### 판단 (11/13: 「예시 받고 켜기」로 확정 — 준희)
 - **지금 바로 체험을 시작하지 않는다.** 72시간이 흘러가는데, 기준이 될 **준희 예시가 아직 없어서** 뽑아도 버릴 가능성이 크다
 - **쓸 가치가 있는 순간 = 예시를 받고 스타일이 정해진 직후.** 그때 체험을 켜고 3일 안에 몰아서 뽑은 뒤 **72시간 전에 취소**한다. MCP가 프로모션 대상이라 **Claude 대화 안에서 바로** 뽑으면 된다
 - 🟢 **우리한테 진짜 쓸모 있는 건 영상 쪽이다** — 준희 캠퍼스 사진(인물 없음)을 **이미지→영상으로 살짝 움직이게**(벚꽃 흔들림·구름 흐름) 만들어 **릴스 배경**으로 쓴다. 실사 기반이라 AI 티가 적고, 인물 생성 금지 원칙에도 안 걸린다
@@ -116,9 +116,9 @@
 | DAY 1 | 캠퍼스 사진 → 5~8초 움직이는 영상(모델 2~3개 비교: Seedance·Kling 등) | 릴스 배경 10개 |
 | DAY 2 | 확정 스타일로 카드 그림·배경 이미지 몰아서 생성 | 카드 그림 30~50장 |
 | DAY 3 | 배경 영상 + 글자로 15초 릴스 3개 시안(글자는 CapCut/Canva에서 얹음) · **취소** | 릴스 시안 3개 |
-- 🔴 노션이 권하는 **「UGC 광고」는 하지 않는다** — AI 인물이 후기처럼 말하는 영상은 인물 생성 금지·허위 후기 금지(CONTENT-OPS §3-4)에 걸린다
+- ~~노션이 권하는 「UGC 광고」는 하지 않는다~~ → 🔁 **11/13 준희: UGC형 허용.** 단 캡션 `#PR` + 플랫폼 AI 라벨 표시 (景品表示法 ステマ規制). 진행은 [MARKETING-VIDEO-PLAN.md](MARKETING-VIDEO-PLAN.md)
 - 체험 시작 시각을 Claude에게 말하면 **60시간 뒤 취소 알림**을 건다
-- 릴스용 AI 영상(Kling·Veo)은 여전히 우선순위 아님 — 우리 릴스는 글자+BGM이고, 인물 생성 불허 원칙과도 충돌
+- ~~릴스용 AI 영상은 우선순위 아님~~ → 🔁 11/13 골이 「홍보 릴스·유튜브 완성」으로 정해져 영상 생성이 주력이 됐다
 - 체험을 켜는 날 **취소 알림을 같이 건다** (Claude에게 「〇시간 뒤 알려줘」)
 
 출처: [Higgsfield 공식 X — 72시간 체험](https://x.com/higgsfield/status/2119884452054937656) · [자동 갱신 조건](https://x.com/higgsfield/status/2119884460577726915) · [헬프센터: Higgsfield MCP란](https://higgsfield.ai/creator-hub/help-center/integrations/what-is-higgsfield-mcp) · [헬프센터: Claude 연결](https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent) · [layer3labs: 크레딧 함정](https://www.layer3labs.io/guides/higgsfield-mcp) · [pasqualepillitteri 정리](https://pasqualepillitteri.it/en/news/31553/higgsfield-free-72-hour-trial-claude-fable-5-2)
