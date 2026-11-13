@@ -20,7 +20,7 @@ import {
   initializeTestEnvironment, assertSucceeds, assertFails,
 } from "@firebase/rules-unit-testing";
 import {
-  doc, collection, getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc, serverTimestamp,
+  doc, collection, getDoc, getDocs, setDoc, updateDoc, deleteDoc, addDoc, serverTimestamp, deleteField,
 } from "firebase/firestore";
 
 const env = await initializeTestEnvironment({
@@ -52,6 +52,11 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   // 🔑 옛 버전이 남긴 「지금은 쓰지 않는 필드」가 있는 문서. 이게 있어도 프로필 수정이
   //    막히지 않아야 한다(affectedKeys 로 검증하는 이유를 증명하는 장치)
   await setDoc(doc(db, "usersPublic/legacy"), { uid: "legacy", nickname: "legacy", grade: "3" });
+  // 🔑 2026-11-10 이전 버전이 공개 미러에 싣던 소속 3필드. #98 이 앱 기동 시 지운다
+  await setDoc(doc(db, "usersPublic/oldmirror"), {
+    uid: "oldmirror", nickname: "old", photoURL: null,
+    schoolDomain: SCHOOL, department: "12", admissionYear: 2024,
+  });
   await setDoc(doc(db, "friendships/alice_bob"), { participants: ["alice", "bob"], createdAt: 1 });
 
   await setDoc(doc(db, `users/alice/timetables/${SEM}`), { visibility: "private", entries: [] });
@@ -77,6 +82,7 @@ const guest = env.unauthenticatedContext().firestore();
 //    = 공격자는 앱을 한 번 켜기만 하면 이 권한을 얻는다. 명단 조회의 실제 경로
 const anon = env.authenticatedContext("anon1").firestore();
 const legacy = env.authenticatedContext("legacy").firestore();
+const oldmirror = env.authenticatedContext("oldmirror").firestore();
 
 const r = [];
 const t = async (n, p) => {
@@ -127,11 +133,20 @@ await t("🔴 usersPublic: photoURL 에 data: URI → 거부", assertFails(setDo
 await t("usersPublic: photoURL 이 https → 통과", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: "https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg" })));
 await t("usersPublic: photoURL 이 null → 통과", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: null })));
 await t("🔴 usersPublic: admissionYear 가 문자열 → 거부", assertFails(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", admissionYear: "2024" })));
-await t("usersPublic: 앱이 쓰는 형태 그대로(6필드)", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: null, schoolDomain: SCHOOL, department: "12", admissionYear: 2024 })));
+// 🔴 구 스토어 빌드(빌드5)의 온보딩은 아직 6필드를 쓴다 — 새 빌드가 깔릴 때까지 통과해야 한다
+await t("usersPublic: 구 스토어 빌드가 쓰는 형태(6필드) → 통과", assertSucceeds(setDoc(doc(bob, "usersPublic/bob"), { uid: "bob", nickname: "bob", photoURL: null, schoolDomain: SCHOOL, department: "12", admissionYear: 2024 })));
 // 🔑 옛 버전이 남긴 모르는 필드가 있어도, 그걸 건드리지 않는 수정은 통과해야 한다.
 //    안 그러면 그 유저는 프로필을 영구히 못 바꾼다 — update 를 affectedKeys 로 검증하는 이유
 await t("usersPublic: 레거시 필드가 남아 있어도 닉네임 변경은 통과", assertSucceeds(setDoc(doc(legacy, "usersPublic/legacy"), { nickname: "new" }, { merge: true })));
 await t("🔴 usersPublic: 레거시 필드를 새로 쓰는 것은 거부", assertFails(setDoc(doc(legacy, "usersPublic/legacy"), { grade: "4" }, { merge: true })));
+// ── 공개 프로필 최소화(#98, 2026-11-10) ──
+// 앱은 이제 uid·nickname·photoURL 만 쓰고, 옛 버전이 쓴 소속 3필드를 기동 시 지운다.
+// 🔴 이 두 케이스는 **규칙 화이트리스트를 좁힐 때의 안전장치**다.
+//    publicProfileKeys 에서 schoolDomain·department·admissionYear 를 빼면
+//    「지우는 쓰기」도 affectedKeys 에 걸려 거부된다 → 정리가 영원히 안 끝난다.
+//    좁히려면 strip-public-profile.mjs 가 0건을 낸 뒤에, 삭제만은 따로 허용해야 한다.
+await t("usersPublic: 앱이 쓰는 새 형태(3필드) → 통과", assertSucceeds(setDoc(doc(oldmirror, "usersPublic/oldmirror"), { uid: "oldmirror", nickname: "old", photoURL: null }, { merge: true })));
+await t("🔑 usersPublic: 옛 소속 3필드를 지우는 정리 쓰기 → 통과(#98 기동 시 정리)", assertSucceeds(updateDoc(doc(oldmirror, "usersPublic/oldmirror"), { uid: "oldmirror", schoolDomain: deleteField(), department: deleteField(), admissionYear: deleteField() })));
 
 // ── emailIndex (메일로 친구 찾기. 토큰의 메일과 일치해야 등록 가능) ──
 await t("emailIndex: 본인 메일 색인 생성", assertSucceeds(setDoc(doc(alice, `emailIndex/${ALICE_MAIL}`), { uid: "alice" })));

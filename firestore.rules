@@ -119,6 +119,12 @@ service cloud.firestore {
     // users/{uid} 本体は本人のみ読めるため、他ユーザーに見せてよい情報
     // （ニックネーム・写真・学校・学部）だけをここに複製する。
     // GPA等の学業情報は絶対にここへ書かないこと。
+    // 🔴 このリストを縮めるとき（2026-11-10 の #98 で学校・学部・入学年度はもう書かない）は
+    //    **消す書き込みも affectedKeys に乗る** ことに注意。3つを外すと
+    //    ensureUserProfile の後片付け（deleteField）まで拒否され、古い文書が永久に残る。
+    //    順番: scripts/strip-public-profile.mjs が 0 件を返す → 旧ストアビルドが
+    //    行き渡る → そのあと縮める（縮めるなら「削除だけは許す」を別に書く）。
+    //    privacy.test.mjs の「옛 소속 3필드를 지우는 정리 쓰기 → 통과」がこの安全装置。
     function publicProfileKeys() {
       return ['uid', 'nickname', 'photoURL', 'schoolDomain', 'department', 'admissionYear'];
     }
@@ -200,6 +206,8 @@ service cloud.firestore {
             || resource.data.toUid == request.auth.uid);
       allow create: if canWriteContent()
         && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid is string
+        && request.resource.data.toUid != request.auth.uid
         && request.resource.data.status == 'pending';
       // 状態変更（承認/拒否）は受信者のみ。statusフィールド以外は変更不可。
       allow update: if isSignedIn()
@@ -213,16 +221,59 @@ service cloud.firestore {
 
     // ── 友達関係（確定済み） ──────────────────────────────
     // ドキュメントID: pairId(uid1, uid2)。participants: [uid1, uid2]
-    // TODO(server): 作成はCloud Functionsに移し、accepted済みの
-    // friendRequestが存在する場合のみ許可するのが理想。
+    // 以前は片方の操作だけで作れたので、承認なしに友達になって「友達のみ」の時間割を読めてしまった。
+    // いまは次の2つのどちらかだけ:
+    //   (a) 相手からの申請を自分が承認した … isAcceptedFriendship
+    //   (b) 相手の招待リンクを自分が開いた … isInviteFriendship（docs/INVITE-LINK.md §3）
+    // ⚠️ 旧アプリは requestId も招待トークンも送らないので、1.1 の OTA が
+    //    行き渡ってから配備すること。
+    //
+    // (a) 申請の承認と同じバッチで作るので getAfter で見る（friendRequestService.acceptFriendRequest）。
+    //     requestId が無い・申請が無いと getAfter が null になり .data でエラー＝拒否（fail closed）。
+    function isAcceptedFriendship(d) {
+      let req = getAfter(/databases/$(database)/documents/friendRequests/$(d.requestId)).data;
+      return req.status == 'accepted'
+        && req.toUid == request.auth.uid
+        && d.participants.size() == 2
+        && d.participants.toSet() == [req.fromUid, req.toUid].toSet();
+    }
+
+    // 相手のuid。participants が2人・重複なしであることは呼ぶ側で確認済み。
+    function otherOf(me, parts) {
+      return parts[0] == me ? parts[1] : parts[0];
+    }
+
+    // (b) 招待リンク（docs/INVITE-LINK.md）。リンクの k= が「招待した本人」の
+    //     users/{uid}.inviteToken と一致するときだけ通す。承認は要らない
+    //     （リンクを自分で配ったことが本人の意思表示 — INVITE-LINK §0 の決定）。
+    //     users は本人しか読めないが規則の get() は読める。トークンはクライアントに漏れない。
+    //
+    // 🔑 (a) より先に評価すること。(a) の getAfter は requestId が無いとエラーになり、
+    //    招待リンク（requestId を送らない）がそのエラーに巻き込まれるのを避けるため。
+    // 🔑 フィールドの有無で分岐するので必ず d.get(…, 既定値) で読む。無いフィールドに
+    //    直接触るとエラー＝拒否になり、via を送らない承認フロー(a)まで落ちる。
+    function isInviteFriendship(d) {
+      let token = d.get('inviteToken', '');
+      return d.get('via', '') == 'invite'
+        && token is string
+        && token.size() >= 16
+        && token == get(/databases/$(database)/documents/users/$(otherOf(request.auth.uid, d.participants))).data.get('inviteToken', '');
+    }
+
     match /friendships/{pairDocId} {
       // resource == null は「まだ友達でない」確認のためのget（存在チェック）を許可
       allow read: if isSignedIn()
         && (resource == null || request.auth.uid in resource.data.participants);
       allow create: if isSignedIn()
+        && request.resource.data.participants.size() == 2
         && request.auth.uid in request.resource.data.participants
+        // 自分と自分の関係を作らせない（participants: [me, me]）。招待リンクは
+        // 自分のトークンを自分が知っているので、これが無いと (b) を素通りしてしまう。
+        && request.resource.data.participants[0] != request.resource.data.participants[1]
         && pairDocId == pairId(request.resource.data.participants[0],
-                               request.resource.data.participants[1]);
+                               request.resource.data.participants[1])
+        && (isInviteFriendship(request.resource.data)
+            || isAcceptedFriendship(request.resource.data));
       allow delete: if isSignedIn()
         && request.auth.uid in resource.data.participants;
     }
@@ -366,17 +417,23 @@ service cloud.firestore {
       return after == before + 1 || after == before - 1;
     }
 
-    // いいね数: +1 は自分のいいね文書があるときだけ、-1 は無いときだけ。
-    // existsAfter を使うので、旧アプリ（いいね文書→カウンターの順に別々に書く）でも
-    // 新アプリ（バッチで同時に書く）でも通る。規則の配備と OTA は順不同でよい。
-    // 🔑 旧アプリが消えたら「+1 は !exists(likePath) && existsAfter(likePath)」に締めること
-    //    （今は いいね文書を持ったまま +1 を繰り返す直接呼び出しを防げない）。
+    // いいね数: +1 は「この書き込みで自分のいいね文書ができる」とき、-1 は「消える」ときだけ。
+    // いいね文書とカウンターを同じバッチで書く必要がある（likeToggle.ts）。
+    // 1人1回を構造で保証する: 文書を持ったまま +1 を繰り返すことはできない。
+    // ⚠️ 旧アプリ（別々に書く）は通らないので、1.1 の OTA が行き渡ってから配備すること。
+    //
+    // 下限 0（SECURITY-1.1 §7）: マイナスまで下げられない。
+    // 🔑 この1行は **カウンター再計算のあと** でなければ入れられなかった。古いデータには
+    //    「いいね文書はあるのにカウンターが 0（または負）」という食い違いがあり得て、
+    //    その投稿のいいねを外す操作が全部拒否されてしまうため。
+    //    2026-11-07 に scripts/recount-counters.mjs を実行し「ずれ 0 件
+    //    （投稿 66・コメント 103）」を確認したので、ここで入れる。
     function isValidLikeCountChange(likePath) {
       let before = resource.data.get('likeCount', 0);
       let after = request.resource.data.get('likeCount', 0);
       return changedOnly('likeCount') && (
-        (after == before + 1 && existsAfter(likePath))
-        || (after == before - 1 && !existsAfter(likePath))
+        (after == before + 1 && !exists(likePath) && existsAfter(likePath))
+        || (after == before - 1 && after >= 0 && exists(likePath) && !existsAfter(likePath))
       );
     }
 
@@ -389,17 +446,30 @@ service cloud.firestore {
       return resource.data.authorUid == request.auth.uid
         && changed.hasOnly(['title', 'body', 'tag', 'deleted', 'deletedAt', 'resolved', 'bestCommentId'])
         && (!changed.hasAny(['title']) || (d.title is string && d.title.size() > 0 && d.title.size() <= 100))
-        && (!changed.hasAny(['body']) || (d.body is string && d.body.size() > 0 && d.body.size() <= 5000));
+        && (!changed.hasAny(['body']) || (d.body is string && d.body.size() > 0 && d.body.size() <= 5000))
+        // tag は空にする（null）のも許す。文字列なら 30 字まで
+        && (!changed.hasAny(['tag']) || d.tag == null || (d.tag is string && d.tag.size() <= 30));
     }
 
-    // コメント数: ±1 に加えて lastCommentId（このバッチで作成/削除したコメントの id）を同時に書ける。
-    // 段階1（この版・OTA 前に配備・加算のみ）: 旧アプリ（commentCount だけ）も
-    //   新アプリ（commentCount + lastCommentId）も通す。
-    // 段階2（#50・OTA 後）: lastCommentId を必須にし、
-    //   +1 は !exists(comments/lastCommentId) && existsAfter(comments/lastCommentId)、
-    //   -1 は getAfter(comments/lastCommentId).data.deleted == true
-    //   で「本当にコメントが増減したか」を見る（docs/SECURITY-1.1.md §7）。
-    //   今はコメントを書かずに +1 を繰り返せる（通知の赤丸を鳴らし続けられる）。
+    // コメント数（段階2・docs/SECURITY-1.1.md §7）: 「本当にコメントが増減したか」を見る。
+    // 段階1（#80・配備済み）は lastCommentId を任意にして旧アプリも通していたので、
+    // コメントを書かずに +1 を繰り返せた（通知の赤丸を永久に鳴らせる・ベスト掲示板の操作）。
+    // ⚠️ lastCommentId を必須にするので、1.1 OTA が行き渡ってから配備すること。
+    //
+    // commentsPath は '…/posts/{postId}/comments' の**文字列**（path() で文書パスを組む）。
+    // ルールの関数内では $() 補間が使えないので、呼び出し側で文字列を作って渡している。
+    //
+    // 🔑 id の文字種を自動id に限定するのが必須。'/' を入れられると comments/{id} 以外の
+    //    文書を指せてしまい、「コメントの いいね文書 を作って commentCount を +1」が通る
+    //    （id = 'realComment/likes/myUid' で !exists && existsAfter が成立してしまう）。
+    // 🔑 exists/get は同じパスなら評価ごとにキャッシュされるので、読み取りは増えない。
+    // 🔴 段階2（lastCommentId を必須にして「本当にコメントが増減したか」を見る）は
+    //    **別PR に分けた**。ストア版に内蔵のコードが lastCommentId を送らないからだ
+    //    （iOS ビルド5 = 2026-11-02 の 6ba8c4b。lastCommentId は 11-06 の c8f8857 で入った）。
+    //    OTA は「受け取って **次の起動** から適用」なので、OTA が行き渡っても
+    //    **新規インストール直後の初回起動は内蔵コードで動く** → その人はコメントが書けない。
+    //    次のストアビルドは 1.2（2027-01 末提出）なので、そこまでこの段階1のまま運用する。
+    //    （OTA-2026-11 §0 / SECURITY-1.1 §7）
     function isValidCommentCountChange() {
       let changed = request.resource.data.diff(resource.data).affectedKeys();
       return changed.hasOnly(['commentCount', 'lastCommentId'])

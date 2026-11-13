@@ -1,6 +1,5 @@
 // firestore.rules 검증: 게시글·댓글 쓰기 강화 (좋아요 수 조작 / authorUid 변경 / 글자 수)
-// 🔴 「옛날 앱」과 「새 앱」의 쓰기 방식을 둘 다 시험한다. 규칙 배포와 OTA는 순서가 정해져 있지 않으므로
-//    규칙을 배포한 순간 아직 업데이트하지 않은 앱이 깨지면 안 된다.
+// 🔴 이 규칙은 새 앱(batch)만 통과시킨다. 1.1 OTA가 퍼진 뒤에 배포할 것 (firestore.rules 주석)
 // 실행: scripts/rules-test 에서 `npm test` (README.md)
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -22,6 +21,9 @@ const SCHOOL = "meiji.ac.jp";
 const BOARD_POST = `schools/${SCHOOL}/boards/free/posts/p1`;
 const LOUNGE_POST = "lounges/visa/posts/p1";
 const LONG_POST = `schools/${SCHOOL}/boards/free/posts/long`;
+// 하한 0 시험용: 「좋아요 문서는 있는데 카운터가 0/음수」인 옛 데이터를 재현한다
+const STALE_POST = `schools/${SCHOOL}/boards/free/posts/stale`;
+const NEGATIVE_POST = `schools/${SCHOOL}/boards/free/posts/negative`;
 
 await env.withSecurityRulesDisabled(async (ctx) => {
   const db = ctx.firestore();
@@ -31,8 +33,18 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await setDoc(doc(db, BOARD_POST), { boardId: "free", schoolDomain: SCHOOL, title: "t", body: "b", authorUid: "author", commentCount: 0 });
   await setDoc(doc(db, LOUNGE_POST), { loungeId: "visa", title: "t", body: "b", authorUid: "author", commentCount: 0, likeCount: 0 });
   await setDoc(doc(db, `${BOARD_POST}/comments/c1`), { postId: "p1", body: "c", authorUid: "author", likeCount: 0 });
+  await setDoc(doc(db, `${LOUNGE_POST}/comments/lc1`), { postId: "p1", body: "c", authorUid: "author", likeCount: 0 });
   // 상한 도입 전에 쓰인 긴 글
   await setDoc(doc(db, LONG_POST), { boardId: "free", schoolDomain: SCHOOL, title: "t", body: "あ".repeat(6000), authorUid: "author", commentCount: 0 });
+  // 🔑 하한 0(SECURITY-1.1 §7) 시험용. 카운터와 실제 좋아요 문서가 어긋난 상태를 일부러 만든다.
+  //    이런 데이터가 남아 있으면 「취소」가 전부 거부되므로, 하한을 넣기 전에
+  //    scripts/recount-counters.mjs 로 어긋남 0건을 만들어야 했다(2026-11-07 확인).
+  await setDoc(doc(db, STALE_POST), { boardId: "free", schoolDomain: SCHOOL, title: "t", body: "b", authorUid: "author", commentCount: 0, likeCount: 0 });
+  await setDoc(doc(db, `${STALE_POST}/likes/reader`), { uid: "reader" });
+  await setDoc(doc(db, NEGATIVE_POST), { boardId: "free", schoolDomain: SCHOOL, title: "t", body: "b", authorUid: "author", commentCount: 0, likeCount: -2 });
+  await setDoc(doc(db, `${NEGATIVE_POST}/likes/reader`), { uid: "reader" });
+  await setDoc(doc(db, `${STALE_POST}/comments/sc1`), { postId: "stale", body: "c", authorUid: "author", likeCount: 0 });
+  await setDoc(doc(db, `${STALE_POST}/comments/sc1/likes/reader`), { uid: "reader" });
 });
 
 const author = env.authenticatedContext("author").firestore();
@@ -44,13 +56,11 @@ async function t(name, p) {
   catch (e) { results.push(["FAIL", name + " :: " + e.message.split("\n")[0]]); }
 }
 
-// ── 좋아요: 옛날 앱 (좋아요 문서 → 카운터를 따로 쓴다) ──
-for (const [label, post] of [["학교", BOARD_POST], ["숲", LOUNGE_POST]]) {
-  await t(`${label} 옛날앱: 좋아요 문서 생성`, assertSucceeds(setDoc(doc(reader, `${post}/likes/reader`), { uid: "reader" })));
-  await t(`${label} 옛날앱: 카운터 +1`, assertSucceeds(updateDoc(doc(reader, post), { likeCount: increment(1) })));
-  await t(`${label} 옛날앱: 좋아요 문서 삭제`, assertSucceeds(deleteDoc(doc(reader, `${post}/likes/reader`))));
-  await t(`${label} 옛날앱: 카운터 -1`, assertSucceeds(updateDoc(doc(reader, post), { likeCount: increment(-1) })));
-}
+// ── 좋아요: 옛날 앱 (따로 쓰기) 는 더 이상 통과하지 못한다 ──
+await t("옛날앱: 좋아요 문서 생성", assertSucceeds(setDoc(doc(reader, `${BOARD_POST}/likes/reader`), { uid: "reader" })));
+await t("옛날앱: 그 뒤 카운터 +1 → 거부 (문서를 가진 채 +1 반복 방지)", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(1) })));
+await t("옛날앱: 좋아요 문서 삭제", assertSucceeds(deleteDoc(doc(reader, `${BOARD_POST}/likes/reader`))));
+await t("옛날앱: 그 뒤 카운터 -1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(-1) })));
 
 // ── 좋아요: 새 앱 (batch) ──
 for (const [label, post] of [["학교", BOARD_POST], ["숲", LOUNGE_POST]]) {
@@ -64,6 +74,30 @@ for (const [label, post] of [["학교", BOARD_POST], ["숲", LOUNGE_POST]]) {
   await t(`${label} 새앱: 좋아요 취소 batch`, assertSucceeds(unlike.commit()));
 }
 
+// ── 좋아요 수 하한 0 (SECURITY-1.1 §7. 카운터 재계산 뒤에 넣은 조건) ──
+// 음수로 내려가면 NotificationsContext 의 「전에 본 수보다 늘었나」 판정이 영구히 어긋난다.
+const unlikeBatch = (post) => {
+  const b = writeBatch(reader);
+  b.delete(doc(reader, `${post}/likes/reader`));
+  b.update(doc(reader, post), { likeCount: increment(-1) });
+  return b.commit();
+};
+await t("🔴 하한: 카운터 0 인 글의 좋아요 취소 → 거부 (0 밑으로 못 내린다)", assertFails(unlikeBatch(STALE_POST)));
+await t("🔴 하한: 이미 음수인 글은 더 내릴 수 없다", assertFails(unlikeBatch(NEGATIVE_POST)));
+await t("🔴 하한: 댓글도 같다 (카운터 0 인 댓글의 좋아요 취소 → 거부)", assertFails((() => {
+  const b = writeBatch(reader);
+  b.delete(doc(reader, `${STALE_POST}/comments/sc1/likes/reader`));
+  b.update(doc(reader, `${STALE_POST}/comments/sc1`), { likeCount: increment(-1) });
+  return b.commit();
+})()));
+await t("하한: 카운터가 맞는 글은 그대로 취소된다", assertSucceeds((async () => {
+  const like = writeBatch(reader);
+  like.set(doc(reader, `${LOUNGE_POST}/likes/reader`), { uid: "reader" });
+  like.update(doc(reader, LOUNGE_POST), { likeCount: increment(1) });
+  await like.commit();
+  await unlikeBatch(LOUNGE_POST);
+})()));
+
 // ── 좋아요 수 조작 (B2) ──
 await t("조작: 좋아요 문서 없이 +1 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(1) })));
 await t("조작: 임의 값 9999 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: 9999 })));
@@ -75,15 +109,52 @@ await t("조작: 좋아요 문서가 있어도 +5 → 거부", (async () => {
 })());
 await t("조작: 작성자도 자기 글 좋아요를 임의 값으로 → 거부", assertFails(updateDoc(doc(author, BOARD_POST), { likeCount: 500 })));
 await t("조작: 좋아요와 제목을 동시에 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { likeCount: increment(1), title: "x" })));
+// ── 댓글 수 게이트 (단계1 · SECURITY-1.1 §7) ──
+// 🔴 단계2(lastCommentId 필수)는 **별 PR 로 분리**했다. 스토어판 내장 코드가
+//    lastCommentId 를 안 보내서(iOS 빌드5 = 11-02), 지금 넣으면 **새로 설치한 사람의
+//    첫 실행**에서 댓글이 안 써진다. 다음 스토어 빌드는 1.2(2027-01 말) — OTA-2026-11 §0.
+//    여기(단계1)는 「±1 이고 다른 필드는 못 건드린다」까지만 본다.
+const comment = (postPath, id) => `${postPath}/comments/${id}`;
+// 새 댓글 + 카운터 +1 을 한 배치로 (boardService.createComment — 새 앱)
+function addComment(db, postPath, id, extra = {}) {
+  const b = writeBatch(db);
+  b.set(doc(db, comment(postPath, id)), { postId: "p1", body: "c", authorUid: "reader", parentId: null, mentionUid: null, likeCount: 0, createdAt: serverTimestamp() });
+  b.update(doc(db, postPath), { commentCount: increment(1), lastCommentId: id, ...extra });
+  return b.commit();
+}
+function delComment(db, postPath, id) {
+  const b = writeBatch(db);
+  b.update(doc(db, comment(postPath, id)), { deleted: true, deletedAt: 1 });
+  b.update(doc(db, postPath), { commentCount: increment(-1), lastCommentId: id });
+  return b.commit();
+}
+
 await t("조작: 댓글 수 임의 값 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { commentCount: 100 })));
-await t("정상: 댓글 수 +1", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1) })));
-await t("정상: 댓글 수 -1", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1) })));
+await t("조작: 댓글 수와 제목을 동시에 → 거부", assertFails(addComment(reader, BOARD_POST, "cx", { title: "x" })));
+await t("정상: 댓글 + 카운터 +1 (새 앱 batch)", assertSucceeds(addComment(reader, BOARD_POST, "cnew")));
+await t("정상: 숲도 동일", assertSucceeds(addComment(reader, LOUNGE_POST, "lcnew")));
+await t("정상: 소프트 삭제 + 카운터 -1 (batch)", assertSucceeds(delComment(reader, BOARD_POST, "cnew")));
+// 🔑 **스토어판 내장 코드(lastCommentId 없음)가 통해야 한다.** 이게 막히면
+//    새로 설치한 사람이 첫 실행에서 댓글을 못 단다 — 단계2 를 분리한 이유 그 자체
+await t("구앱: lastCommentId 없이 +1 → 통과(단계1)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1) })));
+await t("구앱: lastCommentId 없이 -1 → 통과(단계1)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1) })));
+// 🔴 **단계1 이 남기는 구멍을 일부러 기록해 둔다.** 댓글을 안 써도 카운터를 올릴 수 있고,
+//    NotificationsContext 가 그 수로 빨간 점을 켜므로 알림을 계속 울릴 수 있다.
+//    단계2 PR 에서 이 두 줄이 assertFails 로 뒤집힌다 = 그 PR 이 실제로 막았다는 증거
+await t("⚠️ 단계1 한계: 댓글 없이 id 만 붙여 +1 이 통과한다", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1), lastCommentId: "ghost" })));
+await t("⚠️ 단계1 한계: 남이 쓴 댓글 id 로도 +1 이 통과한다", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(1), lastCommentId: "c1" })));
+// isOneStep 때문에 ±1 씩만 — 위에서 2 올렸으니 두 번 내린다
+await t("정리: 올린 만큼 되돌린다 (1/2)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1) })));
+await t("정리: 올린 만큼 되돌린다 (2/2)", assertSucceeds(updateDoc(doc(reader, BOARD_POST), { commentCount: increment(-1) })));
 await t("조작: 남의 글 제목 변경 → 거부", assertFails(updateDoc(doc(reader, BOARD_POST), { title: "x" })));
 
 // ── 댓글 좋아요 ──
 const commentPath = `${BOARD_POST}/comments/c1`;
-await t("댓글 옛날앱: 좋아요 문서", assertSucceeds(setDoc(doc(reader, `${commentPath}/likes/reader`), { uid: "reader" })));
-await t("댓글 옛날앱: +1", assertSucceeds(updateDoc(doc(reader, commentPath), { likeCount: increment(1) })));
+const commentLike = writeBatch(reader);
+commentLike.set(doc(reader, `${commentPath}/likes/reader`), { uid: "reader" });
+commentLike.update(doc(reader, commentPath), { likeCount: increment(1) });
+await t("댓글 새앱: 좋아요 batch", assertSucceeds(commentLike.commit()));
+await t("댓글 조작: 좋아요 문서를 가진 채 또 +1 → 거부", assertFails(updateDoc(doc(reader, commentPath), { likeCount: increment(1) })));
 await t("댓글 조작: 임의 값 → 거부", assertFails(updateDoc(doc(reader, commentPath), { likeCount: 77 })));
 await t("댓글 조작: 남의 댓글 삭제 → 거부", assertFails(updateDoc(doc(reader, commentPath), { deleted: true })));
 
@@ -93,6 +164,9 @@ await t("작성자: 숲 글 authorUid 변경 → 거부", assertFails(updateDoc(
 await t("작성자: 댓글 authorUid 변경 → 거부", assertFails(updateDoc(doc(author, commentPath), { authorUid: "someone" })));
 await t("작성자: createdAt 변경 → 거부", assertFails(updateDoc(doc(author, BOARD_POST), { createdAt: 1 })));
 await t("작성자: 삭제 표시와 authorUid 를 동시에 → 거부", assertFails(updateDoc(doc(author, BOARD_POST), { deleted: true, authorUid: "someone" })));
+await t("작성자: 태그 30자", assertSucceeds(updateDoc(doc(author, BOARD_POST), { tag: "あ".repeat(30) })));
+await t("작성자: 태그 31자 → 거부", assertFails(updateDoc(doc(author, BOARD_POST), { tag: "あ".repeat(31) })));
+await t("작성자: 태그 비우기(null)", assertSucceeds(updateDoc(doc(author, BOARD_POST), { tag: null })));
 await t("작성자: 베스트 답변 지정", assertSucceeds(updateDoc(doc(author, BOARD_POST), { bestCommentId: "c1", resolved: true })));
 await t("작성자: 베스트 답변 해제", assertSucceeds(updateDoc(doc(author, BOARD_POST), { bestCommentId: null, resolved: false })));
 await t("작성자: 댓글 소프트 삭제", assertSucceeds(updateDoc(doc(author, commentPath), { deleted: true, deletedAt: 1 })));
