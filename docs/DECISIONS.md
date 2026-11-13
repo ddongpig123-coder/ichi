@@ -94,7 +94,7 @@
 |---|---|---|
 | ✅ | 🎯 **마케팅 골 = 홍보용 릴스 + 유튜브 영상 완성** (준희). 진행표·모델 전환 시점은 문서 하나로 관리 | [MARKETING-VIDEO-PLAN](MARKETING-VIDEO-PLAN.md) |
 | ✅ | **Higgsfield 3일 무료는 「예시 받고 켜기」** — 준희가 3일을 직접 붙잡고 있어야 해서 (준희) | [MARKETING-TOOLS §7](MARKETING-TOOLS.md) |
-| ✅ | ~~AI 생성 인물 불허 (11/04)~~ → **영상에서 UGC형(AI 인물이 소개·후기처럼 말하기) 허용** (준희). 조건: 캡션 `#PR` + 인스타 AI 라벨 + 유튜브 합성 콘텐츠 「예」 (景品表示法 ステマ規制·플랫폼 규칙) | [MARKETING-VIDEO-PLAN §3](MARKETING-VIDEO-PLAN.md) |
+| ✅ | ~~AI 생성 인물 불허 (11/04)~~ → **영상은 UGC형 연습용으로 만든다** (준희). 게시 여부는 나중에 결정, 연습 단계에선 규제 조건 없음. 구체 대본은 공개 저장소에 안 씀 | [MARKETING-VIDEO-PLAN §3](MARKETING-VIDEO-PLAN.md) |
 | ✅ | 모델 운용: 기획·대본·게시는 **Opus 5.5**, Higgsfield 3일 스프린트(생성·비교·조립)만 **Fable 5.2** | [MARKETING-VIDEO-PLAN §2](MARKETING-VIDEO-PLAN.md) |
 
 ## 2026-11-05 (iOS 심사 대기 중 — S4 선행 결정)
