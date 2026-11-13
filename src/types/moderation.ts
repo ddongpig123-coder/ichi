@@ -22,8 +22,17 @@ export interface Report {
   targetAuthorUid: string; // 被通報者
   reason: ReportReason;
   detail: string | null; // 自由記述（任意）
+  // 通報時点の内容の写し（2026-11-10〜）。運営が通報文書だけで原文を確認できる（証拠保全）。
+  // 写しが取れなかったとき・それ以前の通報は null / 無し
+  snapshot?: ReportSnapshot | null;
   status: ReportStatus;
   createdAt: number;
+}
+
+// 投稿 = title/body、コメント = body、メッセージ・講義レビュー = body（元は text）
+export interface ReportSnapshot {
+  title: string | null; // 最大 100 字
+  body: string | null; // 最大 2000 字
 }
 
 // 通報理由の表示ラベル（UI文字列は日本語のみ）
