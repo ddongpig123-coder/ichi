@@ -84,7 +84,7 @@ allow create: if isSignedIn()
 2. **`npm run deploy:web`** (준희 직접·정지선) — 링크가 가리키는 웹 페이지를 **OTA보다 먼저** 올린다. 확인: `https://ichi-6b8f7.web.app/add-friend?u=test&k=test` 가 「無効な招待リンク」를 보여주면 OK
 3. `eas update --branch production` (OTA-2026-11 §4)
 4. 실기기 테스트: 友達 탭 → 招待リンクで追加 → LINE으로 나에게 전송 → **파란 링크로 보이는지** → 다른 계정(또는 태희) 폰에서 탭 → 앱이 열리고 友達一覧에 들어오는지
-5. Android 프로덕션 공개 후: `PLAY_STORE_PUBLIC = true` → 웹 재배포
+5. ✅ Android 프로덕션 공개(11/14) → `PLAY_STORE_PUBLIC = true` → 웹 재배포
 
 ## 5. 1.2 재빌드에서 할 것
 
