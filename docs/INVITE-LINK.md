@@ -93,7 +93,7 @@ allow create: if isSignedIn()
 | iOS `ios.associatedDomains: ["applinks:ichi-6b8f7.web.app"]` | ✅ `app.json` |
 | 웹 `/.well-known/apple-app-site-association` (`3498G5A326.jp.timetable.app`, `/add-friend`) | ✅ `web/well-known/` → `deploy-web.mjs` 가 복사, `firebase.json` 에 `Content-Type: application/json`·`.well-known` 업로드 허용 |
 | Android `intentFilters` (autoVerify, https, `ichi-6b8f7.web.app`, `/add-friend`) | ✅ `app.json` |
-| 웹 `/.well-known/assetlinks.json` | ⏳ **서명 인증서 SHA-256 2개 대기**(준희, Play Console → 설정 → 앱 무결성 → 앱 서명). 가짜 값이 남아 있으면 배포 스크립트가 안 올린다 |
+| 웹 `/.well-known/assetlinks.json` | ✅ 11/14 지문 2개(Play 앱 서명 키 `80:BF:42…`, EAS 업로드 키 `08:EE:50…`). 위치: Play Console → 「Google Play로 보호됨」 → Play 스토어 보호 ⌄ → Play 앱 서명. ⚠️ 이 파일을 안 올리면 Firebase Hosting 이 **빈 `[]`** 를 자동으로 내보낸다(11/14 확인) |
 | 개발용 앱(大学の森 dev) | 링크를 가로채지 않게 둘 다 뺌(`app.config.js`) |
 | 앱 쪽 코드 | 변경 없음 — expo-router 가 `https://…/add-friend?u&k` 를 그대로 `app/add-friend.tsx` 로 연다(§8 확인 버튼 흐름) |
 
