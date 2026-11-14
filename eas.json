@@ -35,6 +35,12 @@
       "env": {
         "APP_VERSION_OVERRIDE": "1.1.0"
       }
+    },
+    "release": {
+      "extends": "production",
+      "env": {
+        "APP_VERSION_OVERRIDE": "1.1.0"
+      }
     }
   },
   "submit": {
