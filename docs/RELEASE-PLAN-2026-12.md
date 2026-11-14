@@ -58,6 +58,10 @@ S7 강의검색·강의평 · S8 졸업요건 UI · S9 시간표 메이커 v2·�
 3. **gh-pages 의 `privacy.html` 을 `docs/legal/privacy.html` 로 교체**(스토어에 등록된 방침 URL — [docs/legal/README.md](legal/README.md))
 4. App Store 「앱 개인정보」·Play 「데이터 보안」에 **사진** 추가 — 용도 「앱 기능」, 신원과 연결 안 함, 추적 안 함 / Play 는 「일시적으로만 처리」·서비스 제공자 전송(공유 아님). 푸시 토큰도 「기기 또는 기타 ID」에 해당하는지 제출 때 확인
 5. 심사 노트: 「시간표 스크린샷 읽기는 Anthropic API 로 보낸다. 보내기 전 화면에서 동의를 받는다」 + 시험용 스크린샷 1장
+6. 🔴 **EU 디지털서비스법(DSA) 「트레이더 여부」 신고** — EU 에 안 팔아도 필수(11/14 App Store Connect 알림). 안 하면 업데이트 제출이 막힌다.
+   추천: 앱의 「가격 및 사용 가능 여부」에서 **EU 27개국 해제**(일본·한국은 유지) → 비즈니스 → 계약 → 규정 준수 → Digital Services Act → **「This is not a trader account」**.
+   트레이더로 신고하면 주소·전화·이메일이 EU 앱스토어에 공개된다. 근거: Apple 「Manage EU DSA trader requirements」 — EU 앱스토어에 배포하지 않으면 앱스토어상 트레이더로 활동하는 게 아님(법률 자문 아님)
+   - ✅ 11/14 개발자 프로그램 라이선스 약관 갱신 동의 완료(준희)
 
 ## 5. 위험과 대책
 
