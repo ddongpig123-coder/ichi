@@ -44,7 +44,7 @@
 
 - 함수 에뮬레이터 **18건**(가짜 Expo 서버): 로그인·형식 검사 / 내 글에 내 댓글 → 없음 / 남의 댓글 → 기기 2대 / 없는 기기 토큰 삭제 / 답글 → 한국어 / 차단 → 없음 / 댓글 알림 끔 → 없음 / 숲 댓글 / 쪽지(내용 없음) / 1분 내 두 번째 → 없음 / 참가자 아닌 사람 → 무시 / 남의 토큰 해제 불가 / 기기 주인 바뀜 / 계정 삭제 → 토큰·기록 삭제
 - 단위 11건(`cd functions && npm test`) · 시간표 읽기 15건 재확인 · 웹: 알림 메뉴 숨김·오류 0 · `npx tsc --noEmit`
-- ⏳ **실기기**: 개발용 빌드로 확인(§6)
+- ⏳ **실기기**: TestFlight 시험 빌드로 확인(§6, 11/14 준희 결정)
 
 ## 5. 준희가 할 것 — 처음 한 번
 
@@ -52,6 +52,8 @@
 1. PR 머지 뒤 `cd ~/ichi && git checkout master && git pull`
 2. `npm run deploy:functions` — 처음 Firestore 트리거를 만들 때 Google Cloud 기능(Eventarc 등)을 켜겠냐고 물으면 Yes.
    「권한이 아직 준비 안 됐다(service agent)」 오류가 나면 **5분 뒤 같은 명령을 다시** — 처음 한 번 흔한 일
+   - 11/14 1회차: 호출형 3개·`cleanupOnUserDelete`·`readTimetable` 성공, **Firestore 트리거 3개(`pushOn…`)만 실패** → 재시도.
+     트리거 리전은 배포 도구가 **`us-central1`** 로 정했다 = Firestore DB 가 미국(nam5)에 있다는 뜻
 
 ### 5-2. iOS (개발용 빌드 때 자동)
 - `eas build` 중 **「Set up Push Notifications?」 → Yes**. EAS 가 Apple 푸시 키를 만든다(팀 단위 1개, 본 앱·dev 앱 공용)
@@ -64,9 +66,29 @@
    → 터미널 `eas credentials` → Android → production → Google Service Account → **FCM V1** → 그 JSON 업로드
    🔑 `scripts/keys/serviceAccount.json`(DB 전체 권한)을 쓰지 말 것 — Expo 에 맡기는 키는 **알림 권한만** 있는 것으로
 
-## 6. 개발용 빌드 (실기기 시험) — 아이폰
+## 6. 실기기 시험
 
-> 사진 고르기·알림은 웹·Expo Go 로 못 본다. **개발용 앱 「大学の森 dev」** 를 따로 깐다(스토어 앱은 그대로 남는다 — 다른 번들 ID `jp.timetable.app.dev`).
+| 방법 | 사진 읽기 | 푸시 알림 | 비고 |
+|---|---|---|---|
+| **TestFlight 시험 빌드(추천, §6-0)** | ✅ | ✅ 출시와 같은 조건 | 기기 등록·개발자 모드·맥 서버 불필요. 고칠 때마다 다시 빌드 |
+| Expo Go (`npx expo start --go --tunnel`) | ✅ (Expo Go 에 사진 부품이 들어 있다) | ⚠️ 불확실(와도 「Expo Go」 이름) | 빌드 불필요 |
+| 개발용 빌드 「大学の森 dev」(§6-1) | ✅ | ✅ | 코드 수정이 바로 반영. 처음 준비가 많다 |
+
+### 6-0. TestFlight 시험 빌드 (11/14 준희 선택)
+> 이미 출시된 **1.0.0 에는 새 빌드를 올릴 수 없다** → `eas.json` 의 **`beta`** 프로필이 그 빌드에만 버전 **1.1.0** 을 붙인다(`app.config.js` `APP_VERSION_OVERRIDE`).
+> 🔴 **`app.json` 의 `version` 은 출시 때까지 1.0.0 그대로.** 바꾸면 `npm run ota` 가 1.1.0 으로 나가 스토어 1.0.0 사용자에게 OTA 가 끊긴다.
+> 시험 빌드는 채널 `beta` 라 OTA 를 받지 않는다(내장 코드로만 돈다) — 고친 걸 보려면 다시 빌드.
+> 설치하면 폰의 스토어 앱이 TestFlight 판으로 바뀐다(데이터 유지). App Store 에서 다시 받으면 원래대로.
+
+1. `cd ~/ichi && git checkout master && git pull && npm install`
+2. (알림 시험 전) `npm run deploy:functions` 가 **트리거까지 성공**했는지
+3. `eas build --profile beta --platform ios` — Apple 로그인 → 「Set up Push Notifications?」 **Yes** → 20~30분
+4. `eas submit --platform ios --latest` → App Store Connect 처리 10~30분 → 폰의 **TestFlight** 앱에 「大学の森 1.1.0」 → 설치
+5. 확인: ① 사진 읽기 ② 프로필 → 通知 → 켜기 → 다른 계정(웹 등)으로 내 글에 댓글 → 알림 → 누르면 그 글 ③ 쪽지 → 알림(내용 없음)
+
+### 6-1. 개발용 빌드 (코드를 자주 고치며 볼 때)
+
+> **개발용 앱 「大学の森 dev」** 를 따로 깐다(스토어 앱은 그대로 남는다 — 다른 번들 ID `jp.timetable.app.dev`).
 
 1. `cd ~/ichi && git checkout master && git pull && npm install`
 2. 아이폰 등록(처음 한 번): `eas device:create` → **Website** 선택 → 나온 주소(또는 QR)를 아이폰 Safari 로 열기 → 프로파일 다운로드 → 아이폰 **설정** 맨 위 「프로파일이 다운로드됨」 → 설치
