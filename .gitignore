@@ -77,3 +77,8 @@ scripts/cardnews/assets/*.jpeg
 scripts/cardnews/assets/*.png
 scripts/cardnews/assets/*.webp
 scripts/cardnews/assets/*.heic
+
+# Cloud Functions（functions/）
+functions/node_modules/
+functions/.secret.local
+functions/.env.local
