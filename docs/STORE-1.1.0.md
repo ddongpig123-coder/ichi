@@ -12,8 +12,10 @@
 ・時間割のスクショから授業をまとめて登録できるようになりました。AIが読み取り、確認・修正してから保存できます
 ・自分の投稿へのコメント・返信、メッセージが届いたときにプッシュ通知でお知らせします（お知らせ・広告の通知は送りません）
 ・はじめての方向けに「はじめの設定」と使い方ガイドを追加しました
+・ホーム画面・ロック画面のウィジェット「今日の時間割」で、今の授業と次の授業がすぐわかります（iPhone）
 ・掲示板をリニューアル。学校の森・みんなの森・留学生の森で、自由掲示板・質問掲示板・ベスト投稿をそろえました
 ・LINEなどで受け取った友達の招待リンクから、アプリが直接開くようになりました
+・アカウント画面からパスワードを変更できるようになりました
 ・起動画面のデザインを新しくし、そのほかの細かな改善を行いました
 ```
 
@@ -22,8 +24,10 @@
 ・시간표 스크린샷으로 수업을 한 번에 등록할 수 있어요. AI가 읽어 주고, 확인·수정한 뒤 저장해요
 ・내 글에 댓글·답글이 달리거나 쪽지가 오면 푸시 알림으로 알려 드려요 (공지·광고 알림은 보내지 않아요)
 ・처음 쓰는 분을 위해 「처음 설정」과 사용법 안내를 추가했어요
+・홈 화면·잠금 화면 위젯 「오늘의 시간표」로 지금 수업과 다음 수업을 바로 확인해요 (iPhone)
 ・게시판을 새로 단장했어요. 학교의 숲·모두의 숲·유학생의 숲 모두 자유게시판·질문게시판·베스트 글을 갖췄어요
 ・LINE 등에서 받은 친구 초대 링크를 누르면 앱이 바로 열려요
+・계정 화면에서 비밀번호를 바꿀 수 있어요
 ・시작 화면 디자인을 바꾸고, 그 밖의 작은 부분을 개선했어요
 ```
 
@@ -32,8 +36,10 @@
 - Import your class schedule from a screenshot: AI reads it, and you review and edit before saving
 - Push notifications for comments/replies on your posts and for direct messages (no promotional notifications)
 - New first-time setup and a short guide to the app
+- "Today's Classes" widget for the Home Screen and Lock Screen: see your current and next class at a glance (iPhone)
 - Refreshed boards: every forest now has a free board, a Q&A board and best posts
 - Friend invite links open the app directly
+- Change your password from the Account screen
 - New launch screen and other improvements
 ```
 
