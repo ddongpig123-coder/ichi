@@ -9,6 +9,7 @@ import type { TranslationKey } from "../../i18n/translations";
 import type { Theme } from "../../theme/themes";
 import { setTutorialStage, useTutorialStage } from "../../services/tutorialStore";
 import { shareInvite } from "../../services/friendInvite";
+import { canReadTimetableImage } from "../../services/timetableOcrService";
 import { getCurrentAcademicYear, getCurrentSemester } from "../../data/semesterTimetables";
 import { hasDepartmentData } from "../../data/departments";
 import { notify } from "../../utils/dialog";
@@ -128,17 +129,41 @@ export default function TutorialOverlay() {
         {setupProgress}
         <Icon name="calendar-outline" styles={styles} theme={theme} />
         <Text style={styles.title}>{t("tutorial.timetableTitle")}</Text>
-        <Text style={styles.body}>{t("tutorial.timetableBody")}</Text>
-        {/* 1.2（再ビルド）で「スクショから読み込む」をいちばん上に足す — docs/TIMETABLE-OCR.md §4 */}
-        <PrimaryButton
-          label={t("tutorial.timetableSearch")}
-          icon="search-outline"
-          styles={styles}
-          onPress={() => {
-            setTutorialStage("friends");
-            router.push(`/course-search?year=${year}&semester=${semester}`);
-          }}
-        />
+        <Text style={styles.body}>{t(canReadTimetableImage ? "tutorial.timetableBodyOcr" : "tutorial.timetableBody")}</Text>
+        {/* スクショ読み取り（RELEASE-PLAN N1）。写真選択の部品が無い旧バイナリ（1.0.0）では出さない */}
+        {canReadTimetableImage ? (
+          <>
+            <PrimaryButton
+              label={t("tutorial.timetableOcr")}
+              icon="image-outline"
+              styles={styles}
+              onPress={() => {
+                setTutorialStage("friends");
+                router.push(`/timetable-import?year=${year}&semester=${semester}`);
+              }}
+            />
+            <SecondaryButton
+              label={t("tutorial.timetableSearch")}
+              icon="search-outline"
+              styles={styles}
+              theme={theme}
+              onPress={() => {
+                setTutorialStage("friends");
+                router.push(`/course-search?year=${year}&semester=${semester}`);
+              }}
+            />
+          </>
+        ) : (
+          <PrimaryButton
+            label={t("tutorial.timetableSearch")}
+            icon="search-outline"
+            styles={styles}
+            onPress={() => {
+              setTutorialStage("friends");
+              router.push(`/course-search?year=${year}&semester=${semester}`);
+            }}
+          />
+        )}
         <SecondaryButton
           label={t("tutorial.timetableWizard")}
           icon="sparkles-outline"

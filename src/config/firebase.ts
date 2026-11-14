@@ -19,7 +19,8 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+// Cloud Functions（時間割スクショ読み取り）の呼び出しにも使うので export する
+export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 // 세션(익명 포함)이 앱 재시작 후에도 유지되도록 플랫폼별 영속화를 설정한다.
 // firebase v12의 메타 패키지("firebase/auth")는 RN 빌드를 노출하지 않지만,

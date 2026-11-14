@@ -7,7 +7,7 @@
 | `TERMS.md` / `PRIVACY.md` | 정본 텍스트(앱 내 화면 `app/terms.tsx`·`app/privacy.tsx`와 동기) |
 | `terms.html` / `privacy.html` | **공개 호스팅용** 독립 HTML (초안 배너 제거, 일/한 토글) |
 
-확정값: 운영자=Lee Junhee / 관할=東京地方裁判所 / 문의=ddongpig123@gmail.com / 최종갱신일=2026年8月24日.
+확정값: 운영자=Lee Junhee / 관할=東京地方裁判所 / 문의=ddongpig123@gmail.com / 최종갱신일=2026年11月14日(시간표 AI 읽기 — Anthropic 해외 위탁 추가).
 
 ## GitHub Pages로 공개하기
 

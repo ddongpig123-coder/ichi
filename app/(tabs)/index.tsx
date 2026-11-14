@@ -20,6 +20,7 @@ import {
   type TimetableVisibility,
 } from "../../src/services/timetableService";
 import { useFriendOverlaps } from "../../src/hooks/useFriendOverlaps";
+import { canReadTimetableImage } from "../../src/services/timetableOcrService";
 import { notify } from "../../src/utils/dialog";
 import { friendlyErrorBody } from "../../src/utils/writeError";
 import type { ClassSession, Day, Period } from "../../src/types/timetable";
@@ -185,13 +186,24 @@ export default function HomeScreen() {
           friendOverlaps={friendOverlaps}
         />
         {/* 初めての人は空の格子だけでは何をすればいいか分からない → 読み込み後に0件なら1行だけ重ねる。
-            タップは下のマスに通す（pointerEvents="none"） */}
+            タップは下のマスに通す（box-none: 自分の子以外は素通し）。
+            写真選択の部品があるアプリでは「スクショから読み込む」も出す（RELEASE-PLAN N1） */}
         {semesterKey in sessionsMap && sessions.length === 0 && (
-          <View style={styles.emptyHint} pointerEvents="none">
-            <View style={styles.emptyHintPill}>
+          <View style={styles.emptyHint} pointerEvents="box-none">
+            <View style={styles.emptyHintPill} pointerEvents="none">
               <Ionicons name="hand-left-outline" size={14} color={theme.textSecondary} />
               <Text style={styles.emptyHintText}>{t("home.emptyHint")}</Text>
             </View>
+            {canReadTimetableImage && (
+              <TouchableOpacity
+                style={styles.ocrBtn}
+                onPress={() => router.push(`/timetable-import?year=${selectedYear}&semester=${selectedSemester}`)}
+                accessibilityRole="button"
+              >
+                <Ionicons name="image-outline" size={16} color="#fff" />
+                <Text style={styles.ocrBtnText}>{t("home.ocrButton")}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </View>
@@ -263,6 +275,17 @@ function makeStyles(theme: Theme) {
       borderColor: theme.border,
     },
     emptyHintText: { fontSize: 13, color: theme.textSecondary },
+    ocrBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      marginTop: 10,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 999,
+      backgroundColor: theme.primary,
+    },
+    ocrBtnText: { fontSize: 14, fontWeight: "800", color: "#fff" },
     actionRow: {
       height: COURSE_SEARCH_ROW_H,
       flexDirection: "row",
