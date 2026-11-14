@@ -9,6 +9,8 @@ import type { TranslationKey } from "../../i18n/translations";
 import type { Theme } from "../../theme/themes";
 import { setTutorialStage, useTutorialStage } from "../../services/tutorialStore";
 import { shareInvite } from "../../services/friendInvite";
+import { canReadTimetableImage } from "../../services/timetableOcrService";
+import { canAskPushNow, DEFAULT_PUSH_PREFS, markPushSetupAsked, setPushPrefs } from "../../services/pushService";
 import { getCurrentAcademicYear, getCurrentSemester } from "../../data/semesterTimetables";
 import { hasDepartmentData } from "../../data/departments";
 import { notify } from "../../utils/dialog";
@@ -34,14 +36,23 @@ export default function TutorialOverlay() {
   const router = useRouter();
   const { user, schoolDomain } = useAuth();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const [tourIndex, setTourIndex] = useState(0);
   const [addFriendOpen, setAddFriendOpen] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
+  // ④ 通知 を出せるか（通知の部品があり、OS の許可がまだ決まっていない）。null = 確認中
+  const [pushAskable, setPushAskable] = useState<boolean | null>(null);
+  useEffect(() => {
+    let alive = true;
+    canAskPushNow().then((v) => alive && setPushAskable(v)).catch(() => alive && setPushAskable(false));
+    return () => { alive = false; };
+  }, []);
   const fade = useRef(new Animated.Value(0)).current;
 
-  const visible = stage === "timetable" || stage === "friends" || stage === "tour";
+  const visible =
+    stage === "timetable" || stage === "friends" || stage === "push" || stage === "pushOnly" || stage === "tour";
 
   // 出るたび・カードが変わるたびに軽くフェードイン（ポップアップらしく）
   useEffect(() => {
@@ -81,18 +92,22 @@ export default function TutorialOverlay() {
   const year = getCurrentAcademicYear();
   const semester = getCurrentSemester();
 
-  // ── はじめの設定: 進み具合（① 学校 ✓ → ② 時間割 → ③ 友達）
-  const setupStep = stage === "timetable" ? 2 : 3;
+  // ── はじめの設定: 進み具合（① 学校 ✓ → ② 時間割 → ③ 友達 → ④ 通知）
+  // ④ は通知を聞けるときだけ（旧バイナリ・Web・もう許可/拒否済みなら 3 つ）
+  const withPush = pushAskable === true || stage === "push";
+  const setupStep = stage === "timetable" ? 2 : stage === "friends" ? 3 : 4;
+  const steps: TranslationKey[] = ["tutorial.stepSchool", "tutorial.stepTimetable", "tutorial.stepFriends"];
+  if (withPush) steps.push("tutorial.stepPush");
   const setupProgress = (
     <View style={styles.progressRow}>
-      {(["tutorial.stepSchool", "tutorial.stepTimetable", "tutorial.stepFriends"] as TranslationKey[]).map((k, i) => {
+      {steps.map((k, i) => {
         const n = i + 1;
         const done = n < setupStep;
         const on = n === setupStep;
         return (
           <React.Fragment key={k}>
-            {i > 0 && <View style={[styles.progressLine, (done || on) && styles.progressLineOn]} />}
-            <View style={styles.progressItem}>
+            {i > 0 && <View style={[styles.progressLine, withPush && styles.progressLineNarrow, (done || on) && styles.progressLineOn]} />}
+            <View style={[styles.progressItem, withPush && styles.progressItemNarrow]}>
               <View style={[styles.progressDot, done && styles.progressDotDone, on && styles.progressDotOn]}>
                 {done ? <Ionicons name="checkmark" size={13} color="#fff" /> : <Text style={[styles.progressNum, on && styles.progressNumOn]}>{n}</Text>}
               </View>
@@ -105,7 +120,28 @@ export default function TutorialOverlay() {
   );
 
   function skipAll() {
+    // 全部飛ばした人に、直後に「通知をオンにしよう」を出さない（初投稿のあとの案内は残る）
+    markPushSetupAsked();
     setTutorialStage("done");
+  }
+
+  // ③ 友達のあと: 通知を聞けるなら ④、だめなら使い方ツアーへ
+  function afterFriends() {
+    setTutorialStage(pushAskable ? "push" : "tour");
+  }
+
+  // ④ 通知をオンにする（OS の許可ダイアログが出る）。許可されたら両方オンで登録
+  async function turnOnPush(next: "tour" | "done") {
+    if (!user || pushBusy) return;
+    setPushBusy(true);
+    markPushSetupAsked();
+    try {
+      const r = await setPushPrefs(user.uid, language, DEFAULT_PUSH_PREFS);
+      if (r === "failed") notify(t("push.failed"));
+    } finally {
+      setPushBusy(false);
+      setTutorialStage(next);
+    }
   }
 
   async function sendInvite() {
@@ -115,7 +151,7 @@ export default function TutorialOverlay() {
       const r = await shareInvite(user.uid, t("friends.inviteMessage"));
       if (r === "copied") notify(t("friends.inviteCopied"));
       else if (r === "failed") { notify(t("friends.inviteFailed")); return; }
-      setTutorialStage("tour");
+      afterFriends();
     } finally {
       setSharing(false);
     }
@@ -128,17 +164,41 @@ export default function TutorialOverlay() {
         {setupProgress}
         <Icon name="calendar-outline" styles={styles} theme={theme} />
         <Text style={styles.title}>{t("tutorial.timetableTitle")}</Text>
-        <Text style={styles.body}>{t("tutorial.timetableBody")}</Text>
-        {/* 1.2（再ビルド）で「スクショから読み込む」をいちばん上に足す — docs/TIMETABLE-OCR.md §4 */}
-        <PrimaryButton
-          label={t("tutorial.timetableSearch")}
-          icon="search-outline"
-          styles={styles}
-          onPress={() => {
-            setTutorialStage("friends");
-            router.push(`/course-search?year=${year}&semester=${semester}`);
-          }}
-        />
+        <Text style={styles.body}>{t(canReadTimetableImage ? "tutorial.timetableBodyOcr" : "tutorial.timetableBody")}</Text>
+        {/* スクショ読み取り（RELEASE-PLAN N1）。写真選択の部品が無い旧バイナリ（1.0.0）では出さない */}
+        {canReadTimetableImage ? (
+          <>
+            <PrimaryButton
+              label={t("tutorial.timetableOcr")}
+              icon="image-outline"
+              styles={styles}
+              onPress={() => {
+                setTutorialStage("friends");
+                router.push(`/timetable-import?year=${year}&semester=${semester}`);
+              }}
+            />
+            <SecondaryButton
+              label={t("tutorial.timetableSearch")}
+              icon="search-outline"
+              styles={styles}
+              theme={theme}
+              onPress={() => {
+                setTutorialStage("friends");
+                router.push(`/course-search?year=${year}&semester=${semester}`);
+              }}
+            />
+          </>
+        ) : (
+          <PrimaryButton
+            label={t("tutorial.timetableSearch")}
+            icon="search-outline"
+            styles={styles}
+            onPress={() => {
+              setTutorialStage("friends");
+              router.push(`/course-search?year=${year}&semester=${semester}`);
+            }}
+          />
+        )}
         <SecondaryButton
           label={t("tutorial.timetableWizard")}
           icon="sparkles-outline"
@@ -167,7 +227,33 @@ export default function TutorialOverlay() {
           theme={theme}
           onPress={() => setAddFriendOpen(true)}
         />
-        <LaterButton label={t("tutorial.later")} styles={styles} onPress={() => setTutorialStage("tour")} />
+        <LaterButton label={t("tutorial.later")} styles={styles} onPress={afterFriends} />
+      </>
+    );
+  } else if (stage === "push" || stage === "pushOnly") {
+    // push = はじめの設定 ④（次は使い方ツアー）/ pushOnly = 既存ユーザーにアップデート後 1 回（次は閉じる）
+    const next = stage === "push" ? "tour" : "done";
+    card = (
+      <>
+        {stage === "push" ? setupProgress : null}
+        <Icon name="notifications-outline" styles={styles} theme={theme} />
+        <Text style={styles.title}>{t("tutorial.pushTitle")}</Text>
+        <Text style={styles.body}>{t("tutorial.pushBody")}</Text>
+        <PrimaryButton
+          label={t("tutorial.pushEnable")}
+          icon="notifications-outline"
+          styles={styles}
+          busy={pushBusy}
+          onPress={() => turnOnPush(next)}
+        />
+        <LaterButton
+          label={t("tutorial.later")}
+          styles={styles}
+          onPress={() => {
+            markPushSetupAsked();
+            setTutorialStage(next);
+          }}
+        />
       </>
     );
   } else {
@@ -214,7 +300,13 @@ export default function TutorialOverlay() {
       <Animated.View style={[styles.cardWrap, { opacity: fade, transform: [{ scale: fade.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) }] }]}>
         <ScrollView contentContainerStyle={styles.card} bounces={false}>
           <View style={styles.topRow}>
-            <Text style={styles.topLabel}>{stage === "tour" ? `${tourIndex + 1} / ${tour.length}` : t("tutorial.setupLabel")}</Text>
+            <Text style={styles.topLabel}>
+              {stage === "tour"
+                ? `${tourIndex + 1} / ${tour.length}`
+                : stage === "pushOnly"
+                  ? t("tutorial.pushOnlyLabel")
+                  : t("tutorial.setupLabel")}
+            </Text>
             <TouchableOpacity onPress={skipAll} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button">
               <Text style={styles.skip}>{t("tutorial.skip")}</Text>
             </TouchableOpacity>
@@ -226,7 +318,7 @@ export default function TutorialOverlay() {
         visible={addFriendOpen}
         onClose={() => {
           setAddFriendOpen(false);
-          setTutorialStage("tour");
+          afterFriends();
         }}
       />
     </View>
@@ -286,7 +378,9 @@ function makeStyles(theme: Theme) {
     skip: { fontSize: 13, fontWeight: "700", color: theme.textSecondary },
     progressRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 18 },
     progressItem: { alignItems: "center", width: 58 },
+    progressItemNarrow: { width: 50 }, // 4 段階のときは詰める（小さい iPhone でもはみ出さない）
     progressLine: { width: 26, height: 2, backgroundColor: theme.border, marginTop: 11 },
+    progressLineNarrow: { width: 14 },
     progressLineOn: { backgroundColor: theme.primary },
     progressDot: {
       width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: theme.border,

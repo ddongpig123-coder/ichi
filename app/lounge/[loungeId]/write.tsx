@@ -24,6 +24,7 @@ import BannedWordWarning from "../../../src/components/common/BannedWordWarning"
 import type { Theme } from "../../../src/theme/themes";
 import { LOUNGES, isQaLounge, loungeLabel, forestOfLounge, type LoungeId } from "../../../src/types/lounge";
 import { QA_TAGS } from "../../../src/types/board";
+import { offerPushAfter } from "../../../src/components/push/offerPush";
 
 export default function LoungeWriteScreen() {
   const insets = useSafeAreaInsets();
@@ -62,6 +63,8 @@ export default function LoungeWriteScreen() {
     try {
       await createLoungePost(loungeId as LoungeId, user.uid, title.trim(), body.trim(), isQa ? tag : null);
       leave(() => router.back());
+      // 初めての投稿のあとに 1 回だけ「コメントが付いたら通知しましょうか？」（RELEASE-PLAN N2）
+      offerPushAfter("post", user.uid, language, t);
     } catch (e: any) {
       notify(t("post.submitFailed"), friendlyErrorBody(e, t));
     } finally {

@@ -11,8 +11,11 @@
     "expo-constants": "~57.0.22",
     "expo-crypto": "~57.0.3",
     "expo-dev-client": "~57.0.20",
+    "expo-image-picker": "~57.0.18",
     "expo-linking": "~57.0.10",
+    "expo-notifications": "~57.0.19",
     "expo-router": "~57.0.21",
+    "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-updates": "~57.0.26",
     "expo-web-browser": "~57.0.3",
@@ -40,6 +43,7 @@
     "web": "expo start --web",
     "deploy:web": "node scripts/deploy-web.mjs",
     "deploy:rules": "node scripts/deploy-rules.mjs",
+    "deploy:functions": "node scripts/deploy-functions.mjs",
     "ota": "node scripts/ota.mjs"
   },
   "private": true

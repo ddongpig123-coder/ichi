@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "大学の森",
+    "NSPhotoLibraryUsageDescription": "時間割のスクリーンショットを選んで授業を読み取るために、写真へのアクセスを使います。",
+    "NSCameraUsageDescription": "写真を撮って時間割を読み込む場合に、カメラを使います。"
+  }
+}

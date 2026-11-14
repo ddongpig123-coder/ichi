@@ -6,6 +6,9 @@
   "build": {
     "development": {
       "developmentClient": true,
+      "env": {
+        "APP_VARIANT": "development"
+      },
       "distribution": "internal",
       "ios": {
         "simulator": false
@@ -25,6 +28,13 @@
     "production": {
       "autoIncrement": true,
       "channel": "production"
+    },
+    "beta": {
+      "extends": "production",
+      "channel": "beta",
+      "env": {
+        "APP_VERSION_OVERRIDE": "1.1.0"
+      }
     }
   },
   "submit": {

@@ -77,3 +77,16 @@ scripts/cardnews/assets/*.jpeg
 scripts/cardnews/assets/*.png
 scripts/cardnews/assets/*.webp
 scripts/cardnews/assets/*.heic
+
+# Cloud Functions（functions/）
+functions/node_modules/
+functions/.secret.local
+functions/.env.local
+
+# Android の FCM 設定（プッシュ通知）。EAS の環境変数（ファイル）で渡す — app.config.js
+google-services.json
+google-services*.json
+
+# firebase-tools が失敗時に作るログ（認証情報が混ざることがある — コミットしない）
+firebase-debug.log*
+firestore-debug.log*

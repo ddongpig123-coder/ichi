@@ -62,14 +62,59 @@ printf "Console에서 키를 [복사]한 뒤 Enter: " && read -s && echo && expo
 - 키를 터미널·채팅에 붙여넣으면 기록에 남는다 → 위 명령처럼 클립보드에서 읽고, 노출됐으면 Console 에서 즉시 삭제
 
 ## 4. 1.2 구현 시 체크리스트 (요약)
-- [ ] 진입점: **처음 설정 팝업 ② 시간표 단계의 맨 위**(`src/components/tutorial/TutorialOverlay.tsx` 의 1.2 주석 자리)와 홈 화면 버튼
-- [ ] 모델 = **`claude-sonnet-5-5`** (§3-1). 프롬프트에 **사용자 학교의 時限表** 주입(§3-2), 「枠外」 → 「その他」(I-8 선행)
-- [ ] Blaze 전환 → callable 함수(로그인 필수, uid+학기 1회 제한, 이미지 ≤ 수 MB, Firebase App Check 켜기 — 익명 계정 양산으로 우회되는 것 방지)
-- [ ] Anthropic 콘솔 월 지출 한도 + GCP 예산 알림
-- [ ] 앱: `expo-image-picker` 추가(재빌드) → 업로드 전 「학번·이름을 가려주세요」 안내 → 미리보기(수정) → 채우기/덮어쓰기 선택 → 기존 `saveTimetableSessions`로 저장. `ClassSession`(요일·시한·과목명·교원·교실·색) 구조는 그대로
-- [ ] 개인정보방침 제4조에 Anthropic(미국) 추가(현재 Google/Firebase만 기재), 보관 기간·학습 미사용은 **약관 원문 확인 후** 기재
-- [ ] ASC·Play 개인정보 라벨에 「사진·사용자 콘텐츠」 추가, 사진 접근 권한 문구, 심사 노트에 테스트용 이미지
-- [ ] 실패 시 앱은 멀쩡하게(기능만 안내 후 종료). 외부 API 장애·함수 콜드스타트 1~3초 감안
+- [x] 진입점: **처음 설정 팝업 ② 시간표 단계의 맨 위** + 홈 **빈 시간표 위 버튼** (§4-3)
+- [x] 모델 = **`claude-sonnet-5-5`** (§3-1). 프롬프트에 앱이 보낸 時限表 주입(§3-2). 지금은 전 학교 `PERIOD_TIMES`(명치) — 학교별 時限表가 생기면 `periodTable()` 만 바꾼다
+- [ ] 「枠外」 → 「その他」 칸(I-8). 지금은 확인 화면에 「時間割に入らない授業」 목록으로만 보여 주고 저장하지 않는다
+- [x] Blaze 전환 · callable 함수(로그인 필수, uid+학기 1회 제한, 이미지 5MB, 하루 300장 상한) — App Check 는 N7
+- [x] Anthropic 콘솔 월 지출 한도($15) + GCP 예산 알림 (11/14 준희)
+- [x] 앱: `expo-image-picker`(재빌드 필요) → 설명·AI 전송 동의 → 미리보기(수정) → 「빈 칸에만 추가 / 바꾸기」 → `saveTimetableSessions` (§4-3)
+- [x] 개인정보처리방침 제1·4·6조에 Anthropic(미국) 추가 (11/14, §4-3)
+- [ ] ASC·Play 개인정보 라벨에 「사진」 추가 · 심사 노트에 테스트용 이미지 → 제출 때 (RELEASE-PLAN §3 12/7~)
+- [x] 실패 시 앱은 멀쩡하게 — 오류마다 안내 문구, 실패·「시간표 아님」·빈 결과는 횟수 안 씀
+
+## 4-1. ✅ 서버 함수 구현 (2026-11-14, 배포 전)
+
+`functions/index.js` 의 **`readTimetable`**(호출형, 도쿄 리전 `asia-northeast1`).
+
+| 항목 | 내용 |
+|---|---|
+| 입력 | `{ imageBase64, mediaType(png/jpeg/webp), semesterKey("2026-秋"), periods?: [{period,start,end}] }` |
+| 출력 | `{ sessions: [{day, period, name, teacher, room, confidence}], unplaced: [{name, reason}], notTimetable }` |
+| 제한 | 로그인 필수(게스트 포함) · **1인·학기당 1회**(성공 시에만 소모, 실패·「시간표 아님」은 소모 안 함) · 동시에 두 번 눌러도 1회 · **하루 전체 300장 상한**(익명 계정 양산 대비, ≈$4/일) · 이미지 5MB |
+| 모델 | `claude-sonnet-5-5`, effort low (§3-1) |
+| 프롬프트 | 앱이 보낸 **학교 時限表**를 넣는다(없거나 형식이 틀리면 명치 기본) — §3-2 |
+| 출력 검증 | 요일·시한 범위 밖, 빈 과목명, 모르는 키는 버리고 글자 수를 자른다(`functions/timetablePrompt.js`) |
+| 개인정보 | **이미지·읽은 결과를 저장하지 않는다.** `ocrUsage/{uid}__{학기}` 에 사용 기록(상태·토큰 수)만. `ocrUsage`·`ocrDaily` 는 규칙에 match 가 없어 앱에서 못 읽는다 |
+
+- 시험: 단위 5건(`cd functions && npm test`) + **에뮬레이터 13건**(가짜 AI 서버) — 로그인 없음·형식 오류·5MB 초과 거부, AI 오류 시 기록 삭제·재시도, 시간표 아님, 정상(이상한 칸 제외), 모델·시한표·effort 전달, 같은 학기 두 번째 거부, 다른 학기 허용, 기록에 이미지 없음, 하루 상한
+- ~~아직: 앱 화면~~ → §4-3 에서 완료
+- 11/14 추가: **수업을 하나도 못 읽은 결과(빈 결과)도 횟수에 안 센다**(`status: "empty"`) · **계정 삭제 시 `ocrUsage` 도 삭제**(`cleanupOnUserDelete`, v1 auth 트리거 — 11/14 푸시 토큰 삭제도 합침 — 방침 제6조 「계정 삭제까지」의 근거). 에뮬레이터 **15건** 통과.
+  🔴 둘 다 **다음 `npm run deploy:functions` 때 반영**된다(급하지 않음 — 1.1.0 출시 전까지)
+
+## 4-2. 운영 — 처음 한 번 (준희)
+
+1. Firebase **Blaze 전환 + 예산 알림**
+2. Anthropic Console 에서 서버용 API 키 발급 → `npx firebase-tools functions:secrets:set ANTHROPIC_API_KEY --project ichi-6b8f7` (입력은 안 보임)
+   + Console 에서 **월 지출 한도** 설정. 무료 크레딧이 11/27 에 끝나므로 결제 수단 등록 필요(1장 ≈ $0.014)
+3. `npm run deploy:functions` — 처음엔 필요한 Google Cloud API 를 켤지 묻는다 → Yes
+
+## 4-3. ✅ 앱 화면 구현 (2026-11-14)
+
+| 파일 | 하는 일 |
+|---|---|
+| `app/timetable-import.tsx` | ① 설명 + **AI 전송 동의**(Anthropic·미국 / 서버에 저장 안 함 / 학습에 안 씀 / 학번·이름은 잘라내라 / 방침 링크) → ② 사진 고르기 → ③ 읽는 중 → ④ 확인: 시간표 미리보기 + 줄마다 과목명·교원·교실 수정, 요일·교시 바꾸기, 삭제. `confidence: low` = 「要確認」 강조, 같은 칸 2개 경고, 「時間割に入らない授業」(집중·온디맨드·일요일) 목록 → ⑤ 이미 시간표가 있으면 **빈 칸에만 추가(기본) / 바꾸기** → 저장 → 홈 |
+| `src/services/timetableOcrService.ts` | 사진 선택 · `readTimetable` 호출 · 오류 코드 → 문구 · 결과 정리(앱 시간표는 月〜土·1〜7限) · **읽은 결과 임시 보관**(단말 AsyncStorage `ichi:ocrDraft:{uid}:{학기}` — 1학기 1회라 저장 전에 닫아도 안 날아가게. 저장하면 지움) |
+| `app.json` | `expo-image-picker` 플러그인: 사진 권한 문구(일본어) · 카메라 문구(아래 🔑) · 마이크 끔. 안드로이드 `CAMERA` 차단 |
+| `firebase.json` | 웹 CSP `connect-src` 에 함수 주소 추가(웹에서도 쓰게) |
+| 개인정보처리방침 4곳 | `app/privacy.tsx` · `docs/legal/PRIVACY.md` · `docs/legal/privacy.html`(일·한) — 제1조(사진·이용 기록) · 제4조(Anthropic·미국, 미국 제도, 학습 미사용·일정 기간 보관 후 삭제) · 제6조(이용 기록은 계정 삭제까지). 최종 갱신일 2026-11-14 |
+
+- 🔑 **옛 앱(1.0.0) 보호**: 사진 선택은 새 네이티브 부품이라 1.0.0 에는 없다. 그런데 master 는 출시 전까지 계속 OTA 로 1.0.0 에 간다
+  → `requireOptionalNativeModule("ExponentImagePicker")` 로 부품이 있는지 보고, **없으면 입구 버튼 자체를 숨긴다**(`canReadTimetableImage`).
+  `expo-image-picker` 는 맨 위에서 import 하지 않고, 부품이 있을 때만 함수 안에서 `require` 한다(맨 위 import 는 옛 앱을 켜자마자 멈추게 한다)
+- 🔑 iOS 는 원본이 PNG 여도 base64 를 JPEG 로 돌려준다 → 형식은 `mimeType` 이 아니라 **내용의 첫 바이트로 판정**
+- 🔑 카메라 문구를 남긴 이유: 사진 선택 부품 안에 카메라 코드가 들어 있어서, iOS 문구를 빼면 App Store 업로드 때 「Missing purpose string」(ITMS-90683)으로 걸릴 수 있다. 앱은 카메라를 **요청하지 않는다**. 안드로이드는 `CAMERA`·`RECORD_AUDIO` 권한을 빼 둠(prebuild 로 확인)
+- 시험(웹, 11/14): 실서버 13건 — 튜토리얼 ② 버튼 · 홈 버튼 · 동의 화면 · **명치 春 스크린샷 10/10 정확 (8.9초)** · 닫았다 열면 지난 결과 · 요일·교시 변경 · 삭제 · 저장(Firestore 9개·공개범위 friends) · 저장 후 같은 학기 → 「もう使いました」. 화면 배치·병합 7건(가짜 결과, AI 호출 없음) — 要確認·같은 칸 경고·日曜/メディア 목록·「빈 칸에만 추가」 병합. 임시 계정은 전부 삭제
+- **실기기는 개발용 빌드로 확인**(사진 선택은 웹/Expo Go 로 못 본다) — RELEASE-PLAN §3
 
 ## 5. 時間割メーカー와의 관계
 메이커(10/20 추가, `app/timetable-wizard.tsx`)는 **새 시간표를 조합해 만드는** 도구(후보 강의 → 필수 지정 → 목표 단위 범위 → 겹치지 않는 조합 자동 생성 → 교체 저장). 스크린샷 입력은 **이미 짜 둔 시간표를 옮겨 적는** 도구. 둘은 겹치지 않는다(신입생 = 메이커, 재학생 = 스크린샷).

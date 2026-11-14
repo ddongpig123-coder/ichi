@@ -31,6 +31,8 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 
 ## 작업 절차
 - 커밋 전 `npx tsc --noEmit` 통과 필수
+- 🔴 **새 네이티브 모듈(expo-image-picker·expo-notifications·위젯 등)은 맨 위에서 import 금지** — master 는 OTA 로 옛 스토어 앱(1.0.0)에도 가는데, 그 앱엔 부품이 없어 켜자마자 멈춘다.
+  `requireOptionalNativeModule` 로 확인 → 없으면 입구를 숨기고, 있을 때만 함수 안에서 `require`. 본보기 `src/services/timetableOcrService.ts` ([OTA-2026-11 §0](docs/OTA-2026-11.md))
 - UI 변경 시 미리보기(launch.json의 `expo-web`, 포트 8090)로 확인
 - 기능 단위로 커밋
 - 🔴 **브랜치 규칙 (2026-10-20 변경)**: `master` 최신화 → **작업 브랜치** → **PR** → 머지 → 브랜치 삭제
@@ -57,9 +59,9 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 → 4. 그 세션의 **입력 문서**만 읽기
 
 ### 지금 상황
-- **🔴 데드라인: 1.1 OTA 배포 = 2026-12-15 / 기능 동결 = 12-08** (ROADMAP-1.1 §7에 역산 일정)
+- **🔴 데드라인(2026-11-14 변경): 1.1·1.2 를 합쳐 스토어 업데이트 1번 = 「1.1.0」. 12/10 기능 동결 → 12/12 심사 제출 → 12/19 승인 목표 → 준희 12월 말 캐나다 출국 전 출시.** 계획표 [docs/RELEASE-PLAN-2026-12.md](docs/RELEASE-PLAN-2026-12.md) (ROADMAP-1.1 §7 의 「12/15 OTA · 1월 말 1.2」는 대체됨). JS 만 바뀌는 것은 그 사이에도 OTA 로 계속 낸다
 - **iOS**: 10/31 리젝(1.2 익명 UGC) → 11/02 빌드 5 재제출 → **🎉 11/06 승인·App Store 배포 완료**(`apps.apple.com/jp/app/id6825671804`) → **🚀 11/06 첫 OTA(1.0.1) 배포 완료**(S4 게시판 홈·초대 링크·댓글 수·스크랩 포함). 직후 운영은 [OTA-2026-11 §5](docs/OTA-2026-11.md) /
-  **Android**: 비공개 테스트 `alpha` **테스터 12명 참여 7일째**(11/02 Play 판정) → 11/09경 14일 충족 → 프로덕션 액세스 신청
+  **Android**: 11/11 프로덕션 액세스 승인 → 11/13 새 AAB(버전 코드 3) → **🎉 11/14 Google Play 정식 공개**(`PLAY_STORE_PUBLIC = true`)
 - 규칙 배포 현황: **2026-11-06 배포**(11/02분 + 댓글 `lastCommentId` 加算 허용 + `users/{uid}/scraps`) · **11-09 배포**(#92 공개 프로필). **#50 은 11-10 에 「댓글 단계2」만 빼냈다**(→ #99) — 나머지(친구·초대 토큰·좋아요)는 스토어 빌드5 내장 코드와 호환 확인 끝, **배포 가능** — [MY-TASKS 🔁](docs/MY-TASKS.md)
 - ✅ **S2(학교 분기)·S3(게시판 권한) 완료** — 11/08 기한이었던 「최대 리스크」는 해소됐다. S2 = #40(`3ad003a`), S3 = #39(`e541ea2`),
   규칙은 11/02 배포분에 포함. **S7·S8·S9·S10 의 선행이 전부 풀렸다**(ROADMAP-1.1 §5)
@@ -116,7 +118,7 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 - 졸업 마술사 메이지 10학부 완료. 理工·情コミ만 배당표 미연동(便覧이 학내 포털 비공개)
 - 📘 **데이터 작업(便覧·졸업요건·배당표·시라버스 크롤·연간 갱신)은 [docs/DATA-MANUAL.md](docs/DATA-MANUAL.md) 절차대로만.**
   현황 [docs/data/MASTERS-INDEX.md](docs/data/MASTERS-INDEX.md) · 분담 [docs/COLLAB-DATA-TAEHUI.md](docs/COLLAB-DATA-TAEHUI.md) · 도구 `scripts/binran/`
-- **네이티브 푸시 알림은 구현돼 있지 않음**(`expo-notifications` 미설치). 앱 내 빨간 점 배지만 있음
+- ~~네이티브 푸시 알림은 구현돼 있지 않음~~ → **11/14 구현(1.1.0 빌드에 들어감)** — [docs/PUSH-NOTIFICATIONS.md](docs/PUSH-NOTIFICATIONS.md)
 - 학점 기록은 단말 로컬(AsyncStorage) 전용 — 설계상 의도(CREDIT-TRACKING §6-2, 서버에 평문 저장 금지).
   기기 변경 시 소실 경고는 이미 화면에 표시됨. JSON 백업 내보내기/가져오기 추가됨
 
