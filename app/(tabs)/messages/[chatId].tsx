@@ -10,7 +10,7 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useHeaderHeight } from "expo-router/react-navigation";
 import { useAuth } from "../../../src/contexts/AuthContext";
 import { useTheme } from "../../../src/contexts/ThemeContext";
@@ -26,6 +26,8 @@ import { friendlyErrorBody } from "../../../src/utils/writeError";
 import type { Theme } from "../../../src/theme/themes";
 import type { ChatMessage } from "../../../src/types/chat";
 import type { TranslationKey } from "../../../src/i18n/translations";
+import { offerPushAfter } from "../../../src/components/push/offerPush";
+import { setActivePushUrl } from "../../../src/services/pushService";
 
 function timeStr(ms: number): string {
   const d = new Date(ms);
@@ -63,6 +65,13 @@ export default function ChatRoomScreen() {
   const [sending, setSending] = useState(false);
   const [modTarget, setModTarget] = useState<{ path: string; authorUid: string } | null>(null);
   const listRef = useRef<FlatList>(null);
+  // この部屋を開いている間は、同じ部屋のプッシュ通知をアプリ内で出さない（RELEASE-PLAN N2）
+  useFocusEffect(
+    React.useCallback(() => {
+      setActivePushUrl(`/(tabs)/messages/${chatId}`);
+      return () => setActivePushUrl(null);
+    }, [chatId])
+  );
   // KeyboardAvoidingView は自分の位置を「親基準」でしか知らないので、画面上端からの距離
   // (=ヘッダー高。ステータスバー/ノッチ分の上 safe area を含む)を offset で渡す必要がある。
   // 以前は 90 固定で、ヘッダー高が違う機種で入力欄がキーボードに隠れていた。
@@ -99,6 +108,8 @@ export default function ChatRoomScreen() {
     setText("");
     try {
       await sendMessage(chatId, user.uid, trimmed);
+      // 初めてのメッセージのあとに 1 回だけ「返事が来たら通知しましょうか？」（RELEASE-PLAN N2）
+      offerPushAfter("message", user.uid, language, t);
     } catch (e) {
       // 失敗したら本文を入力欄に戻す（打ち直しさせない）。送信中に続きを打っていたらその前に戻す。
       setText((cur) => (cur.trim() ? `${trimmed}\n${cur}` : trimmed));

@@ -49,6 +49,7 @@ import { recordCommentedPost } from "../../../src/services/commentedPostsStore";
 import LoadError from "../../../src/components/common/LoadError";
 import { LOUNGES, isQaLounge, loungeLabel, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
 import { qaTagLabel } from "../../../src/types/board";
+import { offerPushAfter } from "../../../src/components/push/offerPush";
 
 const BEST_COLOR = "#E0A500"; // ベストアンサー（金）。学校の投稿詳細と同じ
 
@@ -354,6 +355,8 @@ export default function LoungePostDetailScreen() {
         });
       }
       await loadComments();
+      // 初めてのコメントのあとに 1 回だけ「返信が来たら通知しましょうか？」（RELEASE-PLAN N2）
+      offerPushAfter("comment", user.uid, language, t);
       setCommentText("");
       setReply(null);
       setMention(null);

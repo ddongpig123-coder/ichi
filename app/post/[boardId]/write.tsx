@@ -23,6 +23,7 @@ import { findBannedWords } from "../../../src/utils/contentFilter";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
 import { BOARDS, boardLabel, isQaBoard, QA_TAGS, type BoardId } from "../../../src/types/board";
+import { offerPushAfter } from "../../../src/components/push/offerPush";
 
 export default function WriteScreen() {
   const insets = useSafeAreaInsets();
@@ -64,6 +65,8 @@ export default function WriteScreen() {
     try {
       await createPost(schoolDomain, boardId as BoardId, user.uid, title.trim(), body.trim(), isQa ? tag : null);
       leave(() => router.back());
+      // 初めての投稿のあとに 1 回だけ「コメントが付いたら通知しましょうか？」（RELEASE-PLAN N2）
+      offerPushAfter("post", user.uid, language, t);
     } catch (e: any) {
       // 所属違い（ルールが弾いた）ときは理由を案内に、それ以外は分かる言葉に差し替える
       notify(t("post.submitFailed"), isPermissionDenied(e) ? writeErrorBody(e, t) : friendlyErrorBody(e, t));

@@ -41,6 +41,7 @@ import { friendlyErrorBody } from "../../src/utils/writeError";
 import { THEME_IDS, THEMES, themeLabel, type Theme } from "../../src/theme/themes";
 import type { UserProfile } from "../../src/types/user";
 import { setTutorialStage } from "../../src/services/tutorialStore";
+import { canUsePush, unregisterPush } from "../../src/services/pushService";
 
 // 은행 잔액 숨기기 스타일: 기본은 ●●●● 로 가리고, 누르면 표시/숨김 토글
 function SecretValue({
@@ -528,6 +529,13 @@ export default function ProfileScreen() {
         <Text style={styles.settingText}>{t("profile.blockList")}</Text>
         <Text style={styles.settingArrow}>›</Text>
       </TouchableOpacity>
+      {/* 通知（コメント・返信 / メッセージ）。通知の部品が無い旧アプリ・Web では出さない（RELEASE-PLAN N2） */}
+      {canUsePush ? (
+        <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/notification-settings")}>
+          <Text style={styles.settingText}>{t("profile.notifications")}</Text>
+          <Text style={styles.settingArrow}>›</Text>
+        </TouchableOpacity>
+      ) : null}
       {/* 표시 언어 토글 — 온보딩 이후에도 한/일 전환 가능하게 (AsyncStorage 저장) */}
       <TouchableOpacity
         style={styles.settingRow}
@@ -571,7 +579,13 @@ export default function ProfileScreen() {
 
       {/* 로그인 기능은 나중에 다시 붙일 예정 — 이메일 계정일 때만 로그아웃 노출 */}
       {user && !user.isAnonymous ? (
-        <TouchableOpacity style={styles.signOutBtn} onPress={() => signOut()}>
+        <TouchableOpacity
+          style={styles.signOutBtn}
+          onPress={async () => {
+            await unregisterPush(); // 前のアカウントの通知がこの端末に来ないように（ログアウトの前に）
+            await signOut();
+          }}
+        >
           <Text style={styles.signOutText}>{t("account.logout")}</Text>
         </TouchableOpacity>
       ) : null}
