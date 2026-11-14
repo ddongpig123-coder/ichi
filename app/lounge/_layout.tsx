@@ -22,6 +22,7 @@ export default function LoungeLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ title: t("lounge.screenTitle") }} />
+      <Stack.Screen name="best" options={{ title: t("boards.bestScreenTitle") }} />
       <Stack.Screen name="[loungeId]/index" options={{ title: "" }} />
       <Stack.Screen name="[loungeId]/write" options={{ title: t("post.writeScreenTitle") }} />
       <Stack.Screen name="[loungeId]/[postId]" options={{ title: t("post.screenTitle") }} />

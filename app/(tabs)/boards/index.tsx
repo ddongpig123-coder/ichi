@@ -18,11 +18,11 @@ import { fetchForestFeed, fetchSchoolFeed, type FeedItem } from "../../../src/se
 
 // 掲示板タブのホーム（2026-11-06 準熙決定, BOARD-ACCESS §4-3）。
 // エブリタイムのホームに倣い、森ごとのブロックを縦に 3 つ並べ、それぞれの下に新着投稿を数件出す:
-//   みんなの森 → 留学生の森 → 学校の森
+//   学校の森 → みんなの森 → 留学生の森（2026-11-14 準熙: 自分の大学をいちばん上に）
 // ブロックの見出しを押すとその森の板一覧へ、投稿を押すと投稿へ。
 // 以前の上部セグメント（学校 / みんなの森 / 留学生の森）は廃止。一覧にアイコン・絵文字は出さない。
 type BlockId = ForestId | "school";
-const ORDER: BlockId[] = ["minna", "ryugakusei", "school"];
+const ORDER: BlockId[] = ["school", "minna", "ryugakusei"];
 
 export default function BoardsHomeScreen() {
   const router = useRouter();
