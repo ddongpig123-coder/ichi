@@ -1,0 +1,7 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "大学の森",
+    "NSPhotoLibraryUsageDescription": "시간표 스크린샷을 골라 수업을 읽어 오기 위해 사진에 접근해요.",
+    "NSCameraUsageDescription": "사진을 찍어 시간표를 불러올 때 카메라를 사용해요."
+  }
+}

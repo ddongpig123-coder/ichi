@@ -163,7 +163,7 @@ OTA는 「받아 두고 **다음 실행**부터 적용」이라 **새로 설치�
    2. 새 버전 만들기 → `.aab` 업로드 → 출시 노트(아래) → 다음
    3. 버전 미리보기 및 확인 → 경고가 있으면 Claude에게 화면 공유 → **검토를 위해 Google에 버전 전송**
    4. Google 검토(보통 1~3일, 길면 7일) → 승인되면 게시(관리형 게시를 켜 두지 않았다면 자동)
-4. **[Claude] 출시 후**: `src/services/friendInvite.ts` `PLAY_STORE_PUBLIC = true` → 준희 `npm run deploy:web` + OTA
+4. ✅ **2026-11-14 공개 확인(준희)** → `PLAY_STORE_PUBLIC = true`(PC 로 연 초대 페이지에도 Google Play 버튼) → 준희 `npm run deploy:web` + OTA
    (초대 링크 웹 페이지의 「Android版は近日公開予定」 → Google Play 버튼). `docs/MY-TASKS.md` 📍에 날짜 기록
 
 출시 노트 (각 500자 이내):

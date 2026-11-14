@@ -14,7 +14,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "jp.timetable.app",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleDevelopmentRegion": "ja"
       }
     },
     "android": {
@@ -28,6 +29,10 @@
       "package": "jp.timetable.app",
       "blockedPermissions": ["com.google.android.gms.permission.AD_ID", "android.permission.CAMERA"]
     },
+    "locales": {
+      "ja": "./locales/ja.json",
+      "ko": "./locales/ko.json"
+    },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
@@ -40,6 +45,19 @@
           "photosPermission": "時間割のスクリーンショットを選んで授業を読み取るために、写真へのアクセスを使います。",
           "cameraPermission": "写真を撮って時間割を読み込む場合に、カメラを使います。",
           "microphonePermission": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-logo.png",
+          "imageWidth": 140,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5F7FA",
+          "dark": {
+            "image": "./assets/splash-logo.png",
+            "backgroundColor": "#131417"
+          }
         }
       ],
       [

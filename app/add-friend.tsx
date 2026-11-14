@@ -172,6 +172,12 @@ export default function AddFriendScreen() {
                   <Text style={styles.secondaryText}>{t("addFriend.appStore")}</Text>
                 </TouchableOpacity>
               )}
+              {/* PC などで開いた人には両方のストアを出す（Android 公開後） */}
+              {os === "other" && PLAY_STORE_PUBLIC && (
+                <TouchableOpacity style={styles.secondaryButton} onPress={() => openWebUrl(PLAY_STORE_URL)}>
+                  <Text style={styles.secondaryText}>{t("addFriend.playStore")}</Text>
+                </TouchableOpacity>
+              )}
               {os === "android" && (PLAY_STORE_PUBLIC ? (
                 <TouchableOpacity style={styles.secondaryButton} onPress={() => openWebUrl(PLAY_STORE_URL)}>
                   <Text style={styles.secondaryText}>{t("addFriend.playStore")}</Text>
