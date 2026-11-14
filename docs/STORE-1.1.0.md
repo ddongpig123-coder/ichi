@@ -14,6 +14,7 @@
 ・はじめての方向けに「はじめの設定」と使い方ガイドを追加しました
 ・掲示板をリニューアル。学校の森・みんなの森・留学生の森で、自由掲示板・質問掲示板・ベスト投稿をそろえました
 ・LINEなどで受け取った友達の招待リンクから、アプリが直接開くようになりました
+・アカウント画面からパスワードを変更できるようになりました
 ・起動画面のデザインを新しくし、そのほかの細かな改善を行いました
 ```
 
@@ -24,6 +25,7 @@
 ・처음 쓰는 분을 위해 「처음 설정」과 사용법 안내를 추가했어요
 ・게시판을 새로 단장했어요. 학교의 숲·모두의 숲·유학생의 숲 모두 자유게시판·질문게시판·베스트 글을 갖췄어요
 ・LINE 등에서 받은 친구 초대 링크를 누르면 앱이 바로 열려요
+・계정 화면에서 비밀번호를 바꿀 수 있어요
 ・시작 화면 디자인을 바꾸고, 그 밖의 작은 부분을 개선했어요
 ```
 
@@ -34,6 +36,7 @@
 - New first-time setup and a short guide to the app
 - Refreshed boards: every forest now has a free board, a Q&A board and best posts
 - Friend invite links open the app directly
+- Change your password from the Account screen
 - New launch screen and other improvements
 ```
 

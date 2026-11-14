@@ -22,6 +22,7 @@ import {
   MICROSOFT_WEB_ONLY_ERROR,
   SOCIAL_WEB_ONLY_ERROR,
   deleteAccount,
+  changePassword,
   DELETE_PASSWORD_REQUIRED,
   DELETE_SOCIAL_WEB_ONLY,
   DELETE_TIMEOUT,
@@ -66,6 +67,11 @@ export default function AccountScreen() {
   // メール/パスワードアカウントか（削除時に本人確認のパスワードが必要）
   const isPasswordUser = user?.providerData?.some((p) => p.providerId === "password") ?? false;
   const [deletePassword, setDeletePassword] = useState("");
+  // パスワードの変更（メールアカウントのみ。ふだんは畳んでおく）
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pwCurrent, setPwCurrent] = useState("");
+  const [pwNew, setPwNew] = useState("");
+  const [pwNewConfirm, setPwNewConfirm] = useState("");
 
   function goBack() {
     router.canGoBack() ? router.back() : router.replace("/(tabs)");
@@ -282,6 +288,63 @@ export default function AccountScreen() {
     }
   }
 
+  // パスワードの変更: 今のパスワードで本人確認 → 新しいパスワード。
+  // 失敗してもパスワードは変わらない（再認証が通ってから updatePassword する）
+  async function handleChangePassword() {
+    if (busy) return;
+    if (!pwCurrent) return notify(t("account.pwChangeTitle"), t("account.pwNeedCurrent"));
+    if (pwNew.length < 6) return notify(t("account.inputError"), t("account.errPasswordLength"));
+    if (pwNew !== pwNewConfirm) return notify(t("account.inputError"), t("account.errPasswordMismatch"));
+    if (pwNew === pwCurrent) return notify(t("account.pwChangeTitle"), t("account.pwSameAsCurrent"));
+    setBusy(true);
+    try {
+      await changePassword(pwCurrent, pwNew);
+      setPwCurrent("");
+      setPwNew("");
+      setPwNewConfirm("");
+      setPwOpen(false);
+      notify(t("account.pwChangeDone"), t("account.pwChangeDoneMessage"));
+    } catch (e: any) {
+      if (e.code === "auth/wrong-password" || e.code === "auth/invalid-credential") {
+        notify(t("account.pwChangeFailed"), t("account.pwWrongCurrent"));
+      } else if (e.code === "auth/weak-password") {
+        notify(t("account.pwChangeFailed"), t("account.errPasswordLength"));
+      } else if (e.code === DELETE_TIMEOUT) {
+        notify(t("account.pwChangeFailed"), t("account.pwTimeoutMessage"));
+      } else if (e.code === "auth/network-request-failed") {
+        notify(t("account.pwChangeFailed"), t("account.deleteNetworkMessage"));
+      } else if (e.code === "auth/too-many-requests") {
+        notify(t("account.pwChangeFailed"), t("account.deleteTooManyMessage"));
+      } else {
+        notify(t("account.pwChangeFailed"), friendlyErrorBody(e, t));
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // 今のパスワードがわからない: 登録メールに再設定メールを送る（ログアウトしなくてよい）
+  function handleForgotCurrentPassword() {
+    const target = user?.email;
+    if (!target || busy) return;
+    confirmDialog(
+      t("account.resetTitle"),
+      t("account.pwResetConfirm").replace("{email}", target),
+      async () => {
+        setBusy(true);
+        try {
+          await sendPasswordReset(target, language);
+          notify(t("account.resetSentTitle"), `${target}\n\n${t("account.resetSentMessage")}`);
+        } catch (e: any) {
+          notify(t("account.resetFailed"), friendlyErrorBody(e, t));
+        } finally {
+          setBusy(false);
+        }
+      },
+      { cancel: t("common.cancel"), ok: t("common.ok") }
+    );
+  }
+
   async function handleSignOut() {
     confirmDialog(
       t("account.logout"),
@@ -392,6 +455,75 @@ export default function AccountScreen() {
                   </TouchableOpacity>
                 </View>
               </>
+            )}
+
+            {/* パスワードの変更（メール/パスワードのアカウントだけ） */}
+            {isPasswordUser && (
+              <View style={styles.pwSection}>
+                <TouchableOpacity
+                  style={styles.pwToggle}
+                  onPress={() => setPwOpen((v) => !v)}
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: pwOpen }}
+                >
+                  <Text style={styles.pwToggleText}>{t("account.pwChangeOpen")}</Text>
+                  <Text style={styles.pwToggleText}>{pwOpen ? "▲" : "▼"}</Text>
+                </TouchableOpacity>
+                {pwOpen && (
+                  <>
+                    <Text style={styles.label}>{t("account.pwCurrent")}</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="••••••"
+                      placeholderTextColor={theme.textSecondary}
+                      secureTextEntry
+                      autoCapitalize="none"
+                      textContentType="password"
+                      autoComplete="current-password"
+                      value={pwCurrent}
+                      onChangeText={setPwCurrent}
+                    />
+                    <TouchableOpacity onPress={handleForgotCurrentPassword} disabled={busy} style={styles.forgotRow} hitSlop={8}>
+                      <Text style={styles.forgotText}>{t("account.pwForgotCurrent")}</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.label}>{t("account.pwNew")}</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="••••••"
+                      placeholderTextColor={theme.textSecondary}
+                      secureTextEntry
+                      autoCapitalize="none"
+                      textContentType="newPassword"
+                      autoComplete="new-password"
+                      value={pwNew}
+                      onChangeText={setPwNew}
+                    />
+                    <Text style={styles.label}>{t("account.pwNewConfirm")}</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="••••••"
+                      placeholderTextColor={theme.textSecondary}
+                      secureTextEntry
+                      autoCapitalize="none"
+                      textContentType="newPassword"
+                      autoComplete="new-password"
+                      value={pwNewConfirm}
+                      onChangeText={setPwNewConfirm}
+                      returnKeyType="go"
+                      onSubmitEditing={handleChangePassword}
+                    />
+                    <TouchableOpacity
+                      style={[styles.primaryButton, { marginTop: 16 }, busy && styles.buttonDisabled]}
+                      onPress={handleChangePassword}
+                      disabled={busy}
+                    >
+                      <Text style={styles.primaryButtonText}>
+                        {busy ? t("account.pwChanging") : t("account.pwChangeButton")}
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
             )}
 
             <TouchableOpacity style={styles.dangerButton} onPress={handleSignOut}>
@@ -620,6 +752,20 @@ function makeStyles(theme: Theme) {
       marginTop: 16,
       textDecorationLine: "underline",
     },
+
+    pwSection: { marginTop: 24 },
+    pwToggle: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: theme.card,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 8,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+    },
+    pwToggleText: { fontSize: 14, fontWeight: "700", color: theme.textPrimary },
 
     forgotRow: { alignSelf: "flex-end", marginTop: 10 },
     forgotText: { fontSize: 13, color: theme.primary, fontWeight: "600" },

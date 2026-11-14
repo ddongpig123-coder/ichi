@@ -116,6 +116,7 @@
 | ✅ | 옛 버전 안내(Claude): 1.1.0 공개 날 `STORE_LATEST` 를 바꿔 1.0.0 에 마지막 OTA → 「新しいバージョンがあります」(강제 아님, 하루 1번). 심사 제출 빌드는 `eas build --profile release`(app.json 은 출시일까지 1.0.0) | [RELEASE-PLAN §4-2](RELEASE-PLAN-2026-12.md) |
 | ✅ | N3(Claude): 초대 링크 `https://ichi-6b8f7.web.app/add-friend…` 를 **앱이 직접 연다**(iOS 유니버설 링크·Android 앱 링크). 대상 경로는 `/add-friend` 만. 개발용 앱은 제외. Android 증명 파일은 진짜 서명 지문이 들어올 때까지 공개 안 함 | [INVITE-LINK §5](INVITE-LINK.md) |
 | ✅ | 개인정보처리방침에 푸시 토큰·Expo(650 Industries, 미국)·Apple·Google 알림 서비스 추가(쪽지 내용은 안 보냄) | 同上 |
+| ✅ | **로그인한 상태에서 비밀번호 변경** (준희 「비번 변경도 가능하게」): 계정 화면 「パスワードを変更する」(메일 계정만, 접어 둠) → 현재 비번으로 본인 확인 → 새 비번 2번. 「現在のパスワードがわからない方」 = 등록 메일로 재설정 메일(로그아웃 불필요). 바꾸면 Firebase 가 **다른 기기 로그인을 끊는다**(이 기기는 유지). JS 만 → **OTA 로 1.0.0 에도 바로**. 규칙 변경 없음 | `app/account.tsx` · `authService.changePassword` |
 
 ## 2026-11-13 (마케팅 — 영상)
 
