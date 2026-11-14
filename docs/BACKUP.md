@@ -85,6 +85,7 @@ node backup-firestore.mjs --restore ../../ichi-backup/2026-11-07T00-00-00-000Z -
 |---|---|---|
 | 2026-11-07 | (estimate) 대상 627 / 제외 21,140 | `--estimate`만. users 151 · usersPublic 144 · posts 66 · comments 103 · chats 12 · messages 9 · friendships 6 · reports 4 · contentQueue 48 등. 실제 덤프는 아직 |
 | **2026-11-09** | **659건 저장** (읽기 1,349) | 🥇 첫 실제 덤프(준희 PC). `~/ichi-backup/2026-11-09T13-02-06-146Z/`. users 193(서브컬렉션 포함) · schools 172(글·댓글·좋아요) · usersPublic 147 · contentQueue 68 · lounges 34 · chats 8 · emailIndex 15 · friendRequests 7 · friendships 7 · reports 4 · inquiries 2 · operators 2. 제외 postIndex·courses |
+| **2026-11-14** | **736건 저장** (읽기 1,503) | 2회차(준희 PC). `~/ichi-backup/2026-11-14T01-21-18-092Z/`. users 206 · usersPublic 155 · schools 193 · contentQueue 68 · lounges 39 · chats 32 · emailIndex 17 · friendRequests 9 · friendships 8 · reports 4 · inquiries 3 · operators 2. 제외 postIndex·courses |
 | | | 돌릴 때마다 한 줄 추가 |
 
 ## 5. 유출일 때는 복구가 아니라 신고다

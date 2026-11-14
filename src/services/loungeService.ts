@@ -9,6 +9,7 @@ import {
   query,
   orderBy,
   limit,
+  startAfter,
   serverTimestamp,
   increment,
   updateDoc,
@@ -16,6 +17,7 @@ import {
   runTransaction,
   Timestamp,
   type DocumentData,
+  type QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { toggleLikeDoc } from "./likeToggle";
@@ -27,7 +29,7 @@ import {
   loungePostIndexDoc,
   searchPostIndex,
 } from "./postIndexService";
-import type { LoungeId, LoungePost, LoungeComment } from "../types/lounge";
+import { loungesOfForest, type ForestId, type LoungeId, type LoungePost, type LoungeComment } from "../types/lounge";
 
 // 留学生ラウンジ（全国単位）のデータアクセス。boardService と同じ形だが、
 // schoolDomain スコープを持たず lounges/{loungeId}/posts/... を対象にする。
@@ -52,11 +54,13 @@ function toMs(val: Timestamp | number | undefined): number {
 
 // ── Posts ──────────────────────────────────────────────
 
+// tag は質問掲示板（qa の板）のカテゴリ。学校の createPost と同じく、あるときだけ書く。
 export async function createLoungePost(
   loungeId: LoungeId,
   authorUid: string,
   title: string,
-  body: string
+  body: string,
+  tag: string | null = null
 ): Promise<string> {
   // 本体と検索索引を1つのバッチで書く（掲示板の createPost と同じ）。
   const ref = doc(postsCol(loungeId));
@@ -70,6 +74,7 @@ export async function createLoungePost(
       commentCount: 0,
       likeCount: 0,
       createdAt: serverTimestamp(),
+      ...(tag ? { tag } : {}),
     },
     loungePostIndexDoc(loungeId, ref.id),
     buildPostIndex(loungeId, authorUid, title, body)
@@ -146,6 +151,59 @@ export async function fetchLoungePosts(
       createdAt: toMs(d.data().createdAt),
     }))
     .filter((p) => !p.deleted);
+}
+
+// 森の板の一覧（ページング付き）。学校の boardService.fetchPosts と同じ形。
+// 以前は最新 20 件だけで、それより古い投稿は一覧から辿れなかった（2026-11-14 学校の森に揃えた）。
+export async function fetchLoungePostsPage(
+  loungeId: LoungeId,
+  pageSize = 20,
+  after?: QueryDocumentSnapshot<DocumentData>
+): Promise<{ posts: LoungePost[]; lastDoc: QueryDocumentSnapshot<DocumentData> | null; hasMore: boolean }> {
+  const q = after
+    ? query(postsCol(loungeId), orderBy("createdAt", "desc"), startAfter(after), limit(pageSize))
+    : query(postsCol(loungeId), orderBy("createdAt", "desc"), limit(pageSize));
+  const snap = await getDocs(q);
+  const posts = snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Omit<LoungePost, "id">), createdAt: toMs(d.data().createdAt) }))
+    .filter((p) => !p.deleted);
+  // hasMore は生ドキュメント数で判定（削除ぶん posts は減るため。boardService.fetchPosts と同じ）
+  return { posts, lastDoc: snap.docs[snap.docs.length - 1] ?? null, hasMore: snap.docs.length === pageSize };
+}
+
+// 森のベスト投稿（その森の板ぜんぶから いいね数トップ N）。学校の fetchBestPosts と同じ集め方。
+// 板ごとに likeCount 降順で N 件 → まとめて並べ替え。単一フィールドの並べ替えなので複合索引は要らない。
+export type BestLoungePost = LoungePost & { loungeId: LoungeId };
+export async function fetchBestLoungePosts(forest: ForestId, topN = 20): Promise<BestLoungePost[]> {
+  const all: BestLoungePost[] = [];
+  await Promise.all(
+    loungesOfForest(forest).map(async (l) => {
+      const snap = await getDocs(query(postsCol(l.id), orderBy("likeCount", "desc"), limit(topN)));
+      snap.docs.forEach((d) => {
+        const data = d.data();
+        if (data.deleted) return;
+        all.push({
+          id: d.id,
+          ...(data as Omit<LoungePost, "id">),
+          loungeId: l.id,
+          likeCount: (data.likeCount ?? 0) as number,
+          createdAt: toMs(data.createdAt),
+        });
+      });
+    })
+  );
+  return all.filter((p) => p.likeCount > 0).sort((a, b) => b.likeCount - a.likeCount).slice(0, topN);
+}
+
+// ── ベストアンサー（質問掲示板） ─────────────────────────
+// 学校の boardService.setBestComment / clearBestComment と同じ。作成者本人の update なので
+// firestore.rules の isAuthorEditOfPost（resolved / bestCommentId）で許可済み。
+export async function setBestLoungeComment(loungeId: LoungeId, postId: string, commentId: string): Promise<void> {
+  await updateDoc(doc(postsCol(loungeId), postId), { bestCommentId: commentId, resolved: true });
+}
+
+export async function clearBestLoungeComment(loungeId: LoungeId, postId: string): Promise<void> {
+  await updateDoc(doc(postsCol(loungeId), postId), { bestCommentId: null, resolved: false });
 }
 
 // ラウンジ内の検索（ヘッダーの🔍から）。boardService.searchPostsInBoard と同じ定番方式：

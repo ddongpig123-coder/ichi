@@ -22,7 +22,8 @@ import { useConfirmDiscard } from "../../../src/hooks/useConfirmDiscard";
 import { POST_BODY_MAX, POST_TITLE_MAX } from "../../../src/data/limits";
 import BannedWordWarning from "../../../src/components/common/BannedWordWarning";
 import type { Theme } from "../../../src/theme/themes";
-import { LOUNGES, loungeLabel, forestOfLounge, type LoungeId } from "../../../src/types/lounge";
+import { LOUNGES, isQaLounge, loungeLabel, forestOfLounge, type LoungeId } from "../../../src/types/lounge";
+import { QA_TAGS } from "../../../src/types/board";
 
 export default function LoungeWriteScreen() {
   const insets = useSafeAreaInsets();
@@ -34,6 +35,9 @@ export default function LoungeWriteScreen() {
   const router = useRouter();
 
   const lounge = LOUNGES.find((l) => l.id === loungeId);
+  // 質問掲示板はカテゴリを選べる（任意。学校の質問掲示板と同じ QA_TAGS）
+  const isQa = isQaLounge(loungeId);
+  const [tag, setTag] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -56,7 +60,7 @@ export default function LoungeWriteScreen() {
     setBannedWords([]);
     setSubmitting(true);
     try {
-      await createLoungePost(loungeId as LoungeId, user.uid, title.trim(), body.trim());
+      await createLoungePost(loungeId as LoungeId, user.uid, title.trim(), body.trim(), isQa ? tag : null);
       leave(() => router.back());
     } catch (e: any) {
       notify(t("post.submitFailed"), friendlyErrorBody(e, t));
@@ -75,6 +79,25 @@ export default function LoungeWriteScreen() {
         <Text style={styles.anon}>
           {forestOfLounge(loungeId)?.id === "ryugakusei" ? t("lounge.anonNoticeRyugakusei") : t("lounge.anonNotice")}
         </Text>
+
+        {isQa ? (
+          <View style={styles.tagWrap}>
+            {QA_TAGS.map((tg) => {
+              const on = tag === tg.id;
+              return (
+                <TouchableOpacity
+                  key={tg.id}
+                  style={[styles.tagChip, on && styles.tagChipOn]}
+                  onPress={() => setTag(on ? null : tg.id)}
+                >
+                  <Text style={[styles.tagChipText, on && styles.tagChipTextOn]}>
+                    {language === "ko" ? tg.ko : tg.ja}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ) : null}
 
         <TextInput
           style={styles.titleInput}
@@ -124,6 +147,14 @@ function makeStyles(theme: Theme) {
     container: { flex: 1, backgroundColor: theme.card, padding: 16 },
     boardName: { fontSize: 13, color: theme.primary, fontWeight: "600", marginBottom: 2 },
     anon: { fontSize: 12, color: theme.textSecondary, marginBottom: 20 },
+    tagWrap: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginTop: -4, marginBottom: 20 },
+    tagChip: {
+      paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999,
+      backgroundColor: theme.background, borderWidth: 1, borderColor: theme.border,
+    },
+    tagChipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
+    tagChipText: { fontSize: 12.5, fontWeight: "700", color: theme.textSecondary },
+    tagChipTextOn: { color: "#fff" },
     titleInput: {
       borderBottomWidth: 1,
       borderColor: theme.border,
