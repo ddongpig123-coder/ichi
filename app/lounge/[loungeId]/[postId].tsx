@@ -28,6 +28,8 @@ import {
   softDeleteLoungeComment,
   toggleLoungeCommentLike,
   fetchLikedLoungeCommentIds,
+  setBestLoungeComment,
+  clearBestLoungeComment,
 } from "../../../src/services/loungeService";
 import { findBannedWords } from "../../../src/utils/contentFilter";
 import { useNotifications } from "../../../src/contexts/NotificationsContext";
@@ -45,7 +47,10 @@ import { addScrap, isScrapped, removeScrap } from "../../../src/services/scrapSe
 import { scrapKey } from "../../../src/types/scrap";
 import { recordCommentedPost } from "../../../src/services/commentedPostsStore";
 import LoadError from "../../../src/components/common/LoadError";
-import { LOUNGES, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
+import { LOUNGES, isQaLounge, loungeLabel, type LoungeId, type LoungePost, type LoungeComment } from "../../../src/types/lounge";
+import { qaTagLabel } from "../../../src/types/board";
+
+const BEST_COLOR = "#E0A500"; // ベストアンサー（金）。学校の投稿詳細と同じ
 
 
 export default function LoungePostDetailScreen() {
@@ -156,6 +161,7 @@ export default function LoungePostDetailScreen() {
       user ? checkLoungeLiked(loungeId as LoungeId, postId, user.uid) : Promise.resolve(false),
     ]).then(([p, _c, isLiked]) => {
       const mine = p as LoungePost | null;
+      const loadedComments = _c as LoungeComment[];
       setPost(mine);
       if (mine && user) {
         isScrapped(user.uid, scrapKey("lounge", loungeId as string, postId)).then(setScrapped).catch(() => {});
@@ -165,6 +171,15 @@ export default function LoungePostDetailScreen() {
       // 自分の投稿を開いたら「新着コメント」の赤丸を消す
       if (mine && user && mine.authorUid === user.uid) {
         markPostSeen("lounge", loungeId as string, postId, mine.commentCount ?? 0);
+      }
+      // ベストアンサーが削除済み/不在なら「解決済み」を解除する（学校の投稿詳細と同じ。
+      // 投稿を更新できるのは作成者だけなので、作成者が開いた時に直す）
+      if (mine && !mine.deleted && mine.bestCommentId && user && mine.authorUid === user.uid) {
+        const best = loadedComments.find((c) => c.id === mine.bestCommentId);
+        if (!best || best.deleted) {
+          clearBestLoungeComment(loungeId as LoungeId, postId).catch(() => {});
+          setPost((prev) => (prev ? { ...prev, bestCommentId: null, resolved: false } : prev));
+        }
       }
     })
       .catch((e) => {
@@ -244,6 +259,23 @@ export default function LoungePostDetailScreen() {
       notify(t("common.error"), friendlyErrorBody(e, t));
     } finally {
       setLiking(false);
+    }
+  }
+
+  // ベストアンサー選択/解除（質問の作成者のみ）。選ぶと解決済みに。学校の投稿詳細と同じ
+  const [bestBusy, setBestBusy] = useState(false);
+  async function handleSelectBest(commentId: string) {
+    if (!post || bestBusy) return;
+    setBestBusy(true);
+    const next = post.bestCommentId === commentId ? null : commentId;
+    try {
+      if (next) await setBestLoungeComment(loungeId as LoungeId, postId, next);
+      else await clearBestLoungeComment(loungeId as LoungeId, postId);
+      setPost({ ...post, bestCommentId: next, resolved: !!next });
+    } catch (e: any) {
+      notify(t("common.error"), friendlyErrorBody(e, t));
+    } finally {
+      setBestBusy(false);
     }
   }
 
@@ -377,6 +409,16 @@ export default function LoungePostDetailScreen() {
     (c) => !c.deleted && !isHidden(c.id) && !isBlocked(c.authorUid)
   ).length;
 
+  // 質問掲示板（知恵袋化）の状態。ベストアンサーは作成者が回答(トップレベルコメント)から選ぶ
+  const isQa = isQaLounge(loungeId);
+  const isAuthor = !!user && user.uid === post.authorUid;
+  const bestId = post.bestCommentId ?? null;
+  // ベストアンサーを先頭に固定（残りは元の順序）
+  const orderedTopLevel =
+    isQa && bestId && topLevelComments.some((c) => c.id === bestId)
+      ? [...topLevelComments.filter((c) => c.id === bestId), ...topLevelComments.filter((c) => c.id !== bestId)]
+      : topLevelComments;
+
   // 返信開始: スレッド root にぶら下げ、返信先の人をメンション。
   // フォーカスはタップのジェスチャ内で同期呼び出し（= 入力欄を直接タップしたのと同じ。setTimeout で
   // 遅延させるとジェスチャ文脈を外れて Android がキーボードを出さないため）。
@@ -405,8 +447,15 @@ export default function LoungePostDetailScreen() {
       );
     }
     const likedByMe = likedComments.has(c.id);
+    const isBest = isQa && bestId === c.id && !isReply;
+    const canSelectBest = isQa && isAuthor && !isReply && c.authorUid !== post.authorUid;
     return (
-      <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard]}>
+      <View key={c.id} style={[styles.commentCard, isReply && styles.replyCard, isBest && styles.bestCard]}>
+        {isBest ? (
+          <View style={styles.bestBadge}>
+            <Text style={styles.bestBadgeText}>★ {t("qa.bestAnswer")}</Text>
+          </View>
+        ) : null}
         <View style={styles.commentAuthorRow}>
           {isReply && <Text style={styles.replyArrow}>↳</Text>}
           <TouchableOpacity
@@ -448,15 +497,28 @@ export default function LoungePostDetailScreen() {
             disabled={!user || likingComment === c.id}
             onPress={() => handleCommentLike(c.id)}
           >
+            {/* 質問板は「ナイス」(知恵袋), 他板は従来のハート（学校と同じ） */}
             <Text style={[styles.cmtActionText, likedByMe && styles.cmtLikeOn]}>
-              <Ionicons name={likedByMe ? "heart" : "heart-outline"} size={13} color={likedByMe ? theme.accent : theme.textSecondary} />{" "}
-              {c.likeCount}
+              <Ionicons
+                name={isQa ? (likedByMe ? "thumbs-up" : "thumbs-up-outline") : likedByMe ? "heart" : "heart-outline"}
+                size={13}
+                color={likedByMe ? theme.accent : theme.textSecondary}
+              />{" "}
+              {isQa ? `${t("qa.nice")} ${c.likeCount}` : c.likeCount}
             </Text>
           </TouchableOpacity>
           {/* 返信はコメント・返信の両方に表示（req 2）。返信への返信も同じスレッドにフラット追加（req 5）。 */}
           <TouchableOpacity style={styles.cmtAction} onPress={() => startReply(c)}>
             <Text style={styles.cmtActionText}>{t("post.reply")}</Text>
           </TouchableOpacity>
+          {/* ベストアンサー選択（質問の作成者のみ・他者の回答に対して） */}
+          {canSelectBest ? (
+            <TouchableOpacity style={styles.cmtAction} disabled={bestBusy} onPress={() => handleSelectBest(c.id)}>
+              <Text style={[styles.cmtActionText, styles.bestSelectText]}>
+                {bestId === c.id ? `★ ${t("qa.cancelBest")}` : `☆ ${t("qa.selectBest")}`}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
     );
@@ -466,7 +528,21 @@ export default function LoungePostDetailScreen() {
     <View style={{ flex: 1, paddingBottom: kbInset }}>
       <ScrollView ref={scrollRef} style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.postCard}>
-          <Text style={styles.boardTag}>{lounge?.label}</Text>
+          <View style={styles.boardTagRow}>
+            <Text style={styles.boardTag}>{lounge ? loungeLabel(lounge, language) : ""}</Text>
+            {isQa ? (
+              <View style={[styles.qaBadge, post.resolved ? styles.qaBadgeResolved : styles.qaBadgeOpen]}>
+                <Text style={[styles.qaBadgeText, post.resolved ? styles.qaBadgeTextResolved : styles.qaBadgeTextOpen]}>
+                  {post.resolved ? t("qa.resolved") : t("qa.open")}
+                </Text>
+              </View>
+            ) : null}
+            {isQa && qaTagLabel(post.tag, language) ? (
+              <View style={styles.tagChip}>
+                <Text style={styles.tagChipText}># {qaTagLabel(post.tag, language)}</Text>
+              </View>
+            ) : null}
+          </View>
           <Text style={styles.postTitle}>{post.title}</Text>
           <View style={styles.metaRow}>
             {/* 作成者=タップでメッセージ。学校掲示板と同じチップ（灰色文字だとボタンに見えない）。
@@ -527,10 +603,10 @@ export default function LoungePostDetailScreen() {
           </View>
         </View>
 
-        <Text style={styles.commentHeader}>{t("post.commentsHeader")} {visibleCommentCount}</Text>
+        <Text style={styles.commentHeader}>{isQa ? t("qa.answersHeader") : t("post.commentsHeader")} {visibleCommentCount}</Text>
         {/* 「コメント 0」の下が大きな空白だったので、最初の一言を促す */}
         {visibleCommentCount === 0 && <Text style={styles.commentEmpty}>{t("post.noCommentsHint")}</Text>}
-        {topLevelComments.map((c) => {
+        {orderedTopLevel.map((c) => {
           const replies = repliesByParent.get(c.id) ?? [];
           const aliveReplies = replies.filter((r) => !r.deleted);
           // コメント削除済み かつ 生存返信なし → スレッド丸ごと非表示（req 7,10）。
@@ -618,7 +694,21 @@ function makeStyles(theme: Theme) {
     container: { flex: 1, backgroundColor: theme.background },
     center: { flex: 1, justifyContent: "center", alignItems: "center" },
     postCard: { backgroundColor: theme.card, padding: 20, marginBottom: 8 },
-    boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600", marginBottom: 6 },
+    boardTagRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+    boardTag: { fontSize: 12, color: theme.primary, fontWeight: "600" },
+    // 質問掲示板（学校の投稿詳細と同じ見た目）
+    qaBadge: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2 },
+    qaBadgeOpen: { backgroundColor: theme.warning + "22" },
+    qaBadgeResolved: { backgroundColor: theme.success + "22" },
+    qaBadgeText: { fontSize: 11, fontWeight: "800" },
+    qaBadgeTextOpen: { color: theme.warning },
+    qaBadgeTextResolved: { color: theme.success },
+    tagChip: { borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2, backgroundColor: theme.primary + "14" },
+    tagChipText: { fontSize: 11, fontWeight: "700", color: theme.primary },
+    bestCard: { borderLeftWidth: 3, borderLeftColor: BEST_COLOR, backgroundColor: BEST_COLOR + "0E" },
+    bestBadge: { alignSelf: "flex-start", backgroundColor: BEST_COLOR, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8 },
+    bestBadgeText: { fontSize: 11, fontWeight: "800", color: "#fff" },
+    bestSelectText: { color: BEST_COLOR, fontWeight: "800" },
     postTitle: { fontSize: 20, fontWeight: "700", color: theme.textPrimary, marginBottom: 8 },
     metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 16 },
     meta: { fontSize: 12, color: theme.textSecondary },

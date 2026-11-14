@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo, useRef } from "react";
+import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import type { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import { mergeFirstPage } from "../../../src/utils/listMerge";
 import {
   View,
@@ -19,9 +20,10 @@ import { useBlock } from "../../../src/contexts/BlockContext";
 import { useHidden } from "../../../src/contexts/HiddenContext";
 import { useI18n } from "../../../src/contexts/I18nContext";
 import { timeAgo } from "../../../src/i18n/translations";
-import { fetchLoungePosts, fetchLoungeSearchCandidates } from "../../../src/services/loungeService";
+import { fetchLoungePostsPage, fetchLoungeSearchCandidates } from "../../../src/services/loungeService";
 import type { Theme } from "../../../src/theme/themes";
-import { LOUNGES, loungeLabel, type LoungeId, type LoungePost } from "../../../src/types/lounge";
+import { LOUNGES, isQaLounge, loungeLabel, type LoungeId, type LoungePost } from "../../../src/types/lounge";
+import { qaTagLabel, QA_TAGS } from "../../../src/types/board";
 import LoadError from "../../../src/components/common/LoadError";
 
 export default function LoungePostListScreen() {
@@ -41,6 +43,15 @@ export default function LoungePostListScreen() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  // 質問掲示板（qa の板）のカテゴリ絞り込み（クライアント側）。null=すべて。学校の質問掲示板と同じ
+  const isQa = isQaLounge(loungeId);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+
+  // ページング（学校の板一覧と同じ）。絞り込み中は表示が FILTER_MIN 件に達するまで次ページを読む
+  const lastDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const FILTER_MIN = 10;
 
   // ラウンジ内検索（ヘッダーの🔍でトグル）。
   // 🔍を開いた時に候補（最近N件）を1回だけ取得し、以降は入力ごとにクライアント側で
@@ -93,7 +104,12 @@ export default function LoungePostListScreen() {
   const load = useCallback(async (opts?: { merge?: boolean }) => {
     if (!loungeId) return;
     try {
-      const p = await fetchLoungePosts(loungeId as LoungeId);
+      const { posts: p, lastDoc, hasMore: more } = await fetchLoungePostsPage(loungeId as LoungeId);
+      // マージ更新（焦点復帰）では読み進めた位置を保つため lastDoc を戻さない
+      if (!(opts?.merge && lastDocRef.current)) {
+        lastDocRef.current = lastDoc;
+        setHasMore(more);
+      }
       setPosts((prev) => (opts?.merge && prev.length > 0 ? mergeFirstPage(prev, p) : p));
       setLoadError(false);
     } catch (e) {
@@ -102,6 +118,25 @@ export default function LoungePostListScreen() {
       setLoadError(true);
     }
   }, [loungeId]);
+
+  // 次ページを追記。重複 id は弾く（焦点復帰と追記が重なった場合の保険）
+  const loadMore = useCallback(async () => {
+    if (!loungeId || !hasMore || loadingMore || !lastDocRef.current) return;
+    setLoadingMore(true);
+    try {
+      const { posts: p, lastDoc, hasMore: more } = await fetchLoungePostsPage(loungeId as LoungeId, 20, lastDocRef.current);
+      lastDocRef.current = lastDoc;
+      setHasMore(more);
+      setPosts((prev) => {
+        const seen = new Set(prev.map((x) => x.id));
+        return [...prev, ...p.filter((x) => !seen.has(x.id))];
+      });
+    } catch {
+      setHasMore(false);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loungeId, hasMore, loadingMore]);
 
   // 初回だけスピナー、2回目以降の焦点復帰は静かにマージ更新
   const focusedOnceRef = useRef(false);
@@ -119,9 +154,26 @@ export default function LoungePostListScreen() {
 
   async function onRefresh() {
     setRefreshing(true);
+    lastDocRef.current = null;
     await load();
     setRefreshing(false);
   }
+
+  // 表示対象（検索中は検索結果、質問板で絞り込み中はカテゴリ一致のみ）。非表示にした投稿は除く
+  const visiblePosts = useMemo(() => {
+    const base = searchMode ? results : isQa && tagFilter ? posts.filter((p) => p.tag === tagFilter) : posts;
+    return base.filter((p) => !isHidden(p.id));
+  }, [searchMode, results, isQa, tagFilter, posts, isHidden]);
+
+  // 絞り込み中に表示が足りなければ次ページを読む（最後まで読んだら止まる）
+  useEffect(() => {
+    if (searchMode || !isQa || !tagFilter) return;
+    if (!hasMore || loadingMore || loading) return;
+    if (visiblePosts.length >= FILTER_MIN) return;
+    loadMore();
+  }, [searchMode, isQa, tagFilter, hasMore, loadingMore, loading, visiblePosts.length, loadMore]);
+
+  const fillingFilter = !searchMode && isQa && !!tagFilter && (loadingMore || hasMore);
 
   if (loading) {
     return (
@@ -159,17 +211,46 @@ export default function LoungePostListScreen() {
           />
         </View>
       )}
+      {!searchMode && isQa && (
+        <View style={styles.filterBar}>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={[{ id: null as string | null }, ...QA_TAGS.map((tg) => ({ id: tg.id as string | null }))]}
+            keyExtractor={(it) => it.id ?? "__all"}
+            contentContainerStyle={{ gap: 7, paddingHorizontal: 12 }}
+            renderItem={({ item }) => {
+              const on = tagFilter === item.id;
+              const label = item.id ? qaTagLabel(item.id, language) : t("qa.filterAll");
+              return (
+                <TouchableOpacity style={[styles.filterChip, on && styles.filterChipOn]} onPress={() => setTagFilter(item.id)}>
+                  <Text style={[styles.filterChipText, on && styles.filterChipTextOn]}>{label}</Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+      )}
       <FlatList
-        data={(searchMode ? results : posts).filter((p) => !isHidden(p.id))}
+        data={visiblePosts}
         contentContainerStyle={{ paddingBottom: insets.bottom }}
         keyExtractor={(item) => item.id}
         maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
         refreshControl={searchMode ? undefined : <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         keyboardShouldPersistTaps="handled"
         ItemSeparatorComponent={() => <View style={styles.sep} />}
+        onEndReached={searchMode ? undefined : () => loadMore()}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          loadingMore ? (
+            <View style={styles.footer}>
+              <ActivityIndicator color={theme.primary} />
+            </View>
+          ) : null
+        }
         ListEmptyComponent={
           <View style={styles.center}>
-            {searchMode && candidatesLoading ? (
+            {(searchMode && candidatesLoading) || fillingFilter ? (
               <ActivityIndicator size="large" color={theme.primary} />
             ) : (
               <Text style={styles.empty}>
@@ -192,7 +273,21 @@ export default function LoungePostListScreen() {
               style={styles.row}
               onPress={() => router.push(`/lounge/${loungeId}/${item.id}`)}
             >
-              <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+              <View style={styles.titleRow}>
+                {isQa ? (
+                  <View style={[styles.qaBadge, item.resolved ? styles.qaBadgeResolved : styles.qaBadgeOpen]}>
+                    <Text style={[styles.qaBadgeText, item.resolved ? styles.qaBadgeTextResolved : styles.qaBadgeTextOpen]}>
+                      {item.resolved ? t("qa.resolved") : t("qa.open")}
+                    </Text>
+                  </View>
+                ) : null}
+                {isQa && qaTagLabel(item.tag, language) ? (
+                  <View style={styles.tagChip}>
+                    <Text style={styles.tagChipText}>{qaTagLabel(item.tag, language)}</Text>
+                  </View>
+                ) : null}
+                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+              </View>
               <View style={styles.meta}>
                 <Text style={styles.metaText}>{t("boards.anonymous")}</Text>
                 <Text style={styles.metaText}>·</Text>
@@ -241,7 +336,26 @@ function makeStyles(theme: Theme) {
       color: theme.textPrimary,
     },
     row: { backgroundColor: theme.card, padding: 16 },
-    title: { fontSize: 15, fontWeight: "600", color: theme.textPrimary, marginBottom: 6 },
+    titleRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 6 },
+    title: { flex: 1, fontSize: 15, fontWeight: "600", color: theme.textPrimary },
+    // 質問掲示板の表示（学校の板一覧と同じ見た目）
+    qaBadge: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
+    qaBadgeOpen: { backgroundColor: theme.warning + "22" },
+    qaBadgeResolved: { backgroundColor: theme.success + "22" },
+    qaBadgeText: { fontSize: 10, fontWeight: "800" },
+    qaBadgeTextOpen: { color: theme.warning },
+    qaBadgeTextResolved: { color: theme.success },
+    tagChip: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2, backgroundColor: theme.primary + "14" },
+    tagChipText: { fontSize: 10, fontWeight: "700", color: theme.primary },
+    filterBar: { paddingVertical: 10, backgroundColor: theme.card, borderBottomWidth: 1, borderBottomColor: theme.border },
+    filterChip: {
+      paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999,
+      backgroundColor: theme.background, borderWidth: 1, borderColor: theme.border,
+    },
+    filterChipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
+    filterChipText: { fontSize: 12, fontWeight: "700", color: theme.textSecondary },
+    filterChipTextOn: { color: "#fff" },
+    footer: { paddingVertical: 16, alignItems: "center" },
     meta: { flexDirection: "row", gap: 6 },
     metaText: { fontSize: 12, color: theme.textSecondary },
     empty: { color: theme.textSecondary, fontSize: 14 },
