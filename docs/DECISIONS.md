@@ -113,6 +113,7 @@
 | ✅ | 시험판 OTA: `npm run ota -- --beta "…"` (runtime 1.1.0·채널 beta — 스토어 사용자에겐 안 감) | 同上 §6-0 |
 | ✅ | **1.1.0 범위 = 원래 계획대로 전부(N3 초대 링크·N4 위젯·N5 포함), 빨리 끝나면 제출을 앞당긴다** (11/14 준희) | [RELEASE-PLAN](RELEASE-PLAN-2026-12.md) |
 | ✅ | N5(Claude): 스플래시 = 앱 로고 + 기본 테마 배경(#F5F7FA, 다크 #131417) · iOS 언어는 **일본어·한국어**(개발 언어 ja). 영어 표기 제거 목적. 사진·카메라 권한 문구 한국어판 추가 | 同上 N5 |
+| ✅ | N3(Claude): 초대 링크 `https://ichi-6b8f7.web.app/add-friend…` 를 **앱이 직접 연다**(iOS 유니버설 링크·Android 앱 링크). 대상 경로는 `/add-friend` 만. 개발용 앱은 제외. Android 증명 파일은 진짜 서명 지문이 들어올 때까지 공개 안 함 | [INVITE-LINK §5](INVITE-LINK.md) |
 | ✅ | 개인정보처리방침에 푸시 토큰·Expo(650 Industries, 미국)·Apple·Google 알림 서비스 추가(쪽지 내용은 안 보냄) | 同上 |
 
 ## 2026-11-13 (마케팅 — 영상)

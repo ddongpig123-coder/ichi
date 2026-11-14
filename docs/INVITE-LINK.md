@@ -10,7 +10,7 @@
 | 링크 형식 | **https** (`https://ichi-6b8f7.web.app/add-friend?u=<uid>&k=<token>`). 커스텀 스킴(`uni-community://`)은 LINE·카톡에서 파란 링크가 안 돼 폐기 |
 | 친구 되는 방식 | **초대한 쪽 승인 없음** (링크를 직접 공유한 것이 본인의 의사표시이므로, 준희). 단 **링크를 연 쪽은 확인 버튼 1번** — 「〇〇さんと友達になりますか？」 → [友達になる] (2026-11-10 변경, §8) |
 | 웹에서 열렸을 때 | 친구를 만들지 **않는다**. 사파리의 게스트 계정은 앱 계정과 다른 사람이라 엉뚱한 계정에서 친구가 생기기 때문. 「アプリで開く」와 스토어 버튼만 |
-| 유니버설 링크 (탭하면 바로 앱) | **1.2 재빌드**에서. 네이티브 설정이라 OTA 불가 |
+| 유니버설 링크 (탭하면 바로 앱) | ~~1.2 재빌드에서~~ → **1.1.0 빌드에 포함**(N3, 11/14 코드). 네이티브 설정이라 OTA 불가 — §5 |
 | 게스트 | 게스트도 친구 추가됨(기능 제한 없음). 추가 직후 「계정 등록 권장」 한 줄 + 버튼 |
 
 ## 1. 받는 사람에게 무슨 일이 생기나
@@ -86,12 +86,28 @@ allow create: if isSignedIn()
 4. 실기기 테스트: 友達 탭 → 招待リンクで追加 → LINE으로 나에게 전송 → **파란 링크로 보이는지** → 다른 계정(또는 태희) 폰에서 탭 → 앱이 열리고 友達一覧에 들어오는지
 5. ✅ Android 프로덕션 공개(11/14) → `PLAY_STORE_PUBLIC = true` → 웹 재배포
 
-## 5. 1.2 재빌드에서 할 것
+## 5. 링크를 누르면 바로 앱 (N3) — ✅ 11/14 코드, 1.1.0 빌드에 들어감
+
+| 할 일 | 상태 |
+|---|---|
+| iOS `ios.associatedDomains: ["applinks:ichi-6b8f7.web.app"]` | ✅ `app.json` |
+| 웹 `/.well-known/apple-app-site-association` (`3498G5A326.jp.timetable.app`, `/add-friend`) | ✅ `web/well-known/` → `deploy-web.mjs` 가 복사, `firebase.json` 에 `Content-Type: application/json`·`.well-known` 업로드 허용 |
+| Android `intentFilters` (autoVerify, https, `ichi-6b8f7.web.app`, `/add-friend`) | ✅ `app.json` |
+| 웹 `/.well-known/assetlinks.json` | ⏳ **서명 인증서 SHA-256 2개 대기**(준희, Play Console → 설정 → 앱 무결성 → 앱 서명). 가짜 값이 남아 있으면 배포 스크립트가 안 올린다 |
+| 개발용 앱(大学の森 dev) | 링크를 가로채지 않게 둘 다 뺌(`app.config.js`) |
+| 앱 쪽 코드 | 변경 없음 — expo-router 가 `https://…/add-friend?u&k` 를 그대로 `app/add-friend.tsx` 로 연다(§8 확인 버튼 흐름) |
+
+- 확인(11/14): prebuild(본 앱 entitlements·매니페스트에 들어감 / dev 앱엔 없음) · 호스팅 에뮬레이터(AASA 200·`application/json`·JSON 정상, assetlinks 는 보류 중이라 404)
+- 🔴 순서: **`npm run deploy:web`(AASA 공개) → 새 빌드 설치**. iOS 는 앱을 설치·업데이트할 때 Apple CDN 에서 AASA 를 받아 간다(반영까지 최대 하루)
+- 실기기 확인은 다음 시험판(beta) 빌드에서: LINE 에 링크 보내기 → 탭 → 사파리 없이 앱의 「〇〇さんと友達になりますか？」
+- 웹 받는 페이지는 앱 없는 사람·옛 앱(1.0.0)용으로 그대로 둔다
+
+### (이력) 1.2 재빌드에서 할 것 — 당시 계획
 
 - **유니버설 링크 (iOS)**: `app.json` `ios.associatedDomains: ["applinks:ichi-6b8f7.web.app"]` + 웹에 `/.well-known/apple-app-site-association` (appID = `<TeamID>.jp.timetable.app`, paths `/add-friend*`). `scripts/deploy-web.mjs`가 이 파일도 복사하도록
 - **앱 링크 (Android)**: `android.intentFilters` (autoVerify, https, host `ichi-6b8f7.web.app`, path `/add-friend`) + 웹에 `/.well-known/assetlinks.json` (서명 인증서 SHA-256)
 - 되면 LINE에서 탭 → 사파리 안 거치고 바로 앱. 웹 받는 페이지는 앱 없는 사람용으로 그대로 둔다
-- **App Store 言語 표기 「英語」 수정**: `ios.infoPlist.CFBundleDevelopmentRegion: "ja"`, `CFBundleLocalizations: ["ja","ko"]` (+ `locales`). 바이너리 설정이라 OTA 불가
+- ✅(N5, #122) **App Store 言語 표기 「英語」 수정**: `ios.infoPlist.CFBundleDevelopmentRegion: "ja"`, `CFBundleLocalizations: ["ja","ko"]` (+ `locales`). 바이너리 설정이라 OTA 불가
 - 대안 검토: 6자리 **초대 코드** (설치 후 링크 재탭 없이 코드 입력으로 친구). 결정 안 됨
 
 ## 6. 알려진 한계
