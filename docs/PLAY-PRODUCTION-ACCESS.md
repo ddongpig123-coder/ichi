@@ -165,6 +165,7 @@ OTA는 「받아 두고 **다음 실행**부터 적용」이라 **새로 설치�
    4. Google 검토(보통 1~3일, 길면 7일) → 승인되면 게시(관리형 게시를 켜 두지 않았다면 자동)
 4. **[Claude] 출시 후**: `src/services/friendInvite.ts` `PLAY_STORE_PUBLIC = true` → 준희 `npm run deploy:web`
    ⚠️ 11/14 에 공개 전인데 true 로 배포했다가 되돌렸다(Play Console 의 트랙에 「프로덕션」이 있는지로 확인할 것)
+   ⚠️ 11/14 확인: 3번의 「새 버전 만들기」(AAB 업로드)가 안 돼 있었다(진행 1/5, 국가 선택만 완료). 「검토를 위해 전송」만 누르면 국가 설정만 심사에 간다
    (초대 링크 웹 페이지의 「Android版は近日公開予定」 → Google Play 버튼). `docs/MY-TASKS.md` 📍에 날짜 기록
 
 출시 노트 (각 500자 이내):
