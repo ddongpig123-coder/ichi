@@ -13,6 +13,7 @@ import {
   getPushPermission,
   loadPushPrefs,
   setPushPrefs,
+  DEFAULT_PUSH_PREFS,
   type PermissionState,
   type PushPrefs,
 } from "../src/services/pushService";
@@ -37,8 +38,8 @@ export default function NotificationSettingsScreen() {
   const refresh = useCallback(async () => {
     const [p, perm] = await Promise.all([loadPushPrefs(), getPushPermission()]);
     setPermission(perm);
-    // OS で通知を切っていたら、オンに見せない
-    setPrefs(perm === "denied" || !p ? OFF : p);
+    // OS で通知を切っていたらオンに見せない。許可済みでまだ触っていなければ既定（両方オン）
+    setPrefs(perm === "denied" ? OFF : p ?? (perm === "granted" ? DEFAULT_PUSH_PREFS : OFF));
   }, []);
 
   useEffect(() => {

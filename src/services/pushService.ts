@@ -39,10 +39,15 @@ export interface PushPrefs {
   messages: boolean;
 }
 
+// 既定は両方オン（2026-11-14 準熙「基本はオン、オフにもできる」）。
+// iPhone は OS の許可なしに通知を出せないので、許可をもらった時点でこの値で登録する
+export const DEFAULT_PUSH_PREFS: PushPrefs = { comments: true, messages: true };
+
 // 端末ローカル（AsyncStorage）
 const PREFS_KEY = "ichi:pushPrefs"; // この端末で受け取る種類。未設定 = まだ一度もオンにしていない
 const REG_KEY = "ichi:pushReg"; // 最後にサーバーへ登録した内容（同じなら登録し直さない）
 const OFFERED_KEY = "ichi:pushOffered"; // 「通知しましょうか？」の案内を出したか（1 回だけ）
+const SETUP_ASKED_KEY = "ichi:pushSetupAsked"; // はじめの設定 ④ / アップデート後の「通知をオンにしよう」を出したか
 
 interface Registration extends PushPrefs {
   uid: string;
@@ -159,9 +164,10 @@ export function enablePush(uid: string, lang: PushLang): Promise<EnableResult> {
 export async function syncPush(uid: string, lang: PushLang): Promise<void> {
   const N = loadN();
   if (!N) return;
-  const prefs = await loadPushPrefs();
-  if (!prefs || (!prefs.comments && !prefs.messages)) return;
   if ((await getPushPermission()) !== "granted") return;
+  // まだ設定画面を触っていない = 既定（両方オン）。Android 12 以下は許可ダイアログなしで granted になる
+  const prefs = (await loadPushPrefs()) ?? DEFAULT_PUSH_PREFS;
+  if (!prefs.comments && !prefs.messages) return;
   try {
     await ensureChannels(N, lang);
     const token = await getToken(N);
@@ -207,6 +213,22 @@ export async function shouldOfferPush(): Promise<boolean> {
 
 export function markPushOffered() {
   AsyncStorage.setItem(OFFERED_KEY, "1").catch(() => {});
+}
+
+// はじめの設定 ④（新規）・アップデート後 1 回（既存）の「通知をオンにしよう」用
+/** OS の許可がまだ決まっていない（＝聞ける）か */
+export async function canAskPushNow(): Promise<boolean> {
+  return canUsePush && (await getPushPermission()) === "undetermined";
+}
+export async function wasPushSetupAsked(): Promise<boolean> {
+  try {
+    return (await AsyncStorage.getItem(SETUP_ASKED_KEY)) === "1";
+  } catch {
+    return true; // 読めないときは出さない
+  }
+}
+export function markPushSetupAsked() {
+  AsyncStorage.setItem(SETUP_ASKED_KEY, "1").catch(() => {});
 }
 
 // ── 通知の表示とタップ
