@@ -9,7 +9,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // プロフィール →「アプリの使い方」で tour だけをもう一度見られる。
 // 既存ユーザー（この機能より前にオンボーディングを終えた人）には出さない（キーが無い = done 扱い）。
 
-export type TutorialStage = "timetable" | "friends" | "tour" | "done";
+// push = はじめの設定 ④ 通知（新規ユーザー。次は tour）/ pushOnly = 既存ユーザーにアップデート後 1 回だけ（次は done）。
+// どちらも通知の部品があるアプリで、OS の許可がまだ決まっていないときだけ（docs/PUSH-NOTIFICATIONS.md §2）
+export type TutorialStage = "timetable" | "friends" | "push" | "pushOnly" | "tour" | "done";
 
 const KEY = "ichi:tutorialStage";
 
@@ -25,7 +27,7 @@ export async function loadTutorialStage(): Promise<TutorialStage> {
   if (current) return current;
   try {
     const v = await AsyncStorage.getItem(KEY);
-    current = v === "timetable" || v === "friends" || v === "tour" ? v : "done";
+    current = v === "timetable" || v === "friends" || v === "push" || v === "pushOnly" || v === "tour" ? v : "done";
   } catch {
     current = "done"; // 読めないときは出さない（毎回出て邪魔になるよりまし）
   }
