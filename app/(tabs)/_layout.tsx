@@ -7,6 +7,7 @@ import { useTheme } from "../../src/contexts/ThemeContext";
 import { useI18n } from "../../src/contexts/I18nContext";
 import { useNotifications } from "../../src/contexts/NotificationsContext";
 import { ONBOARDED_KEY } from "../onboarding";
+import TutorialOverlay from "../../src/components/tutorial/TutorialOverlay";
 import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 import {
   HomeIcon,
@@ -75,7 +76,9 @@ export default function TabsLayout() {
   if (onboarded === null) return null; // フラグ読込中（一瞬）
   if (!onboarded) return <Redirect href="/onboarding" />;
 
+  // はじめの設定・使い方ツアーのポップアップはタブの上に重ねる（TutorialOverlay のコメント参照）
   return (
+    <View style={{ flex: 1 }}>
     <Tabs
       screenOptions={{
         tabBarShowLabel: true,
@@ -116,5 +119,7 @@ export default function TabsLayout() {
       />
       <Tabs.Screen name="profile" options={{ title: t("tabs.profile"), tabBarIcon: icon(ProfileIcon) }} />
     </Tabs>
+    <TutorialOverlay />
+    </View>
   );
 }

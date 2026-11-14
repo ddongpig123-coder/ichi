@@ -62,6 +62,7 @@ printf "Console에서 키를 [복사]한 뒤 Enter: " && read -s && echo && expo
 - 키를 터미널·채팅에 붙여넣으면 기록에 남는다 → 위 명령처럼 클립보드에서 읽고, 노출됐으면 Console 에서 즉시 삭제
 
 ## 4. 1.2 구현 시 체크리스트 (요약)
+- [ ] 진입점: **처음 설정 팝업 ② 시간표 단계의 맨 위**(`src/components/tutorial/TutorialOverlay.tsx` 의 1.2 주석 자리)와 홈 화면 버튼
 - [ ] 모델 = **`claude-sonnet-5-5`** (§3-1). 프롬프트에 **사용자 학교의 時限表** 주입(§3-2), 「枠外」 → 「その他」(I-8 선행)
 - [ ] Blaze 전환 → callable 함수(로그인 필수, uid+학기 1회 제한, 이미지 ≤ 수 MB, Firebase App Check 켜기 — 익명 계정 양산으로 우회되는 것 방지)
 - [ ] Anthropic 콘솔 월 지출 한도 + GCP 예산 알림

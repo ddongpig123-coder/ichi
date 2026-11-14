@@ -10,6 +10,7 @@ import { useAuth } from "../src/contexts/AuthContext";
 import { completeOnboarding, updateSchoolSelection } from "../src/services/userService";
 import { SCHOOLS } from "../src/data/schools";
 import type { UserLanguage } from "../src/types/user";
+import { setTutorialStage } from "../src/services/tutorialStore";
 
 export const ONBOARDED_KEY = "ichi:onboarded";
 
@@ -58,6 +59,8 @@ export default function OnboardingScreen() {
         else router.replace("/(tabs)");
       } else {
         await AsyncStorage.setItem(ONBOARDED_KEY, "1");
+        // ① 学校まで終わったので、ホームの上で ② 時間割 → ③ 友達 → 使い方ツアー のポップアップを出す
+        setTutorialStage("timetable");
         router.replace("/(tabs)");
       }
     } finally {
