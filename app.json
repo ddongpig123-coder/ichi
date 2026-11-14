@@ -41,6 +41,13 @@
           "cameraPermission": "写真を撮って時間割を読み込む場合に、カメラを使います。",
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#2F6AD9"
+        }
       ]
     ],
     "extra": {

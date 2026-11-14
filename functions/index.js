@@ -2,8 +2,10 @@
 // 前提: Firebase を Blaze（従量制）にしてあること・ANTHROPIC_API_KEY を Secret に登録してあること
 //   npx firebase-tools functions:secrets:set ANTHROPIC_API_KEY
 // 詳しくは docs/TIMETABLE-OCR.md §5（運用）・docs/RELEASE-PLAN-2026-12.md N1。
+// プッシュ通知（N2）は docs/PUSH-NOTIFICATIONS.md。
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as functionsV1 from "firebase-functions/v1";
 import { defineSecret } from "firebase-functions/params";
 import { logger } from "firebase-functions";
@@ -11,6 +13,7 @@ import { initializeApp } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import Anthropic from "@anthropic-ai/sdk";
 import { DEFAULT_PERIODS, buildPrompt, extractJson, sanitizePeriods, sanitizeResult } from "./timetablePrompt.js";
+import { isValidExpoToken, tokenDocId, buildCommentPush, buildMessagePush, chunk } from "./push.js";
 
 initializeApp();
 const db = getFirestore();
@@ -114,15 +117,204 @@ export const readTimetable = onCall(
   }
 );
 
-// アカウントが削除されたら、その人の読み取り利用記録（ocrUsage）も消す。
-// docs/legal/PRIVACY.md 第6項「時間割読み取りの利用記録: アカウント削除まで」の裏付け。
-// （クライアントからは ocrUsage を読み書きできないので、アプリの deleteSelfData では消せない）
+// ════════════════════════════════════════════════════════════
+// プッシュ通知（RELEASE-PLAN N2 / docs/PUSH-NOTIFICATIONS.md）
+// 送るのは 2 種類だけ: ① 自分の投稿へのコメント・自分のコメントへの返信 ② メッセージ。
+// お知らせ・広告の通知は送らない（2026-11-14 準熙）。
+//
+// 端末トークンは pushTokens/{sha256(token)} = { uid, token, platform, lang, comments, messages, updatedAt }。
+// firestore.rules に match が無い = アプリからは直接読み書きできない。登録・解除はこのファイルの
+// callable（registerPushToken / unregisterPushToken）経由だけ（規則の変更が要らない）。
+// ════════════════════════════════════════════════════════════
+
+const EXPO_PUSH_URL = process.env.EXPO_PUSH_URL || "https://exp.host/--/api/v2/push/send";
+const MAX_TOKENS_PER_USER = 10; // 1 人の端末数の上限（古いものから消す）
+const MESSAGE_THROTTLE_MS = 60 * 1000; // 同じ쪽지방の通知は 1 分に 1 回まで（会話中に連打しない）
+
+export const registerPushToken = onCall(
+  { region: "asia-northeast1", maxInstances: 10, enforceAppCheck: false },
+  async (request) => {
+    const uid = request.auth?.uid;
+    if (!uid) throw new HttpsError("unauthenticated", "login-required");
+    const d = request.data ?? {};
+    if (!isValidExpoToken(d.token)) throw new HttpsError("invalid-argument", "bad-token");
+    const platform = d.platform === "ios" || d.platform === "android" ? d.platform : null;
+    if (!platform) throw new HttpsError("invalid-argument", "bad-platform");
+    // 同じ端末で別アカウントに入り直したら、前の持ち主の登録は上書きされる（文書 ID がトークン由来）
+    await db.doc(`pushTokens/${tokenDocId(d.token)}`).set({
+      uid,
+      token: d.token,
+      platform,
+      lang: d.lang === "ko" ? "ko" : "ja",
+      comments: d.comments !== false,
+      messages: d.messages !== false,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    const mine = await db.collection("pushTokens").where("uid", "==", uid).get();
+    if (mine.size > MAX_TOKENS_PER_USER) {
+      const old = mine.docs
+        .sort((a, b) => (a.data().updatedAt?.toMillis?.() ?? 0) - (b.data().updatedAt?.toMillis?.() ?? 0))
+        .slice(0, mine.size - MAX_TOKENS_PER_USER);
+      await Promise.all(old.map((x) => x.ref.delete()));
+    }
+    return { ok: true };
+  }
+);
+
+export const unregisterPushToken = onCall(
+  { region: "asia-northeast1", maxInstances: 10, enforceAppCheck: false },
+  async (request) => {
+    const uid = request.auth?.uid;
+    if (!uid) throw new HttpsError("unauthenticated", "login-required");
+    const token = request.data?.token;
+    if (!isValidExpoToken(token)) throw new HttpsError("invalid-argument", "bad-token");
+    const ref = db.doc(`pushTokens/${tokenDocId(token)}`);
+    const snap = await ref.get();
+    // 他人の登録は消さない（トークンを知っていても）
+    if (snap.exists && snap.data().uid === uid) await ref.delete();
+    return { ok: true };
+  }
+);
+
+// その人の端末のうち、kind（"comments" | "messages"）を受け取る設定のものだけ
+async function tokensFor(uid, kind) {
+  const snap = await db.collection("pushTokens").where("uid", "==", uid).get();
+  return snap.docs.filter((d) => d.data()[kind] !== false).map((d) => ({ ref: d.ref, ...d.data() }));
+}
+
+// 受け取る人が送り主をブロックしていたら送らない
+async function isBlocked(targetUid, fromUid) {
+  if (!fromUid) return false;
+  return (await db.doc(`users/${targetUid}/blocks/${fromUid}`).get()).exists;
+}
+
+// Expo のプッシュサービスへ送る。「もう存在しない端末」と返ってきたトークンは消す
+async function sendExpo(messages, tokenRefs) {
+  for (const part of chunk(messages, 100)) {
+    let tickets = [];
+    try {
+      const res = await fetch(EXPO_PUSH_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: JSON.stringify(part),
+      });
+      tickets = (await res.json())?.data ?? [];
+      if (!res.ok) logger.warn("expo push http error", { status: res.status });
+    } catch (e) {
+      logger.warn("expo push failed", { reason: String(e?.message ?? e).slice(0, 200) });
+      continue;
+    }
+    await Promise.all(
+      tickets.map((t, i) => {
+        if (t?.status === "error" && t?.details?.error === "DeviceNotRegistered") {
+          return tokenRefs.get(part[i]?.to)?.delete().catch(() => {});
+        }
+        if (t?.status === "error") logger.warn("expo push ticket error", { error: t?.details?.error ?? t?.message });
+        return null;
+      })
+    );
+  }
+}
+
+// コメント 1 件 → 投稿者（自分の投稿にコメント）と返信先（自分のコメントに返信）へ
+async function notifyComment({ postRef, comment, url }) {
+  const post = (await postRef.get()).data();
+  if (!post || post.deleted) return;
+  const from = comment.authorUid;
+  const targets = new Map(); // uid → "post" | "reply"
+  if (post.authorUid && post.authorUid !== from) targets.set(post.authorUid, "post");
+  let replyTo = comment.mentionUid ?? null;
+  if (!replyTo && comment.parentId) {
+    replyTo = (await postRef.collection("comments").doc(comment.parentId).get()).data()?.authorUid ?? null;
+  }
+  if (replyTo && replyTo !== from && !targets.has(replyTo)) targets.set(replyTo, "reply");
+
+  const messages = [];
+  const tokenRefs = new Map();
+  for (const [uid, kind] of targets) {
+    if (await isBlocked(uid, from)) continue;
+    for (const tk of await tokensFor(uid, "comments")) {
+      messages.push(buildCommentPush({ to: tk.token, lang: tk.lang, kind, postTitle: post.title, body: comment.body, url }));
+      tokenRefs.set(tk.token, tk.ref);
+    }
+  }
+  if (messages.length) await sendExpo(messages, tokenRefs);
+}
+
+// 学校の掲示板のコメント。region を書かない = Firestore のデータベースと同じ地域に自動で置かれる
+// （firebase-tools が DB の場所を調べて合わせる。Firestore トリガーは DB と同じ地域でないと作れない）
+export const pushOnBoardComment = onDocumentCreated(
+  "schools/{sd}/boards/{boardId}/posts/{postId}/comments/{commentId}",
+  async (event) => {
+    const c = event.data?.data();
+    if (!c || c.deleted) return;
+    const { sd, boardId, postId } = event.params;
+    await notifyComment({
+      postRef: db.doc(`schools/${sd}/boards/${boardId}/posts/${postId}`),
+      comment: c,
+      url: `/post/${boardId}/${postId}`,
+    });
+  }
+);
+
+// みんなの森・留学生の森のコメント
+export const pushOnLoungeComment = onDocumentCreated(
+  "lounges/{loungeId}/posts/{postId}/comments/{commentId}",
+  async (event) => {
+    const c = event.data?.data();
+    if (!c || c.deleted) return;
+    const { loungeId, postId } = event.params;
+    await notifyComment({
+      postRef: db.doc(`lounges/${loungeId}/posts/${postId}`),
+      comment: c,
+      url: `/lounge/${loungeId}/${postId}`,
+    });
+  }
+);
+
+// メッセージ（쪽지）。本文は通知に入れない（push.js 冒頭）
+export const pushOnChatMessage = onDocumentCreated("chats/{chatId}/messages/{messageId}", async (event) => {
+  const m = event.data?.data();
+  if (!m) return;
+  const { chatId } = event.params;
+  const chat = (await db.doc(`chats/${chatId}`).get()).data();
+  const participants = Array.isArray(chat?.participants) ? chat.participants : [];
+  const from = m.senderUid;
+  if (!participants.includes(from)) return;
+  const messages = [];
+  const tokenRefs = new Map();
+  for (const uid of participants) {
+    if (uid === from) continue;
+    if (await isBlocked(uid, from)) continue;
+    // 会話中に 1 通ごとに鳴らさない（同じ部屋は 1 分に 1 回）
+    const throttleRef = db.doc(`pushThrottle/${uid}__${chatId}`);
+    const last = (await throttleRef.get()).data()?.at?.toMillis?.() ?? 0;
+    if (Date.now() - last < MESSAGE_THROTTLE_MS) continue;
+    const tokens = await tokensFor(uid, "messages");
+    if (!tokens.length) continue;
+    await throttleRef.set({ uid, at: FieldValue.serverTimestamp() });
+    for (const tk of tokens) {
+      messages.push(buildMessagePush({ to: tk.token, lang: tk.lang, url: `/(tabs)/messages/${chatId}` }));
+      tokenRefs.set(tk.token, tk.ref);
+    }
+  }
+  if (messages.length) await sendExpo(messages, tokenRefs);
+});
+
+// アカウントが削除されたら、その人の記録をサーバー側でも消す:
+//   ocrUsage（時間割読み取りの利用記録）· pushTokens（通知の端末トークン）· pushThrottle
+// docs/legal/PRIVACY.md 第6項「アカウント削除まで」の裏付け。
+// （どれもアプリからは読み書きできないので、アプリの deleteSelfData では消せない）
 // v2 には「ユーザー削除後」のトリガーが無いため、ここだけ v1 を使う。
-export const cleanupOcrUsageOnUserDelete = functionsV1
+export const cleanupOnUserDelete = functionsV1
   .region("asia-northeast1")
   .auth.user()
   .onDelete(async (user) => {
-    const snap = await db.collection("ocrUsage").where("uid", "==", user.uid).get();
-    await Promise.all(snap.docs.map((d) => d.ref.delete()));
-    if (!snap.empty) logger.info("ocrUsage cleaned", { count: snap.size });
+    let count = 0;
+    for (const col of ["ocrUsage", "pushTokens", "pushThrottle"]) {
+      const snap = await db.collection(col).where("uid", "==", user.uid).get();
+      await Promise.all(snap.docs.map((d) => d.ref.delete()));
+      count += snap.size;
+    }
+    if (count) logger.info("user data cleaned", { count });
   });

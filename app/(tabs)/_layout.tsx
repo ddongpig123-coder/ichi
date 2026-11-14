@@ -8,6 +8,7 @@ import { useI18n } from "../../src/contexts/I18nContext";
 import { useNotifications } from "../../src/contexts/NotificationsContext";
 import { ONBOARDED_KEY } from "../onboarding";
 import TutorialOverlay from "../../src/components/tutorial/TutorialOverlay";
+import PushManager from "../../src/components/push/PushManager";
 import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 import {
   HomeIcon,
@@ -120,6 +121,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="profile" options={{ title: t("tabs.profile"), tabBarIcon: icon(ProfileIcon) }} />
     </Tabs>
     <TutorialOverlay />
+      <PushManager />
     </View>
   );
 }

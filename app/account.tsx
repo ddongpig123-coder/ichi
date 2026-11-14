@@ -35,6 +35,7 @@ import { useTheme } from "../src/contexts/ThemeContext";
 import type { Theme } from "../src/theme/themes";
 import ScreenHeader from "../src/components/common/ScreenHeader";
 import { NICKNAME_MAX } from "../src/data/limits";
+import { unregisterPush } from "../src/services/pushService";
 
 // アカウント登録・ログイン画面
 // ゲスト(匿名)ユーザー: メール登録(=アカウント連携。uidを維持しデータが残る) or 既存アカウントへログイン
@@ -286,6 +287,7 @@ export default function AccountScreen() {
       t("account.logout"),
       t("account.logoutConfirm"),
       async () => {
+        await unregisterPush(); // 前のアカウントの通知がこの端末に来ないように（ログアウトの前に）
         await signOut(); // 直後にAuthContextが匿名で自動再ログインする
         goBack();
       },
@@ -299,6 +301,7 @@ export default function AccountScreen() {
   async function runDeleteAccount() {
     setBusy(true);
     try {
+      await unregisterPush(); // サーバー側でも削除時に消える（cleanupOnUserDelete）が、端末の記録もここで消す
       await deleteAccount(isPasswordUser ? deletePassword : undefined);
       notify(t("account.deleteDone"), t("account.deleteDoneMessage"));
       setDeletePassword("");

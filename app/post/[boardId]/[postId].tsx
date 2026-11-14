@@ -49,6 +49,7 @@ import ModerationMenu from "../../../src/components/common/ModerationMenu";
 import type { ReportTargetType } from "../../../src/types/moderation";
 import type { Theme } from "../../../src/theme/themes";
 import { BOARDS, boardLabel, isQaBoard, qaTagLabel, type BoardId, type Post, type Comment } from "../../../src/types/board";
+import { offerPushAfter } from "../../../src/components/push/offerPush";
 
 const BEST_COLOR = "#E0A500"; // ベストアンサー（金）
 
@@ -362,6 +363,8 @@ export default function PostDetailScreen() {
         });
       }
       await loadComments();
+      // 初めてのコメントのあとに 1 回だけ「返信が来たら通知しましょうか？」（RELEASE-PLAN N2）
+      offerPushAfter("comment", user.uid, language, t);
       setCommentText("");
       setReply(null);
       setMention(null);
