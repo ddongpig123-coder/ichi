@@ -4,6 +4,7 @@
 // 詳しくは docs/TIMETABLE-OCR.md §5（運用）・docs/RELEASE-PLAN-2026-12.md N1。
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
+import * as functionsV1 from "firebase-functions/v1";
 import { defineSecret } from "firebase-functions/params";
 import { logger } from "firebase-functions";
 import { initializeApp } from "firebase-admin/app";
@@ -92,8 +93,10 @@ export const readTimetable = onCall(
       if (res.stop_reason === "refusal") throw new Error("refusal");
       const text = res.content.filter((b) => b.type === "text").map((b) => b.text).join("");
       const result = sanitizeResult(extractJson(text), periods);
+      // 時間割でない画像・授業が1つも読めなかった画像は回数に数えない（status が "done" のときだけ already-used）
+      const empty = result.sessions.length === 0 && result.unplaced.length === 0;
       await usageRef.set({
-        status: result.notTimetable ? "not-timetable" : "done",
+        status: result.notTimetable ? "not-timetable" : empty ? "empty" : "done",
         finishedAt: FieldValue.serverTimestamp(),
         model: MODEL,
         inputTokens: res.usage?.input_tokens ?? null,
@@ -102,7 +105,7 @@ export const readTimetable = onCall(
       }, { merge: true });
       return result;
     } catch (e) {
-      // 失敗したら枠を返す（もう一度試せるように）。時間割でない画像も枠を消費しない（上の not-timetable）
+      // 失敗したら枠を返す（もう一度試せるように）。時間割でない画像・空の結果も枠を消費しない（上の not-timetable / empty）
       await usageRef.delete().catch(() => {});
       if (e instanceof HttpsError) throw e;
       logger.warn("readTimetable failed", { uid, reason: String(e?.message ?? e).slice(0, 200) });
@@ -110,3 +113,16 @@ export const readTimetable = onCall(
     }
   }
 );
+
+// アカウントが削除されたら、その人の読み取り利用記録（ocrUsage）も消す。
+// docs/legal/PRIVACY.md 第6項「時間割読み取りの利用記録: アカウント削除まで」の裏付け。
+// （クライアントからは ocrUsage を読み書きできないので、アプリの deleteSelfData では消せない）
+// v2 には「ユーザー削除後」のトリガーが無いため、ここだけ v1 を使う。
+export const cleanupOcrUsageOnUserDelete = functionsV1
+  .region("asia-northeast1")
+  .auth.user()
+  .onDelete(async (user) => {
+    const snap = await db.collection("ocrUsage").where("uid", "==", user.uid).get();
+    await Promise.all(snap.docs.map((d) => d.ref.delete()));
+    if (!snap.empty) logger.info("ocrUsage cleaned", { count: snap.size });
+  });

@@ -18,7 +18,7 @@
       {
         "source": "**",
         "headers": [
-          { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://u.expo.dev; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" },
+          { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://firebasestorage.googleapis.com https://*.googleusercontent.com; font-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://asia-northeast1-ichi-6b8f7.cloudfunctions.net https://u.expo.dev; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" },
           { "key": "Referrer-Policy", "value": "no-referrer" },
           { "key": "X-Content-Type-Options", "value": "nosniff" },
           { "key": "X-Frame-Options", "value": "DENY" },

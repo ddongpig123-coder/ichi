@@ -31,6 +31,8 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before 
 
 ## 작업 절차
 - 커밋 전 `npx tsc --noEmit` 통과 필수
+- 🔴 **새 네이티브 모듈(expo-image-picker·expo-notifications·위젯 등)은 맨 위에서 import 금지** — master 는 OTA 로 옛 스토어 앱(1.0.0)에도 가는데, 그 앱엔 부품이 없어 켜자마자 멈춘다.
+  `requireOptionalNativeModule` 로 확인 → 없으면 입구를 숨기고, 있을 때만 함수 안에서 `require`. 본보기 `src/services/timetableOcrService.ts` ([OTA-2026-11 §0](docs/OTA-2026-11.md))
 - UI 변경 시 미리보기(launch.json의 `expo-web`, 포트 8090)로 확인
 - 기능 단위로 커밋
 - 🔴 **브랜치 규칙 (2026-10-20 변경)**: `master` 최신화 → **작업 브랜치** → **PR** → 머지 → 브랜치 삭제
