@@ -28,6 +28,13 @@
     "production": {
       "autoIncrement": true,
       "channel": "production"
+    },
+    "beta": {
+      "extends": "production",
+      "channel": "beta",
+      "env": {
+        "APP_VERSION_OVERRIDE": "1.1.0"
+      }
     }
   },
   "submit": {
