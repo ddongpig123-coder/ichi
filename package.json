@@ -40,6 +40,7 @@
     "web": "expo start --web",
     "deploy:web": "node scripts/deploy-web.mjs",
     "deploy:rules": "node scripts/deploy-rules.mjs",
+    "deploy:functions": "node scripts/deploy-functions.mjs",
     "ota": "node scripts/ota.mjs"
   },
   "private": true

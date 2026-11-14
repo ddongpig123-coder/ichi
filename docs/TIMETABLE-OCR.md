@@ -71,6 +71,30 @@ printf "Console에서 키를 [복사]한 뒤 Enter: " && read -s && echo && expo
 - [ ] ASC·Play 개인정보 라벨에 「사진·사용자 콘텐츠」 추가, 사진 접근 권한 문구, 심사 노트에 테스트용 이미지
 - [ ] 실패 시 앱은 멀쩡하게(기능만 안내 후 종료). 외부 API 장애·함수 콜드스타트 1~3초 감안
 
+## 4-1. ✅ 서버 함수 구현 (2026-11-14, 배포 전)
+
+`functions/index.js` 의 **`readTimetable`**(호출형, 도쿄 리전 `asia-northeast1`).
+
+| 항목 | 내용 |
+|---|---|
+| 입력 | `{ imageBase64, mediaType(png/jpeg/webp), semesterKey("2026-秋"), periods?: [{period,start,end}] }` |
+| 출력 | `{ sessions: [{day, period, name, teacher, room, confidence}], unplaced: [{name, reason}], notTimetable }` |
+| 제한 | 로그인 필수(게스트 포함) · **1인·학기당 1회**(성공 시에만 소모, 실패·「시간표 아님」은 소모 안 함) · 동시에 두 번 눌러도 1회 · **하루 전체 300장 상한**(익명 계정 양산 대비, ≈$4/일) · 이미지 5MB |
+| 모델 | `claude-sonnet-5-5`, effort low (§3-1) |
+| 프롬프트 | 앱이 보낸 **학교 時限表**를 넣는다(없거나 형식이 틀리면 명치 기본) — §3-2 |
+| 출력 검증 | 요일·시한 범위 밖, 빈 과목명, 모르는 키는 버리고 글자 수를 자른다(`functions/timetablePrompt.js`) |
+| 개인정보 | **이미지·읽은 결과를 저장하지 않는다.** `ocrUsage/{uid}__{학기}` 에 사용 기록(상태·토큰 수)만. `ocrUsage`·`ocrDaily` 는 규칙에 match 가 없어 앱에서 못 읽는다 |
+
+- 시험: 단위 5건(`cd functions && npm test`) + **에뮬레이터 13건**(가짜 AI 서버) — 로그인 없음·형식 오류·5MB 초과 거부, AI 오류 시 기록 삭제·재시도, 시간표 아님, 정상(이상한 칸 제외), 모델·시한표·effort 전달, 같은 학기 두 번째 거부, 다른 학기 허용, 기록에 이미지 없음, 하루 상한
+- 아직: 앱 화면(사진 선택·AI 전송 동의·미리보기·저장) — RELEASE-PLAN N1
+
+## 4-2. 운영 — 처음 한 번 (준희)
+
+1. Firebase **Blaze 전환 + 예산 알림**
+2. Anthropic Console 에서 서버용 API 키 발급 → `npx firebase-tools functions:secrets:set ANTHROPIC_API_KEY --project ichi-6b8f7` (입력은 안 보임)
+   + Console 에서 **월 지출 한도** 설정. 무료 크레딧이 11/27 에 끝나므로 결제 수단 등록 필요(1장 ≈ $0.014)
+3. `npm run deploy:functions` — 처음엔 필요한 Google Cloud API 를 켤지 묻는다 → Yes
+
 ## 5. 時間割メーカー와의 관계
 메이커(10/20 추가, `app/timetable-wizard.tsx`)는 **새 시간표를 조합해 만드는** 도구(후보 강의 → 필수 지정 → 목표 단위 범위 → 겹치지 않는 조합 자동 생성 → 교체 저장). 스크린샷 입력은 **이미 짜 둔 시간표를 옮겨 적는** 도구. 둘은 겹치지 않는다(신입생 = 메이커, 재학생 = 스크린샷).
 메이커의 UX 과제(입구 설명 부족·목표 단위의 의미 설명 없음·기본값)는 S9 시간표 묶음에서 다룬다.
