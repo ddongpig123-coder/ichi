@@ -40,6 +40,7 @@ import { notify } from "../../src/utils/dialog";
 import { friendlyErrorBody } from "../../src/utils/writeError";
 import { THEME_IDS, THEMES, themeLabel, type Theme } from "../../src/theme/themes";
 import type { UserProfile } from "../../src/types/user";
+import { setTutorialStage } from "../../src/services/tutorialStore";
 
 // 은행 잔액 숨기기 스타일: 기본은 ●●●● 로 가리고, 누르면 표시/숨김 토글
 function SecretValue({
@@ -534,6 +535,17 @@ export default function ProfileScreen() {
       >
         <Text style={styles.settingText}>{t("profile.languageRow")}</Text>
         <Text style={styles.settingText}>{language === "ja" ? "日本語" : "한국어"}</Text>
+      </TouchableOpacity>
+      {/* 使い方ツアーをもう一度（はじめの設定は出さない）。ホームに戻ってポップアップで見せる */}
+      <TouchableOpacity
+        style={styles.settingRow}
+        onPress={() => {
+          setTutorialStage("tour");
+          router.navigate("/(tabs)");
+        }}
+      >
+        <Text style={styles.settingText}>{t("profile.howToUse")}</Text>
+        <Text style={styles.settingArrow}>›</Text>
       </TouchableOpacity>
       {/* お問い合わせ — アプリ内フォーム（inquiries に保存） */}
       <TouchableOpacity style={styles.settingRow} onPress={() => router.push("/contact")}>
