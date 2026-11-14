@@ -37,7 +37,8 @@
 - 기기 토큰은 `pushTokens/{토큰 해시}` = `{uid, token, platform, lang, comments, messages}`. **규칙에 match 가 없다 = 앱이 직접 못 읽고 못 쓴다.** 등록·해제는 호출형 함수로만 → **firestore.rules 변경 없음**
 - 같은 기기에서 다른 계정으로 바꾸면 문서 ID(토큰 해시)가 같아서 주인이 바뀐다. 1인 기기 10대까지
 - Expo 가 「없는 기기」라고 답한 토큰은 지운다
-- Firestore 트리거는 **리전을 안 적었다** → 배포 도구가 DB 위치를 보고 같은 곳에 둔다(트리거는 DB 와 같은 리전이어야 만들어진다)
+- Firestore 트리거 함수는 **`asia-northeast1`(도쿄)로 명시** — DB 가 도쿄에 있다(11/14 첫 배포 로그의 트리거 위치로 확인).
+  처음엔 리전을 안 적었는데, 그러면 이벤트 트리거만 DB 위치(도쿄)에 생기고 **함수 본체는 기본값 us-central1** 에 만들어져 댓글 내용이 매번 미국을 오간다 → 고침
 - 🔴 옛 앱 보호: `expo-notifications` 는 맨 위에서 import 하지 않는다(AGENTS.md). iOS 번들에서 알림 부품 6개가 `pushService` 의 지연 `require` 로만 닿는 것 확인(11/14)
 
 ## 4. 시험 (11/14)
@@ -52,8 +53,11 @@
 1. PR 머지 뒤 `cd ~/ichi && git checkout master && git pull`
 2. `npm run deploy:functions` — 처음 Firestore 트리거를 만들 때 Google Cloud 기능(Eventarc 등)을 켜겠냐고 물으면 Yes.
    「권한이 아직 준비 안 됐다(service agent)」 오류가 나면 **5분 뒤 같은 명령을 다시** — 처음 한 번 흔한 일
-   - 11/14 1회차: 호출형 3개·`cleanupOnUserDelete`·`readTimetable` 성공, **Firestore 트리거 3개(`pushOn…`)만 실패** → 재시도.
-     트리거 리전은 배포 도구가 **`us-central1`** 로 정했다 = Firestore DB 가 미국(nam5)에 있다는 뜻
+   - 11/14 1회차: 호출형 2개·`cleanupOnUserDelete`·`readTimetable` 성공, **Firestore 트리거 3개(`pushOn…`)만 실패** —
+     `firebase-debug.log` 에 「Permission denied while using the Eventarc Service Agent … may take a few minutes」 = **처음 한 번의 권한 전파 지연**.
+     같은 로그에서 트리거 위치가 `asia-northeast1` → DB 는 도쿄. 함수가 us-central1 로 가려던 것을 도쿄로 명시(PR #120)한 뒤 재배포
+   - 재배포 때 「us-central1 의 pushOn… 를 지울까요?」라고 물으면 **Yes**(실패해서 반쯤 남은 것)
+   - 실패하면 `firebase-debug.log` 가 생긴다 → 원인 확인 후 지운다(`.gitignore` 등록됨, 계정 정보가 섞일 수 있어 공유 금지)
 
 ### 5-2. iOS (개발용 빌드 때 자동)
 - `eas build` 중 **「Set up Push Notifications?」 → Yes**. EAS 가 Apple 푸시 키를 만든다(팀 단위 1개, 본 앱·dev 앱 공용)

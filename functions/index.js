@@ -241,10 +241,13 @@ async function notifyComment({ postRef, comment, url }) {
   if (messages.length) await sendExpo(messages, tokenRefs);
 }
 
-// 学校の掲示板のコメント。region を書かない = Firestore のデータベースと同じ地域に自動で置かれる
-// （firebase-tools が DB の場所を調べて合わせる。Firestore トリガーは DB と同じ地域でないと作れない）
+// Firestore トリガーの地域。データベース（(default)）は東京 asia-northeast1 にある（2026-11-14 初回デプロイのログで確認）。
+// 書かないと関数だけ us-central1 に作られ、コメント本文が毎回アメリカを往復する → 明示して東京にそろえる
+const TRIGGER_REGION = "asia-northeast1";
+
+// 学校の掲示板のコメント
 export const pushOnBoardComment = onDocumentCreated(
-  "schools/{sd}/boards/{boardId}/posts/{postId}/comments/{commentId}",
+  { document: "schools/{sd}/boards/{boardId}/posts/{postId}/comments/{commentId}", region: TRIGGER_REGION },
   async (event) => {
     const c = event.data?.data();
     if (!c || c.deleted) return;
@@ -259,7 +262,7 @@ export const pushOnBoardComment = onDocumentCreated(
 
 // みんなの森・留学生の森のコメント
 export const pushOnLoungeComment = onDocumentCreated(
-  "lounges/{loungeId}/posts/{postId}/comments/{commentId}",
+  { document: "lounges/{loungeId}/posts/{postId}/comments/{commentId}", region: TRIGGER_REGION },
   async (event) => {
     const c = event.data?.data();
     if (!c || c.deleted) return;
@@ -273,7 +276,7 @@ export const pushOnLoungeComment = onDocumentCreated(
 );
 
 // メッセージ（쪽지）。本文は通知に入れない（push.js 冒頭）
-export const pushOnChatMessage = onDocumentCreated("chats/{chatId}/messages/{messageId}", async (event) => {
+export const pushOnChatMessage = onDocumentCreated({ document: "chats/{chatId}/messages/{messageId}", region: TRIGGER_REGION }, async (event) => {
   const m = event.data?.data();
   if (!m) return;
   const { chatId } = event.params;
