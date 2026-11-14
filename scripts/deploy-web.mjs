@@ -14,6 +14,7 @@ import { copyFileSync, mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { guard } from "./release-guard.mjs";
+import { copyWellKnown } from "./well-known.mjs";
 
 // 0) 배포 전 확인（루트·master·원격과 같음·변경 없음·타입 검사·y 확인）— release-guard.mjs
 //    11/08 에 pull 전 배포로 옛 웹이 나간 적이 있다
@@ -50,6 +51,10 @@ for (const f of ["terms.html", "privacy.html", "delete-account.html"]) {
   copyFileSync(src, join(legalDst, f));
 }
 console.log("✔ 法的文書をコピー: /legal/terms.html, /legal/privacy.html, /legal/delete-account.html");
+
+// 2-2) /.well-known/（招待リンクを直接アプリで開く: iOS ユニバーサルリンク・Android アプリリンク）
+//      web/well-known/README.md。assetlinks.json は指紋がまだ仮（REPLACE_WITH_）なら載せない
+copyWellKnown(root, dist);
 
 // 3) robots.txt（リリース前は全面ブロック。公開時はこの行を外す）
 writeFileSync(

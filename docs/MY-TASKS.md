@@ -17,7 +17,7 @@
 > **11/08 머지 → 11/09 배포 완료(준희)**: #92(보안 §8: usersPublic 명단 유출 차단·필드 검증·웹 헤더) · #93(친구 목록 길게 눌러 삭제). 규칙·웹 헤더·**OTA 1.0.3**(21:55 JST, 그룹 `176d083a…`) 셋 다 세션에서 확인(usersPublic list 거부·gpa 필드 거부·CSP 등 헤더 6개·매니페스트).
 > 📌 교훈: 11/08 첫 시도는 **`git pull` 전에 배포해서 옛 코드가 나갔다.** 배포 전엔 항상 `git pull && git log --oneline -1`로 해시 확인. `eas update`는 **`--environment production`을 붙여서** 돌린다(「Select environment」 질문 자체가 안 뜸. 준희 11/09 확인).
 > 🆕 **11/10부터는 `npm run deploy:rules` / `npm run deploy:web` / `npm run ota -- "1.0.x: 내용"` 만 쓴다** — 위 실수들(pull 전 배포·환경 선택·scripts 폴더)을 스크립트가 먼저 막는다. 항상 `cd ~/ichi` 에서 `git checkout master && git pull` 뒤에.
-> **🎉 Android: 2026-11-14 Google Play 정식 공개 확인(준희)** — 11/11 프로덕션 액세스 승인 → 11/13 새 AAB(버전 코드 3) 제출 → 통과. `PLAY_STORE_PUBLIC = true`(초대 링크 웹 페이지에 Google Play 버튼). 반영은 `npm run deploy:web` + OTA.
+> **🤖 Android: 아직 정식 공개 전(11/14 Play Console 확인 — 트랙은 비공개 alpha·내부 테스트뿐, 프로덕션 앱 0개).** 11/11 프로덕션 액세스 승인까지는 완료. 11/14 에 「공개됐다」로 잘못 알고 `PLAY_STORE_PUBLIC = true` 로 웹 배포했다가 **같은 날 false 로 되돌림**(#123). 프로덕션 출시는 1.1.0 빌드로 낼지 결정 필요
 > ~~**🤖 Android: 2026-11-09 22:26 JST 프로덕션 액세스 신청 제출 → 검토 중(보통 7일, ~11/16).** 300자 답변은 [PLAY-PRODUCTION-ACCESS §0](PLAY-PRODUCTION-ACCESS.md). 결과 전까지 테스터 12명 유지. 승인되면 alpha 릴리스를 프로덕션으로 승격(새 빌드 불필요).~~
 > **11/09 운영 1회차**: `backup-firestore.mjs` 첫 덤프 **659건**([BACKUP §4](BACKUP.md)) · `migrate-chats-to-global.mjs` **실제 실행 → 방 11개·메시지 9건 이전 완료**(구 경로는 남김). 며칠 뒤 `--dry-run`으로 재확인, 「새로 옮긴 방 0」이 2~3회 연속이면 태희에게 → #91(구 경로 닫기).
 > **태희 다음 작업**: 「招待リンクを作り直す」 버튼(§8-④, 준희 수용) → #50 머지·배포(OTA 퍼진 뒤) → #91(쪽지 구 경로 닫기, `migrate-chats` 「옮긴 방 0」 연속 뒤).

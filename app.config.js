@@ -28,10 +28,13 @@ module.exports = ({ config }) => {
     ios: {
       ...config.ios,
       bundleIdentifier: dev ? "jp.timetable.app.dev" : config.ios.bundleIdentifier,
+      // 招待リンクを直接開くのは本番アプリだけ（dev アプリが同じリンクを奪わないように）
+      associatedDomains: dev ? undefined : config.ios.associatedDomains,
     },
     android: {
       ...config.android,
       package: dev ? "jp.timetable.app.dev" : config.android.package,
+      intentFilters: dev ? undefined : config.android.intentFilters,
       ...(googleServicesFile ? { googleServicesFile } : {}),
     },
   };
