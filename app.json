@@ -75,6 +75,21 @@
           "icon": "./assets/notification-icon.png",
           "color": "#2F6AD9"
         }
+      ],
+      [
+        "expo-widgets",
+        {
+          "widgets": [
+            {
+              "name": "TodayTimetable",
+              "displayName": "今日の時間割",
+              "description": "今の授業と次の授業、今日の時間割をホーム画面で確認できます。",
+              "ios": {
+                "supportedFamilies": ["systemSmall", "systemMedium", "systemLarge", "accessoryRectangular"]
+              }
+            }
+          ]
+        }
       ]
     ],
     "extra": {
