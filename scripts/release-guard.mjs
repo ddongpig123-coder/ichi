@@ -10,7 +10,7 @@
 //   1. 저장소 루트에서 도는가 (이 파일 위치로 루트를 정하므로 어느 폴더에서 불러도 루트 기준)
 //   2. master 브랜치인가
 //   3. 원격 master 와 완전히 같은가 (pull 안 한 것 / push 안 한 커밋 모두 잡는다)
-//   4. 고친 채로 커밋 안 한 파일이 없는가
+//   4. 고친 채로 커밋 안 한 파일이 없는가 (scripts/·docs/ 는 앱에 안 들어가므로 경고만)
 //   5. 타입 검사(npx tsc --noEmit) 통과
 //   6. 마지막으로 「이 커밋을 배포합니다」를 보여 주고 y 를 받는다
 //
@@ -76,12 +76,20 @@ export async function guard({ what }) {
   console.log("  ✔ 원격 master 와 같음");
 
   // 4. 커밋 안 한 변경
-  //    - 이미 있는 파일을 고친 것: 무조건 멈춘다 (배포 번들에 섞인다)
+  //    - 이미 있는 파일을 고친 것: 멈춘다 (배포 번들에 섞인다). 단 scripts/·docs/ 는 경고만
   //    - 새 파일: 앱에 들어가는 곳(app/ src/ assets/ 와 루트 바로 아래)이면 멈춘다.
   //      그 밖(scripts/ 의 결과물, docs/ 메모 등)은 목록만 보여 주고 계속한다
-  const lines = git(["status", "--porcelain"]).out.split("\n").filter(Boolean)
+  // 🔑 git() 는 출력 전체를 trim 하므로 첫 줄 앞의 공백(" M path" 의 상태 칸)이 사라진다 → 여기만 날것으로 읽는다
+  const rawStatus = spawnSync("git", ["status", "--porcelain"], { cwd: ROOT, encoding: "utf8" }).stdout || "";
+  const lines = rawStatus.split("\n").filter(Boolean)
     .filter((l) => !l.endsWith(".DS_Store"));
-  const modified = lines.filter((l) => !l.startsWith("??"));
+  //    scripts/·docs/ 는 앱 번들·웹·규칙 어디에도 들어가지 않는다 → 고친 채여도 경고만 하고 계속한다
+  //    (2026-11-14: scripts 에서 npm install 을 하면 scripts/package-lock.json 이 바뀌어 OTA 가 멈췄다)
+  const outsideApp = (p) => /^(scripts|docs)\//.test(p);
+  const pathOf = (l) => l.slice(3).split(" -> ").pop();
+  const modifiedAll = lines.filter((l) => !l.startsWith("??"));
+  const modified = modifiedAll.filter((l) => !outsideApp(pathOf(l)));
+  const modifiedIgnored = modifiedAll.filter((l) => outsideApp(pathOf(l))).map(pathOf);
   const untracked = lines.filter((l) => l.startsWith("??")).map((l) => l.slice(3));
   const risky = untracked.filter((p) => /^(app|src|assets)\//.test(p) || !p.includes("/"));
   if (modified.length > 0 || risky.length > 0) {
@@ -89,8 +97,9 @@ export async function guard({ what }) {
     stop("커밋하지 않은 변경이 있습니다(위 목록). 그대로 배포에 섞일 수 있습니다.",
       "의도한 게 아니면 Claude 에게 이 목록을 보여 주세요");
   }
-  if (untracked.length > 0) {
-    console.log(`  ⚠ 앱과 무관한 새 파일 ${untracked.length}개는 무시합니다: ${untracked.slice(0, 5).join(", ")}${untracked.length > 5 ? " …" : ""}`);
+  const ignored = [...modifiedIgnored, ...untracked];
+  if (ignored.length > 0) {
+    console.log(`  ⚠ 앱과 무관한 파일 ${ignored.length}개는 무시합니다(scripts·docs 등): ${ignored.slice(0, 5).join(", ")}${ignored.length > 5 ? " …" : ""}`);
   }
   console.log("  ✔ 작업 폴더 깨끗함");
 
