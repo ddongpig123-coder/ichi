@@ -12,7 +12,7 @@
 ・時間割のスクショから授業をまとめて登録できるようになりました。AIが読み取り、確認・修正してから保存できます
 ・自分の投稿へのコメント・返信、メッセージが届いたときにプッシュ通知でお知らせします（お知らせ・広告の通知は送りません）
 ・はじめての方向けに「はじめの設定」と使い方ガイドを追加しました
-・ホーム画面・ロック画面のウィジェット「今日の時間割」で、今の授業と次の授業がすぐわかります（iPhone）
+・ホーム画面・ロック画面のウィジェットで、今日の授業や今週の時間割、よく使う友達の時間割まですぐ確認できます（iPhone）
 ・掲示板をリニューアル。学校の森・みんなの森・留学生の森で、自由掲示板・質問掲示板・ベスト投稿をそろえました
 ・LINEなどで受け取った友達の招待リンクから、アプリが直接開くようになりました
 ・アカウント画面からパスワードを変更できるようになりました
@@ -24,7 +24,7 @@
 ・시간표 스크린샷으로 수업을 한 번에 등록할 수 있어요. AI가 읽어 주고, 확인·수정한 뒤 저장해요
 ・내 글에 댓글·답글이 달리거나 쪽지가 오면 푸시 알림으로 알려 드려요 (공지·광고 알림은 보내지 않아요)
 ・처음 쓰는 분을 위해 「처음 설정」과 사용법 안내를 추가했어요
-・홈 화면·잠금 화면 위젯 「오늘의 시간표」로 지금 수업과 다음 수업을 바로 확인해요 (iPhone)
+・홈 화면·잠금 화면 위젯으로 오늘 수업, 이번 주 시간표, 자주 찾는 친구의 시간표까지 바로 확인해요 (iPhone)
 ・게시판을 새로 단장했어요. 학교의 숲·모두의 숲·유학생의 숲 모두 자유게시판·질문게시판·베스트 글을 갖췄어요
 ・LINE 등에서 받은 친구 초대 링크를 누르면 앱이 바로 열려요
 ・계정 화면에서 비밀번호를 바꿀 수 있어요
@@ -36,7 +36,7 @@
 - Import your class schedule from a screenshot: AI reads it, and you review and edit before saving
 - Push notifications for comments/replies on your posts and for direct messages (no promotional notifications)
 - New first-time setup and a short guide to the app
-- "Today's Classes" widget for the Home Screen and Lock Screen: see your current and next class at a glance (iPhone)
+- Home Screen and Lock Screen widgets: today's classes, this week's timetable, and your close friends' timetables at a glance (iPhone)
 - Refreshed boards: every forest now has a free board, a Q&A board and best posts
 - Friend invite links open the app directly
 - Change your password from the Account screen
@@ -144,10 +144,21 @@ Age rating: 18+.
 
 ---
 
-## 5. 스크린샷 (권장 2장 교체 — 실기기, 준희)
+## 5. 스크린샷 (2장 추가 — 11/17 Claude 촬영 완료)
 
-| 화면 | 문구(일) | 문구(한) |
+| 파일 | 화면 | 크기 |
 |---|---|---|
+| [`docs/store/1.1.0/ja-1-ocr.png`](store/1.1.0/ja-1-ocr.png) | 시간표 읽기 확인 화면 — 「10件の授業を読み取りました」 + 시간표 미리보기 + 읽은 수업 목록 | 1206×2622 (6.3") |
+| [`docs/store/1.1.0/ja-2-push.png`](store/1.1.0/ja-2-push.png) | 프로필 → 通知 — 「コメント・返信」「メッセージ」 켜짐 + 「お知らせや広告の通知は送りません」 | 1206×2622 (6.3") |
+
+- 크기는 **1.0 때 ASC 에 올린 5장과 같은 1206×2622**(MY-TASKS 「ASC 입력 완료」 기록) — 같은 칸에 넣어야 해서 맞췄다. 일본어판만 — 다른 언어는 안 올리면 일본어 것이 쓰인다
+- 만든 방법(재현용): 앱과 **같은 화면 코드의 웹판**을 아이폰 6.3" 화면 크기(402×820pt ×3)로 찍고 iOS 상태 표시줄(9:41)을 얹음(촬영 스크립트는 Claude 세션 임시 폴더에만 있음). 임시 게스트 계정은 끝나고 삭제
+  - ① 은 **11/14 실서버가 샘플 이미지(`docs/review/sample-timetable.png`)를 실제로 읽은 결과**를 재생(AI 재호출·사용 횟수 소모 없음). 내용은 가짜 시간표라 개인정보 없음
+  - ② 는 웹에서 원래 숨겨진 알림 화면을 **촬영용 임시 빌드에서만** 보이게 함(저장소엔 안 들어감). 웹 스위치 손잡이 색만 아이폰과 같은 흰색으로 맞춤
+- ASC 에 올리는 순서 제안: 기존 1.0 의 5장 **앞에** ① ② 를 둔다(새 기능이 먼저 보이게)
+- 🔸 더 좋게 하려면(선택): 준희 폰에서 **실제 알림 배너**(잠금화면에 댓글 알림이 뜬 화면)나 **위젯**(샘플 시간표로) 스크린샷을 찍어 ② 와 바꾸거나 추가 — 실기기라 더 설득력 있다
+
+---|---|---|
 | 시간표 읽기 확인 화면(샘플 이미지로) | スクショ1枚で時間割を登録 | 스크린샷 한 장으로 시간표 등록 |
 | 알림 + 프로필 → 通知 | コメント・メッセージをすぐお知らせ | 댓글·쪽지를 바로 알림 |
 
@@ -157,6 +168,6 @@ Age rating: 18+.
 
 ## 6. 제출 직전 체크
 - [ ] `eas build --profile release` (iOS·Android) — RELEASE-PLAN §4-2
-- [ ] 위 1~4 를 콘솔에 입력, 샘플 이미지 첨부
+- [ ] 위 1~4 를 콘솔에 입력, 샘플 이미지 첨부 · §5 스크린샷 2장 업로드(1.0 의 5장 앞에)
 - [ ] 데모 계정: 현재 학기 시간표 비우기 + 시간표 읽기 미사용 확인
 - [ ] 안드로이드는 Play 1.0.0 정식 공개가 끝난 뒤에 1.1.0 을 올린다(같은 트랙에 겹치지 않게)
