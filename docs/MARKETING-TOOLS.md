@@ -121,4 +121,14 @@
 - ~~릴스용 AI 영상은 우선순위 아님~~ → 🔁 11/13 골이 「홍보 릴스·유튜브 완성」으로 정해져 영상 생성이 주력이 됐다
 - 체험을 켜는 날 **취소 알림을 같이 건다** (Claude에게 「〇시간 뒤 알려줘」)
 
-출처: [Higgsfield 공식 X — 72시간 체험](https://x.com/higgsfield/status/2119884452054937656) · [자동 갱신 조건](https://x.com/higgsfield/status/2119884460577726915) · [헬프센터: Higgsfield MCP란](https://higgsfield.ai/creator-hub/help-center/integrations/what-is-higgsfield-mcp) · [헬프센터: Claude 연결](https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent) · [layer3labs: 크레딧 함정](https://www.layer3labs.io/guides/higgsfield-mcp) · [pasqualepillitteri 정리](https://pasqualepillitteri.it/en/news/31553/higgsfield-free-72-hour-trial-claude-fable-5-2)
+### 💰 유료 가격·3일 생산량 (11/17 조사 — 출처마다 숫자가 달라 **결제 화면이 최종**)
+| 플랜 | 월 결제 | 크레딧/월 | 비고 |
+|---|---|---|---|
+| Starter | 약 $19 | 200~270 | 출처마다 다름 |
+| Plus | 약 $49~59 | 1,000~1,200 | 출처마다 다름 |
+| **Ultra** (체험 뒤 자동 전환되는 플랜) | **$129** (연 결제 시 월 $99) | 3,000 | 첫 달 40% 할인 → **약 $77 (Claude 계산값, 공식 금액 확인 못 함)** |
+- **3일 동안 개수 상한은 공개된 게 없다.** 일반 「무제한」 규칙은 **영상 1개씩(최대 15초)·이미지 2개씩 동시 생성**, 자동화·스크립트 금지(개인 수동 사용만). 실제 한계는 **시간**
+- 릴스 1편 = 클립 6~10개 × 다시 뽑기 2~3번 → **완성은 3~5편이 현실적**. 그래서 **완성 2편(V2·V3) + 소재 클립 30~50개 비축**이 목표. 자막·편집은 체험이 끝나도 Claude가 ffmpeg로 무료로 할 수 있다
+- 🔴 **체험 첫 생성 직후 크레딧 잔액을 확인한다** — 헬프센터에는 여전히 「MCP 생성은 크레딧 차감」이라고 적혀 있다(체험은 예외라는 게 공식 X의 설명). 차감되면 즉시 중단
+
+출처: [Higgsfield 공식 X — 72시간 체험](https://x.com/higgsfield/status/2119884452054937656) · [자동 갱신 조건](https://x.com/higgsfield/status/2119884460577726915) · [헬프센터: Higgsfield MCP란](https://higgsfield.ai/creator-hub/help-center/integrations/what-is-higgsfield-mcp) · [헬프센터: Claude 연결](https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent) · [layer3labs: 크레딧 함정](https://www.layer3labs.io/guides/higgsfield-mcp) · [pasqualepillitteri 정리](https://pasqualepillitteri.it/en/news/31553/higgsfield-free-72-hour-trial-claude-fable-5-2) · [Higgsfield 가격 안내(공식 블로그)](https://higgsfield.ai/blog/higgsfield-pricing-explained) · [헬프센터: 무제한 모델](https://higgsfield.ai/creator-hub/help-center/credits/what-are-unlimited-models-and-which-plans-include-them) · [scopeful 가격 정리](https://www.scopeful.org/blog/higgsfield-pricing-2026)
