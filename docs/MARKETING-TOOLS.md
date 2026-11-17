@@ -131,4 +131,9 @@
 - 릴스 1편 = 클립 6~10개 × 다시 뽑기 2~3번 → **완성은 3~5편이 현실적**. 그래서 **완성 2편(V2·V3) + 소재 클립 30~50개 비축**이 목표. 자막·편집은 체험이 끝나도 Claude가 ffmpeg로 무료로 할 수 있다
 - 🔴 **체험 첫 생성 직후 크레딧 잔액을 확인한다** — 헬프센터에는 여전히 「MCP 생성은 크레딧 차감」이라고 적혀 있다(체험은 예외라는 게 공식 X의 설명). 차감되면 즉시 중단
 
+### 🟡 Dreamina(CapCut) — 체험이 끝난 뒤 보충용 (11/17 준희 가입)
+- Higgsfield와 **다른 서비스**(3일 체험 메뉴 없음). **매일 무료 크레딧**을 주는 방식이라고 안내돼 있으나 양은 출처마다 105~225로 다르고, 「무료 크레딧을 못 받았다」는 10월 테스트 후기도 있다 → **준희 계정 화면의 잔액이 기준**
+- 쓰임: Higgsfield 체험이 끝난 뒤 **모자란 클립 한두 개 보충**. 주력으로 잡지 않는다
+- 출처: [Dreamina 무료 크레딧 안내](https://dreamina.capcut.com/ai-video/free-ai-video-generator-usable-clips-guide-2026) · [stork.ai 테스트](https://www.stork.ai/blog/capcut-ai-video-free-credits-2026)
+
 출처: [Higgsfield 공식 X — 72시간 체험](https://x.com/higgsfield/status/2119884452054937656) · [자동 갱신 조건](https://x.com/higgsfield/status/2119884460577726915) · [헬프센터: Higgsfield MCP란](https://higgsfield.ai/creator-hub/help-center/integrations/what-is-higgsfield-mcp) · [헬프센터: Claude 연결](https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent) · [layer3labs: 크레딧 함정](https://www.layer3labs.io/guides/higgsfield-mcp) · [pasqualepillitteri 정리](https://pasqualepillitteri.it/en/news/31553/higgsfield-free-72-hour-trial-claude-fable-5-2) · [Higgsfield 가격 안내(공식 블로그)](https://higgsfield.ai/blog/higgsfield-pricing-explained) · [헬프센터: 무제한 모델](https://higgsfield.ai/creator-hub/help-center/credits/what-are-unlimited-models-and-which-plans-include-them) · [scopeful 가격 정리](https://www.scopeful.org/blog/higgsfield-pricing-2026)
