@@ -72,7 +72,8 @@ export type WeekGrid = {
   /** 今日の列（日曜など無ければ -1） */
   today: number;
   /** 時限ごとの行（使っている時限の最初から最後まで）。s: 1 授業中 / 2 次（自分の今日の列だけ） */
-  rows: { p: string; cells: ({ n: string; c: string; s: number } | null)[] }[];
+  // 空きコマは 0（null は不可 — 端末の保存先 UserDefaults が null を受け付けず、アプリが落ちる）
+  rows: { p: string; cells: ({ n: string; c: string; s: number } | 0)[] }[];
 };
 
 /** 中・大の 1 ページ（自分 or よく使う友達） */
