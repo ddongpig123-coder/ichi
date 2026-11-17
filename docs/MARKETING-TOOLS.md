@@ -131,4 +131,24 @@
 - 릴스 1편 = 클립 6~10개 × 다시 뽑기 2~3번 → **완성은 3~5편이 현실적**. 그래서 **완성 2편(V2·V3) + 소재 클립 30~50개 비축**이 목표. 자막·편집은 체험이 끝나도 Claude가 ffmpeg로 무료로 할 수 있다
 - 🔴 **체험 첫 생성 직후 크레딧 잔액을 확인한다** — 헬프센터에는 여전히 「MCP 생성은 크레딧 차감」이라고 적혀 있다(체험은 예외라는 게 공식 X의 설명). 차감되면 즉시 중단
 
+### 🔴 11/17 실제 연결 결과 — **Claude Code에서는 「무제한」을 못 쓴다**
+- 준희가 Higgsfield 가입·커넥터 연결 완료(11/17 20:11 JST 가입). Higgsfield 사이트에는 「3-day MCP Free Trial — Claimed」로 표시
+- 그런데 이 Claude Code 세션에서 조회하면 **요금제 free · 크레딧 10 · 진행 중 체험 없음**(`trial_status: retry_hold`)으로 나온다 → 사이트 표시와 어긋남. 원인 미확인
+- 무제한으로 비용 조회를 하면 Higgsfield가 이렇게 거절한다: **「Claude Code에서는 무제한 생성 불가. 가능한 곳: Claude 채팅 · Claude Cowork · ChatGPT」**
+- 크레딧으로는 Seedance 2.5 · 9:16 · 5초 한 클립 = **35크레딧** (무료 10크레딧으로는 한 개도 못 뽑음)
+- ➡️ **영상 생성은 Claude 채팅 또는 Cowork에서 한다.** Claude Code(이 세션)는 기획·프롬프트 작성·자막/편집(ffmpeg)·문서 담당. 체험 상태 확인과 자동결제 해지도 채팅/Cowork에서 「cancel auto-renewal」로
+- 실제 할인가(11/17 조회, 구매 기한 11/18 표시): Plus 월 $39(연 결제 월 $27)·1,000크레딧 / Ultra 월 $79(연 결제 월 $50)·3,000크레딧
+
+- ✅ **11/17 20:52 JST 체험 시작 확인**(재시도 후 성공): 요금제 `ultra`, 체험 종료 **11/20 20:52 JST**. **자동결제는 11/17에 해지 완료**(「카드에 $79 청구 안 됨, 체험 끝까지 무제한 유지」 응답 확인). 11/20 09:00 JST에 「내려받기·잔여 클립」 알림 예약
+- ⚠️ 체험이 켜진 뒤에도 Claude Code에서는 무제한이 계속 거절된다 → 생성은 채팅/Cowork 전용이 확정
+
+- 📏 **첫 시험 결과(11/17 밤, Cowork)**: Seedance 2.5 · 5초 · 720p 한 클립에 **약 65분**(대부분 무제한 대기열), 음성 6초에 약 15분. 크레딧 차감 0. 무제한은 720p까지. 품질은 배경 컷으로 쓸 만하나 「대학」보다 「공원」처럼 보였고, 시험 음성은 영어로 읽혔다(목소리 목록에 언어 표시가 없음)
+- 무제한 대상 영상 모델은 **Seedance 2.0(4~15초)·Seedance 2.5(4~30초)** 둘. 둘 다 영상 안에 소리(대사 포함)를 같이 생성할 수 있다 → 5초에 묶일 이유 없음
+- ➡️ 병목은 품질이 아니라 **대기 시간**. 다음 시험 = **8개를 한꺼번에 제출**해 동시에 도는지 확인(Ultra는 영상 8개 동시 생성이 요금제 설명에 있음. 무제한에도 적용되는지는 미확인)
+
+### 🟡 Dreamina(CapCut) — 체험이 끝난 뒤 보충용 (11/17 준희 가입)
+- Higgsfield와 **다른 서비스**(3일 체험 메뉴 없음). **매일 무료 크레딧**을 주는 방식이라고 안내돼 있으나 양은 출처마다 105~225로 다르고, 「무료 크레딧을 못 받았다」는 10월 테스트 후기도 있다 → **준희 계정 화면의 잔액이 기준**
+- 쓰임: Higgsfield 체험이 끝난 뒤 **모자란 클립 한두 개 보충**. 주력으로 잡지 않는다
+- 출처: [Dreamina 무료 크레딧 안내](https://dreamina.capcut.com/ai-video/free-ai-video-generator-usable-clips-guide-2026) · [stork.ai 테스트](https://www.stork.ai/blog/capcut-ai-video-free-credits-2026)
+
 출처: [Higgsfield 공식 X — 72시간 체험](https://x.com/higgsfield/status/2119884452054937656) · [자동 갱신 조건](https://x.com/higgsfield/status/2119884460577726915) · [헬프센터: Higgsfield MCP란](https://higgsfield.ai/creator-hub/help-center/integrations/what-is-higgsfield-mcp) · [헬프센터: Claude 연결](https://higgsfield.ai/creator-hub/help-center/integrations/how-do-i-connect-higgsfield-to-ai-agent) · [layer3labs: 크레딧 함정](https://www.layer3labs.io/guides/higgsfield-mcp) · [pasqualepillitteri 정리](https://pasqualepillitteri.it/en/news/31553/higgsfield-free-72-hour-trial-claude-fable-5-2) · [Higgsfield 가격 안내(공식 블로그)](https://higgsfield.ai/blog/higgsfield-pricing-explained) · [헬프센터: 무제한 모델](https://higgsfield.ai/creator-hub/help-center/credits/what-are-unlimited-models-and-which-plans-include-them) · [scopeful 가격 정리](https://www.scopeful.org/blog/higgsfield-pricing-2026)

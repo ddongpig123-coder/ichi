@@ -90,3 +90,6 @@ google-services*.json
 # firebase-tools が失敗時に作るログ（認証情報が混ざることがある — コミットしない）
 firebase-debug.log*
 firestore-debug.log*
+
+# 마케팅: AI 생성 영상·음성 원본 (공개 저장소에 올리지 않는다)
+higgsfield/
