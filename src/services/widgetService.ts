@@ -92,7 +92,7 @@ function weekGrid(
       p: String(p),
       cells: cols.map((d) => {
         const s = sessions.find((x) => x.day === d && x.period === p);
-        if (!s) return null;
+        if (!s) return 0; // 空きコマ。null は不可（下の plistSafe 参照）
         return { n: s.name.slice(0, 12), c: s.color || "#2F6AD9", s: d === todayCode ? highlight[p] ?? 0 : 0 };
       }),
     });
@@ -264,6 +264,28 @@ export async function loadWidgetFriends(
   return list.filter((f) => f.sessions.length > 0);
 }
 
+/**
+ * 🔴 ウィジェットのデータは端末の UserDefaults（App Group）に保存される。UserDefaults は
+ * null（と undefined・NaN）を保存できず、入っていると **ネイティブ側で例外 → アプリが強制終了** する
+ * （JS の try/catch では止められない）。起動直後に落ちると OTA は自動で前の版に戻る
+ * — 2026-11-17 試験版で実際に起きた（空きコマを null にしていた）。
+ * なので渡す直前に必ず取り除く: オブジェクトの null 値は消す / 配列の null は 0 にする。
+ */
+export function plistSafe(v: unknown): unknown {
+  if (v === null || v === undefined) return undefined;
+  if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+  if (Array.isArray(v)) return v.map((x) => (x === null || x === undefined ? 0 : plistSafe(x)));
+  if (typeof v === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, x] of Object.entries(v as Record<string, unknown>)) {
+      const safe = plistSafe(x);
+      if (safe !== undefined) out[k] = safe;
+    }
+    return out;
+  }
+  return v;
+}
+
 let lastSignature = "";
 
 /**
@@ -290,7 +312,11 @@ export function updateTodayWidget(
   ]);
   if (signature === lastSignature) return;
   try {
-    W.default.updateTimeline(buildTodayTimeline(sessions, lang, url, now, { friends }));
+    const entries = buildTodayTimeline(sessions, lang, url, now, { friends }).map((e) => ({
+      date: e.date,
+      props: plistSafe(e.props) as TodayWidgetProps,
+    }));
+    W.default.updateTimeline(entries);
     lastSignature = signature;
   } catch (e) {
     console.warn("widget update failed:", e);

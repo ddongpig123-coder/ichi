@@ -50,6 +50,7 @@
 - 🔴 **위젯 파일을 직접 import 하지 않는다** — 반드시 `widgetService` 경유. `expo-widgets` 는 읽는 순간 네이티브 부품을 찾아서, 부품 없는 **스토어 1.0.0(OTA 로 같은 JS 가 감)**·안드로이드·웹에서 읽으면 멈춘다(AGENTS.md 「새 네이티브 모듈」 규칙)
 - 위젯 함수 안에서는 **`@expo/ui/swift-ui` 부품·수식어만**. 훅·import·비동기·**함수 밖 상수** 금지 → 값은 props 로, 도우미는 함수 안에
 - Babel 보조 함수가 붙는 문법(객체 `...`펼침·구조 분해·for-of·class) 금지 — 위젯 쪽엔 보조 함수가 없다. import 한 이름을 바꾸지 않는다(`Text as T` ✕)
+- 🔴 **위젯에 넘기는 데이터에 `null`(·`undefined`·NaN) 금지** — 아이폰은 위젯 데이터를 UserDefaults(App Group)에 저장하는데, 여기엔 null 을 못 넣는다. 넣으면 **네이티브 예외로 앱이 강제 종료**(JS try/catch 로 못 막음) → 켜자마자 꺼지니 **OTA 가 자동으로 이전 버전으로 되돌아간다**(겉으로는 「업데이트가 안 뜬다」). 11/17 시험판에서 실제로 났다(주간표 빈 칸을 null 로 넘김). 지금은 ① 빈 칸 = `0` ② 넘기기 직전 `plistSafe()` 로 한 번 더 걸러낸다. Node 시뮬레이션은 이 저장 규칙을 흉내 내지 않으므로 **값 검사를 따로** 한다
 - 쓸 수 있는 부품: Text·VStack·HStack·ZStack·Spacer·Divider·Rectangle/RoundedRectangle/Capsule/Circle·Image·Label·ProgressView·Gauge·Button·Link (`expo-widgets/ios/Widgets/DynamicView.swift` 목록)
 
 ## 5. 검증 (11/14)
