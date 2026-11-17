@@ -15,6 +15,7 @@ import {
   deleteUser,
   reauthenticateWithCredential,
   reauthenticateWithPopup,
+  updatePassword,
   User,
 } from "firebase/auth";
 import { Platform } from "react-native";
@@ -226,6 +227,20 @@ export async function signUpWithEmail(
 export async function signInWithEmail(email: string, password: string): Promise<User> {
   const result = await signInWithEmailAndPassword(auth, email, password);
   return result.user;
+}
+
+// ── パスワードの変更（ログイン中のメールアカウント） ─────────────
+// 今のパスワードで本人確認（再認証）してから新しいパスワードに変える。
+// パスワードは Firebase Auth に渡すだけで、保持・保存・ログ出力しない（AGENTS.md 不変制約）。
+// Firebase はパスワード変更を「重要なアカウント変更」として扱い、ほかの端末のログイン
+// （更新トークン）を失効させる。この端末はそのままログインが続く。
+// 制限時間はアカウント削除と同じ（返ってこない await で画面が固まらないように）。
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous || !user.email) throw new Error("ログイン状態が確認できません");
+  const cred = EmailAuthProvider.credential(user.email, currentPassword);
+  await withTimeout(reauthenticateWithCredential(user, cred), REAUTH_TIMEOUT_MS, "reauthenticate");
+  await withTimeout(updatePassword(user, newPassword), REAUTH_TIMEOUT_MS, "updatePassword");
 }
 
 // パスワード再設定メールを送る（メールは Firebase が送信。アプリはパスワードに触れない）。

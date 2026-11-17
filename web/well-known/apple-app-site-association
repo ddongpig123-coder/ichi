@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "3498G5A326.jp.timetable.app",
+        "appIDs": ["3498G5A326.jp.timetable.app"],
+        "paths": ["/add-friend", "/add-friend/*"],
+        "components": [
+          { "/": "/add-friend", "comment": "友達招待リンク（docs/INVITE-LINK.md §5）" },
+          { "/": "/add-friend/*" }
+        ]
+      }
+    ]
+  }
+}

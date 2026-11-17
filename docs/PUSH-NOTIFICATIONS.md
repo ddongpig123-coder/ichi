@@ -68,7 +68,11 @@
 ### 5-2. iOS (개발용 빌드 때 자동)
 - `eas build` 중 **「Set up Push Notifications?」 → Yes**. EAS 가 Apple 푸시 키를 만든다(팀 단위 1개, 본 앱·dev 앱 공용)
 
-### 5-3. Android (1.1.0 빌드 전까지)
+### 5-3. Android (1.1.0 빌드 전까지) — ✅ 11/14 완료(준희)
+> 결과: Firebase 에 Android 앱 등록 → `google-services.json` 을 EAS 환경변수 `GOOGLE_SERVICES_JSON`(File·Secret, production/preview) ·
+> 서비스 계정 **`expo-push@ichi-6b8f7`**(역할: FCM API 관리자만) 키를 EAS 「FCM V1」에 연결.
+> 🔴 함정: `eas credentials` 의 Upload 는 저장소 안의 `scripts/keys/serviceAccount.json`(**관리자 키**)을 자동으로 찾아 「이걸 쓸까요?」라고 묻는다 → **반드시 n**.
+> 11/14 에 한 번 관리자 키가 올라갔다가 expo-push 로 바꾸고, 관리자 키는 EAS 에서 삭제했다. 경로를 끌어다 놓으면 끝에 빈칸이 붙어 「File does not exist」 → 직접 입력
 1. Firebase 콘솔 → 프로젝트 설정 → 「앱 추가」 → Android → 패키지 이름 `jp.timetable.app` → **`google-services.json` 다운로드**
 2. expo.dev → 프로젝트 → **Environment variables** → Add → 이름 `GOOGLE_SERVICES_JSON`, 종류 **File**, 파일 선택, 환경 production(+preview) → 저장
    (저장소에는 올리지 않는다 — `.gitignore` 등록됨)

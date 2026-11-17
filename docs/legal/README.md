@@ -30,7 +30,7 @@ README 위쪽 안내(= `/docs` 폴더 공개)와 달리, 실제로는 **`gh-page
 
 | 공개 URL | 실체 |
 |---|---|
-| `https://ddongpig123-coder.github.io/ichi/privacy.html` | `gh-pages:privacy.html` ← `docs/legal/privacy.html` 복사본 |
+| `https://ddongpig123-coder.github.io/ichi/privacy.html` | `gh-pages:privacy.html` ← `docs/legal/privacy.html` 복사본. **2026-11-14 갱신**(시간표 AI 읽기·푸시 알림, gh-pages `b2d24cc`, Pages 배포 성공 확인) |
 | `https://ddongpig123-coder.github.io/ichi/terms.html` | `gh-pages:terms.html` ← `docs/legal/terms.html` 복사본 |
 | `https://ddongpig123-coder.github.io/ichi/delete-account.html` | `gh-pages:delete-account.html` ← `docs/legal/delete-account.html` 복사본. **Google Play 「계정 삭제」 요건용** (2026-11-01 추가, gh-pages 복사 대기) |
 | `https://ddongpig123-coder.github.io/ichi/index.html` | `gh-pages:index.html` — **master에 원본 없음. gh-pages에서 직접 관리** |

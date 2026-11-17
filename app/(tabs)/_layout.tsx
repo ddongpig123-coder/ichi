@@ -9,6 +9,7 @@ import { useNotifications } from "../../src/contexts/NotificationsContext";
 import { ONBOARDED_KEY } from "../onboarding";
 import TutorialOverlay from "../../src/components/tutorial/TutorialOverlay";
 import PushManager from "../../src/components/push/PushManager";
+import UpdatePrompt from "../../src/components/common/UpdatePrompt";
 import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 import {
   HomeIcon,
@@ -122,6 +123,7 @@ export default function TabsLayout() {
     </Tabs>
     <TutorialOverlay />
       <PushManager />
+      <UpdatePrompt />
     </View>
   );
 }

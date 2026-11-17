@@ -21,6 +21,13 @@ import {
 } from "../../src/services/timetableService";
 import { useFriendOverlaps } from "../../src/hooks/useFriendOverlaps";
 import { canReadTimetableImage } from "../../src/services/timetableOcrService";
+import * as Linking from "expo-linking";
+import {
+  canUseWidgets,
+  currentSemesterKey,
+  prepareTodayWidget,
+  updateTodayWidget,
+} from "../../src/services/widgetService";
 import { notify } from "../../src/utils/dialog";
 import { friendlyErrorBody } from "../../src/utils/writeError";
 import type { ClassSession, Day, Period } from "../../src/types/timetable";
@@ -43,7 +50,7 @@ export default function HomeScreen() {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const router = useRouter();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
@@ -109,6 +116,17 @@ export default function HomeScreen() {
 
   const sessions = sessionsMap[semesterKey] ?? [];
   const visibility = visibilityMap[semesterKey] ?? "friends";
+
+  // iPhone のホーム画面ウィジェット「今日の時間割」（N4）: 今の学期の時間割を読んだ・保存したら渡す。
+  // ホームで別の学期を見ていても、ウィジェットは今の学期。部品の無い旧アプリ・Android・Web では何もしない
+  useEffect(() => {
+    if (canUseWidgets) prepareTodayWidget();
+  }, []);
+  const widgetSessions = sessionsMap[currentSemesterKey()];
+  useEffect(() => {
+    if (!canUseWidgets || !widgetSessions) return; // まだ読んでいない
+    updateTodayWidget(widgetSessions, language, Linking.createURL("/"));
+  }, [widgetSessions, language]);
   // 同じ講義を取っている友達（実データ: 友達の公開時間割と突き合わせ）
   const friendOverlaps = useFriendOverlaps(semesterKey, sessions);
 
