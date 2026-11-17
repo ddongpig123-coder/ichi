@@ -33,7 +33,7 @@ export const APP_STORE_URL = "https://apps.apple.com/jp/app/id6825671804";
 export const PLAY_STORE_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 // Google Play はまだ本番公開前（2026-11-14 Play Console で確認: トラックは alpha・内部テストのみ）。
 // 公開されたら true にして Web を再デプロイ（npm run deploy:web）。true の間は招待ページに Google Play ボタン
-export const PLAY_STORE_PUBLIC = false;
+export const PLAY_STORE_PUBLIC = true; // 2026-11-17: Play 1.0.0 정식 공개 확인(스토어 페이지 공개 200·インストール 표시, 11/14 제출분 승인)
 
 // 招待トークン。無ければ作って users/{uid} に保存する。
 // 「リンクを無効にしたい」場合はこの値を作り直せばよい（将来のUI）。
