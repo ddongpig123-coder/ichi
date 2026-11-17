@@ -4,6 +4,7 @@ import {
   Spacer,
   Text,
   VStack,
+  ZStack,
 } from "@expo/ui/swift-ui";
 import {
   background,
@@ -13,6 +14,8 @@ import {
   foregroundStyle,
   frame,
   lineLimit,
+  minimumScaleFactor,
+  multilineTextAlignment,
   opacity,
   padding,
   widgetURL,
@@ -55,18 +58,36 @@ export type WidgetClass = {
   s: number;
 };
 
+/** 大きいウィジェットの「今週の時間割」 */
+export type WeekGrid = {
+  /** 列の曜日（「月」…「金」、土曜に授業があれば「土」まで） */
+  days: string[];
+  /** 今日の列（日曜など無ければ -1） */
+  today: number;
+  /** 時限ごとの行（使っている時限の最初から最後まで） */
+  rows: { p: string; cells: ({ n: string; c: string; s: number } | null)[] }[];
+};
+
 export type TodayWidgetProps = {
-  /** 日付（「11/14(金)」）。時間割が無いときは空 */
+  /** 表示している日の日付（「11/14(金)」）。時間割が無いときは空 */
   title: string;
-  /** 見出し（「今日の時間割」） */
+  /** 見出し（「今日の時間割」「明日の時間割」「次の授業日」） */
   heading: string;
+  /** 表示している日が明日なら「明日」（それ以外は空） */
+  tag: string;
+  /** 1 = 今日の授業が無い・終わったので、次の授業日を表示している */
+  other: number;
+  /** 表示している日の授業 */
   items: WidgetClass[];
-  /** 授業中・次の授業が無いときの文（「今日の授業は終わりました」など） */
+  /** 授業中・次の授業が無いときの文（「今日は授業がありません」など） */
   msg: string;
   nowLabel: string;
   nextLabel: string;
   /** 表示しきれない授業の数（「ほか{n}コマ」。{n} を数に置き換える） */
   more: string;
+  /** 大きいウィジェットの見出し（「今週の時間割」） */
+  weekHeading: string;
+  week: WeekGrid | null;
   /** タップで開く URL（アプリのホーム） */
   url: string;
 };
@@ -76,15 +97,19 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
   const family = environment.widgetFamily;
   const dark = environment.colorScheme === "dark";
   const bg = dark ? "#1C1C1E" : "#FFFFFF";
+  const emptyCell = dark ? "#2C2C2E" : "#F2F2F7";
   const NOW_COLOR = "#E2574C";
   const NEXT_COLOR = "#2F6AD9";
   const secondary = { type: "hierarchical" as const, style: "secondary" as const };
+  const primary = { type: "hierarchical" as const, style: "primary" as const };
   const items = props.items || [];
   // まだアプリからデータが来ていない（追加した直前・ギャラリーの見本）ときの表示
   const empty = !props.heading;
   const heading = empty ? "今日の時間割" : props.heading;
   const msg = empty ? "アプリを開くと表示されます" : props.msg;
   const moreText = (n: number) => (props.more || "+{n}").replace("{n}", String(n));
+  // 日付の行（明日なら「明日 11/18(水)」）
+  const dayLine = (props.tag ? props.tag + " " : "") + (props.title || heading);
 
   let focus: WidgetClass | null = null;
   for (let i = 0; i < items.length; i++) {
@@ -105,7 +130,7 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
   const focusColor = focus && focus.s === 1 ? NOW_COLOR : NEXT_COLOR;
   const rootMods = [containerBackground(bg, "widget"), widgetURL(props.url)];
 
-  // ── ロック画面（長方形）: 次の授業を 3 行で
+  // ── ロック画面（長方形）: 次の授業を 3 行で（今日が終わっていれば次の授業日の最初の授業）
   if (family === "accessoryRectangular") {
     if (!focus) {
       return (
@@ -115,10 +140,11 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
         </VStack>
       );
     }
+    const label = props.other ? props.tag || props.title : focusLabel;
     return (
       <VStack alignment="leading" spacing={1} modifiers={[widgetURL(props.url)]}>
         <Text modifiers={[font({ textStyle: "caption", weight: "bold" }), lineLimit(1)]}>
-          {focusLabel + " · " + focus.p + " " + focus.tm}
+          {label + " · " + focus.p + " " + focus.tm}
         </Text>
         <Text modifiers={[font({ textStyle: "headline" }), lineLimit(1)]}>{focus.n}</Text>
         <Text modifiers={[font({ textStyle: "caption" }), lineLimit(1)]}>{focus.r}</Text>
@@ -135,7 +161,7 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
     return (
       <VStack alignment="leading" spacing={3} modifiers={rootMods}>
         <Text modifiers={[font({ size: 12, weight: "semibold" }), foregroundStyle(secondary), lineLimit(1)]}>
-          {props.title || heading}
+          {dayLine}
         </Text>
         {focus ? (
           <VStack alignment="leading" spacing={3}>
@@ -163,9 +189,83 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
     );
   }
 
-  // ── 中（4×2）・大（4×4）: 今日の授業の一覧
-  const large = family === "systemLarge";
-  const max = large ? 7 : 4;
+  // ── 大（4×4）: 今週の時間割（表）。今日の列と「授業中・次の授業」のコマを強調
+  if (family === "systemLarge") {
+    const week = props.week;
+    if (!week || !week.rows || week.rows.length === 0) {
+      return (
+        <VStack alignment="leading" spacing={8} modifiers={rootMods}>
+          <Text modifiers={[font({ size: 14, weight: "bold" }), lineLimit(1)]}>{props.weekHeading || heading}</Text>
+          <Text modifiers={[font({ size: 14, weight: "semibold" }), foregroundStyle(secondary)]}>{msg}</Text>
+          <Spacer />
+        </VStack>
+      );
+    }
+    return (
+      <VStack alignment="leading" spacing={4} modifiers={rootMods}>
+        <HStack spacing={6}>
+          <Text modifiers={[font({ size: 14, weight: "bold" }), lineLimit(1)]}>{props.weekHeading}</Text>
+          <Spacer />
+          {focus ? (
+            <Text modifiers={[font({ size: 11, weight: "semibold" }), foregroundStyle(focusColor), lineLimit(1)]}>
+              {(props.other ? props.tag || props.title : focusLabel) + " " + focus.p}
+            </Text>
+          ) : null}
+        </HStack>
+        <HStack spacing={3}>
+          <Text modifiers={[font({ size: 10 }), frame({ width: 12 })]}>{" "}</Text>
+          {week.days.map((d, i) => (
+            <Text
+              key={"d" + i}
+              modifiers={[
+                font({ size: 11, weight: i === week.today ? "bold" : "semibold" }),
+                foregroundStyle(i === week.today ? NEXT_COLOR : secondary),
+                frame({ maxWidth: 1000 }),
+                lineLimit(1),
+              ]}
+            >
+              {d}
+            </Text>
+          ))}
+        </HStack>
+        {week.rows.map((row, r) => (
+          <HStack key={"r" + r} spacing={3} modifiers={[frame({ maxHeight: 1000 })]}>
+            <Text modifiers={[font({ size: 10, weight: "semibold" }), foregroundStyle(secondary), frame({ width: 12 })]}>
+              {row.p}
+            </Text>
+            {row.cells.map((cell, k) => (
+              <ZStack key={"x" + k} modifiers={[frame({ maxWidth: 1000, maxHeight: 1000 })]}>
+                <RoundedRectangle
+                  cornerRadius={5}
+                  modifiers={[
+                    foregroundStyle(cell ? cell.c : emptyCell),
+                    opacity(cell ? (cell.s ? 1 : k === week.today ? 0.4 : 0.22) : 1),
+                  ]}
+                />
+                {cell ? (
+                  <Text
+                    modifiers={[
+                      font({ size: 9, weight: "semibold" }),
+                      foregroundStyle(cell.s ? "#FFFFFF" : primary),
+                      multilineTextAlignment("center"),
+                      lineLimit(3),
+                      minimumScaleFactor(0.75),
+                      padding({ horizontal: 2 }),
+                    ]}
+                  >
+                    {cell.n}
+                  </Text>
+                ) : null}
+              </ZStack>
+            ))}
+          </HStack>
+        ))}
+      </VStack>
+    );
+  }
+
+  // ── 中（4×2）: 今日（または次の授業日）の授業の一覧
+  const max = 4;
   // 入りきらないときは、終わった授業から外す（いまの授業が必ず見えるように）
   let list = items;
   while (list.length > max && list[0].s === 0) list = list.slice(1);
@@ -173,7 +273,7 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
   list = list.slice(0, max);
 
   return (
-    <VStack alignment="leading" spacing={large ? 8 : 5} modifiers={rootMods}>
+    <VStack alignment="leading" spacing={5} modifiers={rootMods}>
       <HStack spacing={6}>
         <Text modifiers={[font({ size: 14, weight: "bold" }), lineLimit(1)]}>{heading}</Text>
         <Spacer />
@@ -183,39 +283,27 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
           </Text>
         ) : null}
       </HStack>
-      {/* 授業が無い日・全部終わった日は、一覧ではなくひとこと */}
+      {/* 授業が無い・全部終わった（次の授業日も出せない）ときは、一覧ではなくひとこと */}
       {list.length === 0 || msg ? (
         <Text modifiers={[font({ size: 14, weight: "semibold" }), foregroundStyle(secondary), padding({ top: 8 })]}>
           {msg}
         </Text>
       ) : (
-        <VStack alignment="leading" spacing={large ? 8 : 5}>
+        <VStack alignment="leading" spacing={5}>
           {list.map((it, i) => (
             <HStack key={"c" + i} spacing={7} modifiers={it.s === 0 ? [opacity(0.4)] : []}>
-              <RoundedRectangle
-                cornerRadius={2}
-                modifiers={[foregroundStyle(it.c), frame({ width: 4, height: large ? 30 : 18 })]}
-              />
+              <RoundedRectangle cornerRadius={2} modifiers={[foregroundStyle(it.c), frame({ width: 4, height: 18 })]} />
               <Text
                 modifiers={[
                   font({ size: 12, weight: "bold" }),
                   foregroundStyle(secondary),
-                  frame({ width: large ? 44 : 38, alignment: "leading" }),
+                  frame({ width: 38, alignment: "leading" }),
                   lineLimit(1),
                 ]}
               >
                 {it.p}
               </Text>
-              {large ? (
-                <VStack alignment="leading" spacing={1}>
-                  <Text modifiers={[font({ size: 14, weight: "semibold" }), lineLimit(1)]}>{it.n}</Text>
-                  <Text modifiers={[font({ size: 11 }), foregroundStyle(secondary), lineLimit(1)]}>
-                    {it.r ? it.tm + " · " + it.r : it.tm}
-                  </Text>
-                </VStack>
-              ) : (
-                <Text modifiers={[font({ size: 13, weight: "semibold" }), lineLimit(1)]}>{it.n}</Text>
-              )}
+              <Text modifiers={[font({ size: 13, weight: "semibold" }), lineLimit(1)]}>{it.n}</Text>
               <Spacer />
               {it.s === 1 ? (
                 <Text
@@ -230,7 +318,7 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
                 >
                   {props.nowLabel}
                 </Text>
-              ) : !large && it.r ? (
+              ) : it.r ? (
                 <Text modifiers={[font({ size: 11 }), foregroundStyle(secondary), lineLimit(1)]}>{it.r}</Text>
               ) : null}
             </HStack>
