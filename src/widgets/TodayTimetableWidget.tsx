@@ -80,7 +80,10 @@ export type WeekGrid = {
 export type WidgetPage = {
   /** 見出し（「自分の時間割」「田中の時間割」） */
   t: string;
-  week: WeekGrid;
+  /** 時間割の表（友達の時間割が無い・非公開のときは無し） */
+  week?: WeekGrid;
+  /** 表の代わりのひとこと（「まだ今学期の時間割がありません」「時間割は非公開です」） */
+  m?: string;
 };
 
 export type TodayWidgetProps = {
@@ -251,54 +254,65 @@ const TodayTimetable = (props: TodayWidgetProps, environment: WidgetEnvironment)
           </Text>
         )}
       </HStack>
-      <HStack spacing={3}>
-        <Text modifiers={[font({ size: 9 }), frame({ width: 10 })]}>{" "}</Text>
-        {week.days.map((d, i) => (
-          <Text
-            key={"d" + i}
-            modifiers={[
-              font({ size: large ? 11 : 10, weight: i === week.today ? "bold" : "semibold" }),
-              foregroundStyle(i === week.today ? NEXT_COLOR : secondary),
-              frame({ maxWidth: 1000 }),
-              lineLimit(1),
-            ]}
-          >
-            {d}
-          </Text>
-        ))}
-      </HStack>
-      {week.rows.map((row, r) => (
-        <HStack key={"r" + r} spacing={3} modifiers={[frame({ maxHeight: 1000 })]}>
-          <Text modifiers={[font({ size: 9, weight: "semibold" }), foregroundStyle(secondary), frame({ width: 10 })]}>
-            {row.p}
-          </Text>
-          {row.cells.map((cell, k) => (
-            <ZStack key={"x" + k} modifiers={[frame({ maxWidth: 1000, maxHeight: 1000 })]}>
-              <RoundedRectangle
-                cornerRadius={large ? 5 : 4}
+      {week ? (
+        <VStack alignment="leading" spacing={large ? 4 : 3} modifiers={[frame({ maxHeight: 1000 })]}>
+          <HStack spacing={3}>
+            <Text modifiers={[font({ size: 9 }), frame({ width: 10 })]}>{" "}</Text>
+            {week.days.map((d, i) => (
+              <Text
+                key={"d" + i}
                 modifiers={[
-                  foregroundStyle(cell ? cell.c : emptyCell),
-                  opacity(cell ? (cell.s ? 1 : k === week.today ? 0.4 : 0.22) : 1),
+                  font({ size: large ? 11 : 10, weight: i === week.today ? "bold" : "semibold" }),
+                  foregroundStyle(i === week.today ? NEXT_COLOR : secondary),
+                  frame({ maxWidth: 1000 }),
+                  lineLimit(1),
                 ]}
-              />
-              {cell ? (
-                <Text
-                  modifiers={[
-                    font({ size: cellFont, weight: "semibold" }),
-                    foregroundStyle(cell.s ? "#FFFFFF" : primary),
-                    multilineTextAlignment("center"),
-                    lineLimit(cellLines),
-                    minimumScaleFactor(0.7),
-                    padding({ horizontal: 2 }),
-                  ]}
-                >
-                  {cell.n}
-                </Text>
-              ) : null}
-            </ZStack>
+              >
+                {d}
+              </Text>
+            ))}
+          </HStack>
+          {week.rows.map((row, r) => (
+            <HStack key={"r" + r} spacing={3} modifiers={[frame({ maxHeight: 1000 })]}>
+              <Text modifiers={[font({ size: 9, weight: "semibold" }), foregroundStyle(secondary), frame({ width: 10 })]}>
+                {row.p}
+              </Text>
+              {row.cells.map((cell, k) => (
+                <ZStack key={"x" + k} modifiers={[frame({ maxWidth: 1000, maxHeight: 1000 })]}>
+                  <RoundedRectangle
+                    cornerRadius={large ? 5 : 4}
+                    modifiers={[
+                      foregroundStyle(cell ? cell.c : emptyCell),
+                      opacity(cell ? (cell.s ? 1 : k === week.today ? 0.4 : 0.22) : 1),
+                    ]}
+                  />
+                  {cell ? (
+                    <Text
+                      modifiers={[
+                        font({ size: cellFont, weight: "semibold" }),
+                        foregroundStyle(cell.s ? "#FFFFFF" : primary),
+                        multilineTextAlignment("center"),
+                        lineLimit(cellLines),
+                        minimumScaleFactor(0.7),
+                        padding({ horizontal: 2 }),
+                      ]}
+                    >
+                      {cell.n}
+                    </Text>
+                  ) : null}
+                </ZStack>
+              ))}
+            </HStack>
           ))}
-        </HStack>
-      ))}
+        </VStack>
+      ) : (
+        <VStack alignment="leading" spacing={0} modifiers={[frame({ maxHeight: 1000 })]}>
+          <Text modifiers={[font({ size: 14, weight: "semibold" }), foregroundStyle(secondary), padding({ top: 8 })]}>
+            {cur.m || ""}
+          </Text>
+          <Spacer />
+        </VStack>
+      )}
     </VStack>
   );
 };
