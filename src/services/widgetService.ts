@@ -65,10 +65,15 @@ export interface WidgetEntry {
   props: TodayWidgetProps;
 }
 
-/** ウィジェットに載せる友達（よく使う友達のうち、時間割を見られる人） */
+/**
+ * ウィジェットに載せる友達（よく使う友達）。
+ * state: ok = 時間割あり / empty = 今学期の時間割がまだ無い / private = 非公開（読めない）
+ * → empty・private も 1 ページにして理由を出す（「友達を入れたのに ◀ ▶ が出ない」を防ぐ — 11/17 準熙）
+ */
 export interface WidgetFriend {
   nickname: string;
   sessions: ClassSession[];
+  state: "ok" | "empty" | "private";
 }
 
 /** 一人分の「今週の時間割」の表。highlight: 今日の列で強調するコマ（時限 → 1 授業中 / 2 次） */
@@ -117,7 +122,7 @@ export function buildTodayTimeline(
 ): WidgetEntry[] {
   const L = TRANSLATIONS[lang];
   const days = opts.days ?? 7;
-  const friends = (opts.friends ?? []).filter((f) => f.sessions.length > 0);
+  const friends = opts.friends ?? [];
   const base = {
     heading: L["widget.heading"],
     nowLabel: L["widget.now"],
@@ -135,8 +140,10 @@ export function buildTodayTimeline(
     const mine = weekGrid(sessions, lang, day, highlight);
     if (mine) pages.push({ t: L["widget.myTimetable"], week: mine });
     for (const f of friends) {
-      const g = weekGrid(f.sessions, lang, day, {});
-      if (g) pages.push({ t: L["widget.friendTimetable"].replace("{name}", f.nickname), week: g });
+      const t = L["widget.friendTimetable"].replace("{name}", f.nickname);
+      const g = f.state === "ok" ? weekGrid(f.sessions, lang, day, {}) : null;
+      if (g) pages.push({ t, week: g });
+      else pages.push({ t, m: f.state === "private" ? L["widget.friendPrivate"] : L["widget.friendEmpty"] });
     }
     return pages;
   };
@@ -236,9 +243,10 @@ export function prepareTodayWidget(): void {
 }
 
 // ── よく使う友達の時間割（ウィジェットの ◀ ▶ 用）
-// 読み取りを増やしすぎないよう、一人ずつ 30 分は読み直さない。非公開・権限なしは載せない
+// 読み取りを増やしすぎないよう、一人ずつ 30 分は読み直さない。
+// 非公開・未登録もページにして理由を出す。通信エラーの人は今回は載せない（キャッシュもしない）
 const FRIEND_TTL_MS = 30 * 60 * 1000;
-const friendCache = new Map<string, { at: number; sessions: ClassSession[] }>();
+const friendCache = new Map<string, { at: number; friend: WidgetFriend }>();
 
 export async function loadWidgetFriends(
   friends: { id: string; nickname: string }[],
@@ -247,21 +255,23 @@ export async function loadWidgetFriends(
   if (!canUseWidgets || friends.length === 0) return [];
   const now = Date.now();
   const list = await Promise.all(
-    friends.map(async (f) => {
+    friends.map(async (f): Promise<WidgetFriend | null> => {
       const key = `${f.id}|${semesterKey}`;
       const hit = friendCache.get(key);
-      if (hit && now - hit.at < FRIEND_TTL_MS) return { nickname: f.nickname, sessions: hit.sessions };
-      let sessions: ClassSession[] = [];
+      if (hit && now - hit.at < FRIEND_TTL_MS) return { ...hit.friend, nickname: f.nickname };
+      let friend: WidgetFriend;
       try {
-        sessions = (await getTimetable(f.id, semesterKey))?.sessions ?? [];
-      } catch {
-        sessions = []; // 非公開（permission-denied）など
+        const sessions = (await getTimetable(f.id, semesterKey))?.sessions ?? [];
+        friend = { nickname: f.nickname, sessions, state: sessions.length > 0 ? "ok" : "empty" };
+      } catch (e) {
+        if ((e as { code?: string } | null)?.code !== "permission-denied") return null; // 通信エラーなど
+        friend = { nickname: f.nickname, sessions: [], state: "private" };
       }
-      friendCache.set(key, { at: now, sessions });
-      return { nickname: f.nickname, sessions };
+      friendCache.set(key, { at: now, friend });
+      return friend;
     })
   );
-  return list.filter((f) => f.sessions.length > 0);
+  return list.filter((f): f is WidgetFriend => f !== null);
 }
 
 /**
@@ -308,7 +318,7 @@ export function updateTodayWidget(
     lang,
     url,
     pick(sessions),
-    friends.map((f) => [f.nickname, pick(f.sessions)]),
+    friends.map((f) => [f.nickname, f.state, pick(f.sessions)]),
   ]);
   if (signature === lastSignature) return;
   try {
