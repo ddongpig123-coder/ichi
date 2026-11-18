@@ -28,8 +28,8 @@
 ### 🔴 11/21(금) — 네이티브 동결 + 서버·웹
 - [ ] `npm run deploy:functions` (11/14 이후 서버 수정분: 빈 결과 횟수 제외 · 계정 삭제 시 이용 기록 삭제 · 푸시 함수 5개. **트리거까지 성공**했는지 로그 확인)
 - [ ] `npm run deploy:web` (CSP·방침 11/14판·AASA·assetlinks — 11/17 확인으로 이미 공개돼 있으나 master 최신으로 한 번 더)
-- [ ] **gh-pages 의 `privacy.html` 을 `docs/legal/privacy.html` 로 교체**(스토어에 등록된 방침 URL — [legal/README](legal/README.md))
-- [ ] 데모 계정 `ichidemo1~4`: 현재 학기 시간표 비우기 + 시간표 읽기 미사용 확인(심사관이 처음 상태로 보게)
+- [x] ~~gh-pages 의 `privacy.html` 을 `docs/legal/privacy.html` 로 교체~~ → **이미 동일**(11/18 Claude 가 공개 페이지와 바이트 비교 — 11/14판). 방침을 또 고치지 않는 한 할 일 없음
+- [ ] 데모 계정 `ichidemo1~4`: `cd scripts` → `node demo-review-reset.mjs`(상태) → `node demo-review-reset.mjs --clear-timetable 2026-秋` + `node demo-review-reset.mjs --reset-ocr`(심사관이 처음 상태로 보게. 키 `scripts/keys/serviceAccount.json`). 🔴 리젝 → 재제출 전에도 `--reset-ocr` 한 번 더
 - 이날 이후 `app.json`·플러그인·네이티브 부품 변경 금지. JS 는 계속 OTA
 
 ### 11/22(토)~11/24(월) — 빌드·제출 (iOS)

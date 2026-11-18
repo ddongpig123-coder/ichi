@@ -196,3 +196,14 @@ node backup-firestore.mjs              # 덤프 → 저장소 밖 ../ichi-backup
 ```
 
 ⚠️ 덤프에는 이메일·쪽지 본문·초대 토큰이 평문으로 들어 있다. 저장소 안에 두거나 공유하지 말 것.
+
+## 심사용 데모 계정 정리 (demo-review-reset.mjs)
+
+스토어 심사 제출 전에 데모 계정(`ichidemo1~4@example.com`)을 「처음 상태」로 맞춘다 — [docs/STORE-1.1.0.md §3·§6](../docs/STORE-1.1.0.md).
+`ocrUsage`(시간표 읽기 기록)는 규칙에 match 가 없어 Admin SDK 로만 보인다. 데모 계정 외에는 건드리지 않는다(이메일 가드).
+
+```bash
+node demo-review-reset.mjs                            # 상태만: 학기별 과목 수 · 시간표 읽기 기록
+node demo-review-reset.mjs --clear-timetable 2026-秋  # 그 학기 시간표 비우기 → 홈에 읽기 버튼이 보인다
+node demo-review-reset.mjs --reset-ocr                # 읽기 기록 삭제 → 심사원이 다시 1회 쓸 수 있다(리젝 → 재제출 전)
+```
