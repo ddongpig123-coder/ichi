@@ -83,7 +83,7 @@
             {
               "name": "TodayTimetable",
               "displayName": "今日の時間割",
-              "description": "今の授業と次の授業、今日の時間割をホーム画面で確認できます。",
+              "description": "今日の授業・今週の時間割・よく使う友達の時間割をホーム画面で確認できます。",
               "ios": {
                 "supportedFamilies": ["systemSmall", "systemMedium", "systemLarge", "accessoryRectangular"]
               }

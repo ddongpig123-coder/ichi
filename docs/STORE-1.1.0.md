@@ -1,6 +1,6 @@
-# 1.1.0 심사 자료 (App Store · Google Play) — 초안 2026-11-14
+# 1.1.0 심사 자료 (App Store · Google Play) — 초안 2026-11-14 · 최종 점검 2026-11-18
 
-> 1.1.0 제출(12/12 목표, 빨리 끝나면 앞당김) 때 콘솔에 **그대로 붙여 넣는** 문구와 답안.
+> 1.1.0 제출(**11/24 목표** — [RELEASE-PLAN §3-0](RELEASE-PLAN-2026-12.md), 11/17 앞당김) 때 콘솔에 **그대로 붙여 넣는** 문구와 답안. **11/18 코드·실배포와 대조 완료**(§3 끝의 점검 기록).
 > 순서·버전 주의는 [RELEASE-PLAN §4-1·§4-2](RELEASE-PLAN-2026-12.md). 1.0 때 문안은 [STORE-LISTING](STORE-LISTING.md)·[STORE-PRIVACY-LABELS](STORE-PRIVACY-LABELS.md)·[APP-REVIEW-REPLY](APP-REVIEW-REPLY.md).
 
 ---
@@ -80,10 +80,11 @@
 ## 3. App Review Notes (App Store Connect → 앱 심사 정보 → 메모) — 교체용
 
 > 데모 계정은 1.0 그대로. **첨부 파일**에 `docs/review/sample-timetable.png`(가짜 시간표) 를 올린다.
-> 🔁 **11/19 수정**: 데모 계정 `ichidemo1~4` 는 시드 스크립트(`scripts/seed-test-accounts.mjs`)가 **2026 春·秋 둘 다** 시간표를 넣어 두었다
-> → 예전 노트의 「春学期로 바꾸면 버튼이 보인다」는 **틀림**(심사원이 입구를 못 찾는다). 그래서 **비어 있는 「2025年 秋学期」로 바꾸게** 안내하고,
-> 로그인 없이 새로 설치한 경우(처음 설정 ②)도 적었다. → **데모 계정 시간표를 비울 필요 없음**(친구 겹침 데모가 그대로 남는다).
-> 시간표 읽기는 1인·학기당 1회. 데모 계정은 아직 한 번도 안 썼다(1.0 에는 기능이 없었고, 시험은 전부 임시 계정으로 함). 2025 秋에서 한 번 쓰면 다른 학기(예: 2025 春)로 다시 시험할 수 있다고 노트에 적었다.
+> 🔁 **11/19 정리**(11/18·11/19 두 세션의 점검을 합침): 데모 계정 `ichidemo1~4` 는 시드 스크립트(`scripts/seed-test-accounts.mjs`)가 **2026 春·秋 둘 다** 시간표를 넣어 두었다
+> → 예전 노트의 「春学期로 바꾸면 버튼이 보인다」는 **틀림**(심사원이 입구를 못 찾는다). 노트는 **비어 있는 「2025年 秋学期」로 바꾸게** 안내하고, 로그인 없이 새로 설치한 경우(처음 설정 ②)도 적었다.
+> → **데모 계정 시간표는 비우지 않는다**(친구 겹침 데모가 그대로 남는다).
+> 시간표 읽기는 1인·학기당 1회. 데모 계정은 아직 한 번도 안 썼다(1.0 에는 기능이 없었고, 시험은 전부 임시 계정으로 함). 상태 확인·초기화는 `scripts/demo-review-reset.mjs`(준희 PC, 키 필요 — §6).
+> 🔴 리젝 → 재제출이면 심사원이 한 번 더 쓰므로 **재제출 전에 `node demo-review-reset.mjs --reset-ocr`**.
 
 ```
 Thank you for reviewing 大学の森 1.1.0. New features and how to test them:
@@ -101,7 +102,8 @@ Thank you for reviewing 大学の森 1.1.0. New features and how to test them:
   Expected result: 10 classes placed in the grid + 2 classes listed as "not placed" (on-demand / intensive).
   The user can edit or delete each row, then taps "時間割に保存".
 - Limit: once per account per semester (to control cost). Failed or non-timetable images do not count.
-  To try again, choose another empty semester (e.g. "2025年 春学期").
+  To try again, choose another empty semester (e.g. "2025年 春学期"), or let us know in App Review
+  and we will reset the demo account right away.
 
 2) Push notifications
 - Only two kinds: (a) a comment or reply on your own post, (b) a new direct message.
@@ -113,10 +115,12 @@ Thank you for reviewing 大学の森 1.1.0. New features and how to test them:
   The user still confirms before becoming friends.
 
 4) Home Screen / Lock Screen widget "今日の時間割" (iPhone)
-- Long-press the Home Screen → "+" → 大学の森. Small: today's classes. Medium/Large: this week's timetable.
-  Lock Screen (rectangular): the next class. Open the app once so the widget receives the timetable.
-- Medium/Large have ◀ ▶ buttons (iOS 17+) to switch to timetables of friends the user marked as
-  "よく使う友達". Only timetables those friends already share with friends are shown. Data stays on the device.
+- Open the app once (so the widget receives the timetable), then long-press the Home Screen → "+" → 大学の森.
+  Small = today's classes, Medium/Large = this week's timetable, Lock Screen (rectangular) = the current/next class.
+  It shows the current semester only.
+- On Medium/Large, "◀ ▶" (iOS 17+) pages through the timetables of friends chosen in the Friends tab
+  (よく使う友達の編集); only timetables those friends already share with friends are shown.
+- Widget data stays on the device (App Group); nothing extra is sent to our servers.
 
 5) Password change: Profile → Account → "パスワードを変更する" (current password required).
 
@@ -130,6 +134,8 @@ Age rating: 18+.
 ```
 
 - 시험(11/14): 이 샘플 이미지를 실서버로 읽음 → **10과목 전부 정확 + 「시간표 밖」 2개, 8초**
+- **11/18 최종 점검(Claude)** — 노트의 문구를 코드·실배포와 대조해 **전부 일치** 확인: 홈 버튼 `home.ocrButton` · 동의 화면 `ocr.consentBody`(Anthropic 미국·미보관·미학습) · 「同意して画像を選ぶ」·「時間割に保存」 · 학기당 1회(`ocrUsage/{uid}__{학기}`, 실패·시간표 아님은 미집계) · 알림 2종·쪽지 본문 미포함·처음 설정 ④/프로필 → 通知 · Universal Links `applinks:ichi-6b8f7.web.app` + `/add-friend` · ⋯ 메뉴 通報/非表示/ブロック(글·댓글·강의평)·쪽지는 아바타 탭 · 계정 삭제 in-app · 연령 18+ · 방침 공개 페이지 = 저장소 11/14판.
+  고친 것: ① 대체 학기 2026 春 → **2025 春**(2026 春 도 시드돼 있어 비어 있지 않았다 — 11/19 세션도 같은 걸 찾아 **2025 秋 + 연도 바꾸는 방법·처음 설정 ②** 로 합침) ② **위젯 항목 4) 추가**(새 기능 문구엔 위젯이 있는데 노트에 없었다) ③ 한도에 걸리면 리셋해 주겠다는 한 줄 ④ `app.json` 위젯 갤러리 설명문을 새 구성(주간표·친구)에 맞게 — 네이티브 문자열이라 동결(11/21) 전에 고쳤고 11/22 release 빌드부터 반영. 노트 길이 2,606자(ASC 상한 4,000)
 
 ---
 
@@ -152,8 +158,8 @@ Age rating: 18+.
 | **기기 또는 기타 ID** | **수집됨 · 공유 안 함 · 선택 사항 · 목적 = 앱 기능** | 푸시 토큰(Firebase 설치 ID 와 같은 부류로 본다) |
 | 나머지 | 1.0 그대로 | 삭제 요청 가능 = 예 |
 
-- 권한 변화: iOS 사진 접근 문구(일·한) / Android `POST_NOTIFICATIONS`(13+), `READ_EXTERNAL_STORAGE`(12 이하만). 카메라·마이크는 막아 둠
-- 개인정보처리방침 URL 은 그대로(gh-pages `privacy.html`, 11/14 갱신 완료)
+- 권한 변화: iOS 사진 접근 문구(일·한, `locales/*.json`) / Android `POST_NOTIFICATIONS`(13+), `READ_EXTERNAL_STORAGE`·`WRITE_EXTERNAL_STORAGE`(12 이하만, expo-image-picker 가 넣음). 카메라·마이크는 `blockedPermissions`·`microphonePermission: false` 로 막아 둠. **`READ_MEDIA_IMAGES` 는 없다**(11/18 확인) → Play 의 「사진 및 동영상 권한」 선언 폼은 해당 없음(13+ 는 시스템 사진 선택기)
+- 개인정보처리방침 URL 은 그대로(gh-pages `privacy.html`). **11/18 확인: 공개 페이지 = `docs/legal/privacy.html` 과 바이트 단위 동일**(11/14판, Anthropic·푸시 조항 포함) → MY-TASKS 11/21 의 「gh-pages 교체」는 이미 끝난 상태. `delete-account.html` 도 동일
 
 ---
 
@@ -171,7 +177,10 @@ Age rating: 18+.
 - ASC 에 올리는 순서 제안: 기존 1.0 의 5장 **앞에** ① ② 를 둔다(새 기능이 먼저 보이게)
 - 🔸 더 좋게 하려면(선택): 준희 폰에서 **실제 알림 배너**(잠금화면에 댓글 알림이 뜬 화면)나 **위젯**(샘플 시간표로) 스크린샷을 찍어 ② 와 바꾸거나 추가 — 실기기라 더 설득력 있다
 
----|---|---|
+캡션 문구 제안(선택 — 스크린샷 위에 글자를 얹을 때):
+
+| 화면 | 일본어 | 한국어 |
+|---|---|---|
 | 시간표 읽기 확인 화면(샘플 이미지로) | スクショ1枚で時間割を登録 | 스크린샷 한 장으로 시간표 등록 |
 | 알림 + 프로필 → 通知 | コメント・メッセージをすぐお知らせ | 댓글·쪽지를 바로 알림 |
 
@@ -182,5 +191,5 @@ Age rating: 18+.
 ## 6. 제출 직전 체크
 - [ ] `eas build --profile release` (iOS·Android) — RELEASE-PLAN §4-2
 - [ ] 위 1~4 를 콘솔에 입력, 샘플 이미지 첨부 · §5 스크린샷 2장 업로드(1.0 의 5장 앞에)
-- [ ] 데모 계정: 현재 학기 시간표 비우기 + 시간표 읽기 미사용 확인
+- [ ] 데모 계정: 시간표는 **비우지 않는다**(노트가 빈 2025年 秋学期로 안내). 확인하고 싶으면 `cd scripts` → `node demo-review-reset.mjs`(상태 보기, 키 필요). 🔴 리젝 → 재제출 전에는 `--reset-ocr`(읽기 기록 삭제)
 - [ ] 안드로이드는 Play 1.0.0 정식 공개가 끝난 뒤에 1.1.0 을 올린다(같은 트랙에 겹치지 않게)

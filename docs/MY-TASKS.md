@@ -28,8 +28,9 @@
 ### 🔁 11/19(수) — 동결·제출을 오늘로 앞당김 (준희: 홍보가 AI 시간표 읽기를 이미 선전 중 → 받은 사람이 기능을 못 찾으면 안 됨)
 - [x] ~~`npm run deploy:functions`~~ → **불필요**: 서버 함수 7개는 11/14 배포(트리거까지 성공) 이후 바뀐 게 없다(`functions/` 마지막 변경 11/14 14:20)
 - [x] ~~`npm run deploy:web`~~ → **11/17 완료**(Play 버튼 공개·AASA·assetlinks·CSP 확인 — Claude)
-- [x] ~~gh-pages `privacy.html` 교체~~ → **11/14 완료**(gh-pages `b2d24cc`, [legal/README](legal/README.md))
+- [x] ~~gh-pages `privacy.html` 교체~~ → **11/14 완료**(gh-pages `b2d24cc`, [legal/README](legal/README.md)) — 11/18 Claude 가 공개 페이지와 바이트 비교로 재확인
 - [x] ~~데모 계정 시간표 비우기~~ → **불필요**: 심사 메모를 「비어 있는 2025年 秋学期로 바꿔서 시험」으로 고쳤다(데모 계정은 2026 春·秋 둘 다 시간표가 있어 비우면 친구 겹침 데모가 사라진다) — [STORE-1.1.0 §3](STORE-1.1.0.md)
+- [ ] (선택) 데모 계정 상태 보기: `cd scripts` → `node demo-review-reset.mjs`(키 `scripts/keys/serviceAccount.json`). 🔴 **리젝 → 재제출 전에는 `node demo-review-reset.mjs --reset-ocr`**(심사원이 한 번 더 쓰므로)
 - **오늘부터 네이티브 동결**: `app.json`·플러그인·네이티브 부품 변경 금지. JS 는 계속 OTA
 
 ### 11/19(수)~ — 빌드·제출 (iOS) — 원래 11/22~24
