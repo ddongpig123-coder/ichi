@@ -25,18 +25,18 @@
 - [x] ~~새 스크린샷 2장~~ → **11/17 Claude 가 촬영**: `docs/store/1.1.0/ja-1-ocr.png` · `ja-2-push.png`(1206×2622, 1.0 과 같은 크기) — 제출 때 ASC 에 올리기만 하면 된다 [STORE-1.1.0 §5](STORE-1.1.0.md)
 - [ ] 아이폰에 App Store Connect 앱 설치·알림 켜기 / 네이버 메일 확인(Apple 메일은 네이버로)
 
-### 🔴 11/21(금) — 네이티브 동결 + 서버·웹
-- [ ] `npm run deploy:functions` (11/14 이후 서버 수정분: 빈 결과 횟수 제외 · 계정 삭제 시 이용 기록 삭제 · 푸시 함수 5개. **트리거까지 성공**했는지 로그 확인)
-- [ ] `npm run deploy:web` (CSP·방침 11/14판·AASA·assetlinks — 11/17 확인으로 이미 공개돼 있으나 master 최신으로 한 번 더)
-- [ ] **gh-pages 의 `privacy.html` 을 `docs/legal/privacy.html` 로 교체**(스토어에 등록된 방침 URL — [legal/README](legal/README.md))
-- [ ] 데모 계정 `ichidemo1~4`: 현재 학기 시간표 비우기 + 시간표 읽기 미사용 확인(심사관이 처음 상태로 보게)
-- 이날 이후 `app.json`·플러그인·네이티브 부품 변경 금지. JS 는 계속 OTA
+### 🔁 11/19(수) — 동결·제출을 오늘로 앞당김 (준희: 홍보가 AI 시간표 읽기를 이미 선전 중 → 받은 사람이 기능을 못 찾으면 안 됨)
+- [x] ~~`npm run deploy:functions`~~ → **불필요**: 서버 함수 7개는 11/14 배포(트리거까지 성공) 이후 바뀐 게 없다(`functions/` 마지막 변경 11/14 14:20)
+- [x] ~~`npm run deploy:web`~~ → **11/17 완료**(Play 버튼 공개·AASA·assetlinks·CSP 확인 — Claude)
+- [x] ~~gh-pages `privacy.html` 교체~~ → **11/14 완료**(gh-pages `b2d24cc`, [legal/README](legal/README.md))
+- [x] ~~데모 계정 시간표 비우기~~ → **불필요**: 심사 메모를 「비어 있는 2025年 秋学期로 바꿔서 시험」으로 고쳤다(데모 계정은 2026 春·秋 둘 다 시간표가 있어 비우면 친구 겹침 데모가 사라진다) — [STORE-1.1.0 §3](STORE-1.1.0.md)
+- **오늘부터 네이티브 동결**: `app.json`·플러그인·네이티브 부품 변경 금지. JS 는 계속 OTA
 
-### 11/22(토)~11/24(월) — 빌드·제출 (iOS)
+### 11/19(수)~ — 빌드·제출 (iOS) — 원래 11/22~24
 - [ ] `eas build --profile release --platform ios` (이 빌드만 1.1.0·채널 production. 🔴 `app.json` 의 version 은 1.0.0 그대로)
 - [ ] `eas submit --platform ios --profile production --id <빌드 ID>` → ASC 처리 완료 → 앱 페이지에서 **새 버전 1.1.0** 만들기 → 그 빌드 연결
 - [ ] ASC 입력 — 초안은 전부 [STORE-1.1.0](STORE-1.1.0.md): ① 「이 버전의 새로운 기능」 일·한·영(§1) ② 앱 개인정보 → **사진 또는 동영상** 추가(수집·신원 연결 안 함·추적 안 함·앱 기능, §4) ③ 심사 메모 교체(§3 영어) + **샘플 이미지 첨부** ④ 스크린샷 2장 교체 ⑤ 연령 18+·데모 계정 그대로
-- [ ] **심사 제출(Submit for Review)** — 목표 **11/24**. 📌 붙여넣기 전에 `git log origin/master -- docs/STORE-1.1.0.md` 와 열린 PR 을 먼저 본다(11/02 교훈)
+- [ ] **심사 제출(Submit for Review)** — 목표 ~~11/24~~ **11/19~20**. 📌 붙여넣기 전에 `git log origin/master -- docs/STORE-1.1.0.md` 와 열린 PR 을 먼저 본다(11/02 교훈)
 - [ ] 제출 직후 Claude 세션에 알리기. 심사 기간의 1.0.0 사용자용 OTA 는 `npm run ota -- "1.0.x: …"` 로만(런타임이 달라 심사 빌드엔 안 섞인다)
 
 ### 11/25~11/30 — 심사 대응 → 공개
@@ -44,7 +44,7 @@
 - [ ] **승인·공개된 날** [RELEASE-PLAN §4-2](RELEASE-PLAN-2026-12.md) 순서 그대로: ① `src/config/storeVersion.ts` 의 `STORE_LATEST.ios` 를 `"1.1.0"` 으로 → 머지 → `npm run ota -- "1.0.x: 새 버전 안내"`(1.0.0 사용자 **마지막** OTA) ② 그 뒤 `app.json` version → `"1.1.0"`, `eas.json` 의 `release`·`beta` 덮어쓰기 정리 → 이후 `npm run ota` 는 1.1.0 사용자에게
 - [ ] 11/30 까지 승인이 안 나도 12/12·12/19 가 예비. 진짜 기한은 출국(12/26) 전
 
-### 안드로이드 (Play 1.0.0 이 정식 공개된 뒤에만 — 같은 트랙에 겹치지 않게)
+### 안드로이드 (Play 1.0.0 정식 공개 11/17 확인 → **지금 진행 가능**, iOS 와 같은 날 해도 된다)
 - [ ] `eas build --profile release --platform android` → AAB 다운로드 → Play Console 프로덕션 「새 버전 만들기」에 **수동 업로드** → 출시 노트(STORE-1.1.0 §2) → 데이터 보안에 **사진**·**기기 또는 기타 ID**(푸시 토큰) 추가(§4) → 검토 제출
 - [ ] 공개된 날 `STORE_LATEST.android = "1.1.0"` → 1.0.0 마지막 OTA(iOS 와 같은 방식, 플랫폼별로 따로)
 - 1.0.0 공개가 11/24 를 넘기면 안드로이드 1.1.0 은 12월 초. iOS 를 기다리게 하지 않는다
