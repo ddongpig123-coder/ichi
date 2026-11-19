@@ -21,7 +21,7 @@ const css = {
   const fontLink = '<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">';
   for (const it of items) {
     const note = it.note ? `<div class=note>${it.note}</div>` : '';
-    await p.setContent(`<!doctype html><meta charset=utf-8>${fontLink}<style>${common}${css[it.style]}</style><div class=cap><div class=jp>${it.jp}</div><div class=kr>${it.kr || ''}</div>${note}</div><img class=bear src="${bear}">`, { waitUntil: 'load' });
+    await p.setContent(`<!doctype html><meta charset=utf-8>${fontLink}<style>${common}${css[it.style]}</style><div class=cap><div class=jp>${it.jp}</div><div class=kr>${it.kr || ''}</div>${note}</div>${it.extra || ''}<img class=bear src="${bear}">`, { waitUntil: 'load' });
     await Promise.race([p.evaluate(() => document.fonts.ready), new Promise(r => setTimeout(r, 3000))]);
     await p.screenshot({ path: `${it.name}.png`, omitBackground: true });
   }

@@ -10,7 +10,7 @@ for i, s in enumerate(spec["segs"]):
     if s["type"] == "clip":
         names = []
         for j, c in enumerate(s["caps"]):
-            n = f"{name}_{i}_{j}"; names.append(n); caps.append({"name": n, "style": "k", "jp": c["jp"], "kr": c.get("kr", "")})
+            n = f"{name}_{i}_{j}"; names.append(n); caps.append({"name": n, "style": "k", "jp": c["jp"], "kr": c.get("kr", ""), "extra": c.get("extra", "")})
         s["_names"] = names
     elif s["type"] == "app":
         n = f"{name}_{i}_c"; caps.append({"name": n, "style": "c", "jp": s["jp"], "kr": s.get("kr", ""), "note": s.get("note", "")}); s["_cap"] = n
