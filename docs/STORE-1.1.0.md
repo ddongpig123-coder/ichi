@@ -80,15 +80,19 @@
 ## 3. App Review Notes (App Store Connect → 앱 심사 정보 → 메모) — 교체용
 
 > 데모 계정은 1.0 그대로. **첨부 파일**에 `docs/review/sample-timetable.png`(가짜 시간표) 를 올린다.
-> 🔴 제출 전 확인: **데모 계정이 현재 학기(2026 秋)에서 시간표 읽기를 아직 안 썼는지** — 1인·학기당 1회라 이미 썼으면 심사원이 「もう使いました」를 본다.
-> 그리고 **데모 계정의 2026 秋 시간표가 비어 있어야** 홈에 입구 버튼이 보인다(아래 노트에 다른 학기로 바꾸는 방법도 적었다).
+> 🔁 **11/19 수정**: 데모 계정 `ichidemo1~4` 는 시드 스크립트(`scripts/seed-test-accounts.mjs`)가 **2026 春·秋 둘 다** 시간표를 넣어 두었다
+> → 예전 노트의 「春学期로 바꾸면 버튼이 보인다」는 **틀림**(심사원이 입구를 못 찾는다). 그래서 **비어 있는 「2025年 秋学期」로 바꾸게** 안내하고,
+> 로그인 없이 새로 설치한 경우(처음 설정 ②)도 적었다. → **데모 계정 시간표를 비울 필요 없음**(친구 겹침 데모가 그대로 남는다).
+> 시간표 읽기는 1인·학기당 1회. 데모 계정은 아직 한 번도 안 썼다(1.0 에는 기능이 없었고, 시험은 전부 임시 계정으로 함). 2025 秋에서 한 번 쓰면 다른 학기(예: 2025 春)로 다시 시험할 수 있다고 노트에 적었다.
 
 ```
 Thank you for reviewing 大学の森 1.1.0. New features and how to test them:
 
 1) Timetable import from a screenshot
-- Where: Home. When the selected semester's timetable is empty, tap "時間割のスクショから読み込む".
-  (If the demo account already has classes, switch the semester at the top of Home, e.g. "2026年 春学期".)
+- Where: Home, above an EMPTY timetable: "時間割のスクショから読み込む".
+  The demo account already has classes in 2026, so at the top of Home tap the year "2026年 ▼",
+  choose 2025, and keep "秋学期" selected (that semester is empty) - the button appears.
+  (On a fresh install without logging in, the same button is also at the top of step ② of the first-time setup.)
 - Consent: before anything is sent, a screen explains that the chosen image is sent to an AI service
   of Anthropic, PBC (USA) only to read the classes, that we do not store the image or the result,
   and that Anthropic does not use it for training. Nothing is sent until the user taps
@@ -97,6 +101,7 @@ Thank you for reviewing 大学の森 1.1.0. New features and how to test them:
   Expected result: 10 classes placed in the grid + 2 classes listed as "not placed" (on-demand / intensive).
   The user can edit or delete each row, then taps "時間割に保存".
 - Limit: once per account per semester (to control cost). Failed or non-timetable images do not count.
+  To try again, choose another empty semester (e.g. "2025年 春学期").
 
 2) Push notifications
 - Only two kinds: (a) a comment or reply on your own post, (b) a new direct message.
@@ -106,6 +111,14 @@ Thank you for reviewing 大学の森 1.1.0. New features and how to test them:
 
 3) Invite links open the app directly (Universal Links: https://ichi-6b8f7.web.app/add-friend?...).
   The user still confirms before becoming friends.
+
+4) Home Screen / Lock Screen widget "今日の時間割" (iPhone)
+- Long-press the Home Screen → "+" → 大学の森. Small: today's classes. Medium/Large: this week's timetable.
+  Lock Screen (rectangular): the next class. Open the app once so the widget receives the timetable.
+- Medium/Large have ◀ ▶ buttons (iOS 17+) to switch to timetables of friends the user marked as
+  "よく使う友達". Only timetables those friends already share with friends are shown. Data stays on the device.
+
+5) Password change: Profile → Account → "パスワードを変更する" (current password required).
 
 Moderation (Guideline 1.2) — unchanged since 1.0:
 - Any post/comment/review: tap "⋯" → 通報する (Report) / 非表示にする (Hide) / ブロックする (Block).
