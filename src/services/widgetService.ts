@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 import { requireOptionalNativeModule } from "expo";
-import { PERIOD_TIMES, type ClassSession, type Day } from "../types/timetable";
+import { PERIOD_TIMES, placedSessions, type ClassSession, type Day, type PlacedSession } from "../types/timetable";
 import { getCurrentAcademicYear, getCurrentSemester } from "../data/semesterTimetables";
 import { TRANSLATIONS, dayLabel } from "../i18n/translations";
 import { getTimetable } from "./timetableService";
@@ -78,7 +78,7 @@ export interface WidgetFriend {
 
 /** 一人分の「今週の時間割」の表。highlight: 今日の列で強調するコマ（時限 → 1 授業中 / 2 次） */
 function weekGrid(
-  sessions: ClassSession[],
+  sessions: PlacedSession[],
   lang: Lang,
   today: Date,
   highlight: Record<number, number>
@@ -114,7 +114,7 @@ function weekGrid(
  * 各エントリーの時刻から次のエントリーまで、その props が表示される。
  */
 export function buildTodayTimeline(
-  sessions: ClassSession[],
+  allSessions: ClassSession[],
   lang: Lang,
   url: string,
   now = new Date(),
@@ -122,7 +122,10 @@ export function buildTodayTimeline(
 ): WidgetEntry[] {
   const L = TRANSLATIONS[lang];
   const days = opts.days ?? 7;
-  const friends = opts.friends ?? [];
+  // 🔴 曜日・時限の無い授業（「その他」欄, I-8）は表に置けないし、day/period が null なので
+  //    ウィジェットのデータに混ぜない（null は UserDefaults に入れられず落ちる — plistSafe 参照）
+  const sessions = placedSessions(allSessions);
+  const friends = (opts.friends ?? []).map((f) => ({ ...f, sessions: placedSessions(f.sessions) }));
   const base = {
     heading: L["widget.heading"],
     nowLabel: L["widget.now"],
@@ -141,7 +144,7 @@ export function buildTodayTimeline(
     if (mine) pages.push({ t: L["widget.myTimetable"], week: mine });
     for (const f of friends) {
       const t = L["widget.friendTimetable"].replace("{name}", f.nickname);
-      const g = f.state === "ok" ? weekGrid(f.sessions, lang, day, {}) : null;
+      const g = f.state === "ok" ? weekGrid(placedSessions(f.sessions), lang, day, {}) : null;
       if (g) pages.push({ t, week: g });
       else pages.push({ t, m: f.state === "private" ? L["widget.friendPrivate"] : L["widget.friendEmpty"] });
     }
@@ -261,7 +264,8 @@ export async function loadWidgetFriends(
       if (hit && now - hit.at < FRIEND_TTL_MS) return { ...hit.friend, nickname: f.nickname };
       let friend: WidgetFriend;
       try {
-        const sessions = (await getTimetable(f.id, semesterKey))?.sessions ?? [];
+        // 表に載る授業だけ（「その他」欄の授業しか無い友達は「まだ時間割がない」扱い）
+        const sessions = placedSessions((await getTimetable(f.id, semesterKey))?.sessions ?? []);
         friend = { nickname: f.nickname, sessions, state: sessions.length > 0 ? "ok" : "empty" };
       } catch (e) {
         if ((e as { code?: string } | null)?.code !== "permission-denied") return null; // 通信エラーなど

@@ -19,8 +19,11 @@ export interface Course {
   id: string;
   name: string;             // 講義名（例: マーケティング企画Ａ）
   teacher: string;          // 教員名
-  day: Day;
-  period: Period;
+  // 🔑 両方 null = 曜日・時限の決まっていない講義（集中講義・オンデマンド・メディア〔M〕）。
+  //    時間割に入れると「その他」欄に入る（I-8, 2026-11-20）。クローラーも null で出す
+  //    （scripts/crawl-syllabus.mjs・load-firestore.mjs）。時間割メーカーの自動配置からは外れる。
+  day: Day | null;
+  period: Period | null;
   semester: Semester;
   year: number;             // 開講年度（例: 2026）
   campus: string | null;    // キャンパス（例: 駿河台）

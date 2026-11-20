@@ -305,17 +305,18 @@ export default function TimetableWizardScreen() {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.courseName}>{c.name}</Text>
                     <Text style={styles.courseMeta}>
-                      {c.teacher} · {c.day}
-                      {c.period}
+                      {c.teacher} · {c.day !== null ? `${c.day}${c.period}` : t("courseSearch.noSlot")}
                       {c.credits !== null ? ` · ${c.credits}${t("courseSearch.credits")}` : ""}
                     </Text>
                   </View>
+                  {/* 曜日・時限の無い講義（集中・オンデマンド）は自動配置の対象外 → 候補に入れられない（I-8）。
+                      ホームの「その他」欄か講義検索から時間割に入れる */}
                   <TouchableOpacity
-                    style={[styles.addBtn, added && styles.addBtnDone]}
-                    disabled={added}
+                    style={[styles.addBtn, (added || c.day === null) && styles.addBtnDone]}
+                    disabled={added || c.day === null}
                     onPress={() => addCandidate(c)}
                   >
-                    <Text style={styles.addBtnText}>{added ? "✓" : t("wizard.addCandidate")}</Text>
+                    <Text style={styles.addBtnText}>{added ? "✓" : c.day === null ? "—" : t("wizard.addCandidate")}</Text>
                   </TouchableOpacity>
                 </View>
               );

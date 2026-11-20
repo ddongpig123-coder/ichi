@@ -11,6 +11,7 @@ import { useAuth } from "../../src/contexts/AuthContext";
 import SemesterSelector from "../../src/components/common/SemesterSelector";
 import TimeTable from "../../src/components/timetable/TimeTable";
 import SessionFormModal, { type SessionFormValue } from "../../src/components/timetable/SessionFormModal";
+import OtherSessionsRow, { OTHER_ROW_HEIGHT } from "../../src/components/timetable/OtherSessionsRow";
 import VisibilitySelector from "../../src/components/timetable/VisibilitySelector";
 import FriendsList from "../../src/components/friends/FriendsList";
 import {
@@ -25,7 +26,7 @@ import { currentSemesterKey } from "../../src/services/widgetService";
 import { useTodayWidget } from "../../src/hooks/useTodayWidget";
 import { notify } from "../../src/utils/dialog";
 import { friendlyErrorBody } from "../../src/utils/writeError";
-import type { ClassSession, Day, Period } from "../../src/types/timetable";
+import { otherSessions, placedSessions, type ClassSession, type Day, type Period } from "../../src/types/timetable";
 import {
   type Semester,
   type SemesterKey,
@@ -131,7 +132,8 @@ export default function HomeScreen() {
       });
   }
 
-  const [target, setTarget] = useState<{ day: Day; period: Period; session?: ClassSession } | null>(null);
+  // day/period が null = 「その他」欄（曜日・時限なし）の追加・編集（I-8）
+  const [target, setTarget] = useState<{ day: Day | null; period: Period | null; session?: ClassSession } | null>(null);
 
   // ローカル更新 + Firestore保存。失敗したら元に戻して知らせる
   // （以前はログのみで、画面上は保存できたように見え、次回起動で「消えた」になっていた）
@@ -150,7 +152,7 @@ export default function HomeScreen() {
   }
 
   const headerH = NAV_HEADER_BASE + insets.top;
-  const chromeH = headerH + TAB_BAR_BASE + insets.bottom + COURSE_SEARCH_ROW_H;
+  const chromeH = headerH + TAB_BAR_BASE + insets.bottom + COURSE_SEARCH_ROW_H + OTHER_ROW_HEIGHT;
   const timetableH = height - chromeH - FRIENDS_SECTION_H;
   const cellHeight = Math.max(48, (timetableH - TIMETABLE_HEADER_H) / PERIODS_COUNT);
 
@@ -194,7 +196,7 @@ export default function HomeScreen() {
         {/* 初めての人は空の格子だけでは何をすればいいか分からない → 読み込み後に0件なら1行だけ重ねる。
             タップは下のマスに通す（box-none: 自分の子以外は素通し）。
             写真選択の部品があるアプリでは「スクショから読み込む」も出す（RELEASE-PLAN N1） */}
-        {semesterKey in sessionsMap && sessions.length === 0 && (
+        {semesterKey in sessionsMap && placedSessions(sessions).length === 0 && (
           <View style={styles.emptyHint} pointerEvents="box-none">
             <View style={styles.emptyHintPill} pointerEvents="none">
               <Ionicons name="hand-left-outline" size={14} color={theme.textSecondary} />
@@ -213,6 +215,13 @@ export default function HomeScreen() {
           </View>
         )}
       </View>
+
+      {/* 曜日・時限の無い授業（集中講義・オンデマンド・メディア）は表に置けないので、この欄に（I-8） */}
+      <OtherSessionsRow
+        sessions={otherSessions(sessions)}
+        onPressSession={(session) => setTarget({ day: null, period: null, session })}
+        onAdd={() => setTarget({ day: null, period: null })}
+      />
 
       <View style={styles.actionRow}>
         <TouchableOpacity

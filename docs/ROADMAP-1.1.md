@@ -158,7 +158,7 @@
 | I-5 | **강의 별점 평균 표시** | MY-TASKS §10-5 | OTA | 준희축 |
 | I-6 | **졸업요건 설정 접기 UI** | MY-TASKS §10-5 | OTA | 준희축 |
 | I-7 | **검색 결과 분반 표시** (`courseNumber`) | ROADMAP §1 / COLLAB §4-6 | OTA | 준희축 |
-| I-8 | **집중강의·미디어〔M〕 대응** — `Course.day/period` nullable + 시간표 「その他」 섹션 | MY-TASKS §10-3 / COLLAB G4 | OTA | 🔴 **태희**(타입) |
+| I-8 | ~~**집중강의·미디어〔M〕 대응** — `Course.day/period` nullable + 시간표 「その他」 섹션~~ → ✅ **2026-11-20 구현**(`ClassSession`·`Course` 의 day/period nullable · 홈 「その他」 칩 행 · 사진 읽기 枠外 저장 · 검색 「曜日・時限なし」 · 크롤러 null 적재. 규칙 변경 없음, OTA) — [DECISIONS 2026-11-20](DECISIONS.md) | MY-TASKS §10-3 / COLLAB G4 | OTA | 🔴 **태희**(타입) |
 | I-9 | **졸업요건 학부·입학연도를 프로필(users)에 저장** | MY-TASKS §10-4 | OTA | 🔴 **태희**(필드) |
 | I-10 | **친구 초대 링크** — 커스텀 스킴이라 메신저에서 탭이 안 됨 → https/유니버설 링크 | MY-TASKS §10-2 | 🔴 **재빌드** | 태희 |
 

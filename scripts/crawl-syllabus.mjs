@@ -57,15 +57,23 @@ function clean(s) {
   return (s ?? "").replace(/　/g, " ").replace(/\s+/g, " ").trim();
 }
 
-// "月 1" → { day: "月", period: 1 } / 파싱 불가(집중강의 등)면 null
+// 요일·교시가 없는 수업(집중강의·온디맨드·메디아〔M〕)을 나타내는 표기.
+// 2026-11-20(I-8)부터 이런 수업은 건너뛰지 않고 day/period = null 로 적재한다
+// → 앱에서는 시간표 아래 「その他」 칸에 들어간다(src/types/course.ts). 빈 문자열은 여전히 스킵(HTML 파싱 실패일 수 있음).
+const UNSCHEDULED_RE = /集中|オンデマンド|メディア|その他|無|未定/;
+
+// "月 1" → { day: "月", period: 1 } / 집중강의·온디맨드 → { day: null, period: null } / 파싱 불가면 null
 function parseDayPeriod(raw) {
   const t = clean(raw);
   const m = t.match(/([月火水木金土])\s*([1-7])/);
-  if (!m) return null;
-  const day = m[1];
-  const period = Number(m[2]);
-  if (!VALID_DAYS.includes(day) || !VALID_PERIODS.includes(period)) return null;
-  return { day, period };
+  if (m) {
+    const day = m[1];
+    const period = Number(m[2]);
+    if (!VALID_DAYS.includes(day) || !VALID_PERIODS.includes(period)) return null;
+    return { day, period };
+  }
+  if (t && UNSCHEDULED_RE.test(t)) return { day: null, period: null };
+  return null;
 }
 
 // section 값 → Course.Semester[] (복수 반환)
@@ -164,7 +172,7 @@ function parseCourses(html, { nendo, idCount }) {
     // 通年이면 春·秋 두 건으로 등록된다
     for (const semester of semesters) {
       // id에 semester 포함 — 春/秋를 같은 Firestore 컬렉션에 적재해도 충돌하지 않도록
-      const baseId = `${courseNumber ?? name}-${semester}-${dp.day}${dp.period}`
+      const baseId = `${courseNumber ?? name}-${semester}-${dp.day ?? "他"}${dp.period ?? ""}`
         .replace(/[^\w가-힣ぁ-んァ-ヶ一-龯]+/g, "-")
         .replace(/^-+|-+$/g, "");
       const seen = (idCount.get(baseId) ?? 0) + 1;
@@ -310,7 +318,7 @@ async function main() {
 
   console.log(`\n✅ 완료: ${all.length}과목 → ${outPath}`);
   if (allSkipped.length) {
-    console.log(`⏭️  스킵 ${allSkipped.length}건 (요일/교시·학기 없는 집중강의 등):`);
+    console.log(`⏭️  스킵 ${allSkipped.length}건 (요일/교시 파싱 불가·학기 없음 — 집중강의·온디맨드는 스킵하지 않고 day/period=null 로 들어간다):`);
     for (const s of allSkipped.slice(0, 10)) console.log(`   - "${s.name}" [${s.dayRaw}] ${s.reason}`);
     if (allSkipped.length > 10) console.log(`   ... 외 ${allSkipped.length - 10}건`);
   }

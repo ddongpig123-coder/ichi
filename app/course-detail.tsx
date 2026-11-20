@@ -106,7 +106,7 @@ export default function CourseDetailScreen() {
             <Text style={styles.cardTitle}>{t("courseDetail.syllabus")}</Text>
             <Text style={styles.metaLine}>{course.teacher}</Text>
             <Text style={styles.metaLine}>
-              {course.day}{course.period}{t("timetable.periodSuffix")}
+              {course.day !== null ? `${course.day}${course.period}${t("timetable.periodSuffix")}` : t("courseSearch.noSlot")}
               {course.campus ? ` · ${course.campus}` : ""}
               {course.credits !== null ? ` · ${course.credits}${t("courseSearch.credits")}` : ""}
               {` · ${course.year} ${course.semester}`}
