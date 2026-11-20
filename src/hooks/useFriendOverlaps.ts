@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFriends } from "../contexts/FriendsContext";
 import { getTimetable } from "../services/timetableService";
-import type { ClassSession } from "../types/timetable";
+import { isPlaced, type ClassSession } from "../types/timetable";
 
 // ============================================================
 // 自分の時間割と友達の時間割を突き合わせ、同じ講義を取っている友達を
@@ -52,6 +52,7 @@ export function useFriendOverlaps(
   return useMemo(() => {
     const overlaps: Record<string, string[]> = {};
     for (const session of mySessions) {
+      if (!isPlaced(session)) continue; // 「その他」欄（曜日・時限なし）はマスが無いので突き合わせない（I-8）
       const cellKey = `${session.day}-${session.period}`;
       const myName = normalize(session.name);
       const matched: string[] = [];

@@ -33,6 +33,8 @@ export function courseUnitKey(c: Course): string {
 export function groupCourseUnits(courses: Course[]): CourseUnit[] {
   const map = new Map<string, CourseUnit>();
   for (const c of courses) {
+    // 曜日・時限の無い講義（集中講義・オンデマンド・メディア〔M〕）は自動配置できない → 対象外（I-8）
+    if (c.day === null || c.period === null) continue;
     const key = courseUnitKey(c);
     let u = map.get(key);
     if (!u) {

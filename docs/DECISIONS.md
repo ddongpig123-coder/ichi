@@ -88,6 +88,17 @@
 | ✅ | **하루 2~3개, 8~24시(일본 시간) 사이 랜덤 시각** 게시 — 매일 같은 시각이면 사람 글처럼 안 보인다 | [CONTENT-OPS §3-3](CONTENT-OPS.md) |
 | ✅ | **AI 글은 Claude API 대신 Claude 구독으로 생성** — 매주 예약된 Claude Code 세션이 20개를 써서 비공개 저장소에 올리면 Actions가 대기 목록에 넣는다. **추가 비용 0원** (준희, 비용 이유). API 생성 기능은 지우지 않고 꺼 둠 | [CONTENT-OPS §9](CONTENT-OPS.md) |
 
+## 2026-11-20 (I-8 「その他」 칸 — 온라인·집중강의)
+
+| 상태 | 결정 | 근거·링크 |
+|---|---|---|
+| ✅ | **요일·교시 없는 수업(온디맨드·메디아〔M〕·집중강의)은 `ClassSession.day/period = null` 로 저장하고, 홈 시간표 **표 아래 「その他」 칸**(칩)에 보인다.** 별도 컬렉션·필드를 만들지 않는다(1 문서 = 1 학기 유지). 둘 다 null 이거나 둘 다 값 — 한쪽만 null 금지 | `src/types/timetable.ts` `isPlaced/placedSessions/otherSessions` · `src/components/timetable/OtherSessionsRow.tsx` |
+| ✅ | 사진 읽기의 「時間割に入らない授業」은 **버리지 않고 「その他」 에 저장**(× 로 뺄 수 있음). 모델이 준 이유(「オンデマンド」 등)는 `room` 메모로 | [TIMETABLE-OCR §4](TIMETABLE-OCR.md) |
+| ✅ | `Course.day/period` 도 nullable. **크롤러는 集中·オンデマンド·メディア·無 를 건너뛰지 않고 null 로 적재**(빈 문자열은 여전히 스킵). 기존 적재분(2026-07)에는 없다 → 다음 연간 갱신 때 들어간다. 검색에서 「曜日・時限なし」로 표시, 추가하면 「その他」 로. **시간표 메이커(자동 배치)는 대상 외** | [DATA-MANUAL §11](DATA-MANUAL.md) · `scripts/crawl-syllabus.mjs`·`load-firestore.mjs` |
+| ✅ | 위젯·친구 겹침은 표에 놓이는 수업만 본다(`placedSessions`). 위젯 데이터에 null 금지 규칙과도 맞춘다 | [WIDGET §4](WIDGET.md) |
+| ✅ | **규칙 변경 없음**(`users/{uid}/timetables` 는 필드 검증이 없고 `courses` 도 day/period 를 검증하지 않는다) → **OTA 로 낸다**. 옛 JS 는 null 수업을 그냥 무시한다(어떤 칸과도 일치하지 않음) | — |
+| 📌 | 친구 탭의 친구 시간표에는 「その他」 를 아직 안 보여 준다(표만). 필요해지면 같은 칩 행을 붙인다 | — |
+
 ## 2026-11-19 (제출 한 번 더 앞당김)
 
 | | 결정 | 상세 |

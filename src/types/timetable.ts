@@ -16,12 +16,33 @@ export const PERIOD_TIMES: Record<Period, { start: string; end: string }> = {
 
 export interface ClassSession {
   id: string;
-  day: Day;
-  period: Period;
+  // 🔑 day / period が null = 曜日・時限の決まっていない授業（集中講義・オンデマンド・メディア〔M〕）。
+  //    時間割の表には載らず、ホームの表の下「その他」欄に出る（I-8, 2026-11-20）。
+  //    両方そろって null か、両方そろって値を持つ。片方だけ null にしない。
+  //    ウィジェット・友達の重なり・時間割メーカーは placedSessions() で表に載るものだけを扱う。
+  day: Day | null;
+  period: Period | null;
   name: string;
   teacher: string;
-  room: string;
+  room: string; // その他の授業では「オンデマンド」などのメモとしても使う
   color: string;
+}
+
+/** 曜日・時限が決まっている（時間割の表に載る）授業 */
+export type PlacedSession = ClassSession & { day: Day; period: Period };
+
+export function isPlaced(s: ClassSession): s is PlacedSession {
+  return s.day !== null && s.period !== null;
+}
+
+/** 表に載る授業だけ */
+export function placedSessions(list: readonly ClassSession[]): PlacedSession[] {
+  return list.filter(isPlaced);
+}
+
+/** 「その他」欄の授業（集中講義・オンデマンドなど）だけ */
+export function otherSessions(list: readonly ClassSession[]): ClassSession[] {
+  return list.filter((s) => !isPlaced(s));
 }
 
 // 色選択UIのデフォルト5色（+ボタンを押すと拡張パレットが開く）

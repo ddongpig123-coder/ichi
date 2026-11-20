@@ -35,7 +35,7 @@ import {
   type OcrUnplaced,
 } from "../src/services/timetableOcrService";
 import { getCurrentAcademicYear, getCurrentSemester, type Semester } from "../src/data/semesterTimetables";
-import { DAYS, PERIODS, type ClassSession } from "../src/types/timetable";
+import { DAYS, PERIODS, isPlaced, otherSessions, type ClassSession, type PlacedSession } from "../src/types/timetable";
 
 // 時間割スクショ読み取り（RELEASE-PLAN N1 / docs/TIMETABLE-OCR.md §4）
 // 説明 + AI 送信の同意（Apple 審査ガイドライン 5.1.2(i)）→ 画像を選ぶ → 読み取り中 → 確認・修正 → 保存。
@@ -169,6 +169,9 @@ export default function TimetableImportScreen() {
     setRows((rs) => rs.filter((r) => r.key !== key));
     if (editingKey === key) setEditingKey(null);
   }
+  function removeUnplaced(index: number) {
+    setUnplaced((us) => us.filter((_, i) => i !== index));
+  }
 
   const duplicateSlots = useMemo(() => {
     const count = new Map<string, number>();
@@ -179,7 +182,7 @@ export default function TimetableImportScreen() {
   const validRows = rows.filter((r) => r.name.trim());
 
   // プレビュー用（保存されるのと同じ形）
-  const freshSessions: ClassSession[] = useMemo(
+  const freshSessions: PlacedSession[] = useMemo(
     () =>
       validRows.map((r) => ({
         id: r.key,
@@ -193,19 +196,44 @@ export default function TimetableImportScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rows, theme.timetableCells]
   );
+  // 「時間割に入らない授業」（集中講義・オンデマンドなど）→ ホームの「その他」欄に保存する（I-8）。
+  // 理由（「オンデマンド」など）はメモとして room に入れておく
+  const freshOthers: ClassSession[] = useMemo(
+    () =>
+      unplaced.map((u, i) => ({
+        id: `o${i}`,
+        day: null,
+        period: null,
+        name: u.name.trim(),
+        teacher: "",
+        room: u.reason?.trim() ?? "",
+        color: colorFor(u.name.trim(), theme.timetableCells),
+      })),
+    [unplaced, theme.timetableCells]
+  );
   const hasExisting = (existing?.length ?? 0) > 0;
-  const takenSlots = useMemo(() => new Set((existing ?? []).map(slot)), [existing]);
+  const takenSlots = useMemo(() => new Set((existing ?? []).filter(isPlaced).map(slot)), [existing]);
+  const existingOtherNames = useMemo(
+    () => new Set(otherSessions(existing ?? []).map((s) => s.name.trim())),
+    [existing]
+  );
   const skippedByFill = hasExisting && mode === "fill" ? freshSessions.filter((s) => takenSlots.has(slot(s))).length : 0;
+  const nothingToSave = freshSessions.length === 0 && freshOthers.length === 0;
 
   async function save() {
-    if (!user || existing === null || freshSessions.length === 0) return;
+    if (!user || existing === null || nothingToSave) return;
     setPhase("saving");
     const stamp = Date.now();
     const fresh = freshSessions.map((s, i) => ({ ...s, id: `${stamp}-${i}` }));
+    const others = freshOthers.map((s, i) => ({ ...s, id: `${stamp}-o${i}` }));
     const next =
       hasExisting && mode === "fill"
-        ? [...existing, ...fresh.filter((s) => !takenSlots.has(slot(s)))]
-        : fresh;
+        ? [
+            ...existing,
+            ...fresh.filter((s) => !takenSlots.has(slot(s))),
+            ...others.filter((s) => !existingOtherNames.has(s.name)), // 「その他」は同じ名前があれば足さない
+          ]
+        : [...fresh, ...others];
     try {
       await saveTimetableSessions(user.uid, semesterKey, next, { initVisibility: !docExists });
       clearOcrDraft(user.uid, semesterKey);
@@ -257,7 +285,7 @@ export default function TimetableImportScreen() {
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}>
           <View style={styles.section}>
             <Text style={styles.reviewTitle}>
-              {t("ocr.reviewTitle").replace("{n}", String(validRows.length))}
+              {t("ocr.reviewTitle").replace("{n}", String(validRows.length + unplaced.length))}
             </Text>
             <Text style={styles.body}>{t(fromDraft ? "ocr.reviewFromDraft" : "ocr.reviewBody")}</Text>
             {lowCount > 0 && (
@@ -375,8 +403,18 @@ export default function TimetableImportScreen() {
               <Text style={styles.muted}>{t("ocr.unplacedBody")}</Text>
               {unplaced.map((u, i) => (
                 <View key={i} style={styles.unplacedRow}>
-                  <Text style={styles.unplacedName}>{u.name}</Text>
-                  {u.reason ? <Text style={styles.unplacedReason}>{u.reason}</Text> : null}
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.unplacedName}>{u.name}</Text>
+                    {u.reason ? <Text style={styles.unplacedReason}>{u.reason}</Text> : null}
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => removeUnplaced(i)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("common.delete")}
+                    hitSlop={8}
+                  >
+                    <Ionicons name="close-circle" size={20} color={theme.textSecondary} />
+                  </TouchableOpacity>
                 </View>
               ))}
             </View>
@@ -408,9 +446,9 @@ export default function TimetableImportScreen() {
 
           <View style={styles.section}>
             <TouchableOpacity
-              style={[styles.primaryBtn, (saving || freshSessions.length === 0 || existing === null) && { opacity: 0.5 }]}
+              style={[styles.primaryBtn, (saving || nothingToSave || existing === null) && { opacity: 0.5 }]}
               onPress={save}
-              disabled={saving || freshSessions.length === 0 || existing === null}
+              disabled={saving || nothingToSave || existing === null}
               accessibilityRole="button"
             >
               {saving ? <ActivityIndicator color="#fff" /> : <Ionicons name="checkmark" size={18} color="#fff" />}
@@ -559,7 +597,14 @@ function makeStyles(theme: Theme) {
     pickChipOn: { backgroundColor: theme.primary, borderColor: theme.primary },
     pickChipText: { fontSize: 13, fontWeight: "700", color: theme.textPrimary },
     pickChipTextOn: { color: "#fff" },
-    unplacedRow: { paddingVertical: 8, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.border },
+    unplacedRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      paddingVertical: 8,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: theme.border,
+    },
     unplacedName: { fontSize: 14, fontWeight: "700", color: theme.textPrimary },
     unplacedReason: { fontSize: 12, color: theme.textSecondary, marginTop: 2 },
     modeRow: { flexDirection: "row", gap: 10, alignItems: "flex-start", paddingVertical: 8 },

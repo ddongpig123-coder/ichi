@@ -49,8 +49,12 @@ function validateCourse(c, i) {
   if (!c.id || typeof c.id !== "string") errs.push("id 없음");
   if (!c.name || typeof c.name !== "string") errs.push("name 없음");
   if (typeof c.teacher !== "string") errs.push("teacher 타입 오류");
-  if (!VALID_DAYS.includes(c.day)) errs.push(`day 오류: ${c.day}`);
-  if (!VALID_PERIODS.includes(c.period)) errs.push(`period 오류: ${c.period}`);
+  // day/period 둘 다 null = 요일·교시 없는 수업(집중강의·온디맨드·메디아). 한쪽만 null 은 오류 (I-8, 2026-11-20)
+  const unscheduled = c.day === null && c.period === null;
+  if (!unscheduled) {
+    if (!VALID_DAYS.includes(c.day)) errs.push(`day 오류: ${c.day}`);
+    if (!VALID_PERIODS.includes(c.period)) errs.push(`period 오류: ${c.period}`);
+  }
   if (!VALID_SEMESTERS.includes(c.semester)) errs.push(`semester 오류: ${c.semester}`);
   if (typeof c.year !== "number") errs.push("year 타입 오류");
   if (c.campus !== null && typeof c.campus !== "string") errs.push("campus 타입 오류");
@@ -139,7 +143,7 @@ async function main() {
     for (const c of courses.slice(0, 3)) {
       const doc = toFirestoreDoc(c);
       console.log(`   schools/${school}/departments/${dept}/courses/${safeDocId(c.id)}`);
-      console.log(`     → ${c.name} / ${c.teacher} / ${c.day}${c.period} / ${c.credits ?? "?"}単位`);
+      console.log(`     → ${c.name} / ${c.teacher} / ${c.day === null ? "曜日時限なし" : `${c.day}${c.period}`} / ${c.credits ?? "?"}単位`);
       console.log(`     nameGrams(${doc.nameGrams.length}): ${doc.nameGrams.slice(0, 8).join(" ")}${doc.nameGrams.length > 8 ? " …" : ""}`);
       console.log(`     confirmCount 제거됨: ${!("confirmCount" in doc)}`);
     }

@@ -37,7 +37,7 @@ import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
 import { lectureCodeOf } from "../src/utils/courseCode";
 import { getCurrentAcademicYear } from "../src/data/semesterTimetables";
-import { DAYS, PERIODS, type ClassSession, type Day, type Period } from "../src/types/timetable";
+import { DAYS, PERIODS, isPlaced, type ClassSession, type Day, type Period } from "../src/types/timetable";
 import type { Theme } from "../src/theme/themes";
 import ScreenHeader from "../src/components/common/ScreenHeader";
 import SchoolPrompt from "../src/components/common/SchoolPrompt";
@@ -264,14 +264,21 @@ export default function CourseSearchScreen() {
     try {
       const doc = await getTimetable(user.uid, semesterKey);
       const current = doc?.sessions ?? [];
-      if (current.some((s) => s.day === course.day && s.period === course.period)) {
+      // 曜日・時限の無い講義（集中・オンデマンド）はホームの「その他」欄へ。同じ名前が入っていれば重複（I-8）
+      const toOther = course.day === null || course.period === null;
+      if (toOther) {
+        if (current.some((s) => !isPlaced(s) && s.name.trim() === course.name.trim())) {
+          setNotice(t("courseSearch.alreadyOther"));
+          return;
+        }
+      } else if (current.some((s) => s.day === course.day && s.period === course.period)) {
         setNotice(t("courseSearch.occupied"));
         return;
       }
       const next = [...current, courseToSession(course, theme.timetableCells)];
       await saveTimetableSessions(user.uid, semesterKey, next, { initVisibility: doc === null });
       setAddedIds((prev) => new Set(prev).add(course.id));
-      setNotice(t("courseSearch.added"));
+      setNotice(t(toOther ? "courseSearch.addedOther" : "courseSearch.added"));
     } catch (e) {
       console.warn("course add failed:", e);
       setNotice(t("common.saveFailed"));
@@ -393,8 +400,7 @@ export default function CourseSearchScreen() {
                     )}
                   </View>
                   <Text style={styles.courseMeta}>
-                    {item.teacher} · {item.day}
-                    {item.period}
+                    {item.teacher} · {item.day !== null ? `${item.day}${item.period}` : t("courseSearch.noSlot")}
                     {item.campus ? ` · ${item.campus}` : ""}
                     {item.credits !== null ? ` · ${item.credits}${t("courseSearch.credits")}` : ""}
                   </Text>

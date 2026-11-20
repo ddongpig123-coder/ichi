@@ -51,6 +51,9 @@ export default function SessionFormModal({
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   const isEditing = !!initialValue;
+  // 曜日・時限なし = 「その他」欄の授業（集中講義・オンデマンドなど。I-8）。
+  // 閉じているときも day/period は null だが、文言は開いているときしか描かれない
+  const isOther = day === null || period === null;
 
   useEffect(() => {
     if (visible) {
@@ -85,13 +88,15 @@ export default function SessionFormModal({
           <View style={styles.header}>
             <View>
               <Text style={styles.title}>
-                {isEditing ? t("timetable.editTitle") : t("timetable.addTitle")}
+                {isOther
+                  ? t(isEditing ? "timetable.otherEditTitle" : "timetable.otherAddTitle")
+                  : t(isEditing ? "timetable.editTitle" : "timetable.addTitle")}
               </Text>
-              {day && period && (
-                <Text style={styles.subtitle}>
-                  {dayLabel(language, day)}{t("timetable.daySuffix")} ・ {period}{t("timetable.periodSuffix")}
-                </Text>
-              )}
+              <Text style={styles.subtitle}>
+                {isOther
+                  ? t("timetable.otherSubtitle")
+                  : `${dayLabel(language, day)}${t("timetable.daySuffix")} ・ ${period}${t("timetable.periodSuffix")}`}
+              </Text>
             </View>
             {isEditing && (
               <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
@@ -116,7 +121,7 @@ export default function SessionFormModal({
           />
           <TextInput
             style={styles.input}
-            placeholder={t("timetable.room")}
+            placeholder={t(isOther ? "timetable.otherRoom" : "timetable.room")}
             placeholderTextColor={theme.textSecondary}
             value={room}
             onChangeText={setRoom}
