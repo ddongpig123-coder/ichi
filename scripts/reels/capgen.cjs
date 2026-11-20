@@ -10,6 +10,10 @@ const css = {
 .jp{font-size:84px;font-weight:900;line-height:1.28;color:#fff;-webkit-text-stroke:10px #111;paint-order:stroke fill;text-shadow:0 6px 14px rgba(0,0,0,.55)}
 .kr{margin-top:22px;font-size:38px;font-weight:700;color:#fff;-webkit-text-stroke:6px #111;paint-order:stroke fill}
 .y{color:#FFE066}`,
+ k2: `.cap{position:absolute;top:1150px;left:40px;right:40px;text-align:center}
+.jp{font-size:66px;font-weight:900;line-height:1.3;color:#fff;-webkit-text-stroke:9px #111;paint-order:stroke fill;text-shadow:0 6px 14px rgba(0,0,0,.55)}
+.kr{margin-top:20px;font-size:36px;font-weight:700;color:#fff;-webkit-text-stroke:6px #111;paint-order:stroke fill}
+.y{color:#FFE066}`,
  c: `.cap{position:absolute;top:70px;left:60px;right:60px;text-align:center}
 .jp{font-size:76px;font-weight:900;line-height:1.25;color:#14213d;letter-spacing:-.01em}
 .kr{margin-top:18px;font-size:38px;font-weight:700;color:#5b6b8c}
