@@ -42,13 +42,14 @@
 
 ### 11/25~11/30 — 심사 대응 → 공개
 - [ ] 리젝이면 사유 화면을 Claude 에 → 메타데이터면 ASC 수정·재제출, 코드면 새 release 빌드
-- [ ] **승인·공개된 날** [RELEASE-PLAN §4-2](RELEASE-PLAN-2026-12.md) 순서 그대로: ① `src/config/storeVersion.ts` 의 `STORE_LATEST.ios` 를 `"1.1.0"` 으로 → 머지 → `npm run ota -- "1.0.x: 새 버전 안내"`(1.0.0 사용자 **마지막** OTA) ② 그 뒤 `app.json` version → `"1.1.0"`, `eas.json` 의 `release`·`beta` 덮어쓰기 정리 → 이후 `npm run ota` 는 1.1.0 사용자에게
+- [x] **🎉 11/20 iOS 1.1.0 공개 확인**(App Store 조회 API: version 1.1.0, 출시 11/20 08:56 JST) → 아래 ①·② 진행 중
+- [ ] **승인·공개된 날** [RELEASE-PLAN §4-2](RELEASE-PLAN-2026-12.md) 순서 그대로 — ① = PR「STORE_LATEST 1.1.0」(iOS·Android 같이) → 머지 → `npm run ota -- "1.0.x: 新しいバージョンのお知らせ"` → ② = 초안 PR「app.json 1.1.0」을 **①의 OTA 뒤에** 머지 → `npm run ota -- "1.1.1: …"`(1.1.0 사용자 첫 OTA — I-8 その他 칸 포함): ① `src/config/storeVersion.ts` 의 `STORE_LATEST.ios` 를 `"1.1.0"` 으로 → 머지 → `npm run ota -- "1.0.x: 새 버전 안내"`(1.0.0 사용자 **마지막** OTA) ② 그 뒤 `app.json` version → `"1.1.0"`, `eas.json` 의 `release`·`beta` 덮어쓰기 정리 → 이후 `npm run ota` 는 1.1.0 사용자에게
 - [ ] 11/30 까지 승인이 안 나도 12/12·12/19 가 예비. 진짜 기한은 출국(12/26) 전
 
 ### 안드로이드 (Play 1.0.0 정식 공개 11/17 확인 → **지금 진행 가능**, iOS 와 같은 날 해도 된다)
 - [x] **🎉 11/19 검토 전송 완료** — `eas build --profile release --platform android` → AAB(버전 코드 **4 (1.1.0)**) 수동 업로드 → 출시 노트(STORE-1.1.0 §2, 비밀번호 변경 줄 추가) → 검토 전송. 데이터 보안(**사진**·**기기 또는 기타 ID**) 설문 변경도 **같이 검토 중**(게시 개요 「검토 중인 변경사항」 = 프로덕션 4 (1.1.0) 전체 출시 + 앱 콘텐츠 데이터 보안, 빠른 검사 → 구글 검토)
   - 경고 2건은 무시하고 진행(둘 다 1.0.0 때와 같음): ① 「가독화 파일 없음」 = R8 을 안 켜서 해당 없음(N6) ② 「`android.hardware.screen.portrait` 필수 기능」 = `app.json` `orientation: portrait` 때문. 폰·대부분 태블릿은 영향 없음 → **다음 새 빌드에서 `uses-feature … required=false` 로**
-- [ ] 공개된 날 `STORE_LATEST.android = "1.1.0"` → 1.0.0 마지막 OTA(iOS 와 같은 방식, 플랫폼별로 따로)
+- [x] **🎉 11/20 Android 1.1.0 공개 확인**(Play 스토어 페이지 1.1.0·새 출시 노트) → `STORE_LATEST.android` 도 iOS 와 같은 PR 에서 `"1.1.0"` — 1.0.0 마지막 OTA 는 한 번으로 양쪽
 - 1.0.0 공개가 11/24 를 넘기면 안드로이드 1.1.0 은 12월 초. iOS 를 기다리게 하지 않는다
 
 ### Claude 가 그 사이에 하는 것 (참고)

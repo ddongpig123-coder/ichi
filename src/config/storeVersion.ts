@@ -12,9 +12,10 @@ import * as Updates from "expo-updates";
 // expo-updates は 1.0.0 のアプリにも入っている（OTA が届いている）のでトップレベルで import してよい。
 // ============================================================
 
+// 2026-11-20: iOS（App Store 公開 11/20 08:56 JST）・Android（Play 公開）とも 1.1.0 を確認して書き換え
 export const STORE_LATEST: Record<"ios" | "android", string> = {
-  ios: "1.0.0",
-  android: "1.0.0",
+  ios: "1.1.0",
+  android: "1.1.0",
 };
 
 /** "1.10.0" > "1.9.2" のように数値で比べる。a<b なら負 */
