@@ -8,11 +8,12 @@
 //      本番  GOOGLE_SERVICES_JSON      … Firebase に登録した Android アプリ jp.timetable.app のもの
 //      開発  GOOGLE_SERVICES_JSON_DEV  … 任意。jp.timetable.app.dev も登録したときだけ（無ければ Android の開発用ビルドは通知なし）
 //    手元でビルドするときは ./google-services.json を置けば使われる（本番のみ）。
-// ③ TestFlight 用の試験ビルド（eas.json の beta プロファイル）と、審査に出す本番ビルド（release プロファイル）は
-//    APP_VERSION_OVERRIDE=1.1.0 を渡す
-//    → そのビルドだけ version 1.1.0。ストア版 1.0.0 はもう新しいビルドを受け付けないため。
-//    🔴 app.json の version 自体はリリースまで 1.0.0 のまま — 変えると `npm run ota` の行き先（runtime）が
-//    1.1.0 になり、ストアの 1.0.0 利用者に OTA が届かなくなる（docs/PUSH-NOTIFICATIONS.md §6）
+// ③ 次のバージョンの試験ビルド（eas.json の beta）と審査用ビルド（release）にだけ APP_VERSION_OVERRIDE を渡す仕組み。
+//    → そのビルドだけ新しい version。ストアに出ている版はもう新しいビルドを受け付けないため。
+//    🔴 app.json の version 自体はリリースの日まで据え置く — 先に変えると `npm run ota` の行き先（runtime）が
+//    新しい版になり、ストアの今の版の利用者に OTA が届かなくなる（docs/PUSH-NOTIFICATIONS.md §6）。
+//    2026-11-20 1.1.0 公開 → app.json を 1.1.0 にし、eas.json の上書きは外した（RELEASE-PLAN §4-2 ②）。
+//    次（1.2.0）の試験版を作るときは eas.json の beta・release に env APP_VERSION_OVERRIDE=1.2.0 を戻す
 const fs = require("node:fs");
 
 module.exports = ({ config }) => {
