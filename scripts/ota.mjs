@@ -23,6 +23,7 @@ if (!message) {
   process.exit(1);
 }
 // 시험판 빌드(eas.json beta)와 같은 버전 = 같은 runtime 이어야 받는다
+// 🔴 다음 버전(1.2.0) 시험판을 만들 때 eas.json beta 의 APP_VERSION_OVERRIDE 와 같이 올린다(지금은 app.json 1.1.0 과 같음)
 const BETA_VERSION = "1.1.0";
 const branch = beta ? "beta" : "production";
 if (beta) process.env.APP_VERSION_OVERRIDE = BETA_VERSION;

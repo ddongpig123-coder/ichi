@@ -31,16 +31,10 @@
     },
     "beta": {
       "extends": "production",
-      "channel": "beta",
-      "env": {
-        "APP_VERSION_OVERRIDE": "1.1.0"
-      }
+      "channel": "beta"
     },
     "release": {
-      "extends": "production",
-      "env": {
-        "APP_VERSION_OVERRIDE": "1.1.0"
-      }
+      "extends": "production"
     }
   },
   "submit": {
