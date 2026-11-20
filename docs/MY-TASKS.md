@@ -42,7 +42,7 @@
 
 ### 11/25~11/30 — 심사 대응 → 공개
 - [ ] 리젝이면 사유 화면을 Claude 에 → 메타데이터면 ASC 수정·재제출, 코드면 새 release 빌드
-- [ ] **승인·공개된 날** [RELEASE-PLAN §4-2](RELEASE-PLAN-2026-12.md) 순서 그대로: ① `src/config/storeVersion.ts` 의 `STORE_LATEST.ios` 를 `"1.1.0"` 으로 → 머지 → `npm run ota -- "1.0.x: 새 버전 안내"`(1.0.0 사용자 **마지막** OTA) ② 그 뒤 `app.json` version → `"1.1.0"`, `eas.json` 의 `release`·`beta` 덮어쓰기 정리 → 이후 `npm run ota` 는 1.1.0 사용자에게
+- [ ] **승인·공개된 날** (🎉 iOS 11/20 승인 → ① iOS 진행 중 · 안드로이드는 공개되면 같은 ① 을 한 번 더 · ② 는 안드로이드 공개 뒤) [RELEASE-PLAN §4-2](RELEASE-PLAN-2026-12.md) 순서 그대로: ① `src/config/storeVersion.ts` 의 `STORE_LATEST.ios` 를 `"1.1.0"` 으로 → 머지 → `npm run ota -- "1.0.x: 새 버전 안내"`(1.0.0 사용자 **마지막** OTA) ② 그 뒤 `app.json` version → `"1.1.0"`, `eas.json` 의 `release`·`beta` 덮어쓰기 정리 → 이후 `npm run ota` 는 1.1.0 사용자에게
 - [ ] 11/30 까지 승인이 안 나도 12/12·12/19 가 예비. 진짜 기한은 출국(12/26) 전
 
 ### 안드로이드 (Play 1.0.0 정식 공개 11/17 확인 → **지금 진행 가능**, iOS 와 같은 날 해도 된다)

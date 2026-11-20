@@ -13,8 +13,8 @@ import * as Updates from "expo-updates";
 // ============================================================
 
 export const STORE_LATEST: Record<"ios" | "android", string> = {
-  ios: "1.0.0",
-  android: "1.0.0",
+  ios: "1.1.0", // 2026-11-20 App Store で 1.1.0 公開（審査承認・自動リリース）
+  android: "1.0.0", // Android 1.1.0 は審査中（11/19 送信）— 公開された日に "1.1.0" へ
 };
 
 /** "1.10.0" > "1.9.2" のように数値で比べる。a<b なら負 */
