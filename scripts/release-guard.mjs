@@ -25,6 +25,29 @@ import { fileURLToPath } from "node:url";
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const isWin = process.platform === "win32";
 
+// ── 명령 실행 (Windows 의 .cmd 포함)
+// Windows 는 .cmd(npx·eas·npm)를 shell 을 거쳐야만 띄울 수 있다(Node 18.20+/20.12+ 는 shell 없이 EINVAL).
+// 그런데 shell: true 에 인자 「배열」을 주면 Node 는 따옴표 없이 빈칸으로 이어 붙이기만 한다
+// → 빈칸이 든 인자(OTA 메시지)가 둘로 쪼개진다. 2026-11-20 Windows 에서 처음
+//   npm run ota -- "1.0.x: 新しいバージョンのお知らせ" → eas 「Unexpected argument」로 실패했다
+//   (그때까지 OTA 는 전부 맥에서 냈다 — 맥은 shell 을 안 써서 문제가 없었다). Node 24 의 DEP0190 경고도 이것.
+// → Windows 에선 인자를 직접 따옴표로 감싸 「한 줄 문자열」로 shell 에 준다.
+//   cmd.exe 는 "…" 안의 & | < > ^ ( ) 를 글자로 다룬다. " 와 % 만은 안전하게 못 넘기므로 막는다(ota.mjs 가 미리 바꾼다).
+export function winQuote(arg) {
+  const s = String(arg);
+  if (/["%]/.test(s)) throw new Error(`Windows 에서는 " 와 % 가 든 인자를 넘길 수 없습니다: ${s}`);
+  if (s !== "" && !/[\s&|<>^()!,;=]/.test(s)) return s;
+  // 끝의 \ 는 닫는 따옴표를 이스케이프해 버리므로 두 배로(Windows 인자 해석 규칙)
+  return `"${s.replace(/(\\+)$/, "$1$1")}"`;
+}
+
+/** 명령 실행. Windows = 따옴표로 감싼 한 줄 문자열을 shell 로 / 그 밖 = shell 없이 배열 그대로 */
+export function spawnCmd(cmd, args, opts = {}) {
+  return isWin
+    ? spawnSync([cmd, ...args].map(winQuote).join(" "), { ...opts, shell: true })
+    : spawnSync(cmd, args, opts);
+}
+
 function git(args) {
   const r = spawnSync("git", args, { cwd: ROOT, encoding: "utf8" });
   return { ok: r.status === 0, out: (r.stdout || "").trim(), err: (r.stderr || "").trim() };
@@ -37,10 +60,10 @@ function stop(msg, hint) {
   process.exit(1);
 }
 
-// 배포 명령 실행 (실패하면 그 종료 코드로 끝낸다). Windows 는 .cmd 를 shell 로만 띄울 수 있다
+// 배포 명령 실행 (실패하면 그 종료 코드로 끝낸다). Windows 의 따옴표 처리는 위 spawnCmd
 export function run(label, cmd, args) {
-  console.log(`\n▶ ${label}\n  $ ${[cmd, ...args].join(" ")}`);
-  const r = spawnSync(cmd, args, { cwd: ROOT, stdio: "inherit", shell: isWin });
+  console.log(`\n▶ ${label}\n  $ ${[cmd, ...args].map((a) => (/\s/.test(a) ? `"${a}"` : a)).join(" ")}`);
+  const r = spawnCmd(cmd, args, { cwd: ROOT, stdio: "inherit" });
   if (r.status !== 0) {
     console.error(`✖ 실패: ${label}`, r.error ? `(${r.error.code ?? r.error.message})` : `(exit ${r.status})`);
     process.exit(r.status ?? 1);
@@ -105,7 +128,7 @@ export async function guard({ what }) {
 
   // 5. 타입 검사
   console.log("  … 타입 검사(npx tsc --noEmit) 중");
-  const tsc = spawnSync(isWin ? "npx.cmd" : "npx", ["tsc", "--noEmit"], { cwd: ROOT, encoding: "utf8", shell: isWin });
+  const tsc = spawnCmd(isWin ? "npx.cmd" : "npx", ["tsc", "--noEmit"], { cwd: ROOT, encoding: "utf8" });
   if (tsc.status !== 0) {
     console.error((tsc.stdout || tsc.stderr || "").split("\n").slice(0, 20).join("\n"));
     stop("타입 검사 실패.", "Claude 에게 위 오류를 보여 주세요");

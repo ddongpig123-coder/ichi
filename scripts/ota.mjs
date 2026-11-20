@@ -12,12 +12,12 @@
 // 🔴 실행은 준희가 직접(정지선). 🔴 앱 심사 중에는 OTA 금지(OTA-2026-11 머리말).
 // 🔴 규칙을 같이 바꿨다면 순서는 규칙 배포(npm run deploy:rules) → 웹(npm run deploy:web) → OTA.
 
-import { spawnSync } from "node:child_process";
-import { guard, run } from "./release-guard.mjs";
+import { guard, run, spawnCmd } from "./release-guard.mjs";
 
 const args = process.argv.slice(2);
 const beta = args.includes("--beta");
-const message = args.filter((a) => a !== "--beta").join(" ").trim();
+// " 와 % 는 Windows 의 shell 로 안전하게 못 넘긴다(release-guard.mjs winQuote) → 전각으로 바꿔 둔다
+const message = args.filter((a) => a !== "--beta").join(" ").trim().replace(/"/g, "”").replace(/%/g, "％");
 if (!message) {
   console.error('\n✖ 메시지가 없습니다. 이렇게 실행하세요:\n\n  npm run ota -- "1.0.5: 초대 링크 확인 버튼"\n  (시험판만) npm run ota -- --beta "알림 기본 켜짐"\n');
   process.exit(1);
@@ -30,8 +30,7 @@ if (beta) process.env.APP_VERSION_OVERRIDE = BETA_VERSION;
 await guard({ what: beta ? `OTA 배포 (시험판 beta ${BETA_VERSION} 만 — 스토어 사용자에겐 안 감) 「${message}」` : `OTA 배포 (production) 「${message}」` });
 
 // 전역 eas(npm i -g eas-cli)가 있으면 그걸, 없으면 npx eas-cli
-const isWin = process.platform === "win32";
-const hasEas = spawnSync("eas", ["--version"], { stdio: "ignore", shell: isWin }).status === 0;
+const hasEas = spawnCmd("eas", ["--version"], { stdio: "ignore" }).status === 0;
 const [cmd, pre] = hasEas ? ["eas", []] : ["npx", ["eas-cli"]];
 run("EAS Update", cmd, [...pre, "update", "--branch", branch, "--environment", "production", "--message", message]);
 

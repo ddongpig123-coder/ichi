@@ -9,11 +9,10 @@
 //   /legal/terms.html · /legal/privacy.html … ストア提出用の公開URL
 //   /robots.txt                             … リリース前は検索エンジン除け
 
-import { spawnSync } from "node:child_process";
 import { copyFileSync, mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { guard } from "./release-guard.mjs";
+import { guard, spawnCmd } from "./release-guard.mjs";
 import { copyWellKnown } from "./well-known.mjs";
 
 // 0) 배포 전 확인（루트·master·원격과 같음·변경 없음·타입 검사·y 확인）— release-guard.mjs
@@ -22,13 +21,13 @@ await guard({ what: "웹(Firebase Hosting) 배포" });
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
-// Windows では .cmd を shell なしで spawn できない(Node 18.20+/20.12+ は EINVAL) → shell 経由
+// Windows では .cmd を shell なしで spawn できない(Node 18.20+/20.12+ は EINVAL) → spawnCmd が引用して shell 経由
 const isWin = process.platform === "win32";
 const npx = isWin ? "npx.cmd" : "npx";
 
 function run(label, args) {
   console.log(`\n▶ ${label}`);
-  const r = spawnSync(npx, args, { cwd: root, stdio: "inherit", shell: isWin });
+  const r = spawnCmd(npx, args, { cwd: root, stdio: "inherit" });
   if (r.status !== 0) {
     console.error(`✖ 失敗: ${label}`, r.error ? `(${r.error.code ?? r.error.message})` : `(exit ${r.status})`);
     process.exit(r.status ?? 1);
