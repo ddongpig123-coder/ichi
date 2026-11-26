@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大学の森 — アプリをダウンロード</title>
+<meta name="description" content="大学生の時間割・卒業単位アプリ「大学の森」。App Store・Google Playで配信中。">
+<meta property="og:title" content="大学の森 — 大学生の時間割・卒業単位">
+<meta property="og:description" content="時間割はスクショ1枚でAIが登録。友達と時間割共有・卒業単位の自動計算。">
+<meta property="og:image" content="https://ichi-6b8f7.web.app/get/icon.png">
+<link rel="icon" href="/get/icon.png">
+<!--
+  SNS（インスタのストーリー・プロフィール等）に貼る「ダウンロード用リンク」 https://ichi-6b8f7.web.app/get
+  iPhone → App Store / Android → Google Play へ自動で移動。PC などは両方のボタンを出す。
+  CSP が script-src 'self' なのでインラインスクリプトは書かない（get.js に分ける）。
+  scripts/deploy-web.mjs が web/get/ を dist/get/ にコピーする。
+-->
+<style>
+  :root { --bg:#F7F5FF; --card:#FFFFFF; --text:#2D2853; --sub:#6B6789; --accent:#695CE7; --line:#E3DFF7; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#16142A; --card:#211E3A; --text:#F1EFFF; --sub:#AAA6C8; --accent:#8B80F0; --line:#34305A; }
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; }
+  body { min-height:100vh; background:var(--bg); color:var(--text);
+    font-family:-apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+    display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+  .card { width:100%; max-width:380px; background:var(--card); border-radius:20px; padding:32px 24px 26px;
+    text-align:center; box-shadow:0 10px 30px rgba(95,80,190,.10); }
+  .icon { width:96px; height:96px; border-radius:22px; display:block; margin:0 auto 14px; }
+  h1 { font-size:22px; margin:0 0 4px; font-weight:800; }
+  .tag { font-size:13px; color:var(--sub); margin:0 0 20px; line-height:1.6; }
+  .status { font-size:13px; color:var(--sub); margin:0 0 16px; min-height:1em; }
+  .btn { display:block; width:100%; padding:14px 16px; border-radius:12px; font-size:16px; font-weight:700;
+    text-decoration:none; margin-top:10px; }
+  .primary { background:var(--accent); color:#fff; }
+  .secondary { background:transparent; color:var(--accent); border:1.5px solid var(--line); }
+  .order { display:flex; flex-direction:column; }
+  body.android .ios-btn { order:2; }
+  body.android .android-btn { order:1; }
+</style>
+</head>
+<body>
+  <main class="card">
+    <img class="icon" src="/get/icon.png" alt="大学の森">
+    <h1>大学の森</h1>
+    <p class="tag">時間割はスクショ1枚でAIが登録<br>友達と時間割共有・卒業単位を自動計算</p>
+    <p class="status" id="status"></p>
+    <div class="order">
+      <a class="btn primary ios-btn" id="ios" href="https://apps.apple.com/jp/app/id6825671804">App Storeでダウンロード</a>
+      <a class="btn secondary android-btn" id="android" href="https://play.google.com/store/apps/details?id=jp.timetable.app">Google Playでダウンロード</a>
+    </div>
+  </main>
+  <script src="/get/get.js"></script>
+</body>
+</html>

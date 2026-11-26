@@ -159,15 +159,25 @@ export default function AddFriendScreen() {
                 {inviter ? `${name}${t("addFriend.webInvitedSuffix")}` : ""}
                 {t("addFriend.webDesc")}
               </Text>
-              {os !== "other" && (
-                <TouchableOpacity
-                  style={styles.primaryButton}
-                  onPress={() => openWebUrl(buildAppOpenUrl(inviterUid!, token, os))}
-                >
-                  <Text style={styles.primaryText}>{t("addFriend.openApp")}</Text>
+              {/* iPhone: App Store を一番上の大きいボタンに（2026-11-26 準熙）。
+                  1.1.0 からはアプリがあればリンクを押した瞬間にユニバーサルリンクで開くので、
+                  このページが見えている iPhone はほぼ「アプリ未インストール」。そこで「アプリで開く」を
+                  先に押すと Safari が「アドレスが無効」エラーを出していた。Android は intent の
+                  fallback で Play に飛ぶので「アプリで開く」が上のままでよい */}
+              {os === "ios" && (
+                <TouchableOpacity style={styles.primaryButton} onPress={() => openWebUrl(APP_STORE_URL)}>
+                  <Text style={styles.primaryText}>{t("addFriend.appStore")}</Text>
                 </TouchableOpacity>
               )}
-              {os !== "android" && (
+              {os !== "other" && (
+                <TouchableOpacity
+                  style={os === "ios" ? styles.secondaryButton : styles.primaryButton}
+                  onPress={() => openWebUrl(buildAppOpenUrl(inviterUid!, token, os))}
+                >
+                  <Text style={os === "ios" ? styles.secondaryText : styles.primaryText}>{t("addFriend.openApp")}</Text>
+                </TouchableOpacity>
+              )}
+              {os === "other" && (
                 <TouchableOpacity style={styles.secondaryButton} onPress={() => openWebUrl(APP_STORE_URL)}>
                   <Text style={styles.secondaryText}>{t("addFriend.appStore")}</Text>
                 </TouchableOpacity>

@@ -88,6 +88,13 @@
 | ✅ | **하루 2~3개, 8~24시(일본 시간) 사이 랜덤 시각** 게시 — 매일 같은 시각이면 사람 글처럼 안 보인다 | [CONTENT-OPS §3-3](CONTENT-OPS.md) |
 | ✅ | **AI 글은 Claude API 대신 Claude 구독으로 생성** — 매주 예약된 Claude Code 세션이 20개를 써서 비공개 저장소에 올리면 Actions가 대기 목록에 넣는다. **추가 비용 0원** (준희, 비용 이유). API 생성 기능은 지우지 않고 꺼 둠 | [CONTENT-OPS §9](CONTENT-OPS.md) |
 
+## 2026-11-26 (홍보용 다운로드 링크 · 초대 페이지 버튼 순서)
+
+| | 결정 | 상세 |
+|---|---|---|
+| ✅ | **SNS 에 붙이는 다운로드 링크 = `https://ichi-6b8f7.web.app/get`** — 아이폰→App Store, 안드로이드→Google Play 로 자동 이동, PC 는 두 버튼. 인스타 스토리 링크 스티커·프로필 링크에 이것 하나만 쓴다(링크가 하나라 OS 별로 나눌 필요 없음) | `web/get/` · `scripts/deploy-web.mjs` 가 `dist/get/` 로 복사. 🔴 `npm run deploy:web` 뒤부터 동작 |
+| ✅ | **초대 링크 받는 페이지(웹): 아이폰은 「App Storeでダウンロード」를 맨 위 큰 버튼**, 「アプリで開く」는 아래로. 안드로이드는 그대로(「アプリで開く」가 앱 없으면 Play 로 넘어감) | [INVITE-LINK](INVITE-LINK.md) · 웹 페이지라 OTA 가 아니라 `npm run deploy:web` 으로 나간다 |
+
 ## 2026-11-20 (I-8 「その他」 칸 — 온라인·집중강의)
 
 | 상태 | 결정 | 근거·링크 |
