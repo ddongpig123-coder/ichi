@@ -55,6 +55,20 @@ console.log("✔ 法的文書をコピー: /legal/terms.html, /legal/privacy.htm
 //      web/well-known/README.md。assetlinks.json は指紋がまだ仮（REPLACE_WITH_）なら載せない
 copyWellKnown(root, dist);
 
+// 2-3) /get/（SNS に貼るダウンロード用リンク。iPhone→App Store / Android→Google Play に自動で移動）
+//      web/get/index.html。dist/get/index.html があれば Hosting は rewrites より先にこれを返す
+const getDst = join(dist, "get");
+mkdirSync(getDst, { recursive: true });
+for (const f of ["index.html", "get.js", "icon.png"]) {
+  const src = join(root, "web", "get", f);
+  if (!existsSync(src)) {
+    console.error(`✖ 見つかりません: web/get/${f}`);
+    process.exit(1);
+  }
+  copyFileSync(src, join(getDst, f));
+}
+console.log("✔ ダウンロード用ページをコピー: /get/");
+
 // 3) robots.txt（リリース前は全面ブロック。公開時はこの行を外す）
 writeFileSync(
   join(dist, "robots.txt"),
