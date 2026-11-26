@@ -20,9 +20,8 @@ import ScreenHeader from "../src/components/common/ScreenHeader";
 import { notify } from "../src/utils/dialog";
 import { friendlyErrorBody } from "../src/utils/writeError";
 
-// 運営者の連絡先（利用規約・プライバシーポリシーと同一）。App Store 指針 1.2 により
-// 「アプリ内で連絡先を提示し、不適切な活動を報告できること」が必須。
-export const OPERATOR_CONTACT_EMAIL = "ddongpig123@gmail.com";
+// 運営者の連絡先は src/config/contact.ts（卒業要件の「便覧を送る」でも使う）
+import { OPERATOR_CONTACT_EMAIL } from "../src/config/contact";
 
 // お問い合わせフォーム。内容（必須）+ 返信先（任意）を inquiries に保存。
 export default function ContactScreen() {

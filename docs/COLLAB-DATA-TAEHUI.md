@@ -231,6 +231,7 @@ docs/DATA-MANUAL.md 와 docs/COLLAB-DATA-TAEHUI.md §9 를 읽고, §9-1 담당�
 > [DATA-MANUAL §3](DATA-MANUAL.md) 출처 조사 순서에 이 두 단계를 추가할 것.
 
 ### 10-2. 🟢 학생에게 부탁하기 — 테스터 모집과 겸하면 공짜다
+> 🆕 **2026-11-26 앱 안 입구 생김**: 졸업요건 화면이 「準備中」인 학교(明治 외)에서 「あなたの学部の便覧を送ってください」 → 메일(`src/config/contact.ts` `binranMailUrl`, 운영자 주소로 제목 「【大学の森】便覧の提供」·학교명 미리 채움). 받으면 아래 ⚠️ 그대로 — **PDF 는 로컬에만**, 추출은 [DATA-MANUAL](DATA-MANUAL.md) §5~§7, 결과는 MASTERS-INDEX 에.
 안드로이드 폐쇄테스트 **테스터 12명**을 어차피 모아야 한다([MY-TASKS.md](MY-TASKS.md)).
 **그때 섭외 대상을 학부로 지정**하면 두 문제가 한 번에 풀린다.
 

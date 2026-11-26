@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -37,6 +37,9 @@ import {
 import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTimetables";
 import { HeaderBackButton } from "../src/components/common/ScreenHeader";
 import { DEPARTMENTS_BY_SCHOOL } from "../src/data/departments";
+import { SCHOOLS } from "../src/data/schools";
+import { OPERATOR_CONTACT_EMAIL, binranMailUrl } from "../src/config/contact";
+import { notify } from "../src/utils/dialog";
 
 const GRADES = [1, 2, 3, 4];
 const MEIJI_DOMAIN = MEIJI;
@@ -261,6 +264,14 @@ export default function GraduationScreen() {
   }, [user, profileReady, admissionYear]);
 
   const coverage = schoolCoverageOf(schoolDomain);
+
+  // 便覧の提供メール（件名・本文に学校名を入れておく。PDF・写真はメールアプリで添付してもらう）
+  function sendBinranMail() {
+    const school = SCHOOLS.find((s) => s.domain === schoolDomain);
+    const schoolName = school ? (language === "ko" ? school.nameKo : school.nameJa) : "";
+    const url = binranMailUrl(t("grad.binranMailSubject"), t("grad.binranMailBody").replace("{school}", schoolName));
+    Linking.openURL(url).catch(() => notify(t("grad.binranMailFailed"), OPERATOR_CONTACT_EMAIL));
+  }
   // 明治以外の学校・学校未設定のみブロック。profileReady/schoolReady 前や不明時は fail-open。
   const blocked = profileReady && schoolReady && coverage !== "meiji" && !override;
 
@@ -560,7 +571,7 @@ export default function GraduationScreen() {
       </View>
 
       {blocked ? (
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
           <View style={styles.soonCard}>
             <Ionicons name="construct-outline" style={styles.soonIcon} />
             <Text style={styles.soonTitle}>{t("grad.soonTitle")}</Text>
@@ -579,7 +590,25 @@ export default function GraduationScreen() {
               <Text style={styles.soonBrowseText}>{t("grad.soonBrowse")}</Text>
             </TouchableOpacity>
           </View>
-        </View>
+
+          {/* 便覧を送ってください（学内限定で手に入りにくいので、その学校の学生に頼む — COLLAB §10-2）。
+              学校が未設定の人は先に学校を選んでもらうので出さない */}
+          {coverage === "school" && (
+            <View style={styles.binranCard}>
+              <Ionicons name="book-outline" style={styles.binranIcon} />
+              <Text style={styles.binranTitle}>{t("grad.binranTitle")}</Text>
+              <Text style={styles.binranBody}>{t("grad.binranBody")}</Text>
+              <TouchableOpacity style={styles.binranButton} onPress={sendBinranMail}>
+                <Ionicons name="mail-outline" size={16} color="#fff" />
+                <Text style={styles.binranButtonText}>{t("grad.binranMail")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.binranSub} onPress={() => router.push("/contact")}>
+                <Text style={styles.binranSubText}>{t("grad.binranContact")}</Text>
+              </TouchableOpacity>
+              <Text style={styles.binranNote}>{t("grad.binranPrivacy")}</Text>
+            </View>
+          )}
+        </ScrollView>
       ) : (
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
         {/* 学部・入学年度・学科・在籍区分セレクタ（全学部共通） */}
@@ -1070,6 +1099,23 @@ function makeStyles(theme: Theme) {
       paddingHorizontal: 16, paddingVertical: 11,
     },
     soonBrowseText: { fontSize: 12.5, fontWeight: "700", color: theme.textSecondary },
+
+    // 便覧を送ってください
+    binranCard: {
+      backgroundColor: theme.primary + "12", borderWidth: 1, borderColor: theme.primary + "40", borderRadius: 16,
+      padding: 20, marginTop: 14, alignItems: "center",
+    },
+    binranIcon: { fontSize: 28, marginBottom: 8, color: theme.primary },
+    binranTitle: { fontSize: 15, fontWeight: "800", color: theme.textPrimary, textAlign: "center" },
+    binranBody: { fontSize: 12.5, color: theme.textSecondary, marginTop: 8, textAlign: "center", lineHeight: 19 },
+    binranButton: {
+      flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: theme.primary, borderRadius: 10,
+      paddingHorizontal: 18, paddingVertical: 11, marginTop: 16,
+    },
+    binranButtonText: { fontSize: 13.5, fontWeight: "800", color: "#fff" },
+    binranSub: { marginTop: 10, paddingVertical: 6, paddingHorizontal: 10 },
+    binranSubText: { fontSize: 12.5, fontWeight: "700", color: theme.primary },
+    binranNote: { fontSize: 10.5, color: theme.textSecondary, marginTop: 10, textAlign: "center", lineHeight: 15 },
 
     disclaimer: {
       backgroundColor: theme.accent + "14", borderRadius: 10, padding: 12, marginTop: 18,
