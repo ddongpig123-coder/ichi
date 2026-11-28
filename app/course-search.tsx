@@ -31,7 +31,16 @@ import {
   fetchConfirmState,
   CROWD_CONFIRM_THRESHOLD,
   type ConfirmState,
+  searchCoursesBySlot,
+  filterBySlot,
+  SLOT_SEARCH_LIMIT,
+  fetchReviewStats,
+  type ReviewStats,
 } from "../src/services/courseService";
+import { useFriends } from "../src/contexts/FriendsContext";
+import { useFriendSessions, friendsTakingCourse } from "../src/hooks/useFriendSessions";
+import { dayLabel } from "../src/i18n/translations";
+import { Ionicons } from "@expo/vector-icons";
 import { getTimetable, saveTimetableSessions } from "../src/services/timetableService";
 import { getUserProfile } from "../src/services/userService";
 import type { Course, Semester } from "../src/types/course";
@@ -125,6 +134,13 @@ export default function CourseSearchScreen() {
   }, [myDept]);
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<Course[]>([]);
+  // 曜日・時限で絞る / 探す（S7 / I-2）。もう一度押すと解除
+  const [slotDay, setSlotDay] = useState<Day | null>(null);
+  const [slotPeriod, setSlotPeriod] = useState<Period | null>(null);
+  // この授業を取っている友達（S7 / I-2）・星の平均（S7 / I-5）
+  const { allFriends } = useFriends();
+  const friendSessions = useFriendSessions(semesterKey);
+  const [stats, setStats] = useState<Record<string, ReviewStats>>({});
 
   // 共通外国語などは同じ講義名・教員・曜限で**クラス（分反）だけが違う**講義が並ぶ。
   // そのままだと検索結果が同じ行の重複に見えるので（COLLAB-DATA-TAEHUI §4-6）、
@@ -155,19 +171,28 @@ export default function CourseSearchScreen() {
   const [registering, setRegistering] = useState(false);
 
   // keyword state を使わず引数で検索できる版（登録直後の即時再検索に使う）
+  // 連続で押したとき、遅れて返ってきた古い検索で結果・案内を上書きしない
+  const searchSeq = useRef(0);
   async function runSearch(kw: string) {
     if (!deptId) {
       setNotice(t("courseSearch.selectDepartmentFirst"));
       return;
     }
-    if (!kw.trim()) return;
+    const bySlot = !kw.trim();
+    if (bySlot && slotDay === null && slotPeriod === null) return;
     Keyboard.dismiss();
     setNotice(null);
     setLoading(true);
     setSearched(true);
+    const seq = ++searchSeq.current;
     try {
-      const found = await searchCourses({ schoolDomain, deptId, keyword: kw, year, semester });
+      // 語があれば語で探して曜日・時限で絞る。語が無ければ曜日・時限そのもので探す
+      const found = bySlot
+        ? await searchCoursesBySlot({ schoolDomain, deptId, year, semester, day: slotDay, period: slotPeriod })
+        : filterBySlot(await searchCourses({ schoolDomain, deptId, keyword: kw, year, semester }), slotDay, slotPeriod);
+      if (seq !== searchSeq.current) return;
       setResults(found);
+      if (bySlot && found.length >= SLOT_SEARCH_LIMIT) setNotice(t("courseSearch.slotLimit"));
       // 未確認講義の確認状態をまとめてロード（公式=verified:true はスキップ）
       const unverified = found.filter((c) => !c.verified);
       if (unverified.length && user) {
@@ -184,11 +209,12 @@ export default function CourseSearchScreen() {
         });
       }
     } catch (e) {
+      if (seq !== searchSeq.current) return;
       console.warn("course search failed:", e);
       setResults([]);
       setNotice(t("common.error"));
     } finally {
-      setLoading(false);
+      if (seq === searchSeq.current) setLoading(false);
     }
   }
 
@@ -206,6 +232,41 @@ export default function CourseSearchScreen() {
     // keyword は「選び直した時点の値」を使えばよい（入力のたびに検索しない）
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deptId]);
+
+  // 曜日・時限を変えたら検索し直す（語も曜日も無くなったら結果を消す）
+  const prevSlotRef = useRef(`${slotDay}-${slotPeriod}`);
+  useEffect(() => {
+    const k = `${slotDay}-${slotPeriod}`;
+    if (prevSlotRef.current === k) return;
+    prevSlotRef.current = k;
+    if (!deptId) return;
+    if (keyword.trim() || slotDay !== null || slotPeriod !== null) runSearch(keyword);
+    else { setResults([]); setSearched(false); setNotice(null); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slotDay, slotPeriod]);
+
+  // 結果の星（平均・件数）を少しずつ読む。1講義=読み取り1回。結果が変わったら古い読み込みは捨てる
+  useEffect(() => {
+    if (!deptId || results.length === 0) return;
+    let alive = true;
+    const todo = results.filter((c) => !stats[c.id]).slice(0, 60);
+    (async () => {
+      for (let i = 0; i < todo.length && alive; i += 6) {
+        const chunk = todo.slice(i, i + 6);
+        const got = await Promise.all(chunk.map((c) =>
+          fetchReviewStats({ schoolDomain, deptId, courseId: c.id }).then((st) => [c.id, st] as const).catch(() => null)
+        ));
+        if (!alive) return;
+        setStats((prev) => {
+          const next = { ...prev };
+          for (const g of got) if (g) next[g[0]] = g[1];
+          return next;
+        });
+      }
+    })();
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results, deptId, schoolDomain]);
 
   // 実在確認（1人1回。confirms サブコレクションに create）
   async function handleConfirm(course: Course) {
@@ -345,6 +406,34 @@ export default function CourseSearchScreen() {
         </TouchableOpacity>
       </View>
 
+      {deptReady && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.slotScroll}
+          contentContainerStyle={styles.slotRow}
+          keyboardShouldPersistTaps="handled"
+        >
+          {DAYS.map((d) => {
+            const on = slotDay === d;
+            return (
+              <TouchableOpacity key={d} style={[styles.slotChip, on && styles.slotChipOn]} onPress={() => setSlotDay(on ? null : d)}>
+                <Text style={[styles.slotChipText, on && styles.slotChipTextOn]}>{dayLabel(language, d)}</Text>
+              </TouchableOpacity>
+            );
+          })}
+          <View style={styles.slotDivider} />
+          {PERIODS.map((p) => {
+            const on = slotPeriod === p;
+            return (
+              <TouchableOpacity key={p} style={[styles.slotChip, on && styles.slotChipOn]} onPress={() => setSlotPeriod(on ? null : p)}>
+                <Text style={[styles.slotChipText, on && styles.slotChipTextOn]}>{p}{t("timetable.periodSuffix")}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      )}
+
       {notice && <Text style={styles.notice}>{notice}</Text>}
 
       {loading ? (
@@ -379,6 +468,7 @@ export default function CourseSearchScreen() {
               // 検索前は空白だったので、何をすればいいか1行だけ案内する
               <View style={styles.center}>
                 <Text style={styles.hint}>{t("courseSearch.searchHint")}</Text>
+                {deptReady && <Text style={styles.hint}>{t("courseSearch.slotHint")}</Text>}
               </View>
             )
           }
@@ -391,6 +481,12 @@ export default function CourseSearchScreen() {
                   <TouchableOpacity activeOpacity={0.6} onPress={() => openDetail(item)}>
                   <View style={styles.nameRow}>
                     <Text style={styles.courseName}>{item.name}</Text>
+                    {stats[item.id]?.count ? (
+                      <Text style={styles.stars}>
+                        {`★${(stats[item.id].average ?? 0).toFixed(1)}`}
+                        <Text style={styles.starsCount}>{` (${stats[item.id].count})`}</Text>
+                      </Text>
+                    ) : null}
                     {item.verified ? (
                       <Text style={styles.badgeOfficial}>{t("courseSearch.official")}</Text>
                     ) : cs?.verifiedByCrowd ? (
@@ -411,6 +507,18 @@ export default function CourseSearchScreen() {
                       {t("courseSearch.lectureCode")}: {lectureCodeOf(item)}
                     </Text>
                   ) : null}
+                  {(() => {
+                    const taking = friendsTakingCourse(item, friendSessions, allFriends);
+                    if (taking.length === 0) return null;
+                    const names = taking.slice(0, 3).map((f) => f.nickname).join("・");
+                    const more = taking.length > 3 ? ` +${taking.length - 3}` : "";
+                    return (
+                      <View style={styles.friendsRow}>
+                        <Ionicons name="people" size={12} color={theme.primary} />
+                        <Text style={styles.friendsText} numberOfLines={1}>{`${names}${more}${t("courseSearch.friendsTaking")}`}</Text>
+                      </View>
+                    );
+                  })()}
                   </TouchableOpacity>
                   {/* 未確認講義: 確認数 + 確認ボタン（自分が未確認のときだけ押せる） */}
                   {!item.verified && (
@@ -612,6 +720,20 @@ function makeStyles(theme: Theme) {
 
     // 배지 + 확인
     nameRow: { flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" },
+    stars: { fontSize: 12, fontWeight: "800", color: "#F5A623" },
+    starsCount: { fontSize: 11, fontWeight: "600", color: theme.textSecondary },
+    friendsRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
+    friendsText: { flexShrink: 1, fontSize: 11.5, fontWeight: "700", color: theme.primary },
+    slotScroll: { flexGrow: 0 },
+    slotRow: { paddingHorizontal: 12, paddingBottom: 8, gap: 6, alignItems: "center" },
+    slotChip: {
+      minWidth: 34, paddingHorizontal: 9, paddingVertical: 5, borderRadius: 999, alignItems: "center",
+      borderWidth: 1, borderColor: theme.border, backgroundColor: theme.card,
+    },
+    slotChipOn: { borderColor: theme.primary, backgroundColor: theme.primary },
+    slotChipText: { fontSize: 12, fontWeight: "700", color: theme.textSecondary },
+    slotChipTextOn: { color: "#fff" },
+    slotDivider: { width: 1, height: 18, backgroundColor: theme.border, marginHorizontal: 4 },
     badgeOfficial: {
       fontSize: 10, fontWeight: "700", color: theme.primary,
       backgroundColor: theme.primary + "1A", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4,

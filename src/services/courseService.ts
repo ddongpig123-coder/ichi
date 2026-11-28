@@ -1,5 +1,6 @@
 import {
-  addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, query, setDoc, where,
+  addDoc, average, collection, count, deleteDoc, doc, getAggregateFromServer, getDoc, getDocs, limit, query, setDoc, where,
+  type QueryConstraint,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import type { Course, CourseReview, ReviewTag, Semester } from "../types/course";
@@ -97,6 +98,44 @@ export async function searchCourses(params: CourseSearchParams): Promise<Course[
         normalizeForSearch(c.teacher).includes(normKeyword)
     )
     .slice(0, COURSE_SEARCH_LIMIT);
+}
+
+// ── 曜日・時限で探す（S7 / I-2, 2026-11-28） ─────────────────────
+// キーワードなしでも「月曜2限の授業」のように探せる。年度・学期・曜日・時限はすべて等価条件なので
+// 既存の単一フィールド索引の組み合わせで通る（nameGrams と同じ。複合索引の追加は不要）。
+export const SLOT_SEARCH_LIMIT = 150;
+
+export interface CourseSlotParams {
+  schoolDomain: string;
+  deptId: string;
+  year: number;
+  semester: Semester;
+  day: Day | null;
+  period: Period | null;
+}
+
+export async function searchCoursesBySlot(params: CourseSlotParams): Promise<Course[]> {
+  if (params.day === null && params.period === null) return [];
+  const conds: QueryConstraint[] = [
+    where("year", "==", params.year),
+    where("semester", "==", params.semester),
+  ];
+  if (params.day !== null) conds.push(where("day", "==", params.day));
+  if (params.period !== null) conds.push(where("period", "==", params.period));
+  const snap = await getDocs(query(coursesRef(params.schoolDomain, params.deptId), ...conds, limit(SLOT_SEARCH_LIMIT)));
+  const DAY_ORDER = ["月", "火", "水", "木", "金", "土"];
+  return snap.docs
+    .map((d) => ({ ...(d.data() as Course), id: d.id }))
+    .sort((a, b) =>
+      (DAY_ORDER.indexOf(a.day ?? "") - DAY_ORDER.indexOf(b.day ?? "")) ||
+      ((a.period ?? 0) - (b.period ?? 0)) ||
+      a.name.localeCompare(b.name, "ja")
+    );
+}
+
+// 検索結果を曜日・時限で絞る（キーワード検索のあと、クライアント側で）
+export function filterBySlot(courses: Course[], day: Day | null, period: Period | null): Course[] {
+  return courses.filter((c) => (day === null || c.day === day) && (period === null || c.period === period));
 }
 
 // ── クラウドソーシング（ユーザー登録講義 + 実在確認） ────────────
@@ -204,6 +243,7 @@ export async function setCourseReview(loc: CourseLoc, uid: string, input: Review
   const ref = reviewDoc(loc, uid);
   const existing = await getDoc(ref);
   const now = Date.now();
+  invalidateReviewStats(loc);
   await setDoc(ref, {
     rating: input.rating,
     tags: input.tags,
@@ -218,6 +258,7 @@ export async function setCourseReview(loc: CourseLoc, uid: string, input: Review
 
 // 自分のレビューを削除（ルール: isOwner(reviewerUid) のみ許可）
 export async function deleteCourseReview(loc: CourseLoc, uid: string): Promise<void> {
+  invalidateReviewStats(loc);
   await deleteDoc(reviewDoc(loc, uid));
 }
 
@@ -234,6 +275,28 @@ export interface ReviewAggregate {
 }
 
 // 集計はクライアントで（レビュー件数は多くないため全件取得→平均・タグ集計）。
+// 一覧用の星（平均と件数）だけを集計クエリで取る（S7 / I-5）。レビュー本文は読まない。
+// 料金は講義1件ごとに読み取り1回ぶん（レビュー1000件まで）。同じ講義はアプリを開いている間キャッシュする
+export interface ReviewStats { average: number | null; count: number }
+const reviewStatsCache = new Map<string, { at: number; stats: ReviewStats }>();
+const REVIEW_STATS_TTL = 10 * 60 * 1000;
+
+export async function fetchReviewStats(loc: CourseLoc): Promise<ReviewStats> {
+  const key = `${loc.schoolDomain}/${loc.deptId}/${loc.courseId}`;
+  const hit = reviewStatsCache.get(key);
+  if (hit && Date.now() - hit.at < REVIEW_STATS_TTL) return hit.stats;
+  const snap = await getAggregateFromServer(reviewsRef(loc), { n: count(), avg: average("rating") });
+  const n = snap.data().n;
+  const stats: ReviewStats = { count: n, average: n > 0 ? snap.data().avg ?? null : null };
+  reviewStatsCache.set(key, { at: Date.now(), stats });
+  return stats;
+}
+
+// レビューを書いた・消したら一覧の星も更新されるように
+export function invalidateReviewStats(loc: CourseLoc): void {
+  reviewStatsCache.delete(`${loc.schoolDomain}/${loc.deptId}/${loc.courseId}`);
+}
+
 export function aggregateReviews(reviews: CourseReviewWithUid[], myUid: string): ReviewAggregate {
   const count = reviews.length;
   const average = count ? reviews.reduce((s, r) => s + r.rating, 0) / count : 0;
