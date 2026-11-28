@@ -39,6 +39,9 @@ export interface Course {
   // array-contains でクエリ語の1-gramを引き当て → クライアントで全文含有を再判定する。
   // 生成規則は src/utils/ngram.ts の makeBigrams（クローラー load-firestore.mjs と同一実装）。
   nameGrams: string[];
+  // 教員名の2-gram（同じ makeBigrams）。教員名だけで検索したとき候補を引くため（2026-11-28 追加）。
+  // それ以前に適載した文書には無い → scripts/add-teacher-grams.mjs で補う。無い文書は教員名検索に出ないだけ
+  teacherGrams?: string[];
   createdAt: number;
   // ※ confirmCount(クラウドソーシング確認数)はフィールドではなく confirms サブコレクションで管理。
   //   courses を update: false のまま保てる（Blaze不要）。CourseConfirm を参照。

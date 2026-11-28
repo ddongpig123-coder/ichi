@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, TextInput } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,7 +8,7 @@ import type { Theme } from "../src/theme/themes";
 import { useI18n } from "../src/contexts/I18nContext";
 import { useAuth } from "../src/contexts/AuthContext";
 import { completeOnboarding, updateSchoolSelection } from "../src/services/userService";
-import { SCHOOLS } from "../src/data/schools";
+import { SCHOOLS, matchSchool } from "../src/data/schools";
 import type { UserLanguage } from "../src/types/user";
 import { setTutorialStage } from "../src/services/tutorialStore";
 
@@ -31,6 +31,9 @@ export default function OnboardingScreen() {
 
   const [step, setStep] = useState<1 | 2 | 3>(schoolOnly ? 3 : 1);
   const [schoolDomain, setSchoolDomain] = useState<string | null | undefined>(undefined);
+  // 学校が多い（69校）ので検索で絞る。選んだ学校は絞り込みに関係なく残す
+  const [schoolQuery, setSchoolQuery] = useState("");
+  const shownSchools = SCHOOLS.filter((s) => s.domain === schoolDomain || matchSchool(s, schoolQuery));
   const [busy, setBusy] = useState(false);
 
   async function handleStart() {
@@ -145,7 +148,20 @@ export default function OnboardingScreen() {
           <>
             <Text style={styles.title}>{t("onboarding.schoolTitle")}</Text>
             <Text style={styles.subtitle}>{t("onboarding.schoolSubtitle")}</Text>
-            {SCHOOLS.map((school) => (
+            <TextInput
+              style={styles.searchInput}
+              value={schoolQuery}
+              onChangeText={setSchoolQuery}
+              placeholder={t("onboarding.schoolSearch")}
+              placeholderTextColor={theme.textSecondary}
+              autoCorrect={false}
+              autoCapitalize="none"
+              clearButtonMode="while-editing"
+            />
+            {shownSchools.length === 0 && (
+              <Text style={styles.searchEmpty}>{t("onboarding.schoolNotFound")}</Text>
+            )}
+            {shownSchools.map((school) => (
               <TouchableOpacity
                 key={school.domain}
                 style={[styles.choiceButton, schoolDomain === school.domain && styles.choiceButtonActive]}
@@ -162,6 +178,8 @@ export default function OnboardingScreen() {
             >
               <Text style={styles.choiceText}>{t("onboarding.schoolOther")}</Text>
             </TouchableOpacity>
+            {/* 卒業要件・講義データはまだ一部の学校だけ → 便覧を送ってもらえれば優先対応（2026-11-28 準熙） */}
+            <Text style={styles.schoolNote}>{t("onboarding.schoolDataNote")}</Text>
 
           </>
         )}
@@ -239,6 +257,12 @@ function makeStyles(theme: Theme) {
     },
     choiceButtonActive: { borderColor: theme.primary, borderWidth: 2, backgroundColor: theme.primary + "14" },
     choiceText: { fontSize: 15, fontWeight: "600", color: theme.textPrimary },
+    searchInput: {
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border, borderRadius: 10,
+      paddingHorizontal: 14, paddingVertical: 11, fontSize: 15, color: theme.textPrimary, marginBottom: 12,
+    },
+    searchEmpty: { fontSize: 13, color: theme.textSecondary, textAlign: "center", marginVertical: 12, lineHeight: 19 },
+    schoolNote: { fontSize: 11.5, color: theme.textSecondary, lineHeight: 17, marginTop: 6, textAlign: "center" },
 
     primaryButton: {
       backgroundColor: theme.primary,

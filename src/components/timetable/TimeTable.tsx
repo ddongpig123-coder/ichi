@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
-  useWindowDimensions, Modal, Pressable,
+  useWindowDimensions, Modal, Pressable, Animated, Easing,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { DAYS, PERIODS, PERIOD_TIMES, type ClassSession, type Day, type Period } from "../../types/timetable";
 import { useFriends, type Friend } from "../../contexts/FriendsContext";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -20,6 +21,26 @@ interface TimeTableProps {
   onPressEmptyCell?: (day: Day, period: Period) => void;
   cellHeight?: number;
   friendOverlaps?: Record<string, string[]>;
+  // 編集モード（2026-11-28 ユーザー要望: スマホのホーム画面のように、長押し → × で消す）
+  editMode?: boolean;
+  onLongPressSession?: (session: ClassSession) => void;
+  onDeleteSession?: (session: ClassSession) => void;
+}
+
+// 編集モード中の小さな揺れ（ホーム画面のアプリ整理と同じ合図）。ネイティブドライバで軽く
+function useWiggle(active: boolean) {
+  const v = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!active) { v.stopAnimation(); v.setValue(0); return; }
+    const loop = Animated.loop(Animated.sequence([
+      Animated.timing(v, { toValue: 1, duration: 110, easing: Easing.linear, useNativeDriver: true }),
+      Animated.timing(v, { toValue: -1, duration: 220, easing: Easing.linear, useNativeDriver: true }),
+      Animated.timing(v, { toValue: 0, duration: 110, easing: Easing.linear, useNativeDriver: true }),
+    ]));
+    loop.start();
+    return () => loop.stop();
+  }, [active, v]);
+  return v.interpolate({ inputRange: [-1, 1], outputRange: ["-1.6deg", "1.6deg"] });
 }
 
 function SessionCard({
@@ -30,6 +51,9 @@ function SessionCard({
   friendOverlaps,
   onPress,
   onShowFriendList,
+  editMode,
+  onLongPress,
+  onDelete,
 }: {
   session: ClassSession;
   day: Day;
@@ -38,9 +62,14 @@ function SessionCard({
   friendOverlaps?: Record<string, string[]>;
   onPress?: () => void;
   onShowFriendList: (friends: Friend[]) => void;
+  editMode?: boolean;
+  onLongPress?: () => void;
+  onDelete?: () => void;
 }) {
   const { theme } = useTheme();
+  const { t } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  const rotate = useWiggle(!!editMode);
   const { allFriends } = useFriends();
 
   const key = `${day}-${period}`;
@@ -59,17 +88,25 @@ function SessionCard({
   return (
     <TouchableOpacity
       style={[styles.cell, { height: cellHeight }]}
-      activeOpacity={0.7}
-      onPress={onPress}
+      activeOpacity={editMode ? 1 : 0.7}
+      onPress={editMode ? undefined : onPress}
+      onLongPress={editMode ? undefined : onLongPress}
+      delayLongPress={400}
     >
-      <View style={[styles.sessionCard, { backgroundColor: `${session.color}22`, borderLeftColor: session.color }]}>
+      <Animated.View
+        style={[
+          styles.sessionCard,
+          { backgroundColor: `${session.color}22`, borderLeftColor: session.color },
+          editMode && { transform: [{ rotate }] },
+        ]}
+      >
         <View style={firstFriend ? styles.textAreaWithAvatar : undefined}>
           <Text style={styles.sessionName} numberOfLines={2}>{session.name}</Text>
           <Text style={styles.sessionTeacher} numberOfLines={1}>{session.teacher}</Text>
           <Text style={styles.sessionRoom} numberOfLines={1}>{session.room}</Text>
         </View>
 
-        {firstFriend && (
+        {firstFriend && !editMode && (
           <TouchableOpacity
             style={styles.avatarWrapper}
             onPress={(e) => { e.stopPropagation?.(); handleAvatarPress(); }}
@@ -83,13 +120,25 @@ function SessionCard({
             )}
           </TouchableOpacity>
         )}
-      </View>
+      </Animated.View>
+      {editMode && (
+        <TouchableOpacity
+          style={styles.deleteBadge}
+          onPress={onDelete}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel={`${session.name} ${t("timetable.deleteSession")}`}
+        >
+          <Ionicons name="close" size={12} color="#fff" />
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 }
 
 export default function TimeTable({
   sessions, onPressSession, onPressEmptyCell, cellHeight, friendOverlaps,
+  editMode, onLongPressSession, onDeleteSession,
 }: TimeTableProps) {
   const { width } = useWindowDimensions();
   const cellWidth = (width - TIME_COL_WIDTH) / DAYS.length;
@@ -159,6 +208,9 @@ export default function TimeTable({
                         friendOverlaps={friendOverlaps}
                         onPress={() => onPressSession?.(session)}
                         onShowFriendList={setFriendListModal}
+                        editMode={editMode}
+                        onLongPress={onLongPressSession ? () => onLongPressSession(session) : undefined}
+                        onDelete={() => onDeleteSession?.(session)}
                       />
                     </View>
                   );
@@ -241,6 +293,21 @@ function makeStyles(theme: Theme) {
     plusText: { fontSize: 8, color: "#fff", fontWeight: "700", lineHeight: 10 },
 
     textAreaWithAvatar: { paddingRight: 20 },
+
+    deleteBadge: {
+      position: "absolute",
+      top: -2,
+      left: -2,
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      backgroundColor: "#8E8E93",
+      borderWidth: 1.5,
+      borderColor: theme.card,
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 2,
+    },
 
     modalOverlay: {
       flex: 1,

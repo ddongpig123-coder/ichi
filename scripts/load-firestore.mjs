@@ -77,10 +77,11 @@ function safeDocId(id) {
 }
 
 // 크롤 JSON 1건 → 적재할 Firestore 문서.
-// confirmCount 제거 + 검색용 nameGrams 추가. 크롤 JSON 자체는 건드리지 않는다.
+// confirmCount 제거 + 검색용 nameGrams·teacherGrams 추가. 크롤 JSON 자체는 건드리지 않는다.
+// teacherGrams(2026-11-28~): 교원명만으로 검색할 때 후보를 잡는다 — 이게 없으면 「선생님 이름」 검색이 0건
 function toFirestoreDoc(c) {
   const { confirmCount, ...rest } = c;
-  return { ...rest, nameGrams: makeBigrams(c.name) };
+  return { ...rest, nameGrams: makeBigrams(c.name), teacherGrams: makeBigrams(c.teacher ?? "") };
 }
 
 function parseArgs(argv) {

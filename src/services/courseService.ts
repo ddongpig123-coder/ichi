@@ -12,10 +12,12 @@ import { makeBigrams, queryGram, matchesQuery, normalizeForSearch } from "../uti
 // Firestore パス: schools/{schoolDomain}/departments/{deptId}/courses/{courseId}
 // firestore.rules: read は isSignedIn() のみ。update/delete は禁止（クロール投入は Admin SDK）。
 //
-// 検索方式: nameGrams(講義名2-gram) の array-contains で候補を引き、クライアントで
-// 「講義名/教員名にキーワードを含むか」+ 年度・学期で最終フィルタする（中間一致対応）。
-// ※ 純粋な教員名だけの検索は候補(講義名gram)に乗らないため実データでは弱い。
-//   教員名検索を強化するなら適載時に teacherGrams を足す（今は講義名中心のUX）。
+// 検索方式: nameGrams(講義名2-gram) と teacherGrams(教員名2-gram) の array-contains で
+// 候補を**並行して**引き、クライアントで「講義名/教員名にキーワードを含むか」で最終フィルタする（中間一致対応）。
+// 年度・学期はサーバー側で絞る。
+// ⚠️ 以前は nameGrams だけで候補を引いていたため、教員名だけの検索（例: ゼミの先生の名前）が
+//    0件になっていた（2026-11-28 ユーザー指摘。検索欄は「授業名・教員名」なのに）。
+//    teacherGrams は scripts/add-teacher-grams.mjs で既存の講義に補う。
 // ============================================================
 
 // 20学部・20,022件を Firestore に適載済み（2026-07-22）。実データ検索を使う。
@@ -66,18 +68,29 @@ export async function searchCourses(params: CourseSearchParams): Promise<Course[
   // 結果から消えていた（2026春「英語」: 理工 235件中169件しか出ない = 28%欠落。
   // 商24件・政経5件も同様に欠落）。array-contains + 等価2件は既存インデックスで通る
   // （複合インデックスの追加デプロイ不要 — 実データで確認済み）。
-  const q = query(
+  const byField = (field: "nameGrams" | "teacherGrams") => getDocs(query(
     coursesRef(params.schoolDomain, params.deptId),
     where("year", "==", params.year),
     where("semester", "==", params.semester),
-    where("nameGrams", "array-contains", gram),
+    where(field, "array-contains", gram),
     limit(CANDIDATE_LIMIT)
-  );
-  const snap = await getDocs(q);
+  ));
+  // 教員名側の失敗（索引の準備中など）で講義名検索まで落とさない
+  const [byName, byTeacher] = await Promise.all([
+    byField("nameGrams"),
+    byField("teacherGrams").catch(() => null),
+  ]);
   const normKeyword = normalizeForSearch(keyword);
 
-  return snap.docs
-    .map((d) => ({ ...(d.data() as Course), id: d.id }))
+  const seen = new Set<string>();
+  const candidates: Course[] = [];
+  for (const d of [...byName.docs, ...(byTeacher?.docs ?? [])]) {
+    if (seen.has(d.id)) continue;
+    seen.add(d.id);
+    candidates.push({ ...(d.data() as Course), id: d.id });
+  }
+
+  return candidates
     .filter(
       (c) =>
         matchesQuery(c.name, keyword) ||
@@ -120,6 +133,7 @@ export async function contributeCourse(
     addedBy: params.uid,
     verified: false,
     nameGrams: makeBigrams(data.name),
+    teacherGrams: makeBigrams(data.teacher),
     createdAt: Date.now(),
   });
   return ref.id;
