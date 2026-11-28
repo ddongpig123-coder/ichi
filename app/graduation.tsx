@@ -34,7 +34,7 @@ import {
   FACULTIES, facultyById, facultyFromDept, bandForAdmissionYear, resolveZones,
   MEIJI, type Faculty, type FBand,
 } from "../src/data/facultyMasters";
-import { ENROLLMENT_YEAR, gradeFromAdmissionYear } from "../src/data/semesterTimetables";
+import { ENROLLMENT_YEAR, gradeFromAdmissionYear, getCurrentAcademicYear, getCurrentSemester } from "../src/data/semesterTimetables";
 import { HeaderBackButton } from "../src/components/common/ScreenHeader";
 import { DEPARTMENTS_BY_SCHOOL } from "../src/data/departments";
 import { SCHOOLS } from "../src/data/schools";
@@ -89,6 +89,9 @@ export default function GraduationScreen() {
 
   // 自コース（基幹科目の自/他判定）+ CAN(履修できる科目) 用の現在学年。
   const [grade, setGrade] = useState(3);
+  // 学部・入学年度などの設定欄は、学部が決まっていれば1行の要約に畳む（S8 / I-6, 2026-11-28）。
+  // 「変更」で開く。学部が未選択のときは常に開いている
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [courseId, setCourseId] = useState<CourseId | null>(null);
   const selectedCourse = COURSES_2021.find((c) => c.id === courseId) ?? null;
   const gradeLocked = grade < 3; // 基幹科目は3・4年配当
@@ -453,6 +456,7 @@ export default function GraduationScreen() {
                 facultyPinnedRef.current = true;
                 skipDeptResetRef.current = false; // 手動変更では必ず学科を既定化する
                 setFacultyId(f.id);
+                setSettingsOpen(true); // 選んだ直後に畳まない（入学年度・学年も続けて選ぶため）
               }}
             >
               <Text style={[styles.courseChipText, on && styles.courseChipTextOn]}>{facultyName(f.nameJa, language)}</Text>
@@ -611,9 +615,54 @@ export default function GraduationScreen() {
         </ScrollView>
       ) : (
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 + insets.bottom }]}>
-        {/* 学部・入学年度・学科・在籍区分セレクタ（全学部共通） */}
-        {facultyChips}
-        {selectorsBlock}
+        {/* 学部・入学年度・学科・在籍区分セレクタ（全学部共通）。決まっていれば要約1行に畳む（I-6） */}
+        {selFaculty && !settingsOpen ? (
+          <TouchableOpacity style={styles.settingsSummary} onPress={() => setSettingsOpen(true)} activeOpacity={0.7}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingsSummaryTitle} numberOfLines={1}>{facultyName(selFaculty.nameJa, language)}</Text>
+              <Text style={styles.settingsSummaryText} numberOfLines={2}>
+                {[
+                  isCommerce ? commerceBandLabel : selBand?.labelJa,
+                  `${grade}年`,
+                  deptList?.find((d) => d.id === deptId)?.nameJa,
+                  !isCommerce && selFaculty.residencyVariable
+                    ? t(isRyugakusei ? "grad.residencyRyu" : "grad.residencyDom")
+                    : null,
+                ].filter(Boolean).join(" · ")}
+              </Text>
+            </View>
+            <Text style={styles.settingsChange}>{t("grad.settingsChange")}</Text>
+            <Ionicons name="chevron-down" size={16} color={theme.primary} />
+          </TouchableOpacity>
+        ) : (
+          <>
+            {facultyChips}
+            {selectorsBlock}
+            {selFaculty ? (
+              <TouchableOpacity style={styles.settingsClose} onPress={() => setSettingsOpen(false)}>
+                <Text style={styles.settingsChange}>{t("grad.settingsClose")}</Text>
+                <Ionicons name="chevron-up" size={16} color={theme.primary} />
+              </TouchableOpacity>
+            ) : null}
+          </>
+        )}
+
+        {/* 講義検索へ（I-3）: 足りない区分を見ながらそのまま授業を探して時間割に入れる。学部を引き継ぐ */}
+        {selFaculty ? (
+          <TouchableOpacity
+            style={styles.searchCta}
+            onPress={() =>
+              router.push(
+                `/course-search?year=${getCurrentAcademicYear()}&semester=${getCurrentSemester()}` +
+                `&dept=${encodeURIComponent(selFaculty.nameJa)}`
+              )
+            }
+            accessibilityRole="button"
+          >
+            <Ionicons name="search-outline" size={15} color={theme.primary} />
+            <Text style={styles.searchCtaText}>{t("grad.searchCourses")}</Text>
+          </TouchableOpacity>
+        ) : null}
 
         {/* 学部未選択（プロフィールの学部から推定できなかった場合） */}
         {!selFaculty ? (
@@ -941,6 +990,21 @@ function makeStyles(theme: Theme) {
 
     content: { paddingHorizontal: 16 },
     sectionLabel: { fontSize: 12, color: theme.textSecondary, fontWeight: "700", marginTop: 8, marginBottom: 6 },
+    settingsSummary: {
+      flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8,
+      backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border, borderRadius: 12,
+      paddingHorizontal: 14, paddingVertical: 11,
+    },
+    settingsSummaryTitle: { fontSize: 14, fontWeight: "800", color: theme.textPrimary },
+    settingsSummaryText: { fontSize: 12, color: theme.textSecondary, marginTop: 2, lineHeight: 17 },
+    settingsChange: { fontSize: 12.5, fontWeight: "700", color: theme.primary },
+    settingsClose: { flexDirection: "row", alignItems: "center", alignSelf: "flex-end", gap: 4, marginTop: 10, paddingVertical: 4 },
+    searchCta: {
+      flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 10,
+      borderWidth: 1, borderColor: theme.primary + "55", backgroundColor: theme.primary + "10",
+      borderRadius: 10, paddingVertical: 10,
+    },
+    searchCtaText: { fontSize: 13, fontWeight: "700", color: theme.primary },
     zonesIntro: { fontSize: 11.5, color: theme.textSecondary, marginTop: 14, lineHeight: 16 },
 
     seg: {

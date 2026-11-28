@@ -109,7 +109,7 @@ export default function CourseSearchScreen() {
   const { t, language } = useI18n();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
-  const params = useLocalSearchParams<{ year?: string; semester?: string }>();
+  const params = useLocalSearchParams<{ year?: string; semester?: string; dept?: string }>();
   const year = Number(params.year) || getCurrentAcademicYear();
   const semester: Semester = params.semester === "秋" ? "秋" : "春";
   const semesterKey = `${year}-${semester}`;
@@ -121,17 +121,26 @@ export default function CourseSearchScreen() {
     () => matchDepartment(schoolDomain, myDeptRaw),
     [schoolDomain, myDeptRaw]
   );
-  // 本人の学部を先頭に、残りは元の並び（学部コード順）で表示する。
+  // 卒業要件から来たときは、その画面で選んでいる学部を最初に選んでおく（S8 / I-3。id か名前で照合）
+  const paramDept = useMemo(
+    () => (params.dept ? matchDepartment(schoolDomain, params.dept) : null),
+    [schoolDomain, params.dept]
+  );
+  // 本人の学部（卒業要件から来たときはその学部）を先頭に、残りは元の並び（学部コード順）で表示する。
+  // 先頭に来ないと、横スクロールの外にあって選ばれているのが見えない
   const orderedDepartments = useMemo(
-    () => orderDepartments(schoolDomain, myDept),
-    [schoolDomain, myDept]
+    () => orderDepartments(schoolDomain, paramDept ?? myDept),
+    [schoolDomain, myDept, paramDept]
   );
   // 講義データが無い学校では学部チップを出さない（明治の学部が他校の人に見えてしまうため）。
   const deptReady = hasDepartmentData(schoolDomain);
-  // 既定選択は本人の学部（ユーザーが未選択のときのみ）。
   useEffect(() => {
-    if (myDept) setDeptId((cur) => cur ?? myDept.id);
-  }, [myDept]);
+    if (paramDept) setDeptId(paramDept.id);
+  }, [paramDept]);
+  // 既定選択は本人の学部（ユーザーが未選択で、呼び出し元の指定も無いときのみ）。
+  useEffect(() => {
+    if (myDept && !paramDept) setDeptId((cur) => cur ?? myDept.id);
+  }, [myDept, paramDept]);
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<Course[]>([]);
   // 曜日・時限で絞る / 探す（S7 / I-2）。もう一度押すと解除
