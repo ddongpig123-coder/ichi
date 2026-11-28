@@ -135,6 +135,14 @@ export default function HomeScreen() {
   // day/period が null = 「その他」欄（曜日・時限なし）の追加・編集（I-8）
   const [target, setTarget] = useState<{ day: Day | null; period: Period | null; session?: ClassSession } | null>(null);
 
+  // 編集モード: 授業を長押し → 揺れて × が出る → × で即削除（2026-11-28 ユーザー要望）。
+  // 消した直後は「元に戻す」を数秒出す（誤タップ対策）。学期を替えたら抜ける
+  const [editMode, setEditMode] = useState(false);
+  const [undo, setUndo] = useState<{ key: SemesterKey; session: ClassSession } | null>(null);
+  const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => { setEditMode(false); setUndo(null); }, [semesterKey]);
+  useEffect(() => () => { if (undoTimer.current) clearTimeout(undoTimer.current); }, []);
+
   // ローカル更新 + Firestore保存。失敗したら元に戻して知らせる
   // （以前はログのみで、画面上は保存できたように見え、次回起動で「消えた」になっていた）
   function persistSessions(next: ClassSession[]) {
@@ -172,6 +180,22 @@ export default function HomeScreen() {
     setTarget(null);
   }
 
+  function deleteInEditMode(session: ClassSession) {
+    const next = (sessionsMap[semesterKey] ?? []).filter((s) => s.id !== session.id);
+    persistSessions(next);
+    setUndo({ key: semesterKey, session });
+    if (undoTimer.current) clearTimeout(undoTimer.current);
+    undoTimer.current = setTimeout(() => setUndo(null), 4500);
+    if (placedSessions(next).length === 0) setEditMode(false);
+  }
+
+  function undoDelete() {
+    if (!undo || undo.key !== semesterKey) return;
+    const current = sessionsMap[semesterKey] ?? [];
+    if (!current.some((s) => s.id === undo.session.id)) persistSessions([...current, undo.session]);
+    setUndo(null);
+  }
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <SemesterSelector
@@ -182,14 +206,25 @@ export default function HomeScreen() {
           if (!isSemesterAvailable(year, selectedSemester)) setSelectedSemester("春");
         }}
         onChangeSemester={setSelectedSemester}
-        rightSlot={<VisibilitySelector value={visibility} onChange={handleChangeVisibility} />}
+        rightSlot={
+          editMode ? (
+            <TouchableOpacity style={styles.doneBtn} onPress={() => setEditMode(false)} accessibilityRole="button">
+              <Text style={styles.doneBtnText}>{t("home.editDone")}</Text>
+            </TouchableOpacity>
+          ) : (
+            <VisibilitySelector value={visibility} onChange={handleChangeVisibility} />
+          )
+        }
       />
 
       <View>
         <TimeTable
           sessions={sessions}
-          onPressEmptyCell={(day, period) => setTarget({ day, period })}
+          onPressEmptyCell={(day, period) => (editMode ? setEditMode(false) : setTarget({ day, period }))}
           onPressSession={(session) => setTarget({ day: session.day, period: session.period, session })}
+          editMode={editMode}
+          onLongPressSession={() => setEditMode(true)}
+          onDeleteSession={deleteInEditMode}
           cellHeight={cellHeight}
           friendOverlaps={friendOverlaps}
         />
@@ -215,6 +250,17 @@ export default function HomeScreen() {
           </View>
         )}
       </View>
+
+      {undo && undo.key === semesterKey && (
+        <View style={styles.undoBar}>
+          <Text style={styles.undoText} numberOfLines={1}>
+            {`「${undo.session.name}」${t("home.deletedSuffix")}`}
+          </Text>
+          <TouchableOpacity onPress={undoDelete} accessibilityRole="button" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Text style={styles.undoBtnText}>{t("home.undo")}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* 曜日・時限の無い授業（集中講義・オンデマンド・メディア）は表に置けないので、この欄に（I-8） */}
       <OtherSessionsRow
@@ -269,6 +315,18 @@ export default function HomeScreen() {
 function makeStyles(theme: Theme) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: theme.background },
+    doneBtn: {
+      backgroundColor: theme.primary, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 6,
+    },
+    doneBtnText: { color: "#fff", fontSize: 13, fontWeight: "800" },
+    // 時間割の上に重ねる（下の欄を押し下げない）
+    undoBar: {
+      position: "absolute", left: 12, right: 12, bottom: 0, zIndex: 10,
+      flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10,
+      backgroundColor: "#2C2C2E", borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10,
+    },
+    undoText: { flex: 1, color: "#fff", fontSize: 13 },
+    undoBtnText: { color: "#64D2FF", fontSize: 13, fontWeight: "800" },
     emptyHint: {
       position: "absolute",
       top: 0,

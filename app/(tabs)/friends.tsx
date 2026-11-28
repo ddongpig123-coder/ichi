@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import type { Theme } from "../../src/theme/themes";
@@ -29,14 +30,25 @@ import {
 } from "../../src/data/semesterTimetables";
 import { notify, confirmDialog } from "../../src/utils/dialog";
 import { friendlyErrorBody } from "../../src/utils/writeError";
+import { TAB_BAR_HEIGHT } from "../../src/theme/layout";
 
-const CELL_HEIGHT = 42;
+// 友達の時間割は画面いっぱいに大きく（2026-11-28 ユーザー要望: 半々だと時間割が小さい）。
+// 友達の切り替えは上の小さな横並び（チップ）、メッセージ・削除のある一覧は下へスクロール。
+const TIMETABLE_HEADER_H = 24;
+const PERIODS_COUNT = 7;
+const NAV_HEADER_BASE = 44;
+const CHIPS_H = 52;     // 友達チップの行
+const SELECTOR_H = 48;  // 学期セレクタ
+const PEEK_H = 40;      // 下に一覧が続くと分かるよう、見出しが少し見える分
+const MIN_CELL_H = 42;
 
 // 友達の時間割ロード結果: null=読み込み中 / "private"=非公開(権限なし) / 配列=表示
 type FriendSessions = ClassSession[] | "private" | null;
 
 export default function FriendsScreen() {
   const { theme } = useTheme();
+  const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { user, schoolDomain } = useAuth();
   const { t } = useI18n();
@@ -157,6 +169,12 @@ export default function FriendsScreen() {
   const friendSessions: FriendSessions = friendKey ? (friendSessionsMap[friendKey] ?? null) : null;
   const selectedFriend = allFriends.find((f) => f.id === effectiveId);
 
+  const chromeH = NAV_HEADER_BASE + insets.top + TAB_BAR_HEIGHT + insets.bottom;
+  const cellHeight = Math.max(
+    MIN_CELL_H,
+    (height - chromeH - CHIPS_H - SELECTOR_H - TIMETABLE_HEADER_H - PEEK_H) / PERIODS_COUNT
+  );
+
   function handleRemove(friendId: string, nickname: string) {
     confirmDialog(
       t("friends.removeTitle"),
@@ -190,6 +208,7 @@ export default function FriendsScreen() {
     <View style={styles.container}>
       <AddFriendModal visible={addModalVisible} onClose={() => setAddModalVisible(false)} />
 
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
       {/* 受信箱: 保留中の申請があるときだけ表示 */}
       {requests.length > 0 && (
         <View style={styles.inboxSection}>
@@ -211,6 +230,33 @@ export default function FriendsScreen() {
         </View>
       )}
 
+      {/* 友達の切り替え: 小さな横並び。多いときは横にスクロール */}
+      {orderedAll.length > 0 && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.chipsRow}
+          contentContainerStyle={styles.chipsContent}
+        >
+          {orderedAll.map((friend) => {
+            const selected = friend.id === effectiveId;
+            return (
+              <TouchableOpacity
+                key={friend.id}
+                style={[styles.chip, selected && styles.chipSelected]}
+                onPress={() => setSelectedId(friend.id)}
+                activeOpacity={0.7}
+              >
+                <DefaultAvatar size={22} />
+                <Text style={[styles.chipText, selected && styles.chipTextSelected]} numberOfLines={1}>
+                  {friend.nickname}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      )}
+
       {selectedFriend && (
         <View style={styles.timetableSection}>
           <SemesterSelector
@@ -229,12 +275,13 @@ export default function FriendsScreen() {
               </Text>
             </View>
           ) : (
-            <TimeTable sessions={friendSessions ?? []} cellHeight={CELL_HEIGHT} />
+            <TimeTable sessions={friendSessions ?? []} cellHeight={cellHeight} />
           )}
         </View>
       )}
 
-      <ScrollView style={styles.listSection} contentContainerStyle={styles.listContent}>
+      <View style={styles.listSection}>
+        {orderedAll.length > 0 && <Text style={styles.listTitle}>{t("friends.listTitle")}</Text>}
         {!loading && orderedAll.length === 0 && (
           <View style={styles.emptyBox}>
             <Text style={styles.emptyText}>{t("friends.empty")}</Text>
@@ -266,6 +313,7 @@ export default function FriendsScreen() {
           </TouchableOpacity>
         ))}
         {orderedAll.length > 0 && <Text style={styles.listHint}>{t("friends.longPressHint")}</Text>}
+      </View>
       </ScrollView>
     </View>
   );
@@ -319,8 +367,25 @@ function makeStyles(theme: Theme) {
     privateBox: { paddingVertical: 32, alignItems: "center" },
     privateText: { fontSize: 13, color: theme.textSecondary },
 
-    listSection: { flex: 1 },
-    listContent: { paddingVertical: 4 },
+    scroll: { flex: 1 },
+    scrollContent: { paddingBottom: 12 },
+
+    chipsRow: { flexGrow: 0, borderBottomWidth: 1, borderBottomColor: theme.border, backgroundColor: theme.card },
+    chipsContent: { paddingHorizontal: 10, paddingVertical: 9, gap: 8, alignItems: "center" },
+    chip: {
+      flexDirection: "row", alignItems: "center", gap: 6, maxWidth: 160,
+      paddingLeft: 5, paddingRight: 12, paddingVertical: 4, borderRadius: 999,
+      borderWidth: 1, borderColor: theme.border, backgroundColor: theme.background,
+    },
+    chipSelected: { borderColor: theme.primary, backgroundColor: theme.primary + "1A" },
+    chipText: { fontSize: 13, fontWeight: "600", color: theme.textPrimary, flexShrink: 1 },
+    chipTextSelected: { color: theme.primary },
+
+    listSection: { paddingTop: 4 },
+    listTitle: {
+      fontSize: 12, fontWeight: "700", color: theme.textSecondary,
+      paddingHorizontal: 14, paddingTop: 12, paddingBottom: 6,
+    },
 
     emptyBox: { paddingVertical: 40, alignItems: "center", gap: 6 },
     emptyText: { fontSize: 14, fontWeight: "700", color: theme.textSecondary },
